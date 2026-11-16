@@ -14,55 +14,90 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
  const boxGeo=new T.BoxGeometry(1,1,1),poleGeo=new T.CylinderGeometry(1,1,1,8);
  function b(parent,x,y,z,w,h,d,m){const o=new T.Mesh(boxGeo,m);o.position.set(x,y,z);o.scale.set(w,h,d);o.castShadow=false;o.receiveShadow=true;parent.add(o);return o;}
  function pole(parent,x,y,z,r,h,m){const o=new T.Mesh(poleGeo,m);o.position.set(x,y,z);o.scale.set(r,h,r);o.castShadow=false;parent.add(o);return o;}
+ // Brickwork is generated as a reusable facade texture rather than a plain color.
+ function brickTexture(index){
+  const canvas=document.createElement('canvas');canvas.width=512;canvas.height=512;
+  const c=canvas.getContext('2d'),colors=['#955c4b','#a46b58','#856055','#ba8b6d','#b6a293'];
+  c.fillStyle='#a99b8c';c.fillRect(0,0,512,512);
+  for(let row=0;row<40;row++)for(let col=-1;col<11;col++){
+   const xx=col*52+(row%2)*26,yy=row*13;
+   const jitter=((row*71+col*43+index*17)%23)-11;
+   c.fillStyle=colors[Math.abs(row*3+col+index)%colors.length];
+   c.fillRect(xx+1,yy+1,50,11);
+   c.fillStyle='rgba(35,25,20,.10)';c.fillRect(xx+2,yy+9,48,2);
+   c.fillStyle='rgba(240,210,190,.12)';c.fillRect(xx+2,yy+1,48,2);
+  }
+  const t=new T.CanvasTexture(canvas);t.colorSpace=T.SRGBColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(2,3);t.anisotropy=4;return t;
+ }
+ const brickWalls=Array.from({length:5},(_,i)=>new T.MeshStandardMaterial({map:brickTexture(i),roughness:.96,color:0xffffff}));
+ const darkGlass=new T.MeshStandardMaterial({color:0x324d5c,roughness:.25,metalness:.38});
+ const iron=new T.MeshStandardMaterial({color:0x272b2b,roughness:.78,metalness:.38});
  function skylineTower(x,z,w,d,h,index){
   const g=new T.Group();g.position.set(x,0,z);root.add(g);
-  // Distinct architectural silhouettes instead of identical striped slabs.
-  const style=index%6,levels=Math.max(4,Math.floor(h/3.6));
-  const brick=new T.MeshStandardMaterial({color:[0x995944,0xb47c60,0x8b5143,0xc5a489][index%4],roughness:.92});
-  const limestone=new T.MeshStandardMaterial({color:0xd5c6ae,roughness:.9});
-  const blueGlass=new T.MeshPhysicalMaterial({color:0x548fa9,metalness:.32,roughness:.16,clearcoat:.6});
-  const body=style===0||style===3?brick:style===1?blueGlass:style===2?limestone:wall[index%wall.length];
-  const baseHeight=style===0||style===3?Math.min(h,17):h;
-  b(g,0,baseHeight/2,0,w,baseHeight,d,body);
-  if(baseHeight<h)b(g,0,(baseHeight+h)/2,0,w*.73,h-baseHeight,d*.77,body);
-  if(style===2){b(g,0,h+1,0,w+1,2,d+1,limestone);b(g,0,h+2.3,0,w*.78,.5,d*.78,frame);}
-  else if(style===1){b(g,0,h+1.5,0,w*.68,3,d*.68,blueGlass);}
-  else if(style===4){b(g,0,h+1,0,w*.8,2,d*.8,frame);pole(g,0,h+4,0,.13,4,metal);}
-  else b(g,0,h+.3,0,w+.45,.6,d+.45,concrete);
-  if(style===0||style===3){
-   // Individually framed windows and projecting black balconies.
-   for(let floor=1;floor<Math.min(levels,6);floor++){
-    const yy=floor*3.2+1.1;
-    for(let bay=0;bay<Math.max(2,Math.floor(w/4));bay++){
-     const xx=-w/2+(bay+.5)*w/Math.max(2,Math.floor(w/4));
-     b(g,xx,yy,d/2+.13,1.7,2,.12,windows);
-     b(g,xx,yy+1.05,d/2+.16,2,.13,.2,concrete);
-     if((bay+floor)%2===0){
-      b(g,xx,yy-.95,d/2+.85,2.8,.13,1.55,frame);
-      b(g,xx,yy-.32,d/2+1.58,2.8,.07,.08,frame);
-      for(const dx of [-1.25,0,1.25])b(g,xx+dx,yy-.65,d/2+1.58,.06,.65,.06,frame);
-     }
+  // Street-scale brick apartments and occasional distinctive taller buildings.
+  const style=index%9,brick=style!==7&&style!==8;
+  const floors=Math.max(3,Math.floor(h/3.25));
+  const body=brick?brickWalls[index%brickWalls.length]:wall[index%wall.length];
+  b(g,0,h/2,0,w,h,d,body);
+  // Cornices, rooftop water towers, ventilation and parapets vary by building.
+  b(g,0,h+.35,0,w+.6,.7,d+.6,brick?concrete:frame);
+  if(index%4===0){
+   b(g,0,h+1.05,0,w+.35,.6,d+.35,concrete);
+   const tank=new T.Mesh(new T.CylinderGeometry(1.15,1.15,2.6,10),metal);
+   tank.position.set(w*.2,h+2.4,0);g.add(tank);
+   for(const dx of [-.9,.9])pole(g,w*.2+dx,h+1,0,.08,2,iron);
+  }else if(index%4===1){
+   b(g,w*.18,h+1.2,0,3.2,1.7,3,frame);
+  }else if(index%4===2){
+   b(g,0,h+1,0,w*.75,1.2,d*.7,body);
+  }
+  const bays=Math.max(2,Math.floor(w/3.3));
+  const sideBays=Math.max(2,Math.floor(d/3.4));
+  for(let floor=0;floor<floors;floor++){
+   const yy=1.9+floor*3.25;
+   if(yy+1.2>h)break;
+   // Individual dark windows with stone lintels and sills, not full-width stripes.
+   for(let bay=0;bay<bays;bay++){
+    const xx=-w/2+(bay+.5)*w/bays;
+    for(const face of [-1,1]){
+     b(g,xx,yy,face*(d/2+.095),1.35,1.9,.12,darkGlass);
+     b(g,xx,yy+1.04,face*(d/2+.16),1.7,.15,.23,concrete);
+     b(g,xx,yy-.99,face*(d/2+.18),1.7,.11,.3,concrete);
+     b(g,xx,yy,face*(d/2+.19),.075,1.94,.09,frame);
     }
    }
-  }else{
-   const step=style===1?2.9:3.8;
-   for(let floor=1;floor<levels;floor++){
-    const yy=floor*h/levels;
-    if(style===1){
-     b(g,0,yy,d/2+.12,w*.92,2.1,.14,windows);
-     b(g,0,yy,-d/2-.12,w*.92,2.1,.14,windows);
-     for(let col=1;col<6;col++)b(g,-w/2+col*w/6,h/2,d/2+.25,.1,h,.14,frame);
-    }else{
-     for(let bay=0;bay<Math.max(2,Math.floor(w/4.4));bay++){
-      const xx=-w/2+(bay+.5)*w/Math.max(2,Math.floor(w/4.4));
-      b(g,xx,yy,d/2+.12,style===2?1.3:2.2,1.8,.13,windows);
-      b(g,xx,yy,-d/2-.12,style===2?1.3:2.2,1.8,.13,windows);
-     }
+   for(let bay=0;bay<sideBays;bay++){
+    const zz=-d/2+(bay+.5)*d/sideBays;
+    for(const face of [-1,1]){
+     b(g,face*(w/2+.08),yy,zz,.12,1.8,1.25,darkGlass);
+     b(g,face*(w/2+.14),yy+1.03,zz,.23,.13,1.5,concrete);
     }
    }
   }
-  b(g,0,1.55,d/2+.18,w*.72,2.8,.2,windows);
-  b(g,0,3.1,d/2+.45,w*.82,.28,.9,frame);
+  // NYC-style black fire escapes, alternating landings, guardrails and ladders.
+  if(brick&&index%3!==2){
+   const fx=w*.23,front=d/2+.78;
+   for(let floor=1;floor<Math.min(floors,7);floor++){
+    const y=floor*3.25+.15;
+    b(g,fx,y,front,3.4,.12,1.25,iron);
+    b(g,fx,y+.82,front+.6,3.4,.08,.07,iron);
+    for(let p=0;p<5;p++)b(g,fx-1.5+p*.75,y+.42,front+.6,.065,.82,.065,iron);
+    if(floor<Math.min(floors,7)-1){
+     const ladder=new T.Group();g.add(ladder);
+     ladder.position.set(fx+1.25,y+1.55,front+.45);
+     ladder.rotation.z=.27;
+     for(const dx of [-.34,.34])b(ladder,dx,0,0,.07,3.2,.07,iron);
+     for(let step=0;step<10;step++)b(ladder,0,-1.4+step*.3,0,.75,.06,.07,iron);
+    }
+   }
+  }
+  // Ground-floor entrances and occasional storefront awnings.
+  b(g,0,1.45,d/2+.14,2.15,2.8,.16,wood);
+  b(g,0,3.0,d/2+.48,3.3,.22,.95,frame);
+  if(index%4===3){
+   const awning=new T.MeshStandardMaterial({color:0x385b55,roughness:.9});
+   b(g,-w*.25,3.3,d/2+.7,w*.38,.22,1.6,awning);
+  }
   return g;
  }
  // City extends beyond the playable district in concentric, staggered rows.
@@ -70,14 +105,14 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
  let total=0;
  for(let ring=0;ring<3;ring++){
   const radius=202+ring*65;
-  const n=ring===0?30:40;
+  const n=ring===0?16:22;
   for(let i=0;i<n;i++){
    const angle=2*Math.PI*(i+.24*(rnd()-.5))/n;
    const x=Math.cos(angle)*(radius+(rnd()-.5)*22);
    const z=Math.sin(angle)*(radius+(rnd()-.5)*22);
    // South Beach and the ocean must remain completely free of city towers.
    if(z>95)continue;
-   const w=12+rnd()*15,d=12+rnd()*15,h=25+rnd()*58+(ring===1?20:0);
+   const w=14+rnd()*12,d=12+rnd()*13,h=12+rnd()*23+(ring===2&&total%8===0?20:0);
    skylineTower(x,z,w,d,h,total++);
   }
  }
@@ -118,6 +153,6 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
  // Central plaza perimeter: planters and benches only outside fountain basin.
  for(const [x,z,rot] of [[29,26,0],[67,26,0],[29,70,Math.PI],[67,70,Math.PI]])bench(x,z,rot);
  for(const [x,z] of [[24,25],[72,25],[24,71],[72,71]])planter(x,z);
- // Keep the waterfront horizon unobstructed: no low-poly cone mountains.
+ // Brick facade, varied rooftops and fire escapes replace uniform striped skyscrapers.
  return {root,skylineCount:total,dispose(){scene.remove(root);}};
 }
