@@ -3,6 +3,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
 import {createCloudSky} from './cloud-sky.js';
+import {addCityDepth} from './city-depth-assets.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -290,6 +291,8 @@ for(const dz of [-28.8,28.8]){
 }
 for(const dx of [-28.8,28.8])box(.3,.18,57,48+dx,.17,-48,curbMaterial);
 const observationNeedle=createObservationNeedle(scene,{x:48,z:-48});
+// Populate tower surroundings and distant horizon with detailed 3D architecture.
+const cityDepth=addCityDepth({scene,asphalt,paving,grass});
 // The old cartoon fountain, tiled boxes, sphere bushes, and procedural benches
 // have been REMOVED. The GLB supplies the entire detailed plaza instead.
 let realisticPlaza=null;
