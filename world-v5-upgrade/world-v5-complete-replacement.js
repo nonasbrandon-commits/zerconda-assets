@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
+import {createCloudSky} from './cloud-sky.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -20,8 +21,9 @@ const PATH={
  flower:'realistic-assets/plaza-assets/flowering-plant/flower_empodium_1k.gltf'
 };
 const status=document.getElementById('status');
-const scene=new THREE.Scene();scene.background=new THREE.Color(0xaacbdf);
-scene.fog=new THREE.FogExp2(0xaacbdf,.0016);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x8eb7d3);
+const cloudSky=createCloudSky(scene,{count:38});
+scene.fog=new THREE.FogExp2(0xa9c8dc,.0009);
 const camera=new THREE.PerspectiveCamera(66,innerWidth/innerHeight,.1,600);
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);
@@ -465,7 +467,7 @@ function toggleCar(){
 renderer.domElement.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;lastY=e.clientY;});
 addEventListener('pointerup',()=>drag=false);
 addEventListener('pointermove',e=>{if(!drag)return;yaw-=(e.clientX-lastX)*.003;
- pitch=THREE.MathUtils.clamp(pitch+(e.clientY-lastY)*.0025,-.35,.65);
+ pitch=THREE.MathUtils.clamp(pitch+(e.clientY-lastY)*.0025,-1.15,1.25);
  lastX=e.clientX;lastY=e.clientY;});
 function walkable(x,z){
  if(Math.abs(x)>168||Math.abs(z)>168)return false;
@@ -479,6 +481,7 @@ let elapsed=0;
 function animate(){
  requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);elapsed+=dt;
  if(realisticPlaza)realisticPlaza.update(dt);
+ cloudSky.update(dt);
  const f=Number(keys.has('KeyW')||keys.has('ArrowUp'))-Number(keys.has('KeyS')||keys.has('ArrowDown'));
  const side=Number(keys.has('KeyD')||keys.has('ArrowRight'))-Number(keys.has('KeyA')||keys.has('ArrowLeft'));
  if(activeCar){
