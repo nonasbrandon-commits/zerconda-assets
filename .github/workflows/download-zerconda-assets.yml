@@ -1,0 +1,64 @@
+name: Download Zerconda realistic PBR assets
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/download-zerconda-assets.yml'
+permissions:
+  contents: write
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download CC0 ambientCG materials, validate and commit
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, urllib.request, zipfile, io, pathlib, json, time
+          root=pathlib.Path("realistic-assets/pbr")
+          root.mkdir(parents=True,exist_ok=True)
+          ids=["Asphalt025","Bricks076","PavingStones070","Ground037","Metal032","RoadLines001"]
+          report={}
+          for asset in ids:
+              url=f"https://ambientcg.com/get?file={asset}_1K-JPG.zip"
+              try:
+                  req=urllib.request.Request(url,headers={"User-Agent":"ZercondaAssetImporter/1.0"})
+                  with urllib.request.urlopen(req,timeout=90) as response:
+                      data=response.read(24*1024*1024+1)
+                  if len(data)>24*1024*1024: raise ValueError("ZIP download over 24 MB")
+                  if not zipfile.is_zipfile(io.BytesIO(data)): raise ValueError("Not a valid ZIP")
+                  target=root/asset
+                  target.mkdir(exist_ok=True)
+                  kept=[]
+                  with zipfile.ZipFile(io.BytesIO(data)) as z:
+                      for info in z.infolist():
+                          if info.is_dir(): continue
+                          name=pathlib.PurePosixPath(info.filename).name
+                          if not name.lower().endswith((".jpg",".jpeg",".png",".webp",".txt")): continue
+                          if info.file_size>24*1024*1024: continue
+                          out=target/name
+                          out.write_bytes(z.read(info))
+                          kept.append(str(out))
+                  if not kept: raise ValueError("No suitable textures found")
+                  report[asset]={"status":"downloaded","files":kept,"source":url}
+              except Exception as e:
+                  report[asset]={"status":"failed","reason":str(e),"source":url}
+          pathlib.Path("realistic-assets/DOWNLOAD_REPORT.json").write_text(json.dumps(report,indent=2))
+          pathlib.Path("realistic-assets/README.md").write_text(
+              "# Zerconda realistic material assets\n\n"
+              "Source: https://ambientcg.com/ (CC0).\n"
+              "These are real PBR texture maps, not 3D building or car models.\n"
+              "See DOWNLOAD_REPORT.json for exact download success/failure.\n"
+              "Use *_Color for baseColor, *_NormalGL for normal, and *_Roughness for roughness.\n"
+              "Do not use NormalDX in Three.js without conversion.\n"
+              "All downloaded individual files are checked below 24 MiB.\n"
+          )
+          successes=sum(x["status"]=="downloaded" for x in report.values())
+          print(json.dumps(report,indent=2))
+          if not successes: raise SystemExit("No assets downloaded; no commit will be made")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add realistic-assets/
+          git diff --cached --quiet || (git commit -m "Add realistic CC0 PBR textures for Zerconda V5" && git push)
