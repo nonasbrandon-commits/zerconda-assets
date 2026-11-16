@@ -1,0 +1,28 @@
+name: Install CC0 detailed palm model
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/install-detailed-palms.yml'
+permissions:
+  contents: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download original CC0 GLB and verify format
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p realistic-assets/palms
+          curl --fail --location --retry 3 --max-time 120 'https://files.innerscene.com/library/palm-detailed-a8777b8c/6c1f074e83cdb7dbaeae/palm-detailed.glb' -o realistic-assets/palms/palm-detailed.glb
+          test "$(head -c 4 realistic-assets/palms/palm-detailed.glb)" = glTF
+          test "$(stat -c%s realistic-assets/palms/palm-detailed.glb)" -gt 100000
+          printf 'Asset: palm-detailed.glb\nSource: https://www.innerscene.com/tools/library/3d-parts/palm-detailed-a8777b8c\nLicense: CC0 1.0 public domain (as stated by source)\n' > realistic-assets/palms/SOURCE.txt
+      - name: Commit validated asset
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add realistic-assets/palms/
+          git diff --cached --quiet || (git commit -m "Install licensed detailed 3D palm GLB" && git push)
