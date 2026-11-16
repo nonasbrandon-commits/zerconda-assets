@@ -417,7 +417,9 @@ function animate(){
   d.open=THREE.MathUtils.damp(d.open,near?1:0,4,dt);
   d.hinge.rotation.y=d.side*d.open*1.22;
  }
- jetMaterial.opacity=.48+.09*Math.sin(elapsed*2);
+ // The old procedural fountain's jetMaterial was removed with that fountain.
+ // Its stale animation line caused ReferenceError every frame BEFORE renderer.render().
+ // Animated water is now updated by realisticPlaza.update(dt) above.
  const dist=activeCar?9:5,eye=activeCar?3.4:2.1;
  // Recover from a nonfinite camera/player coordinate instead of rendering blank sky.
  if(!Number.isFinite(player.x)||!Number.isFinite(player.z)||!Number.isFinite(yaw)||!Number.isFinite(pitch))resetView();
@@ -434,10 +436,10 @@ function animate(){
    ' | objects '+scene.children.length+
    ' | draw calls '+renderer.info.render.calls+
    ' | triangles '+renderer.info.render.triangles+
-   '\\nCamera '+p.x.toFixed(1)+','+p.y.toFixed(1)+','+p.z.toFixed(1)+
+   '\nCamera '+p.x.toFixed(1)+','+p.y.toFixed(1)+','+p.z.toFixed(1)+
    ' | player '+player.x.toFixed(1)+','+player.z.toFixed(1)+
    ' | canvas '+renderer.domElement.clientWidth+'x'+renderer.domElement.clientHeight+
-   (renderFailure?'\\nERROR '+renderFailure:'');
+   (renderFailure?'\nERROR '+renderFailure:'');
  }
 
 }
