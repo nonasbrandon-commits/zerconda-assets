@@ -6,26 +6,22 @@ const textureLoader=new THREE.TextureLoader();
 const masonryMaps=new Map();
 function loadMasonryMap(kind){
  if(masonryMaps.has(kind))return masonryMaps.get(kind);
- const texture=textureLoader.load(URBAN_BASE+'brick_'+kind+'.jpg',()=>{},undefined,()=>console.warn('Zerconda: brick '+kind+' texture unavailable'));
- texture.wrapS=texture.wrapT=THREE.RepeatWrapping;
- texture.repeat.set(3,3);texture.anisotropy=8;
- if(kind==='color')texture.colorSpace=THREE.SRGBColorSpace;
- masonryMaps.set(kind,texture);return texture;
+ const entry={texture:null,ready:false,listeners:[]};
+ masonryMaps.set(kind,entry);
+ entry.texture=textureLoader.load(URBAN_BASE+'brick_'+kind+'.jpg',
+  ()=>{entry.ready=true;for(const callback of entry.listeners)callback(entry.texture);entry.listeners.length=0;},
+  undefined,()=>{entry.listeners.length=0;console.warn('Zerconda PBR unavailable: brick_'+kind);});
+ entry.texture.wrapS=entry.texture.wrapT=THREE.RepeatWrapping;
+ entry.texture.repeat.set(3,3);entry.texture.anisotropy=8;
+ if(kind==='color')entry.texture.colorSpace=THREE.SRGBColorSpace;
+ return entry;
 }
 function applyRealBrick(material){
- // Do not assign the map until it loads; a missing asset must not hide buildings.
- const map=loadMasonryMap('color');
- if(map.image&&map.image.width){material.map=map;material.needsUpdate=true;}
- else{
-  const listener=()=>{material.map=map;material.needsUpdate=true;};
-  if(map.image?.addEventListener)map.image.addEventListener('load',listener,{once:true});
+ for(const [kind,property] of [['color','map'],['normal','normalMap'],['roughness','roughnessMap']]){
+  const entry=loadMasonryMap(kind);
+  const apply=t=>{material[property]=t;if(kind==='normal')material.normalScale.set(.3,.3);material.needsUpdate=true;};
+  if(entry.ready)apply(entry.texture);else entry.listeners.push(apply);
  }
- const normal=loadMasonryMap('normal');
- if(normal.image?.width){material.normalMap=normal;material.normalScale.set(.3,.3);material.needsUpdate=true;}
- else if(normal.image?.addEventListener)normal.image.addEventListener('load',()=>{material.normalMap=normal;material.normalScale.set(.3,.3);material.needsUpdate=true;},{once:true});
- const rough=loadMasonryMap('roughness');
- if(rough.image?.width){material.roughnessMap=rough;material.needsUpdate=true;}
- else if(rough.image?.addEventListener)rough.image.addEventListener('load',()=>{material.roughnessMap=rough;material.needsUpdate=true;},{once:true});
 }
 // Three distinctive architecture kits inspired by user-provided references:
 // historic brick fire-escape apartments, glass terrace residences, modern white-frame condos.
