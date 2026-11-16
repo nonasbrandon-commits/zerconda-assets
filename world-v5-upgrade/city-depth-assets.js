@@ -16,22 +16,53 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
  function pole(parent,x,y,z,r,h,m){const o=new T.Mesh(poleGeo,m);o.position.set(x,y,z);o.scale.set(r,h,r);o.castShadow=false;parent.add(o);return o;}
  function skylineTower(x,z,w,d,h,index){
   const g=new T.Group();g.position.set(x,0,z);root.add(g);
-  b(g,0,h/2,0,w,h,d,wall[index%wall.length]);
-  // Repeat window bands, with proper depth and silhouette.
-  const floors=Math.max(3,Math.floor(h/4));
-  for(let i=1;i<floors;i++){
-   const yy=i*h/floors;
-   b(g,0,yy,d/2+.08,w*.86,.85,.15,windows);
-   b(g,0,yy,-d/2-.08,w*.86,.85,.15,windows);
-   b(g,w/2+.08,yy,0,.15,.85,d*.83,windows);
-   b(g,-w/2-.08,yy,0,.15,.85,d*.83,windows);
+  // Distinct architectural silhouettes instead of identical striped slabs.
+  const style=index%6,levels=Math.max(4,Math.floor(h/3.6));
+  const brick=new T.MeshStandardMaterial({color:[0x995944,0xb47c60,0x8b5143,0xc5a489][index%4],roughness:.92});
+  const limestone=new T.MeshStandardMaterial({color:0xd5c6ae,roughness:.9});
+  const blueGlass=new T.MeshPhysicalMaterial({color:0x548fa9,metalness:.32,roughness:.16,clearcoat:.6});
+  const body=style===0||style===3?brick:style===1?blueGlass:style===2?limestone:wall[index%wall.length];
+  const baseHeight=style===0||style===3?Math.min(h,17):h;
+  b(g,0,baseHeight/2,0,w,baseHeight,d,body);
+  if(baseHeight<h)b(g,0,(baseHeight+h)/2,0,w*.73,h-baseHeight,d*.77,body);
+  if(style===2){b(g,0,h+1,0,w+1,2,d+1,limestone);b(g,0,h+2.3,0,w*.78,.5,d*.78,frame);}
+  else if(style===1){b(g,0,h+1.5,0,w*.68,3,d*.68,blueGlass);}
+  else if(style===4){b(g,0,h+1,0,w*.8,2,d*.8,frame);pole(g,0,h+4,0,.13,4,metal);}
+  else b(g,0,h+.3,0,w+.45,.6,d+.45,concrete);
+  if(style===0||style===3){
+   // Individually framed windows and projecting black balconies.
+   for(let floor=1;floor<Math.min(levels,6);floor++){
+    const yy=floor*3.2+1.1;
+    for(let bay=0;bay<Math.max(2,Math.floor(w/4));bay++){
+     const xx=-w/2+(bay+.5)*w/Math.max(2,Math.floor(w/4));
+     b(g,xx,yy,d/2+.13,1.7,2,.12,windows);
+     b(g,xx,yy+1.05,d/2+.16,2,.13,.2,concrete);
+     if((bay+floor)%2===0){
+      b(g,xx,yy-.95,d/2+.85,2.8,.13,1.55,frame);
+      b(g,xx,yy-.32,d/2+1.58,2.8,.07,.08,frame);
+      for(const dx of [-1.25,0,1.25])b(g,xx+dx,yy-.65,d/2+1.58,.06,.65,.06,frame);
+     }
+    }
+   }
+  }else{
+   const step=style===1?2.9:3.8;
+   for(let floor=1;floor<levels;floor++){
+    const yy=floor*h/levels;
+    if(style===1){
+     b(g,0,yy,d/2+.12,w*.92,2.1,.14,windows);
+     b(g,0,yy,-d/2-.12,w*.92,2.1,.14,windows);
+     for(let col=1;col<6;col++)b(g,-w/2+col*w/6,h/2,d/2+.25,.1,h,.14,frame);
+    }else{
+     for(let bay=0;bay<Math.max(2,Math.floor(w/4.4));bay++){
+      const xx=-w/2+(bay+.5)*w/Math.max(2,Math.floor(w/4.4));
+      b(g,xx,yy,d/2+.12,style===2?1.3:2.2,1.8,.13,windows);
+      b(g,xx,yy,-d/2-.12,style===2?1.3:2.2,1.8,.13,windows);
+     }
+    }
+   }
   }
-  for(const side of [-1,1]){
-   b(g,side*w*.42,h/2,d/2+.12,.28,h,.24,frame);
-   b(g,side*w*.42,h/2,-d/2-.12,.28,h,.24,frame);
-  }
-  b(g,0,h+.4,0,w+1,.8,d+1,concrete);
-  if(index%3===0)pole(g,0,h+3,0,.18,5,metal);
+  b(g,0,1.55,d/2+.18,w*.72,2.8,.2,windows);
+  b(g,0,3.1,d/2+.45,w*.82,.28,.9,frame);
   return g;
  }
  // City extends beyond the playable district in concentric, staggered rows.
