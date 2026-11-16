@@ -3,8 +3,17 @@ import * as THREE from 'three';
 // 88m open-air observation deck, elevator interaction and 360 degree view.
 export function createObservationNeedle(scene,{x=48,z=-48}={}){
  const root=new THREE.Group();root.position.set(x,0,z);root.name='Zerconda Needle Observation Tower';scene.add(root);
- const stone=new THREE.MeshStandardMaterial({color:0xc8c6bf,roughness:.82});
- const steel=new THREE.MeshStandardMaterial({color:0x66747a,metalness:.7,roughness:.32});
+ const textureLoader=new THREE.TextureLoader();
+ const concreteColor=textureLoader.load('https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/water-concrete-v1/tower-concrete-warm-color.jpg');
+ const concreteNormal=textureLoader.load('https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/water-concrete-v1/tower-concrete-warm-normal.jpg');
+ for(const t of [concreteColor,concreteNormal]){t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(2,5);t.anisotropy=8;}
+ concreteColor.colorSpace=THREE.SRGBColorSpace;
+ const stone=new THREE.MeshStandardMaterial({map:concreteColor,normalMap:concreteNormal,normalScale:new THREE.Vector2(.32,.32),color:0xffffff,roughness:.92,metalness:0});
+ const coolColor=textureLoader.load('https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/water-concrete-v1/tower-concrete-cool-color.jpg');
+ const coolNormal=textureLoader.load('https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/water-concrete-v1/tower-concrete-cool-normal.jpg');
+ for(const t of [coolColor,coolNormal]){t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(2,5);t.anisotropy=8;}
+ coolColor.colorSpace=THREE.SRGBColorSpace;
+ const steel=new THREE.MeshStandardMaterial({map:coolColor,normalMap:coolNormal,normalScale:new THREE.Vector2(.28,.28),color:0xffffff,metalness:.04,roughness:.85});
  const trim=new THREE.MeshStandardMaterial({color:0x34434c,metalness:.7,roughness:.28});
  const windows=new THREE.MeshPhysicalMaterial({color:0x9ec9d7,metalness:.12,roughness:.09,transparent:true,opacity:.72,side:THREE.DoubleSide,clearcoat:1});
  const lit=new THREE.MeshBasicMaterial({color:0xe3f5ff});
