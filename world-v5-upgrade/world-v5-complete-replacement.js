@@ -267,7 +267,7 @@ for(let k=0;k<blocks.length;k++){
  if(Math.abs(bx)>100||Math.abs(bz)>100)continue; // avoid outside-city half blocks
  for(const [i,j] of [[-1,-1],[1,-1],[-1,1],[1,1]]){
   const x=bx+i*17,z=bz+j*17;
-  if(bx===-48&&bz===-48&&i===1)continue; // Reserve east side for Brewstone cafe opposite the Needle.
+  if(bx===-48&&bz===-48)continue; // Reserved commercial district: cafe, dealership, and access road. // Reserve east side for Brewstone cafe opposite the Needle.
   makeBuilding(x,z,24,23,18+Math.floor(rand()*5)*3.2,k+Math.round(rand()*4));
  }
 }
@@ -308,7 +308,10 @@ for(const dx of [-28.8,28.8])box(.3,.18,57,48+dx,.17,-48,curbMaterial);
 const observationNeedle=createObservationNeedle(scene,{x:48,z:-48});
 const coffeeShop=createCoffeeShop(scene,{x:-34,z:-48});
 // Walk-in showroom just west of Brewstone Coffee, with three fictional display vehicles.
-const dealership=createDealership(scene,{x:-62,z:-48});
+const dealership=createDealership(scene,{x:-72,z:-48});
+// Separate commercial parcels with an actual paved access road, curb and pedestrian sidewalks.
+box(8,.13,83,-51.5,-.025,-48,asphalt);
+for(const side of [-1,1])box(2.6,.16,83,-51.5+side*5.5,.035,-48,paving);
 coffeeShop.root.rotation.y=Math.PI/2; // Entrance and patio face east toward the Needle.
 // Convert authored local chair locations to rotated world coordinates.
 for(const seat of coffeeShop.seats){const lx=seat.x+34,lz=seat.z+48;seat.x=-34+lz;seat.z=-48-lx;}
@@ -338,7 +341,7 @@ for(const c of roadLines){
    // 16.5m from centerline: beyond 9.5m asphalt and 4m sidewalk.
    for(const [x,z] of [[c+side*16.5,p],[p,c+side*16.5]]){
     if(Math.abs(x)>162||Math.abs(z)>162)continue;
-    if(nearRoad(x,z,5.1)||insideBuilding(x,z,1.5)||inPlaza(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39||doors.some(d=>Math.hypot(x-d.x,z-d.z)<entranceClearance)||Math.abs(x+34)<22&&Math.abs(z+48)<23)continue;
+    if(Math.abs(x+51.5)<12&&Math.abs(z+48)<44||Math.abs(x+72)<17&&Math.abs(z+48)<19||nearRoad(x,z,5.1)||insideBuilding(x,z,1.5)||inPlaza(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39||doors.some(d=>Math.hypot(x-d.x,z-d.z)<entranceClearance)||Math.abs(x+34)<22&&Math.abs(z+48)<23)continue;
     if(treeSpots.some(([a,b])=>Math.hypot(x-a,z-b)<10))continue;
     treeSpots.push([x,z]);
    }
@@ -474,7 +477,7 @@ renderer.domElement.addEventListener('wheel',e=>{
  movement.wheelImpulse=THREE.MathUtils.clamp(
   movement.wheelImpulse+dir*WHEEL_STEP,-WHEEL_MAX,WHEEL_MAX);
 },{passive:false});
-addEventListener('keydown',e=>{keys.add(e.code);if(e.code==='KeyE'&&!e.repeat){if(apartmentSession)apartmentAction();else if(dealership.isNear(player.x,player.z,5.5)||dealership.inside(player.x,player.z))visitDealership();else toggleCar();}if(e.code==='KeyF'&&!e.repeat)toggleNearbyDoor();if(e.code==='KeyT'&&!e.repeat)toggleObservationDeck();
+addEventListener('keydown',e=>{keys.add(e.code);if(e.code==='KeyE'&&!e.repeat){if(apartmentSession)apartmentAction();else if(nearCafeEntrance()||cafeInside)enterCafe();else if(dealership.isNear(player.x,player.z,5.5)||dealership.inside(player.x,player.z))visitDealership();else toggleCar();}if(e.code==='KeyF'&&!e.repeat)toggleNearbyDoor();if(e.code==='KeyT'&&!e.repeat)toggleObservationDeck();
  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();});
 addEventListener('keyup',e=>keys.delete(e.code));
 for(const b of document.querySelectorAll('[data-key]')){
@@ -516,9 +519,13 @@ function visitDealership(){
  if(vehicle){if(status)status.textContent=vehicle.name+' · Display vehicle · Visit the vehicle shop for purchases';return;}
  if(dealership.inside(player.x,player.z)){player.x=dealership.x+15;player.z=dealership.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Exited Zerconda Motors';}
 }
-let sittingSeat=null;
-function toggleCafeSeat(){if(sittingSeat){sittingSeat=null;return;}const seat=coffeeShop.nearestSeat(player.x,player.z,2.5);if(!seat)return;sittingSeat=seat;player.x=seat.x;player.z=seat.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Seated at Brewstone Coffee · Press C or use button to stand';}
-addEventListener('keydown',e=>{if(e.code==='KeyC'&&!e.repeat&&(sittingSeat||coffeeShop.nearestSeat(player.x,player.z,2.5)))toggleCafeSeat();});
+let sittingSeat=null,cafeInside=false;
+const cafeEntry={x:-34+10.8,z:-48};
+function nearCafeEntrance(){return Math.hypot(player.x-cafeEntry.x,player.z-cafeEntry.z)<4.5;}
+function enterCafe(){if(sittingSeat){sittingSeat=null;}if(cafeInside){cafeInside=false;player.x=cafeEntry.x+3.3;player.z=cafeEntry.z;}else{cafeInside=true;player.x=cafeEntry.x-3.6;player.z=cafeEntry.z;}movement.vx=0;movement.vz=0;if(status)status.textContent=cafeInside?'Inside Brewstone Coffee · Find a table and press C':'Exited Brewstone Coffee';}
+const cafeEntryButton=actionButton('zerconda-cafe-enter','E · ENTER COFFEE SHOP',445,enterCafe);
+function toggleCafeSeat(){if(!cafeInside)return;if(sittingSeat){sittingSeat=null;return;}const seat=coffeeShop.nearestSeat(player.x,player.z,2.5);if(!seat)return;sittingSeat=seat;player.x=seat.x;player.z=seat.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Seated at Brewstone Coffee · Press C or use button to stand';}
+addEventListener('keydown',e=>{if(e.code==='KeyC'&&!e.repeat&&cafeInside&&(sittingSeat||coffeeShop.nearestSeat(player.x,player.z,2.5)))toggleCafeSeat();});
 function nearestDoor(){
  if(activeCar||onObservationDeck||apartmentSession)return null;
  let nearest=null,best=3.7;
@@ -562,6 +569,8 @@ addEventListener('pointermove',e=>{if(!drag)return;yaw-=(e.clientX-lastX)*.003;
  lastX=e.clientX;lastY=e.clientY;});
 function walkable(x,z){
  if(apartmentSession)return apartments.contains(x,z);
+  if(cafeInside)return coffeeShop.isInside(x,z);
+  if(coffeeShop.isInside(x,z))return false;
  if(Math.abs(x)>168||Math.abs(z)>168)return false;
  if(onObservationDeck)return observationNeedle.isOnDeck(x,z);
  if(Math.hypot(x-observationNeedle.x,z-observationNeedle.z)<5.3)return false;
