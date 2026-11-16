@@ -92,7 +92,7 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    }
   }
   // Ground-floor entrances and occasional storefront awnings.
-  b(g,0,1.45,d/2+.14,2.15,2.8,.16,wood);
+  b(g,0,1.45,d/2+.14,2.15,2.8,.16,frame);
   b(g,0,3.0,d/2+.48,3.3,.22,.95,frame);
   if(index%4===3){
    const awning=new T.MeshStandardMaterial({color:0x385b55,roughness:.9});
