@@ -2,7 +2,7 @@
 
 Target URL: https://zerconda.com/world-v5/
 
-## Deploy these seven files
+## Deploy these eight files
 
 Source repository: https://github.com/nonasbrandon-commits/zerconda-assets
 
@@ -15,6 +15,7 @@ Source repository: https://github.com/nonasbrandon-commits/zerconda-assets
 | `world-v5-upgrade/cloud-sky.js` | `/world-v5/cloud-sky.js` |
 | `world-v5-upgrade/city-depth-assets.js` | `/world-v5/city-depth-assets.js` |
 | `world-v5-upgrade/nine-building-styles.js` | `/world-v5/nine-building-styles.js` |
+| `world-v5-upgrade/brewstone-coffee.js` | `/world-v5/brewstone-coffee.js` |
 
 The Observation Needle near (48,-48) has a ground elevator. Walk near its entrance and press T (or tap the on-screen button) to travel to the 90-meter viewing deck. Press T again to descend. The deck has 360-degree views and a walkable safety-railed perimeter.
 
