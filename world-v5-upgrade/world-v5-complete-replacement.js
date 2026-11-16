@@ -8,6 +8,7 @@ import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js';
 import {createApartmentExperience} from './apartment-interiors.js';
 import {createDealership} from './zerconda-dealership.js';
+import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -429,21 +430,12 @@ async function populate(){
   const src=loaded[key];if(!src)return;
   return cloneNormalized(src,x,z,height,angle);
  };
- for(let i=0;i<8;i++){
-  const a=i*Math.PI/4;
-  const x=48+Math.cos(a)*25,z=48+Math.sin(a)*25;
-  decorate('bench',x,z,1.15,-a+Math.PI/2);
- }
- for(let i=0;i<12;i++){
-  const a=i*Math.PI/6;
-  const x=48+Math.cos(a)*29,z=48+Math.sin(a)*29;
-  decorate('planter',x,z,1.1,a);
-  if(i%2===0)decorate('flower',x+.7,z+.7,.8,a);
- }
+ // Detailed, human-scale furniture replaces the oversized mismatched imported crates and toy flowers.
 
  if(status)status.textContent='Loaded '+Object.keys(loaded).length+'/'+keys.length+' model types · Fountain plaza at (48,48)';
 }
 populate();
+addPremiumPlazaFurniture(scene,{cx:48,cz:48});
 const keys=new Set(),player={x:48,z:15},clock=new THREE.Clock();
 let activeCar=null,yaw=0,pitch=.1,drag=false,lastX=0,lastY=0;
 let onObservationDeck=false;
