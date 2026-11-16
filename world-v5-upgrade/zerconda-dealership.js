@@ -28,7 +28,7 @@ export function createDealership(scene,{x=-62,z=-48}={}){
  const url='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/dealership/zerconda-motors-sign.svg';
  new THREE.TextureLoader().load(url,t=>{t.colorSpace=THREE.SRGBColorSpace;sign.material.map=t;sign.material.needsUpdate=true;},undefined,()=>{sign.material.color.set(0x0b314f);});
  // Three cars, each a distinctly styled fictional model (no real logos).
- const cars=[];
+ const cars=[];const worldZ=z;
  function car({name,color,z,bodyHeight=1.25,roofHeight=.62,length=4.9}){
   const g=new THREE.Group();g.position.set(-2.5,0,z);g.rotation.y=-Math.PI/2;root.add(g);
   const paint=new THREE.MeshPhysicalMaterial({color,metalness:.66,roughness:.22,clearcoat:1,clearcoatRoughness:.12});
@@ -47,7 +47,7 @@ export function createDealership(scene,{x=-62,z=-48}={}){
   // Raised display platform and placard.
   const podium=new THREE.Mesh(new THREE.CylinderGeometry(3.6,3.6,.12,48),mat(0xd9e0e4,.3));podium.position.set(-2.5,.015,z);root.add(podium);
   const placard=box(root,2.7,1.2,.14,2.5,.9,z,steel);
-  cars.push({name,position:{x:x-2.5,z:z+z}});
+  cars.push({name,position:{x:x-2.5,z:worldZ+z}});
  }
  car({name:'Zerconda City Sedan',color:0xe4e7e8,z:-8,length:4.8});
  car({name:'Zerconda Sport Coupe',color:0x1766a6,z:0,length:4.55,bodyHeight:1.05,roofHeight:.5});
