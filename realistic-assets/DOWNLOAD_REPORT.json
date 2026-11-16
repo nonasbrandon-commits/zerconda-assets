@@ -1,0 +1,63 @@
+{
+  "Asphalt025": {
+    "status": "failed",
+    "reason": "HTTP Error 404: Not Found",
+    "source": "https://ambientcg.com/get?file=Asphalt025_1K-JPG.zip"
+  },
+  "Bricks076": {
+    "status": "failed",
+    "reason": "HTTP Error 404: Not Found",
+    "source": "https://ambientcg.com/get?file=Bricks076_1K-JPG.zip"
+  },
+  "PavingStones070": {
+    "status": "downloaded",
+    "files": [
+      "realistic-assets/pbr/PavingStones070/PavingStones070_1K-JPG_AmbientOcclusion.jpg",
+      "realistic-assets/pbr/PavingStones070/PavingStones070_1K-JPG_Color.jpg",
+      "realistic-assets/pbr/PavingStones070/PavingStones070_1K-JPG_Displacement.jpg",
+      "realistic-assets/pbr/PavingStones070/PavingStones070_1K-JPG_NormalDX.jpg",
+      "realistic-assets/pbr/PavingStones070/PavingStones070_1K-JPG_NormalGL.jpg",
+      "realistic-assets/pbr/PavingStones070/PavingStones070_1K-JPG_Roughness.jpg",
+      "realistic-assets/pbr/PavingStones070/PavingStones070.png"
+    ],
+    "source": "https://ambientcg.com/get?file=PavingStones070_1K-JPG.zip"
+  },
+  "Ground037": {
+    "status": "downloaded",
+    "files": [
+      "realistic-assets/pbr/Ground037/Ground037_1K-JPG_AmbientOcclusion.jpg",
+      "realistic-assets/pbr/Ground037/Ground037_1K-JPG_Color.jpg",
+      "realistic-assets/pbr/Ground037/Ground037_1K-JPG_Displacement.jpg",
+      "realistic-assets/pbr/Ground037/Ground037_1K-JPG_NormalDX.jpg",
+      "realistic-assets/pbr/Ground037/Ground037_1K-JPG_NormalGL.jpg",
+      "realistic-assets/pbr/Ground037/Ground037_1K-JPG_Roughness.jpg",
+      "realistic-assets/pbr/Ground037/Ground037.png"
+    ],
+    "source": "https://ambientcg.com/get?file=Ground037_1K-JPG.zip"
+  },
+  "Metal032": {
+    "status": "downloaded",
+    "files": [
+      "realistic-assets/pbr/Metal032/Metal032_1K-JPG_Color.jpg",
+      "realistic-assets/pbr/Metal032/Metal032_1K-JPG_Displacement.jpg",
+      "realistic-assets/pbr/Metal032/Metal032_1K-JPG_Metalness.jpg",
+      "realistic-assets/pbr/Metal032/Metal032_1K-JPG_NormalDX.jpg",
+      "realistic-assets/pbr/Metal032/Metal032_1K-JPG_NormalGL.jpg",
+      "realistic-assets/pbr/Metal032/Metal032_1K-JPG_Roughness.jpg",
+      "realistic-assets/pbr/Metal032/Metal032.png"
+    ],
+    "source": "https://ambientcg.com/get?file=Metal032_1K-JPG.zip"
+  },
+  "RoadLines001": {
+    "status": "downloaded",
+    "files": [
+      "realistic-assets/pbr/RoadLines001/RoadLines001_1K-JPG_Color.jpg",
+      "realistic-assets/pbr/RoadLines001/RoadLines001_1K-JPG_Displacement.jpg",
+      "realistic-assets/pbr/RoadLines001/RoadLines001_1K-JPG_NormalDX.jpg",
+      "realistic-assets/pbr/RoadLines001/RoadLines001_1K-JPG_NormalGL.jpg",
+      "realistic-assets/pbr/RoadLines001/RoadLines001_1K-JPG_Roughness.jpg",
+      "realistic-assets/pbr/RoadLines001/RoadLines001.png"
+    ],
+    "source": "https://ambientcg.com/get?file=RoadLines001_1K-JPG.zip"
+  }
+}
