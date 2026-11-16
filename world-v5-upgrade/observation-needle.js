@@ -108,6 +108,75 @@ export function createObservationNeedle(scene,{x=48,z=-48}={}){
   const band=mesh(new THREE.TorusGeometry(Math.max(2.4,6-h*.048),.14,8,64),shadowSteel,0,h,0);
   band.rotation.x=Math.PI/2;
  }
+ // Reference-inspired silhouette: four outward-splayed sculptural legs and
+ // exposed triangular braces support a broad circular, glazed observation saucer.
+ // These are genuine 3D meshes, not a billboard image.
+ const ivory=new THREE.MeshStandardMaterial({color:0xd4d9d8,metalness:.22,roughness:.46});
+ const innerSteel=new THREE.MeshStandardMaterial({color:0x52646d,metalness:.67,roughness:.34});
+ const cyanGlow=new THREE.MeshBasicMaterial({color:0x39c5ed});
+ const beamBetween=(a,b,r,material)=>{
+  const v=new THREE.Vector3().subVectors(b,a);
+  const part=mesh(new THREE.CylinderGeometry(r*.78,r,v.length(),12),material,
+   (a.x+b.x)/2,(a.y+b.y)/2,(a.z+b.z)/2);
+  part.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),v.normalize());
+  return part;
+ };
+ // Four prominent tapered A-frame legs, much wider at street level.
+ for(let i=0;i<4;i++){
+  const a=Math.PI/4+i*Math.PI/2,dx=Math.cos(a),dz=Math.sin(a);
+  const path=new THREE.CatmullRomCurve3([
+   new THREE.Vector3(dx*13.5,.7,dz*13.5),
+   new THREE.Vector3(dx*11.1,17,dz*11.1),
+   new THREE.Vector3(dx*7.4,40,dz*7.4),
+   new THREE.Vector3(dx*4.4,66,dz*4.4),
+   new THREE.Vector3(dx*3.9,79,dz*3.9)
+  ]);
+  mesh(new THREE.TubeGeometry(path,48,.78,12,false),ivory,0,0,0);
+  const inner=new THREE.CatmullRomCurve3([
+   new THREE.Vector3(dx*10.8,3,dz*10.8),
+   new THREE.Vector3(dx*7.5,30,dz*7.5),
+   new THREE.Vector3(dx*4.5,66,dz*4.5)
+  ]);
+  mesh(new THREE.TubeGeometry(inner,32,.24,8,false),innerSteel,0,0,0);
+ }
+ // Alternating diagonal members create an open lattice visible against the sky.
+ for(const h of [11,23,35,47,59,70]){
+  const lowerR=13.4-(h/80)*9.5,upperR=13.4-((h+10)/80)*9.5;
+  for(let i=0;i<4;i++){
+   const a=Math.PI/4+i*Math.PI/2,b=Math.PI/4+((i+1)%4)*Math.PI/2;
+   beamBetween(new THREE.Vector3(Math.cos(a)*lowerR,h,Math.sin(a)*lowerR),
+    new THREE.Vector3(Math.cos(b)*upperR,h+10,Math.sin(b)*upperR),.19,innerSteel);
+  }
+ }
+ // The wide top has an illuminated underside and distinct ring-shaped eaves.
+ const under=mesh(new THREE.CylinderGeometry(10.5,5.8,3.1,82),ivory,0,79.4,0);
+ const saucerBase=mesh(new THREE.CylinderGeometry(13.4,11.2,1.3,96),innerSteel,0,82.0,0);
+ for(const [radius,y,tube,material] of [
+  [12.7,82.55,.25,ivory],[12.35,83.15,.085,cyanGlow],
+  [12.5,87.85,.11,cyanGlow],[13.2,89.4,.28,ivory],
+  [13.55,90.4,.17,innerSteel]
+ ]){
+  const ring=mesh(new THREE.TorusGeometry(radius,tube,12,112),material,0,y,0);
+  ring.rotation.x=Math.PI/2;
+ }
+ // Individually framed blue-tinted glazing around the panoramic restaurant deck.
+ const sapphire=new THREE.MeshPhysicalMaterial({
+  color:0x244e64,metalness:.15,roughness:.12,transparent:true,opacity:.72,
+  clearcoat:1,side:THREE.DoubleSide,depthWrite:false
+ });
+ for(let i=0;i<64;i++){
+  const a=i*Math.PI/32,r=12.1;
+  const pane=mesh(new THREE.BoxGeometry(.045,4.1,1.17),sapphire,
+   Math.cos(a)*r,85.6,Math.sin(a)*r);
+  pane.rotation.y=-a;
+  const frame=mesh(new THREE.BoxGeometry(.12,4.45,.12),ivory,
+   Math.cos(a)*12.23,85.6,Math.sin(a)*12.23);
+  frame.rotation.y=-a;
+ }
+ // Slim antenna mast and a subtle aviation beacon.
+ const mast=mesh(new THREE.CylinderGeometry(.12,.22,9,12),ivory,0,105.5,0);
+ const antennaTip=mesh(new THREE.SphereGeometry(.25,12,8),
+  new THREE.MeshBasicMaterial({color:0xff584c}),0,110.2,0);
  // Glass elevator doors at ground level and an illuminated arrival sign.
  // Visible street-level elevator lobby: pale stone, glass entry and a lit portal.
  const entry=mesh(new THREE.BoxGeometry(5.2,4.3,3.8),stone,0,2.15,6.8);
