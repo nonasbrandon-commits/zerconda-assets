@@ -19,7 +19,7 @@ import {createPedestrians} from './animated-pedestrians.js';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-16-rigged-real-humanoid';
+const ZERCONDA_BUILD='2026-11-16-mainland-terrain-repair';
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
 // Does not call any old tree/lamp/car spawn loops.
@@ -143,6 +143,9 @@ const inPlaza=(x,z,extra=0)=>Math.hypot(x-plazaCenter.x,z-plazaCenter.z)<plazaRa
 const insideBuilding=(x,z,pad=0)=>buildings.some(b=>Math.abs(x-b.x)<b.w/2+pad&&Math.abs(z-b.z)<b.d/2+pad);
 
 // Entire city road/sidewalk grid. Roads are continuous; sidewalks NEVER cross lanes.
+// Seamless mainland under the skyline: stops the blue sky void and floating towers.
+// Southern edge ends before the beach/ocean; city roads and landscaping sit above it.
+box(1250,.18,940,165,-.28,-305,grass);
 box(350,.12,350,0,-.16,0,grass);
 for(const c of roadLines){
  box(19,.12,350,c,-.04,0,asphalt);
