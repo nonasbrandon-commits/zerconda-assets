@@ -277,7 +277,12 @@ function makeBuilding(x,z,w,d,h,type){
    box(.2,.14,1.78,side*(w/2+.16),4.04+f*3.2,zz,stone,g);
   }
  }
- if(type%5===0||type%5===2||type%5===4)addSignatureArchitecture(g,{w,d,h,style:type%5===0?0:type%5===2?1:2});
+ // Most residential streets use warm brick apartments, with contrasting modern
+ // and historic styles interspersed to avoid repetitive skyline silhouettes.
+ if(type%7!==3){
+  const architectureStyle=(type%7===0||type%7===1||type%7===4||type%7===6)?3:(type%7===2?0:type%7===5?1:2);
+  addSignatureArchitecture(g,{w,d,h,style:architectureStyle});
+ }
  buildings.push({x,z,w,d,h});
 }
 const blocks=[
