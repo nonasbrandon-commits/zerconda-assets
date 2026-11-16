@@ -42,13 +42,16 @@ export function createCoffeeShop(scene,{x=48,z=48}={}){
   box(px,.45,pz,1.2,.9,1.2,plaster);
   const leaves=new THREE.Mesh(new THREE.IcosahedronGeometry(.85,1),fabric);leaves.position.set(px,1.65,pz);root.add(leaves);
  }
- // Sign above the glass shopfront, visible from observation tower.
- const cv=document.createElement('canvas');cv.width=1024;cv.height=256;
- const ctx=cv.getContext('2d');ctx.fillStyle='#263b3a';ctx.fillRect(0,0,1024,256);
- ctx.fillStyle='#f8e4c0';ctx.font='bold 112px Arial';ctx.textAlign='center';ctx.fillText('BREWSTONE COFFEE',512,160);
- const signTex=new THREE.CanvasTexture(cv);signTex.colorSpace=THREE.SRGBColorSpace;
- const sign=new THREE.Mesh(new THREE.PlaneGeometry(15,3.75),new THREE.MeshBasicMaterial({map:signTex,side:THREE.DoubleSide}));
- sign.position.set(0,5.25,9.18);root.add(sign);
+ // Legible front fascia: fit full name within the available width and keep roof above it.
+ const cv=document.createElement('canvas');cv.width=2048;cv.height=384;
+ const ctx=cv.getContext('2d');ctx.fillStyle='#223432';ctx.fillRect(0,0,2048,384);
+ ctx.fillStyle='#f6e7c8';ctx.textAlign='center';ctx.textBaseline='middle';
+ let fontSize=190;do{ctx.font='bold '+fontSize+'px Arial';fontSize-=4;}while(ctx.measureText('BREWSTONE COFFEE').width>1880&&fontSize>50);
+ ctx.fillText('BREWSTONE COFFEE',1024,190);
+ const signTex=new THREE.CanvasTexture(cv);signTex.colorSpace=THREE.SRGBColorSpace;signTex.anisotropy=8;
+ const sign=new THREE.Mesh(new THREE.PlaneGeometry(20.5,2.9),new THREE.MeshBasicMaterial({map:signTex,side:THREE.DoubleSide,depthTest:true}));
+ // Front-facing plane sits outside the facade and below the roof edge.
+ sign.position.set(0,4.88,9.38);root.add(sign);
  for(const xx of [-9,-3,3,9]){
   const light=new THREE.PointLight(0xffd6a1,.8,6);light.position.set(xx,4.8,1);root.add(light);
  }
