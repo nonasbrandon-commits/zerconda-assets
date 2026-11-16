@@ -23,14 +23,15 @@ const scene=new THREE.Scene();scene.background=new THREE.Color(0xaacbdf);
 scene.fog=new THREE.Fog(0xaacbdf,190,390);
 const camera=new THREE.PerspectiveCamera(66,innerWidth/innerHeight,.1,600);
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,1));renderer.setSize(innerWidth,innerHeight);
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.35;
-renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+// Temporarily disable costly shadow maps while diagnosing blank WebGL output.
+renderer.shadowMap.enabled=false;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 document.body.prepend(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xe6f4ff,0x737569,2.1));
 const sun=new THREE.DirectionalLight(0xffefdc,3.1);sun.position.set(-70,135,85);sun.castShadow=true;
-sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-160;sun.shadow.camera.right=160;
+sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-160;sun.shadow.camera.right=160;
 sun.shadow.camera.top=160;sun.shadow.camera.bottom=-160;sun.shadow.normalBias=.045;scene.add(sun);
 const M=(color,roughness=.86,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
 // Existing photographic CC0 PBR textures already in GitHub (no cartoon flat ground).
@@ -324,6 +325,24 @@ resetButton.addEventListener('click',resetView);document.body.appendChild(resetB
 const movement={vx:0,vz:0,wheelImpulse:0};
 const WALK_SPEED=5.2,RUN_SPEED=10.5,ACCELERATION=13,DECELERATION=17;
 const WHEEL_STEP=5.5,WHEEL_MAX=15;
+// Live diagnostics: distinguish a blank render from a covered/lost WebGL canvas.
+const diag=document.createElement('div');
+diag.id='zerconda-render-diagnostics';
+diag.style.cssText='position:fixed;left:8px;bottom:10px;z-index:99999;background:rgba(0,0,0,.82);color:#c5ffcf;padding:8px 11px;font:12px monospace;pointer-events:none;white-space:pre-line;border-radius:5px;max-width:95vw';
+document.body.appendChild(diag);
+let contextLost=false,renderFailure='';
+renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();contextLost=true;renderFailure='WebGL context lost';});
+renderer.domElement.addEventListener('webglcontextrestored',()=>{contextLost=false;renderFailure='WebGL context restored';});
+// Unlit diagnostic marker at (48,2,29), in front of the player.
+// If this is invisible despite nonzero draw calls, investigate canvas overlay/CSS.
+const diagnosticMarker=new THREE.Mesh(
+ new THREE.BoxGeometry(1.6,3.2,1.6),
+ new THREE.MeshBasicMaterial({color:0xff00ff,depthTest:false})
+);
+diagnosticMarker.position.set(48,1.8,29);
+diagnosticMarker.renderOrder=999;
+scene.add(diagnosticMarker);
+let diagnosticFrames=0;
 renderer.domElement.addEventListener('wheel',e=>{
  e.preventDefault();
  if(activeCar)return;
@@ -407,7 +426,20 @@ function animate(){
  eye+2+pitch*dist,player.z-Math.cos(yaw)*dist);
  camera.position.lerp(desired,Math.min(1,dt*8));camera.lookAt(target);
  if(!Number.isFinite(camera.position.x)||!Number.isFinite(camera.position.y)||!Number.isFinite(camera.position.z))resetView();
- renderer.render(scene,camera);
+ try{renderer.render(scene,camera);}
+ catch(err){renderFailure=String(err);console.error('ZERCONDA RENDER ERROR',err);}
+ if((diagnosticFrames++%30)===0){
+  const p=camera.position;
+  diag.textContent='RENDER '+(contextLost?'CONTEXT LOST':'ACTIVE')+
+   ' | objects '+scene.children.length+
+   ' | draw calls '+renderer.info.render.calls+
+   ' | triangles '+renderer.info.render.triangles+
+   '\\nCamera '+p.x.toFixed(1)+','+p.y.toFixed(1)+','+p.z.toFixed(1)+
+   ' | player '+player.x.toFixed(1)+','+player.z.toFixed(1)+
+   ' | canvas '+renderer.domElement.clientWidth+'x'+renderer.domElement.clientHeight+
+   (renderFailure?'\\nERROR '+renderFailure:'');
+ }
+
 }
 animate();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;
