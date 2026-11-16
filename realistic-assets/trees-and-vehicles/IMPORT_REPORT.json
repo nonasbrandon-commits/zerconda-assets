@@ -1,0 +1,52 @@
+{
+  "vehicles": {
+    "starter-white-sedan": {
+      "status": "downloaded",
+      "bytes": 5063760,
+      "source": "https://www.innerscene.com/tools/library/3d-parts/white-four-door-sedan-1f271353",
+      "license": "CC0"
+    },
+    "starter-graphite-sedan": {
+      "status": "downloaded",
+      "bytes": 5060456,
+      "source": "https://www.innerscene.com/tools/library/3d-parts/graphite-four-door-sedan-eed96d12",
+      "license": "CC0"
+    },
+    "generic-sedan": {
+      "status": "downloaded",
+      "bytes": 641908,
+      "source": "https://www.innerscene.com/tools/library/3d-parts/sedan-car-42109739",
+      "license": "CC0"
+    },
+    "sports-supercar": {
+      "status": "downloaded",
+      "bytes": 3949472,
+      "source": "https://www.innerscene.com/tools/library/3d-parts/generic-mid-engine-supercar-73f252c5",
+      "license": "CC0"
+    },
+    "generic-police-sedan": {
+      "status": "downloaded",
+      "bytes": 7262652,
+      "source": "https://www.innerscene.com/tools/library/3d-parts/police-sedan-with-generic-livery-8770d8f3",
+      "license": "CC0"
+    }
+  },
+  "trees": {
+    "leafy-small-tree": {
+      "status": "failed",
+      "reason": "[Errno 2] No such file or directory: 'realistic-assets/trees-and-vehicles/trees/leafy-small-tree.glb'"
+    },
+    "leafy-jacaranda": {
+      "status": "failed",
+      "reason": "Download exceeds safety limit"
+    },
+    "leafy-fir": {
+      "status": "failed",
+      "reason": "Download exceeds safety limit"
+    },
+    "leafy-island-tree": {
+      "status": "failed",
+      "reason": "[Errno 2] No such file or directory: 'realistic-assets/trees-and-vehicles/trees/leafy-island-tree.glb'"
+    }
+  }
+}
