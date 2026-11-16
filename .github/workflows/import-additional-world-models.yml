@@ -119,11 +119,11 @@ jobs:
           python3 /tmp/import_models.py
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add realistic-assets/professional-models
+          git add realistic-assets/expanded-models
           git diff --cached --quiet || (git commit -m "Import professional CC0 models and diagnostic report for Zerconda V5" && git push)
           python3 - <<'PY_CHECK'
           import json
-          d=json.load(open('realistic-assets/professional-models/IMPORT_REPORT.json'))
+          d=json.load(open('realistic-assets/expanded-models/IMPORT_REPORT.json'))
           good=[k for k,v in d.items() if v['status']=='downloaded']
           print('Verified professional model categories:',good)
           if not good:raise SystemExit('IMPORT INCOMPLETE: no professional models. Inspect report.')
