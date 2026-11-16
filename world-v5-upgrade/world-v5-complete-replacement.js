@@ -309,6 +309,7 @@ const observationNeedle=createObservationNeedle(scene,{x:48,z:-48});
 const coffeeShop=createCoffeeShop(scene,{x:-34,z:-48});
 // Walk-in showroom just west of Brewstone Coffee, with three fictional display vehicles.
 const dealership=createDealership(scene,{x:-72,z:-48});
+let dealerInside=false;
 // Separate commercial parcels with an actual paved access road, curb and pedestrian sidewalks.
 box(8,.13,83,-51.5,-.025,-48,asphalt);
 for(const side of [-1,1])box(2.6,.16,83,-51.5+side*5.5,.035,-48,paving);
@@ -477,7 +478,7 @@ renderer.domElement.addEventListener('wheel',e=>{
  movement.wheelImpulse=THREE.MathUtils.clamp(
   movement.wheelImpulse+dir*WHEEL_STEP,-WHEEL_MAX,WHEEL_MAX);
 },{passive:false});
-addEventListener('keydown',e=>{keys.add(e.code);if(e.code==='KeyE'&&!e.repeat){if(apartmentSession)apartmentAction();else if(nearCafeEntrance()||cafeInside)enterCafe();else if(dealership.isNear(player.x,player.z,5.5)||dealership.inside(player.x,player.z))visitDealership();else toggleCar();}if(e.code==='KeyF'&&!e.repeat)toggleNearbyDoor();if(e.code==='KeyT'&&!e.repeat)toggleObservationDeck();
+addEventListener('keydown',e=>{keys.add(e.code);if(e.code==='KeyE'&&!e.repeat){if(apartmentSession)apartmentAction();else if(nearCafeEntrance()||cafeInside)enterCafe();else if(dealership.isNear(player.x,player.z,5.5)||dealerInside)visitDealership();else toggleCar();}if(e.code==='KeyF'&&!e.repeat)toggleNearbyDoor();if(e.code==='KeyT'&&!e.repeat)toggleObservationDeck();
  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();});
 addEventListener('keyup',e=>keys.delete(e.code));
 for(const b of document.querySelectorAll('[data-key]')){
@@ -511,13 +512,13 @@ legacyDoorObserver.observe(document.body,{subtree:true,childList:true});
 const cafeButton=actionButton('zerconda-cafe-button','C · SIT DOWN',365,toggleCafeSeat);
 const dealerButton=actionButton('zerconda-dealership-button','E · ENTER DEALERSHIP',390,visitDealership);
 function visitDealership(){
- if(dealership.isNear(player.x,player.z,5.5)&&!dealership.inside(player.x,player.z)){
+ if(!dealerInside&&dealership.isNear(player.x,player.z,5.5)){dealerInside=true;
   player.x=dealership.x+9;player.z=dealership.z;movement.vx=0;movement.vz=0;
   if(status)status.textContent='Welcome to Zerconda Motors · Explore three vehicles on the showroom floor';return;
  }
  const vehicle=dealership.nearestCar(player.x,player.z,5);
  if(vehicle){if(status)status.textContent=vehicle.name+' · Display vehicle · Visit the vehicle shop for purchases';return;}
- if(dealership.inside(player.x,player.z)){player.x=dealership.x+15;player.z=dealership.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Exited Zerconda Motors';}
+ if(dealerInside){dealerInside=false;player.x=dealership.x+15;player.z=dealership.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Exited Zerconda Motors';}
 }
 let sittingSeat=null,cafeInside=false;
 const cafeEntry={x:-34+10.8,z:-48};
