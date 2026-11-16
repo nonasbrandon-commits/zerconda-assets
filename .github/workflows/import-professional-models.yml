@@ -89,13 +89,23 @@ jobs:
                           for obj in doc.get('buffers',[])+doc.get('images',[]):
                               uri=obj.get('uri','')
                               if uri and not uri.startswith('data:') and not (out/uri).exists():missing.append(uri)
+                      # Poly Haven includes may be keyed by bare filename; glTF references textures/<name>.
+                      for uri in list(missing):
+                          matches=[p for p in out.rglob(pathlib.PurePosixPath(uri).name) if p.is_file()]
+                          if len(matches)==1:
+                              dest=out/uri
+                              dest.parent.mkdir(parents=True,exist_ok=True)
+                              if matches[0]!=dest:matches[0].replace(dest)
+                      missing=[uri for uri in missing if not (out/uri).exists()]
                       if missing:raise ValueError('Missing glTF dependencies: '+str(missing[:8]))
                       report[label]={'status':'downloaded','asset_id':asset,'asset_name':assets[asset].get('name'),'files':saved,'license':'CC0','source':'https://polyhaven.com/a/'+asset}
                       used.add(asset)
                       break
                   except Exception as exc:
                       errors.append(asset+': '+str(exc))
-                      for p in sorted((root/label).rglob('*'),reverse=True):\n                          if p.is_file():p.unlink()\n                          elif p.is_dir():p.rmdir()
+                      for p in sorted((root/label).rglob('*'),reverse=True):
+                          if p.is_file():p.unlink()
+                          elif p.is_dir():p.rmdir()
               if label not in report:report[label]={'status':'unavailable','attempts':errors}
           (root/'IMPORT_REPORT.json').write_text(json.dumps(report,indent=2))
           (root/'README.md').write_text('# Zerconda V5 professional models\n\nSource: Poly Haven (CC0). These are third-party authored models, not generated primitives.\n\nSee IMPORT_REPORT.json for verified downloaded models, dependencies, and failures. Files are individually limited to 24 MB. Use Three.js GLTFLoader. Do not substitute basic geometry for missing models.\n')
