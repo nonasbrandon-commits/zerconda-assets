@@ -1,0 +1,29 @@
+name: Import CC0 real building models
+on:
+  push:
+    paths:
+      - 'world-v5-upgrade/import-cc0-buildings.py'
+      - '.github/workflows/import-cc0-buildings.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import-buildings:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Download and validate CC0 GLB buildings
+        run: python world-v5-upgrade/import-cc0-buildings.py
+      - name: Commit actual building model assets
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add realistic-assets/cc0-city-buildings/
+          if ! git diff --cached --quiet; then
+            git commit -m "Import CC0 Kenney commercial suburban and industrial GLB building assets"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
