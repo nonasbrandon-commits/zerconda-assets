@@ -14,7 +14,9 @@ export function createObservationNeedle(scene,{x=48,z=-48}={}){
  cyl(2.3,4.2,63,42.5,steel);cyl(4.1,2.7,8,77.5,trim);
  // Reinforced glass-walled observation lounge.
  cyl(12.5,10.6,1.5,82,stone);
- cyl(11.4,11.4,5.8,85.6,windows,64);
+ // Open panoramic glazing; no opaque central wall obstructing the skyline.
+ const glazing=cyl(11.4,11.4,5.8,85.6,windows,64);
+ glazing.material.depthWrite=false;
  cyl(12.3,12.3,.9,88.9,stone);
  cyl(13.4,12.8,1.15,90.1,trim);
  cyl(8.6,8.6,.28,89.05,stone);
@@ -41,6 +43,21 @@ export function createObservationNeedle(scene,{x=48,z=-48}={}){
  const ctx=signCanvas.getContext('2d');ctx.fillStyle='#e8f2f5';ctx.fillRect(0,0,512,128);ctx.fillStyle='#19333e';ctx.font='bold 42px Arial';ctx.textAlign='center';ctx.fillText('OBSERVATION DECK',256,78);
  const tex=new THREE.CanvasTexture(signCanvas);tex.colorSpace=THREE.SRGBColorSpace;
  sign.material=new THREE.MeshBasicMaterial({map:tex});
+ // Panoramic lounge: benches and binocular viewing stations around the rim.
+ const seating=new THREE.MeshStandardMaterial({color:0x8b6e58,roughness:.82});
+ for(let i=0;i<12;i++){
+  const a=i*Math.PI/6,px=Math.cos(a)*8.2,pz=Math.sin(a)*8.2;
+  const seat=mesh(new THREE.BoxGeometry(2.1,.23,.72),seating,px,89.65,pz);
+  seat.rotation.y=-a+Math.PI/2;
+  const back=mesh(new THREE.BoxGeometry(2.1,.8,.18),seating,px+Math.cos(a)*.3,90.04,pz+Math.sin(a)*.3);
+  back.rotation.y=seat.rotation.y;
+ }
+ for(let i=0;i<6;i++){
+  const a=i*Math.PI/3,px=Math.cos(a)*9.8,pz=Math.sin(a)*9.8;
+  mesh(new THREE.CylinderGeometry(.08,.14,1.3,10),steel,px,89.8,pz);
+  const scope=mesh(new THREE.CylinderGeometry(.16,.2,.75,16),trim,px,90.5,pz);
+  scope.rotation.z=Math.PI/2;
+ }
  const beacon=new THREE.PointLight(0xf2faff,3,15);beacon.position.set(0,89.4,0);root.add(beacon);
  return {root,x,z,entrance:{x,z:z+8.2},deckY:90.1,deckRadius:10.7,
    // The tower shaft is solid; the public observation ring is walkable.
