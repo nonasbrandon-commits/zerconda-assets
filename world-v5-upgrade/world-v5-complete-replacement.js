@@ -16,9 +16,10 @@ import {addSignatureArchitecture} from './signature-apartment-buildings.js';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 import {createOwnableHomes} from './ownable-suburban-homes.js';
 import {createPedestrians} from './animated-pedestrians.js';
+import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-16-walking-people-map-fix';
+const ZERCONDA_BUILD='2026-11-16-eastside-golf-expansion';
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
 // Does not call any old tree/lamp/car spawn loops.
@@ -309,6 +310,7 @@ for(let k=0;k<blocks.length;k++){
 
 // Ocean-view residential neighborhood: homes face the southern beach.
 const waterfrontHomes=addWaterfrontHomes(scene,{count:12});
+const eastsideGolf=createEastsideGolfDistrict(scene,{x:425,z:-48});
 const ownableHomes=createOwnableHomes(scene);
 
 // Dedicated tower island in its own city block (0..96, -96..0).
@@ -656,7 +658,9 @@ function walkable(x,z){
  if(apartmentSession)return apartments.contains(x,z);
   if(cafeInside)return coffeeShop.isInside(x,z);
   if(coffeeShop.isInside(x,z))return false;
- if(Math.abs(x)>168||z< -168||z>247)return false;
+ if(x< -168||x>575||z< -200||z>247)return false;
+ // Eastern expansion is accessed from the city's eastbound road corridor.
+ if(x>168&&z>110)return false;
  if(onObservationDeck)return observationNeedle.isOnDeck(x,z);
  if(insideNeedleLobby)return Math.abs(x-observationNeedle.x)<2.2&&z>observationNeedle.z+5.5&&z<observationNeedle.z+9.5;
  if(Math.hypot(x-observationNeedle.x,z-observationNeedle.z)<5.3)return false;
