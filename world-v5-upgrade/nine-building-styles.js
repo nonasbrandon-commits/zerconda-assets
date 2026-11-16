@@ -8,7 +8,13 @@ export function addBuildingIdentity(group,{w,d,h,type=0}={}){
   steel=P(0x63747b,.38,.65),copper=P(0x6b8178,.46,.55),white=P(0xe4e2d8,.75),
   blue=P(0x88b7c9,.18,.24),glass=P(0x789eb4,.14,.35),terracotta=P(0xb1765c,.85);
  const mat=[limestone,brick,steel,white,darkBrick,copper,terracotta,blue,limestone][id];
- const win=[glass,blue,glass,glass,blue,glass,blue,glass,glass][id];
+ // Three user-reference-inspired glazing families, repeated with different mullions.
+ const paneColors=[0x71b7d1,0x9aadb3,0x5ca9cb,0x8fa9b9,0x4c6d81,0x7caaa5,0x8bacc4,0x6ba8c7,0xa0b8c2];
+ const glazing=new THREE.MeshPhysicalMaterial({color:paneColors[id],metalness:.14,roughness:.16,clearcoat:1,clearcoatRoughness:.08,side:THREE.DoubleSide});
+ const darkGlazing=new THREE.MeshPhysicalMaterial({color:0x344d5b,metalness:.24,roughness:.12,clearcoat:1,side:THREE.DoubleSide});
+ const win=id===4?darkGlazing:glazing;
+ const whiteFrame=P(0xdce4e5,.38,.32),bronzeFrame=P(0x514e47,.37,.48),blueFrame=P(0x526a7c,.34,.53);
+ const sash=id%3===0?whiteFrame:id%3===1?bronzeFrame:blueFrame;
  const geo=new THREE.BoxGeometry(1,1,1);
  function box(x,y,z,a,b,c,m){
   const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.scale.set(a,b,c);
@@ -23,16 +29,34 @@ export function addBuildingIdentity(group,{w,d,h,type=0}={}){
    const y=5.1+f*3.3;if(y+1.5>h)break;
    for(let i=0;i<bays;i++){
     const x=-w/2+(i+.5)*w/bays;
-    const ww=Math.min(2.2,w/bays*.68);
+    const ww=id===2||id===7?Math.min(w/bays*.94,3.5):Math.min(2.4,w/bays*.73);
     // Glazing, actual mullion and lintel on front/back.
-    box(x,y,z+side*.09,ww,1.8,.11,win);
-    box(x,y,z+side*.18,.07,1.85,.11,steel);
-    box(x,y-1.02,z+side*.22,ww+.3,.12,.28,mat);
+    const tall=id===2||id===7?2.7:id===1||id===5?2.2:1.8;
+    box(x,y,z+side*.09,ww,tall,.11,win);
+    // Frame around each window, including glass divisions and window sills.
+    for(const sx of [-1,1])box(x+sx*ww/2,y,z+side*.2,.09,tall+.1,.13,sash);
+    for(const sy of [-1,1])box(x,y+sy*tall/2,z+side*.2,ww+.1,.09,.13,sash);
+    const divs=id===2||id===7?2:id===0||id===3?2:1;
+    for(let k=1;k<=divs;k++)box(x-ww/2+k*ww/(divs+1),y,z+side*.22,.055,tall,.1,sash);
+    if(id===0||id===3||id===8)box(x,y-.26,z+side*.22,ww,.055,.09,sash);
+    if(id===1||id===4)box(x,y+.3,z+side*.22,ww,.055,.09,sash);
+    box(x,y-tall/2-.13,z+side*.22,ww+.3,.12,.28,mat);
     if(id===1||id===4)box(x,y+1.02,z+side*.19,ww+.4,.13,.26,limestone);
    }
   }
  }
  rowWindows(d/2+.13);rowWindows(-d/2-.13,true);
+ // Side windows use the same glazing family but a different bay rhythm.
+ for(const side of [-1,1])for(let f=0;f<floors;f++){
+  const y=5.1+f*3.3;if(y+1.5>h)break;
+  for(let i=0;i<sideBays;i++){
+   const z=-d/2+(i+.5)*d/sideBays;
+   const ww=Math.min(2.3,d/sideBays*.7);
+   const pane=box(side*(w/2+.19),y,z,.12,1.9,ww,win);
+   box(side*(w/2+.27),y,z,.13,1.9,.07,sash);
+   for(const edge of [-1,1])box(side*(w/2+.27),y,z+edge*ww/2,.13,2,.07,sash);
+  }
+ }
  // Nine visibly different building silhouettes and facade identities.
  if(id===0){ // Chicago limestone office
   for(const x of [-w*.39,w*.39])box(x,h/2,d/2+.32,.48,h,.55,limestone);
