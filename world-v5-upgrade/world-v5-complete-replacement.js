@@ -225,12 +225,18 @@ for(let i=0;i<8;i++){
 // Trees are only placed in designated landscape strips on blocks.
 // NEVER on road, parking lanes, intersections, or inside fountain plaza.
 const treeSpots=[];
-for(const [bx,bz] of blocks){
- if(Math.abs(bx)>100||Math.abs(bz)>100)continue;
- for(const [dx,dz] of [[-29,-29],[29,-29],[-29,29],[29,29]]){
-  const x=bx+dx,z=bz+dz;
-  if(nearRoad(x,z,4)||insideBuilding(x,z,4)||inPlaza(x,z,4))continue;
-  treeSpots.push([x,z]);
+for(const c of roadLines){
+ for(let p=-145;p<=145;p+=23){
+  if(roadLines.some(v=>Math.abs(p-v)<22))continue;
+  for(const side of [-1,1]){
+   // 16.5m from centerline: beyond 9.5m asphalt and 4m sidewalk.
+   for(const [x,z] of [[c+side*16.5,p],[p,c+side*16.5]]){
+    if(Math.abs(x)>162||Math.abs(z)>162)continue;
+    if(nearRoad(x,z,5.1)||insideBuilding(x,z,1.5)||inPlaza(x,z,2))continue;
+    if(treeSpots.some(([a,b])=>Math.hypot(x-a,z-b)<10))continue;
+    treeSpots.push([x,z]);
+   }
+  }
  }
 }
 // Streetlights placed in 4m sidewalks (offset 11.5 from road centers).
