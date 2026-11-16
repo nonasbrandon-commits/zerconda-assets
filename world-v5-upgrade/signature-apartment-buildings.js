@@ -1,4 +1,32 @@
 import * as THREE from 'three';
+// Shared real CC0 photo-scanned PBR maps already present in this repository.
+// Loading is non-blocking: existing brick colors remain visible if a texture fails.
+const URBAN_BASE='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/urban-pbr/';
+const textureLoader=new THREE.TextureLoader();
+const masonryMaps=new Map();
+function loadMasonryMap(kind){
+ if(masonryMaps.has(kind))return masonryMaps.get(kind);
+ const texture=textureLoader.load(URBAN_BASE+'brick_'+kind+'.jpg',()=>{},undefined,()=>console.warn('Zerconda: brick '+kind+' texture unavailable'));
+ texture.wrapS=texture.wrapT=THREE.RepeatWrapping;
+ texture.repeat.set(3,3);texture.anisotropy=8;
+ if(kind==='color')texture.colorSpace=THREE.SRGBColorSpace;
+ masonryMaps.set(kind,texture);return texture;
+}
+function applyRealBrick(material){
+ // Do not assign the map until it loads; a missing asset must not hide buildings.
+ const map=loadMasonryMap('color');
+ if(map.image&&map.image.width){material.map=map;material.needsUpdate=true;}
+ else{
+  const listener=()=>{material.map=map;material.needsUpdate=true;};
+  if(map.image?.addEventListener)map.image.addEventListener('load',listener,{once:true});
+ }
+ const normal=loadMasonryMap('normal');
+ if(normal.image?.width){material.normalMap=normal;material.normalScale.set(.3,.3);material.needsUpdate=true;}
+ else if(normal.image?.addEventListener)normal.image.addEventListener('load',()=>{material.normalMap=normal;material.normalScale.set(.3,.3);material.needsUpdate=true;},{once:true});
+ const rough=loadMasonryMap('roughness');
+ if(rough.image?.width){material.roughnessMap=rough;material.needsUpdate=true;}
+ else if(rough.image?.addEventListener)rough.image.addEventListener('load',()=>{material.roughnessMap=rough;material.needsUpdate=true;},{once:true});
+}
 // Three distinctive architecture kits inspired by user-provided references:
 // historic brick fire-escape apartments, glass terrace residences, modern white-frame condos.
 // All elements are actual 3D meshes, not photo billboards.
@@ -9,6 +37,7 @@ export function addSignatureArchitecture(group,{w,d,h,style=0}={}){
   const clayColors=[0x9c513b,0xb76549,0x8d4938,0xb46d50,0x9a5b43];
   const idx=Math.abs(Math.round(w*3+d*7+h*11))%clayColors.length;
   const brick=new THREE.MeshStandardMaterial({color:clayColors[idx],roughness:.94});
+  applyRealBrick(brick);
   const cream=new THREE.MeshStandardMaterial({color:0xd9c7aa,roughness:.9});
   const dark=new THREE.MeshStandardMaterial({color:0x242d33,metalness:.58,roughness:.42});
   const glass=new THREE.MeshPhysicalMaterial({color:0x456779,metalness:.08,roughness:.16,transparent:true,opacity:.83,side:THREE.DoubleSide});
