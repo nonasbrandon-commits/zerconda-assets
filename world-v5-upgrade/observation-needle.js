@@ -79,6 +79,35 @@ export function createObservationNeedle(scene,{x=48,z=-48}={}){
   const rib=mesh(new THREE.BoxGeometry(.24,49,.34),stone,Math.cos(a)*radius,42,Math.sin(a)*radius);
   rib.rotation.y=-a;
  }
+ // Structural realism: inset metallic vertical flutes, diagonal trusses and deck fins.
+ const brushed=new THREE.MeshStandardMaterial({color:0x89979a,metalness:.75,roughness:.38});
+ const shadowSteel=new THREE.MeshStandardMaterial({color:0x3b4d56,metalness:.64,roughness:.48});
+ for(let i=0;i<12;i++){
+  const a=i*Math.PI/6;
+  const radius=2.85;
+  const rib=mesh(new THREE.BoxGeometry(.12,55,.22),brushed,Math.cos(a)*radius,43,Math.sin(a)*radius);
+  rib.rotation.y=-a;
+ }
+ for(let h=14;h<70;h+=14){
+  for(let i=0;i<6;i++){
+   const a=i*Math.PI/3;
+   const r=5.8-h*.04;
+   const p0=new THREE.Vector3(Math.cos(a)*r,h,Math.sin(a)*r);
+   const p1=new THREE.Vector3(Math.cos(a+Math.PI/3)*(r-.6),h+12,Math.sin(a+Math.PI/3)*(r-.6));
+   const delta=p1.clone().sub(p0);
+   const brace=mesh(new THREE.CylinderGeometry(.12,.12,delta.length(),8),shadowSteel,...p0.clone().add(p1).multiplyScalar(.5).toArray());
+   brace.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.normalize());
+  }
+ }
+ for(let i=0;i<48;i++){
+  const a=i*Math.PI/24;
+  const fin=mesh(new THREE.BoxGeometry(.14,3.4,1.25),brushed,Math.cos(a)*12.1,86.0,Math.sin(a)*12.1);
+  fin.rotation.y=-a;
+ }
+ for(const h of [7,18,31,45,59,72]){
+  const band=mesh(new THREE.TorusGeometry(Math.max(2.4,6-h*.048),.14,8,64),shadowSteel,0,h,0);
+  band.rotation.x=Math.PI/2;
+ }
  // Glass elevator doors at ground level and an illuminated arrival sign.
  // Visible street-level elevator lobby: pale stone, glass entry and a lit portal.
  const entry=mesh(new THREE.BoxGeometry(5.2,4.3,3.8),stone,0,2.15,6.8);
