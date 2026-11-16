@@ -444,13 +444,14 @@ addPremiumPlazaFurniture(scene,{cx:48,cz:48});
 const keys=new Set(),player={x:48,z:15},clock=new THREE.Clock();
 const cityMap=createCityMap({player});
 let activeCar=null,yaw=0,pitch=.1,drag=false,lastX=0,lastY=0;
+let driverLookYaw=0,driverLookPitch=0,driverSteer=0;
 let onObservationDeck=false;
 // Initialize camera BEFORE the first frame. A blank sky must never be the default.
 camera.position.set(48,5,7);
 camera.lookAt(48,2,45);
 function resetView(){
  if(apartmentSession){apartmentSession=null;apartments.root.visible=false;}
- activeCar=null;onObservationDeck=false;player.x=48;player.z=15;yaw=0;pitch=.1;
+ activeCar=null;driverLookYaw=0;driverLookPitch=0;driverSteer=0;onObservationDeck=false;player.x=48;player.z=15;yaw=0;pitch=.1;
  camera.position.set(48,5,7);camera.lookAt(48,2,45);
  if(status)status.textContent='View reset · Walk forward with W';
 }
@@ -559,16 +560,18 @@ function toggleObservationDeck(){
  if(status)status.textContent='Observation deck · Walk with WASD · Drag to look · T to descend';
 }
 function toggleCar(){
- if(activeCar){player.x=activeCar.x+3;player.z=activeCar.z;activeCar=null;movement.vx=0;movement.vz=0;movement.wheelImpulse=0;return;}
+ if(activeCar){player.x=activeCar.x+3;player.z=activeCar.z;activeCar=null;driverLookYaw=0;driverLookPitch=0;driverSteer=0;movement.vx=0;movement.vz=0;movement.wheelImpulse=0;return;}
  let closest=null,best=5;
  for(const c of cars){const d=Math.hypot(c.x-player.x,c.z-player.z);
   if(d<best){best=d;closest=c;}}
- if(closest){activeCar=closest;movement.vx=0;movement.vz=0;movement.wheelImpulse=0;}
+ if(closest){activeCar=closest;driverLookYaw=0;driverLookPitch=0;driverSteer=0;pitch=0;movement.vx=0;movement.vz=0;movement.wheelImpulse=0;}
 }
 renderer.domElement.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;lastY=e.clientY;});
 addEventListener('pointerup',()=>drag=false);
-addEventListener('pointermove',e=>{if(!drag)return;yaw-=(e.clientX-lastX)*.003;
- pitch=THREE.MathUtils.clamp(pitch+(e.clientY-lastY)*.0025,-.4,.75);
+addEventListener('pointermove',e=>{if(!drag)return;
+ const dx=e.clientX-lastX,dy=e.clientY-lastY;
+ if(activeCar){driverLookYaw=THREE.MathUtils.clamp(driverLookYaw-dx*.003,-1.25,1.25);driverLookPitch=THREE.MathUtils.clamp(driverLookPitch+dy*.0025,-.45,.55);}
+ else{yaw-=dx*.003;pitch=THREE.MathUtils.clamp(pitch+dy*.0025,-.4,.75);}
  lastX=e.clientX;lastY=e.clientY;});
 function walkable(x,z){
  if(apartmentSession)return apartments.contains(x,z);
@@ -593,6 +596,7 @@ function animate(){
  const side=Number(keys.has('KeyD')||keys.has('ArrowRight'))-Number(keys.has('KeyA')||keys.has('ArrowLeft'));
  if(activeCar){
   const c=activeCar;c.speed=THREE.MathUtils.damp(c.speed,f*11,2.6,dt);
+  // Steering stays relative to the vehicle, not to the driver's camera view.
   c.angle-=side*dt*(.5+Math.abs(c.speed)*.035);
   const nx=c.x+Math.sin(c.angle)*c.speed*dt,nz=c.z+Math.cos(c.angle)*c.speed*dt;
   if(walkable(nx,nz)){
@@ -627,18 +631,31 @@ function animate(){
  // The old procedural fountain's jetMaterial was removed with that fountain.
  // Its stale animation line caused ReferenceError every frame BEFORE renderer.render().
  // Animated water is now updated by realisticPlaza.update(dt) above.
- const dist=onObservationDeck?2.8:(activeCar?9:5),eye=onObservationDeck?observationNeedle.deckY+1.7:(activeCar?3.4:2.1);
- // Recover from a nonfinite camera/player coordinate instead of rendering blank sky.
- if(!Number.isFinite(player.x)||!Number.isFinite(player.z)||!Number.isFinite(yaw)||!Number.isFinite(pitch))resetView();
- const target=new THREE.Vector3(player.x,eye,player.z);
- const desired=new THREE.Vector3(player.x-Math.sin(yaw)*dist,
- eye+2+pitch*dist,player.z-Math.cos(yaw)*dist);
- camera.position.lerp(desired,Math.min(1,dt*8));
- camera.position.y=Math.max(onObservationDeck?observationNeedle.deckY+1.25:1.75,camera.position.y);
- camera.lookAt(target);
+ if(activeCar){
+  // First-person driver's seat: camera moves with the car and looks through windshield.
+  // Car geometry is hidden only for this client while driving to avoid blocking the view.
+  const a=activeCar.angle;
+  const forward=new THREE.Vector3(Math.sin(a),0,Math.cos(a));
+  const right=new THREE.Vector3(Math.cos(a),0,-Math.sin(a));
+  const eyePos=new THREE.Vector3(activeCar.x,1.58,activeCar.z).addScaledVector(right,-.34).addScaledVector(forward,.25);
+  camera.position.copy(eyePos);
+  const heading=a+driverLookYaw;
+  const direction=new THREE.Vector3(Math.sin(heading),-Math.sin(driverLookPitch),Math.cos(heading));
+  camera.lookAt(eyePos.clone().addScaledVector(direction,25));
+ }else{
+  const dist=onObservationDeck?2.8:5,eye=onObservationDeck?observationNeedle.deckY+1.7:2.1;
+  const target=new THREE.Vector3(player.x,eye,player.z);
+  const desired=new THREE.Vector3(player.x-Math.sin(yaw)*dist,eye+2+pitch*dist,player.z-Math.cos(yaw)*dist);
+  camera.position.lerp(desired,Math.min(1,dt*8));
+  camera.position.y=Math.max(onObservationDeck?observationNeedle.deckY+1.25:1.75,camera.position.y);
+  camera.lookAt(target);
+ }
  if(!Number.isFinite(camera.position.x)||!Number.isFinite(camera.position.y)||!Number.isFinite(camera.position.z))resetView();
+ // Prevent the driven car body from obstructing the first-person windshield view.
+ if(activeCar)activeCar.group.visible=false;
  try{renderer.render(scene,camera);}
  catch(err){renderFailure=String(err);console.error('ZERCONDA RENDER ERROR',err);}
+ finally{if(activeCar)activeCar.group.visible=true;}
  const nearTower=!activeCar&&Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)<7;
  towerButton.style.display=(onObservationDeck||nearTower)?'block':'none';
  towerButton.textContent=onObservationDeck?'T · RETURN TO GROUND':'ENTER NEEDLE · GO TO TOP';
