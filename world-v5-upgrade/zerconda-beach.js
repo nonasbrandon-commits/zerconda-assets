@@ -1,5 +1,6 @@
 import {addRealisticBeachPalms} from './realistic-beach-palms.js';
 import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Zerconda South Beach, reachable on foot from the southern city edge at z=168.
 // Tiled sand PBR, animated layered water, foam, dunes, boardwalk, umbrellas and palms.
 export function createZercondaBeach(scene,{base='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/'}={}){
@@ -75,7 +76,30 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
   const canopy=mesh(new THREE.ConeGeometry(1.65,.68,12),fabric[(i+1)%4],x+2,2.9,z);
  }
  // Detailed coconut palms with individual curved fronds, no low-poly cone foliage.
- addRealisticBeachPalms(root,{count:30});
+ // Load an actual CC0 GLB palm model. Geometry fallback only on failed download.
+ const palmUrl=base+'realistic-assets/palms/palm-detailed.glb';
+ new GLTFLoader().load(palmUrl,gltf=>{
+   const template=gltf.scene;
+   template.updateMatrixWorld(true);
+   const bounds=new THREE.Box3().setFromObject(template);
+   const size=bounds.getSize(new THREE.Vector3());
+   const center=bounds.getCenter(new THREE.Vector3());
+   const scale=8.9/Math.max(.01,size.y);
+   for(let i=0;i<24;i++){
+     const x=-150+(i*67)%300,z=192+(i*29)%36;
+     if(Math.abs(x)<13&&z<203)continue;
+     const palm=template.clone(true);
+     palm.position.set(x-center.x*scale,-bounds.min.y*scale,z-center.z*scale);
+     palm.scale.setScalar(scale*(.86+(i%5)*.055));
+     palm.rotation.y=i*2.39996;
+     palm.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+     root.add(palm);
+   }
+   console.info('Zerconda: loaded real CC0 GLB beach palms',palmUrl);
+ },undefined,error=>{
+   console.error('Detailed palm GLB missing; using fallback palm geometry',error);
+   addRealisticBeachPalms(root,{count:24});
+ });
  let elapsed=0;
  return {root,update(dt){elapsed+=dt;const arr=pos.array;for(let i=0;i<pos.count;i++){const xx=original[i*3],yy=original[i*3+1];arr[i*3+2]=Math.sin(xx*.038+yy*.013+elapsed*1.3)*.21+Math.sin(yy*.095-xx*.022+elapsed*2.1)*.10+Math.sin(xx*.17+yy*.11-elapsed*2.7)*.035;}pos.needsUpdate=true;ocean.geometry.computeVertexNormals();if(water.map){water.map.offset.x=(elapsed*.003)%1;water.map.offset.y=(elapsed*.005)%1;}wash.position.z=242+Math.sin(elapsed*.7)*2;wash.material.opacity=.08+.06*(.5+.5*Math.sin(elapsed*.7));shore.forEach((s,i)=>{s.position.z=241+i*1.35+Math.sin(elapsed*.9+i*.7)*1.5;s.material.opacity=.14+.18*(.5+.5*Math.sin(elapsed*.9+i*.7));});},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
 }
