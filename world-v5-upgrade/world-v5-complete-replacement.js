@@ -7,6 +7,7 @@ import {addCityDepth} from './city-depth-assets.js';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js';
 import {createApartmentExperience} from './apartment-interiors.js';
+import {createDealership} from './zerconda-dealership.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -306,6 +307,8 @@ for(const dz of [-28.8,28.8]){
 for(const dx of [-28.8,28.8])box(.3,.18,57,48+dx,.17,-48,curbMaterial);
 const observationNeedle=createObservationNeedle(scene,{x:48,z:-48});
 const coffeeShop=createCoffeeShop(scene,{x:-34,z:-48});
+// Walk-in showroom just west of Brewstone Coffee, with three fictional display vehicles.
+const dealership=createDealership(scene,{x:-62,z:-48});
 coffeeShop.root.rotation.y=Math.PI/2; // Entrance and patio face east toward the Needle.
 // Convert authored local chair locations to rotated world coordinates.
 for(const seat of coffeeShop.seats){const lx=seat.x+34,lz=seat.z+48;seat.x=-34+lz;seat.z=-48-lx;}
@@ -471,7 +474,7 @@ renderer.domElement.addEventListener('wheel',e=>{
  movement.wheelImpulse=THREE.MathUtils.clamp(
   movement.wheelImpulse+dir*WHEEL_STEP,-WHEEL_MAX,WHEEL_MAX);
 },{passive:false});
-addEventListener('keydown',e=>{keys.add(e.code);if(e.code==='KeyE'&&!e.repeat){if(apartmentSession)apartmentAction();else toggleCar();}if(e.code==='KeyF'&&!e.repeat)toggleNearbyDoor();if(e.code==='KeyT'&&!e.repeat)toggleObservationDeck();
+addEventListener('keydown',e=>{keys.add(e.code);if(e.code==='KeyE'&&!e.repeat){if(apartmentSession)apartmentAction();else if(dealership.isNear(player.x,player.z,5.5)||dealership.inside(player.x,player.z))visitDealership();else toggleCar();}if(e.code==='KeyF'&&!e.repeat)toggleNearbyDoor();if(e.code==='KeyT'&&!e.repeat)toggleObservationDeck();
  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();});
 addEventListener('keyup',e=>keys.delete(e.code));
 for(const b of document.querySelectorAll('[data-key]')){
@@ -503,6 +506,16 @@ fixLegacyDoorLabels();
 const legacyDoorObserver=new MutationObserver(fixLegacyDoorLabels);
 legacyDoorObserver.observe(document.body,{subtree:true,childList:true});
 const cafeButton=actionButton('zerconda-cafe-button','C · SIT DOWN',365,toggleCafeSeat);
+const dealerButton=actionButton('zerconda-dealership-button','E · ENTER DEALERSHIP',390,visitDealership);
+function visitDealership(){
+ if(dealership.isNear(player.x,player.z,5.5)&&!dealership.inside(player.x,player.z)){
+  player.x=dealership.x+9;player.z=dealership.z;movement.vx=0;movement.vz=0;
+  if(status)status.textContent='Welcome to Zerconda Motors · Explore three vehicles on the showroom floor';return;
+ }
+ const vehicle=dealership.nearestCar(player.x,player.z,5);
+ if(vehicle){if(status)status.textContent=vehicle.name+' · Display vehicle · Visit the vehicle shop for purchases';return;}
+ if(dealership.inside(player.x,player.z)){player.x=dealership.x+15;player.z=dealership.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Exited Zerconda Motors';}
+}
 let sittingSeat=null;
 function toggleCafeSeat(){if(sittingSeat){sittingSeat=null;return;}const seat=coffeeShop.nearestSeat(player.x,player.z,2.5);if(!seat)return;sittingSeat=seat;player.x=seat.x;player.z=seat.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Seated at Brewstone Coffee · Press C or use button to stand';}
 addEventListener('keydown',e=>{if(e.code==='KeyC'&&!e.repeat&&(sittingSeat||coffeeShop.nearestSeat(player.x,player.z,2.5)))toggleCafeSeat();});
