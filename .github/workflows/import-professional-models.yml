@@ -65,22 +65,19 @@ jobs:
                       out=root/label
                       out.mkdir(exist_ok=True)
                       # Include dependencies from selected file. Preserve relative paths and reject unsafe paths.
-                      selected=[('model',node)]
-                      def deps(n):
-                          inc=n.get('include',{})
-                          if isinstance(inc,dict):
-                              for k,v in inc.items():
-                                  if isinstance(v,dict) and 'url' in v:selected.append((k,v))
-                                  elif isinstance(v,str):selected.append((k,{'url':v}))
-                      deps(node)
+                      selected=[(node['url'].split('?')[0].rsplit('/',1)[-1],node)]
+                      inc=node.get('include',{})
+                      if isinstance(inc,dict):
+                          for rel,v in inc.items():
+                              if isinstance(v,dict) and 'url' in v:selected.append((rel,v))
                       saved=[]
-                      for key,item in selected:
+                      for rel,item in selected:
                           url=item['url']
-                          name=url.split('?')[0].rsplit('/',1)[-1]
-                          if not name:raise ValueError('No file name')
-                          if item.get('size',0)>LIMIT:raise ValueError('Dependency over 24 MB: '+name)
+                          if not rel or rel.startswith('/') or '..' in pathlib.PurePosixPath(rel).parts:raise ValueError('Unsafe dependency path: '+rel)
+                          if item.get('size',0)>LIMIT:raise ValueError('Dependency over 24 MB: '+rel)
                           data=get(url)
-                          dest=out/name
+                          dest=out/rel
+                          dest.parent.mkdir(parents=True,exist_ok=True)
                           dest.write_bytes(data)
                           saved.append({'path':str(dest),'bytes':len(data),'source':url})
                       if not saved:raise ValueError('No files saved')
@@ -98,7 +95,7 @@ jobs:
                       break
                   except Exception as exc:
                       errors.append(asset+': '+str(exc))
-                      for p in (root/label).glob('*'):p.unlink()
+                      for p in sorted((root/label).rglob('*'),reverse=True):\n                          if p.is_file():p.unlink()\n                          elif p.is_dir():p.rmdir()
               if label not in report:report[label]={'status':'unavailable','attempts':errors}
           (root/'IMPORT_REPORT.json').write_text(json.dumps(report,indent=2))
           (root/'README.md').write_text('# Zerconda V5 professional models\n\nSource: Poly Haven (CC0). These are third-party authored models, not generated primitives.\n\nSee IMPORT_REPORT.json for verified downloaded models, dependencies, and failures. Files are individually limited to 24 MB. Use Three.js GLTFLoader. Do not substitute basic geometry for missing models.\n')
