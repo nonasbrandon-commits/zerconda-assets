@@ -2,7 +2,7 @@
 
 Target URL: https://zerconda.com/world-v5/
 
-## Deploy these nine files
+## Deploy these ten files
 
 Source repository: https://github.com/nonasbrandon-commits/zerconda-assets
 
@@ -45,3 +45,6 @@ GitHub Actions workflow `Browser render test for Zerconda V5` launches Chromium,
 
 ## Zerconda Motors showroom
 Deploy `zerconda-dealership.js` alongside `world.js`. Its sign texture loads from `realistic-assets/dealership/zerconda-motors-sign.svg` on the GitHub raw URL. Verify E ENTER DEALERSHIP beside Brewstone Coffee, all three showroom vehicles, and E EXIT DEALERSHIP. This is a 3D showroom, not a flat image billboard.
+
+## Commercial block layout and entry controls
+The newest `world-v5-complete-replacement.js` reserves the block west of the Observation Needle for Brewstone Coffee and Zerconda Motors. An 8m access road separates the two buildings. Remove all old duplicated world spawn scripts. The coffee shop requires E ENTER before C SIT; the dealership requires E ENTER before inspecting display cars; apartment buildings require F ENTER. Check brick facade proportions and ensure no building overlaps either business. Keep the same import map and deploy the newest complete file, not partial snippets.
