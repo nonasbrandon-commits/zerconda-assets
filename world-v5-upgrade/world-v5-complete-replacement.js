@@ -462,13 +462,13 @@ const keys=new Set(),player={x:48,z:15},clock=new THREE.Clock();
 const cityMap=createCityMap({player});
 let activeCar=null,yaw=0,pitch=.1,drag=false,lastX=0,lastY=0;
 let driverLookYaw=0,driverLookPitch=0,driverSteer=0;
-let onObservationDeck=false;
+let onObservationDeck=false,insideNeedleLobby=false;
 // Initialize camera BEFORE the first frame. A blank sky must never be the default.
 camera.position.set(48,5,7);
 camera.lookAt(48,2,45);
 function resetView(){
  if(apartmentSession){apartmentSession=null;apartments.root.visible=false;}
- activeCar=null;driverLookYaw=0;driverLookPitch=0;driverSteer=0;onObservationDeck=false;player.x=48;player.z=15;yaw=0;pitch=.1;
+ activeCar=null;driverLookYaw=0;driverLookPitch=0;driverSteer=0;onObservationDeck=false;insideNeedleLobby=false;player.x=48;player.z=15;yaw=0;pitch=.1;
  camera.position.set(48,5,7);camera.lookAt(48,2,45);
  if(status)status.textContent='View reset · Walk forward with W';
 }
@@ -513,7 +513,7 @@ const actionButton=(id,label,bottom,callback)=>{
  el.style.cssText='position:fixed;right:14px;bottom:'+bottom+'px;z-index:9999;padding:12px 15px;background:#203d50;color:white;border:1px solid #a2bac9;border-radius:9px;font:700 13px system-ui;display:none;cursor:pointer';
  el.addEventListener('click',callback);document.body.appendChild(el);return el;
 };
-const towerButton=actionButton('zerconda-tower-button','T · OBSERVATION DECK',245,toggleObservationDeck);
+const towerButton=actionButton('zerconda-tower-button','ENTER TOWER / ELEVATOR',245,toggleObservationDeck);
 const doorButton=actionButton('zerconda-door-button','F · ENTER BUILDING',305,toggleNearbyDoor);
 const apartmentButton=actionButton('zerconda-apartment-action','E · ELEVATOR / EXIT',425,apartmentAction);
 const floorPanel=document.createElement('div');floorPanel.id='zerconda-apartment-floors';
@@ -563,19 +563,31 @@ function toggleNearbyDoor(){
   }
  }
 }
+// Two-step tower interaction: enter lobby first, then press the elevator button.
 function toggleObservationDeck(){
  if(activeCar)return;
  if(onObservationDeck){
-  onObservationDeck=false;
-  player.x=observationNeedle.entrance.x;player.z=observationNeedle.entrance.z+1;
-  camera.position.set(player.x,5,player.z-6);
-  if(status)status.textContent='Back at tower entrance · T to go up';return;
+  onObservationDeck=false;insideNeedleLobby=true;
+  player.x=observationNeedle.x;player.z=observationNeedle.z+7.5;
+  movement.vx=0;movement.vz=0;
+  if(status)status.textContent='Tower lobby · Press elevator button to go up again';
+  return;
+ }
+ if(insideNeedleLobby){
+  insideNeedleLobby=false;onObservationDeck=true;
+  player.x=observationNeedle.x;player.z=observationNeedle.z+8;
+  movement.vx=0;movement.vz=0;yaw=0;pitch=0;
+  camera.position.set(player.x,observationNeedle.deckY+1.8,player.z-2);
+  if(status)status.textContent='Observation deck · Look through panoramic windows · Press T to descend';
+  return;
  }
  if(Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)>7)return;
- onObservationDeck=true;player.x=observationNeedle.x;player.z=observationNeedle.z+8;
- yaw=0;pitch=.1;camera.position.set(player.x,observationNeedle.deckY+4,player.z-5);
- if(status)status.textContent='Observation deck · Walk with WASD · Drag to look · T to descend';
+ insideNeedleLobby=true;
+ player.x=observationNeedle.x;player.z=observationNeedle.z+7.5;
+ movement.vx=0;movement.vz=0;yaw=0;pitch=0;
+ if(status)status.textContent='Tower lobby · Walk to the elevator · Press T or the elevator button';
 }
+
 function toggleCar(){
  if(activeCar){player.x=activeCar.x+3;player.z=activeCar.z;activeCar=null;driverLookYaw=0;driverLookPitch=0;driverSteer=0;movement.vx=0;movement.vz=0;movement.wheelImpulse=0;return;}
  let closest=null,best=5;
@@ -596,6 +608,7 @@ function walkable(x,z){
   if(coffeeShop.isInside(x,z))return false;
  if(Math.abs(x)>168||z< -168||z>247)return false;
  if(onObservationDeck)return observationNeedle.isOnDeck(x,z);
+ if(insideNeedleLobby)return Math.abs(x-observationNeedle.x)<2.2&&z>observationNeedle.z+5.5&&z<observationNeedle.z+9.5;
  if(Math.hypot(x-observationNeedle.x,z-observationNeedle.z)<5.3)return false;
  if(insideBuilding(x,z,1.2))return false;
  if(Math.hypot(x-48,z-48)<11.55)return false; // actual 3D basin collision
