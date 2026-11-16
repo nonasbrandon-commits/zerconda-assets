@@ -1,0 +1,49 @@
+name: Prepare optimized realistic environment image assets
+on:
+  push:
+    paths:
+      - '.github/workflows/build-environment-images.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pillow
+      - name: Create photographic terrain and stone variants from repository CC0 source textures
+        run: |
+          python - <<'PY'
+          from PIL import Image,ImageEnhance
+          from pathlib import Path
+          assets=[
+            ('Ground037','Ground037','grass-natural',1.12,.91),
+            ('Ground037','Ground037','grass-shaded',.84,.94),
+            ('PavingStones070','PavingStones070','paving-warm',1.07,.88),
+            ('PavingStones070','PavingStones070','paving-cool',.94,.87),
+            ('RoadLines001','RoadLines001','road-natural',.78,.82)
+          ]
+          out=Path('realistic-assets/environment-photos')
+          out.mkdir(parents=True,exist_ok=True)
+          for folder,stem,name,brightness,saturation in assets:
+            source=Path(f'realistic-assets/pbr/{folder}/{stem}_1K-JPG_Color.jpg')
+            im=Image.open(source).convert('RGB')
+            im=ImageEnhance.Brightness(im).enhance(brightness)
+            im=ImageEnhance.Color(im).enhance(saturation)
+            target=out/f'{name}.jpg'
+            im.save(target,'JPEG',quality=90,optimize=True)
+            print(target, target.stat().st_size)
+          PY
+      - name: Commit new environment image assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add realistic-assets/environment-photos/
+          if ! git diff --cached --quiet; then
+            git commit -m "Add five optimized photographic environment textures"
+            git push
+          fi
