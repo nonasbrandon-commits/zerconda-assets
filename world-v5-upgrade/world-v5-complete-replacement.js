@@ -73,6 +73,7 @@ const glassCanvas=document.createElement('canvas');glassCanvas.width=512;glassCa
  gc.globalAlpha=.22;gc.fillStyle='#f8fafc';for(let i=0;i<11;i++){gc.beginPath();gc.ellipse((i*97)%512,55+(i*41)%150,52,9,-.25,0,Math.PI*2);gc.fill();}
  gc.globalAlpha=.48;gc.strokeStyle='#d8e9ef';gc.lineWidth=4;gc.beginPath();gc.moveTo(32,0);gc.lineTo(260,512);gc.stroke();gc.globalAlpha=1;
  const glassTexture=new THREE.CanvasTexture(glassCanvas);glassTexture.colorSpace=THREE.SRGBColorSpace;glassTexture.anisotropy=8;
+ const reflectionAsset=new THREE.TextureLoader().load(BASE+'realistic-assets/windows/urban-glass-reflection.svg',t=>{glass.map=t;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;glass.needsUpdate=true;},undefined,err=>console.warn('Using generated glass reflection fallback',err));
  const glass=new THREE.MeshPhysicalMaterial({map:glassTexture,color:0xffffff,metalness:.16,roughness:.12,transparent:true,opacity:.93,clearcoat:1,clearcoatRoughness:.055,side:THREE.DoubleSide,depthWrite:true});
 const windowMat=glass,doorMat=M(0x655343,.42,.18);
 const windowFrame=M(0x43494a,.42,.5),windowSill=M(0xd7cec0,.9);
