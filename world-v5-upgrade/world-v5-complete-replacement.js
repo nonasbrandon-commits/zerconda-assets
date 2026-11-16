@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {installRealisticFountain} from './realistic-fountain.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -181,74 +182,17 @@ for(let k=0;k<blocks.length;k++){
  }
 }
 
-// CENTRAL PLAZA — detailed stone paving, tiered masonry fountain and landscaping.
-// Actual photographed CC0 PBR stone maps already uploaded in this GitHub repo.
-// These are image textures, NOT generated color squares or canvas placeholders.
-const textureLoader=new THREE.TextureLoader();
-function pbrTexture(file,repeat=4,color=false){
- const t=textureLoader.load(BASE+'realistic-assets/pbr/PavingStones070/'+file);
- t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(repeat,repeat);
- t.anisotropy=renderer.capabilities.getMaxAnisotropy();
- if(color)t.colorSpace=THREE.SRGBColorSpace;
- return t;
-}
-const plazaStone=new THREE.MeshStandardMaterial({
- map:pbrTexture('PavingStones070_1K-JPG_Color.jpg',3,true),
- normalMap:pbrTexture('PavingStones070_1K-JPG_NormalGL.jpg',3),
- roughnessMap:pbrTexture('PavingStones070_1K-JPG_Roughness.jpg',3),
- roughness:1,metalness:0
-});
-const granite=M(0x99938a,.88),carvedStone=M(0xc5bdb0,.9);
-const copper=M(0x6b6457,.32,.7);
-box(62,.18,62,48,.055,48,plazaStone);
-// A stone border and four pedestrian approaches.
-for(const q of [-1,1]){
- box(62,.12,.55,48,.17,48+q*30.7,granite);
- box(.55,.12,62,48+q*30.7,.17,48,granite);
- box(7,.13,10,48,.14,48+q*33,plazaStone);
- box(10,.13,7,48+q*33,.14,48,plazaStone);
-}
-// Dark granite ring visually anchors the fountain to the paved square.
-const fountain=new THREE.Group();fountain.position.set(48,0,48);scene.add(fountain);
-cylinder(11.1,11.3,.23,0,.26,0,granite,fountain,96);
-cylinder(10.15,10.35,1.12,0,.84,0,carvedStone,fountain,96);
-cylinder(10.42,10.42,.22,0,1.45,0,granite,fountain,96);
-const water=new THREE.MeshPhysicalMaterial({color:0x397d8e,roughness:.12,metalness:.05,
- transparent:true,opacity:.84,clearcoat:1,clearcoatRoughness:.04,side:THREE.DoubleSide});
-cylinder(9.75,9.75,.07,0,1.5,0,water,fountain,96);
-// Carved relief panels around the outer basin.
-for(let i=0;i<40;i++){
- const a=i*Math.PI*2/40;
- const p=new THREE.Mesh(new THREE.BoxGeometry(.72,.48,.13),i%2?carvedStone:granite);
- p.position.set(Math.sin(a)*10.27,.92,Math.cos(a)*10.27);
- p.rotation.y=a;fountain.add(p);
-}
-// Three ornamental basins and a bronze finial.
-cylinder(2.3,2.8,2.85,0,2.95,0,granite,fountain,64);
-cylinder(5.2,5.5,.52,0,4.6,0,carvedStone,fountain,96);
-cylinder(4.82,4.82,.07,0,4.91,0,water,fountain,96);
-cylinder(1.15,1.7,2.05,0,5.92,0,granite,fountain,64);
-cylinder(2.75,3.02,.38,0,7.13,0,carvedStone,fountain,96);
-cylinder(2.48,2.48,.05,0,7.37,0,water,fountain,96);
-cylinder(.24,.38,.86,0,7.86,0,copper,fountain,24);
-const finial=new THREE.Mesh(new THREE.SphereGeometry(.42,20,12),copper);
-finial.position.y=8.42;fountain.add(finial);
-const jetMaterial=new THREE.MeshPhysicalMaterial({color:0xc0ecf4,transparent:true,
- opacity:.55,roughness:.1,depthWrite:false});
-const jets=[];
-for(let i=0;i<24;i++){
- const a=i*Math.PI*2/24,r=8.4,pts=[];
- for(let j=0;j<=24;j++){
-  const t=j/24;pts.push(new THREE.Vector3(
-   Math.cos(a)*r*(1-t*.5),1.6+Math.sin(t*Math.PI)*2.9,
-   Math.sin(a)*r*(1-t*.5)));
- }
- const jet=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),40,.052,6),jetMaterial);
- fountain.add(jet);jets.push(jet);
-}
-// Real bench/planter/flower GLTF assets are loaded in populate() below.
-// Do not generate the old cartoon wooden boxes or green polygon shrubs here.
-// Their model textures and normal maps are part of the repository.
+// The old cartoon fountain, tiled boxes, sphere bushes, and procedural benches
+// have been REMOVED. The GLB supplies the entire detailed plaza instead.
+let realisticPlaza=null;
+installRealisticFountain({scene,centerX:48,centerZ:48,renderer})
+ .then(plaza=>{realisticPlaza=plaza;
+  if(status)status.textContent='Real 3D fountain plaza loaded at (48,48)';
+ })
+ .catch(err=>{console.error('Real fountain asset unavailable:',err);
+  if(status)status.textContent='Fountain GLB missing: upload the model to GitHub first';
+ });
+
 // Trees are only placed in designated landscape strips on blocks.
 // NEVER on road, parking lanes, intersections, or inside fountain plaza.
 const treeSpots=[];
@@ -336,23 +280,8 @@ async function populate(){
   const g=cloneNormalized(src,x,z,1.55,angle);
   if(g)cars.push({group:g,x,z,angle,speed:0});
  }
- // Place actual photographed PBR textured GLTF assets around the plaza.
- // Plant models are clustered in planters, never scattered over the walkway.
- const decor=[];
- for(let i=0;i<8;i++){
-  const a=i*Math.PI/4;
-  decor.push(['bench',48+Math.cos(a)*23,48+Math.sin(a)*23,1.5,-a+Math.PI/2]);
- }
- for(let i=0;i<12;i++){
-  const a=(i+.5)*Math.PI/6;
-  const x=48+Math.cos(a)*28,z=48+Math.sin(a)*28;
-  decor.push(['planter',x,z,1.8,-a+Math.PI/2]);
-  decor.push(['flower',x,z,1.7,-a+Math.PI/2]);
- }
- decor.push(['statue',48,77,2.8,0]);
- for(const [key,x,z,height,angle] of decor){
-  if(loaded[key])cloneNormalized(loaded[key],x,z,height,angle);
- }
+ // All fountain-area benches, urns, paving and flowers are contained in
+ // zerconda_walkable_fountain_plaza.glb. Do not spawn duplicate props here.
  if(status)status.textContent='Loaded '+Object.keys(loaded).length+'/'+keys.length+' model types · Fountain plaza at (48,48)';
 }
 populate();
@@ -393,12 +322,13 @@ addEventListener('pointermove',e=>{if(!drag)return;yaw-=(e.clientX-lastX)*.003;
 function walkable(x,z){
  if(Math.abs(x)>168||Math.abs(z)>168)return false;
  if(insideBuilding(x,z,1.2))return false;
- if(Math.hypot(x-48,z-48)<10.8)return false; // fountain basin
+ if(Math.hypot(x-48,z-48)<11.55)return false; // actual 3D basin collision
  return true;
 }
 let elapsed=0;
 function animate(){
  requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);elapsed+=dt;
+ if(realisticPlaza)realisticPlaza.update(dt);
  const f=Number(keys.has('KeyW')||keys.has('ArrowUp'))-Number(keys.has('KeyS')||keys.has('ArrowDown'));
  const side=Number(keys.has('KeyD')||keys.has('ArrowRight'))-Number(keys.has('KeyA')||keys.has('ArrowLeft'));
  if(activeCar){
