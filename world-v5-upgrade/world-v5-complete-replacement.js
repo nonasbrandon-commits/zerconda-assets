@@ -465,7 +465,25 @@ populate();
 addPremiumPlazaFurniture(scene,{cx:48,cz:48});
 const keys=new Set(),player={x:48,z:15},clock=new THREE.Clock();
 const cityMap=createCityMap({player});
-let activeCar=null,yaw=0,pitch=.1,drag=false,lastX=0,lastY=0;
+// Third-person walking avatar: forward-facing, visible from the default camera.
+// Kept lightweight so mobile devices do not need an additional model download.
+const avatar=new THREE.Group();avatar.name='Zerconda player avatar';scene.add(avatar);
+const avatarClothes=new THREE.MeshStandardMaterial({color:0x263b50,roughness:.91});
+const avatarPants=new THREE.MeshStandardMaterial({color:0x202932,roughness:.94});
+const avatarSkin=new THREE.MeshStandardMaterial({color:0xb88465,roughness:.92});
+const avatarShoes=new THREE.MeshStandardMaterial({color:0x171b22,roughness:.95});
+function avatarPart(geo,mat,x,y,z,parent=avatar){
+ const part=new THREE.Mesh(geo,mat);part.position.set(x,y,z);part.castShadow=true;part.receiveShadow=true;parent.add(part);return part;
+}
+avatarPart(new THREE.CapsuleGeometry(.32,.56,5,10),avatarClothes,0,1.28,0);
+avatarPart(new THREE.SphereGeometry(.21,12,10),avatarSkin,0,1.94,.025);
+for(const side of [-1,1]){
+ avatarPart(new THREE.CapsuleGeometry(.115,.55,4,8),avatarClothes,side*.43,1.24,0).rotation.z=side*.1;
+ avatarPart(new THREE.CapsuleGeometry(.13,.58,4,8),avatarPants,side*.17,.49,0);
+ avatarPart(new THREE.BoxGeometry(.24,.16,.43),avatarShoes,side*.17,.12,.12);
+}
+
+let activeCar=null,yaw=0,pitch=0,drag=false,lastX=0,lastY=0;
 let driverLookYaw=0,driverLookPitch=0,driverSteer=0;
 let onObservationDeck=false,insideNeedleLobby=false;
 // Initialize camera BEFORE the first frame. A blank sky must never be the default.
@@ -473,7 +491,7 @@ camera.position.set(48,5,7);
 camera.lookAt(48,2,45);
 function resetView(){
  if(apartmentSession){apartmentSession=null;apartments.root.visible=false;}
- activeCar=null;driverLookYaw=0;driverLookPitch=0;driverSteer=0;onObservationDeck=false;insideNeedleLobby=false;player.x=48;player.z=15;yaw=0;pitch=.1;
+ activeCar=null;driverLookYaw=0;driverLookPitch=0;driverSteer=0;onObservationDeck=false;insideNeedleLobby=false;player.x=48;player.z=15;yaw=0;pitch=0;
  camera.position.set(48,5,7);camera.lookAt(48,2,45);
  if(status)status.textContent='View reset · Walk forward with W';
 }
@@ -605,7 +623,7 @@ addEventListener('pointerup',()=>drag=false);
 addEventListener('pointermove',e=>{if(!drag)return;
  const dx=e.clientX-lastX,dy=e.clientY-lastY;
  if(activeCar){driverLookYaw=THREE.MathUtils.clamp(driverLookYaw-dx*.003,-1.25,1.25);driverLookPitch=THREE.MathUtils.clamp(driverLookPitch+dy*.0025,-.45,.55);}
- else{yaw-=dx*.003;pitch=THREE.MathUtils.clamp(pitch-dy*.004,-1.05,1.05);}
+ else{yaw-=dx*.003;pitch=THREE.MathUtils.clamp(pitch-dy*.004,-1.25,1.25);}
  lastX=e.clientX;lastY=e.clientY;});
 function walkable(x,z){
  if(apartmentSession)return apartments.contains(x,z);
@@ -667,6 +685,7 @@ function animate(){
  // Its stale animation line caused ReferenceError every frame BEFORE renderer.render().
  // Animated water is now updated by realisticPlaza.update(dt) above.
  if(activeCar){
+  avatar.visible=false;
   // First-person driver's seat: camera moves with the car and looks through windshield.
   // Car geometry is hidden only for this client while driving to avoid blocking the view.
   const a=activeCar.angle;
@@ -680,10 +699,16 @@ function animate(){
  }else{
   const dist=onObservationDeck?2.8:insideNeedleLobby?1.6:5,eye=onObservationDeck?observationNeedle.deckY+1.7:2.1;
   const target=new THREE.Vector3(player.x,eye,player.z);
-  const desired=new THREE.Vector3(player.x-Math.sin(yaw)*dist,eye+2+Math.sin(pitch)*dist,player.z-Math.cos(yaw)*dist);
+  // Camera elevation and target elevation must not cancel one another.
+  // Positive pitch looks UP, negative pitch looks DOWN, with full vertical range.
+  const desired=new THREE.Vector3(player.x-Math.sin(yaw)*dist,eye+1.15,player.z-Math.cos(yaw)*dist);
   camera.position.lerp(desired,Math.min(1,dt*8));
   camera.position.y=Math.max(onObservationDeck?observationNeedle.deckY+1.25:1.75,camera.position.y);
-  camera.lookAt(target.clone().add(new THREE.Vector3(0,Math.sin(pitch)*3.5,0)));
+  const forward=new THREE.Vector3(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch));
+  camera.lookAt(camera.position.clone().addScaledVector(forward,20));
+  avatar.visible=!onObservationDeck&&!insideNeedleLobby&&!apartmentSession;
+  avatar.position.set(player.x,0,player.z);
+  avatar.rotation.y=yaw;
  }
  if(!Number.isFinite(camera.position.x)||!Number.isFinite(camera.position.y)||!Number.isFinite(camera.position.z))resetView();
  // Prevent the driven car body from obstructing the first-person windshield view.
