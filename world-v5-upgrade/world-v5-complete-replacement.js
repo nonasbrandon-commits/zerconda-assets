@@ -16,6 +16,8 @@ import {addSignatureArchitecture} from './signature-apartment-buildings.js';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
+const ZERCONDA_BUILD='2026-11-16-waterfront-repair';
+console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
 // Does not call any old tree/lamp/car spawn loops.
 const BASE='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/';
