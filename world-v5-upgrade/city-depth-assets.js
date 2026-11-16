@@ -45,7 +45,7 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    const x=Math.cos(angle)*(radius+(rnd()-.5)*22);
    const z=Math.sin(angle)*(radius+(rnd()-.5)*22);
    // South Beach and the ocean must remain completely free of city towers.
-   if(z>155)continue;
+   if(z>95)continue;
    const w=12+rnd()*15,d=12+rnd()*15,h=25+rnd()*58+(ring===1?20:0);
    skylineTower(x,z,w,d,h,total++);
   }
