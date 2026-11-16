@@ -1,55 +1,266 @@
 {
   "tree": {
-    "status": "unavailable",
-    "attempts": [
-      "island_tree_01: Dependency over 24 MB: island_tree_01.bin",
-      "island_tree_02: Dependency over 24 MB: island_tree_02.bin",
-      "island_tree_03: Dependency over 24 MB: island_tree_03.bin",
-      "dead_tree_trunk: Missing glTF dependencies: ['textures/dead_tree_trunk_nor_gl_1k.jpg', 'textures/dead_tree_trunk_diff_1k.jpg', 'textures/dead_tree_trunk_arm_1k.jpg']",
-      "fir_tree_01: Dependency over 24 MB: fir_tree_01.bin",
-      "jacaranda_tree: Dependency over 24 MB: jacaranda_tree.bin"
-    ]
+    "status": "downloaded",
+    "asset_id": "dead_tree_trunk",
+    "asset_name": "Dead Tree Trunk",
+    "files": [
+      {
+        "path": "realistic-assets/professional-models/tree/dead_tree_trunk_1k.gltf",
+        "bytes": 2812,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/dead_tree_trunk/dead_tree_trunk_1k.gltf"
+      },
+      {
+        "path": "realistic-assets/professional-models/tree/textures/dead_tree_trunk_arm_1k.jpg",
+        "bytes": 724384,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dead_tree_trunk/dead_tree_trunk_arm_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/tree/textures/dead_tree_trunk_nor_gl_1k.jpg",
+        "bytes": 1053075,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dead_tree_trunk/dead_tree_trunk_nor_gl_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/tree/textures/dead_tree_trunk_diff_1k.jpg",
+        "bytes": 713480,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dead_tree_trunk/dead_tree_trunk_diff_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/tree/dead_tree_trunk.bin",
+        "bytes": 2293788,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/dead_tree_trunk/dead_tree_trunk.bin"
+      }
+    ],
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/dead_tree_trunk"
   },
   "street-light": {
-    "status": "unavailable",
-    "attempts": [
-      "Lantern_01: Missing glTF dependencies: ['textures/Lantern_01_brass_nor_gl_1k.jpg', 'textures/Lantern_01_brass_diff_1k.jpg', 'textures/Lantern_01_brass_arm_1k.jpg', 'textures/Lantern_01_brass_diff_1k.jpg']",
-      "brass_diya_lantern: Missing glTF dependencies: ['textures/brass_diya_lantern_nor_gl_1k.jpg', 'textures/brass_diya_lantern_diff_1k.jpg', 'textures/brass_diya_lantern_arm_1k.jpg', 'textures/brass_diya_lantern_diff_1k.jpg']",
-      "lantern_chandelier_01: Missing glTF dependencies: ['textures/lantern_chandelier_01_nor_gl_1k.jpg', 'textures/lantern_chandelier_01_diff_1k.jpg', 'textures/lantern_chandelier_01_arm_1k.jpg', 'textures/lantern_chandelier_01_glass_alpha_1k.jpg', 'textures/lantern_chandelier_01_glass_nor_gl_1k.jpg', 'textures/lantern_chandelier_01_glass_diff_1k.jpg', 'textures/lantern_chandelier_01_glass_arm_1k.jpg']",
-      "street_lamp_01: Missing glTF dependencies: ['textures/street_lamp_01_nor_gl_1k.jpg', 'textures/street_lamp_01_diff_1k.jpg', 'textures/street_lamp_01_arm_1k.jpg', 'textures/street_lamp_01_diff_1k.jpg']",
-      "street_lamp_02: Missing glTF dependencies: ['textures/street_lamp_02_nor_gl_1k.jpg', 'textures/street_lamp_02_diff_1k.jpg', 'textures/street_lamp_02_arm_1k.jpg', 'textures/street_lamp_02_diff_1k.jpg']",
-      "wooden_lantern_01: Missing glTF dependencies: ['textures/wooden_lantern_01_nor_gl_1k.jpg', 'textures/wooden_lantern_01_diff_1k.jpg', 'textures/wooden_lantern_01_arm_1k.jpg', 'textures/wooden_lantern_01_glass_nor_gl_1k.jpg', 'textures/wooden_lantern_01_glass_diff_1k.jpg', 'textures/wooden_lantern_01_glass_arm_1k.jpg']"
-    ]
+    "status": "downloaded",
+    "asset_id": "Lantern_01",
+    "asset_name": "Lantern 01",
+    "files": [
+      {
+        "path": "realistic-assets/professional-models/street-light/Lantern_01_1k.gltf",
+        "bytes": 4866,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/Lantern_01/Lantern_01_1k.gltf"
+      },
+      {
+        "path": "realistic-assets/professional-models/street-light/textures/Lantern_01_brass_arm_1k.jpg",
+        "bytes": 229054,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/Lantern_01/Lantern_01_brass_arm_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/street-light/Lantern_01.bin",
+        "bytes": 864852,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/Lantern_01/Lantern_01.bin"
+      },
+      {
+        "path": "realistic-assets/professional-models/street-light/textures/Lantern_01_brass_nor_gl_1k.jpg",
+        "bytes": 180646,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/Lantern_01/Lantern_01_brass_nor_gl_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/street-light/textures/Lantern_01_brass_diff_1k.jpg",
+        "bytes": 140998,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/Lantern_01/Lantern_01_brass_diff_1k.jpg"
+      }
+    ],
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/Lantern_01"
   },
   "bench": {
-    "status": "unavailable",
-    "attempts": [
-      "painted_wooden_bench: Missing glTF dependencies: ['textures/painted_wooden_bench_nor_gl_1k.jpg', 'textures/painted_wooden_bench_diff_1k.jpg', 'textures/painted_wooden_bench_arm_1k.jpg']",
-      "bench_vice_01: Missing glTF dependencies: ['textures/bench_vice_01_nor_gl_1k.jpg', 'textures/bench_vice_01_diff_1k.jpg', 'textures/bench_vice_01_arm_1k.jpg']",
-      "wooden_picnic_table: Missing glTF dependencies: ['textures/wooden_picnic_table_bottom_nor_gl_1k.jpg', 'textures/wooden_picnic_table_bottom_diff_1k.jpg', 'textures/wooden_picnic_table_bottom_arm_1k.jpg', 'textures/wooden_picnic_table_top_nor_gl_1k.jpg', 'textures/wooden_picnic_table_top_diff_1k.jpg', 'textures/wooden_picnic_table_top_arm_1k.jpg']"
-    ]
+    "status": "downloaded",
+    "asset_id": "painted_wooden_bench",
+    "asset_name": "Painted Wooden Bench",
+    "files": [
+      {
+        "path": "realistic-assets/professional-models/bench/painted_wooden_bench_1k.gltf",
+        "bytes": 2835,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/painted_wooden_bench/painted_wooden_bench_1k.gltf"
+      },
+      {
+        "path": "realistic-assets/professional-models/bench/textures/painted_wooden_bench_diff_1k.jpg",
+        "bytes": 545216,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/painted_wooden_bench/painted_wooden_bench_diff_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/bench/textures/painted_wooden_bench_nor_gl_1k.jpg",
+        "bytes": 830104,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/painted_wooden_bench/painted_wooden_bench_nor_gl_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/bench/textures/painted_wooden_bench_arm_1k.jpg",
+        "bytes": 586040,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/painted_wooden_bench/painted_wooden_bench_arm_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/bench/painted_wooden_bench.bin",
+        "bytes": 25444,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/painted_wooden_bench/painted_wooden_bench.bin"
+      }
+    ],
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/painted_wooden_bench"
   },
   "trash-bin": {
-    "status": "unavailable",
-    "attempts": [
-      "metal_trash_can: Missing glTF dependencies: ['textures/metal_trash_can_nor_gl_1k.jpg', 'textures/metal_trash_can_diff_1k.jpg', 'textures/metal_trash_can_arm_1k.jpg', 'textures/metal_trash_can_rust_nor_gl_1k.jpg', 'textures/metal_trash_can_rust_diff_1k.jpg', 'textures/metal_trash_can_rust_arm_1k.jpg']",
-      "trashbag: Missing glTF dependencies: ['textures/trashbag_nor_gl_1k.jpg', 'textures/trashbag_diff_1k.jpg', 'textures/trashbag_arm_1k.jpg']"
-    ]
+    "status": "downloaded",
+    "asset_id": "metal_trash_can",
+    "asset_name": "Metal Trash Can",
+    "files": [
+      {
+        "path": "realistic-assets/professional-models/trash-bin/metal_trash_can_1k.gltf",
+        "bytes": 15481,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/metal_trash_can/metal_trash_can_1k.gltf"
+      },
+      {
+        "path": "realistic-assets/professional-models/trash-bin/textures/metal_trash_can_diff_1k.jpg",
+        "bytes": 551939,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/metal_trash_can/metal_trash_can_diff_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/trash-bin/textures/metal_trash_can_rust_diff_1k.jpg",
+        "bytes": 768161,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/metal_trash_can/metal_trash_can_rust_diff_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/trash-bin/textures/metal_trash_can_arm_1k.jpg",
+        "bytes": 731776,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/metal_trash_can/metal_trash_can_arm_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/trash-bin/textures/metal_trash_can_rust_nor_gl_1k.jpg",
+        "bytes": 1085844,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/metal_trash_can/metal_trash_can_rust_nor_gl_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/trash-bin/textures/metal_trash_can_nor_gl_1k.jpg",
+        "bytes": 842945,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/metal_trash_can/metal_trash_can_nor_gl_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/trash-bin/metal_trash_can.bin",
+        "bytes": 378288,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/metal_trash_can/metal_trash_can.bin"
+      },
+      {
+        "path": "realistic-assets/professional-models/trash-bin/textures/metal_trash_can_rust_arm_1k.jpg",
+        "bytes": 620549,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/metal_trash_can/metal_trash_can_rust_arm_1k.jpg"
+      }
+    ],
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/metal_trash_can"
   },
   "urban-prop": {
-    "status": "unavailable",
-    "attempts": [
-      "concrete_road_barrier: Missing glTF dependencies: ['textures/concrete_road_barrier_nor_gl_1k.jpg', 'textures/concrete_road_barrier_diff_1k.jpg', 'textures/concrete_road_barrier_arm_1k.jpg']",
-      "concrete_road_barrier_02: Missing glTF dependencies: ['textures/concrete_road_barrier_02_nor_gl_1k.jpg', 'textures/concrete_road_barrier_02_diff_1k.jpg', 'textures/concrete_road_barrier_02_arm_1k.jpg']",
-      "fire_hydrant: Missing glTF dependencies: ['textures/fire_hydrant_nor_gl_1k.jpg', 'textures/fire_hydrant_diff_1k.jpg', 'textures/fire_hydrant_arm_1k.jpg', 'textures/fire_hydrant_aged_nor_gl_1k.jpg', 'textures/fire_hydrant_aged_diff_1k.jpg', 'textures/fire_hydrant_aged_arm_1k.jpg']",
-      "modular_fire_escape: Missing glTF dependencies: ['textures/modular_fire_escape_01_nor_gl_1k.jpg', 'textures/modular_fire_escape_01_diff_1k.jpg', 'textures/modular_fire_escape_01_arm_1k.jpg', 'textures/modular_fire_escape_02_nor_gl_1k.jpg', 'textures/modular_fire_escape_02_diff_1k.jpg', 'textures/modular_fire_escape_02_arm_1k.jpg']"
-    ]
+    "status": "downloaded",
+    "asset_id": "concrete_road_barrier",
+    "asset_name": "Concrete Road Barrier",
+    "files": [
+      {
+        "path": "realistic-assets/professional-models/urban-prop/concrete_road_barrier_1k.gltf",
+        "bytes": 2868,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/concrete_road_barrier/concrete_road_barrier_1k.gltf"
+      },
+      {
+        "path": "realistic-assets/professional-models/urban-prop/textures/concrete_road_barrier_nor_gl_1k.jpg",
+        "bytes": 961760,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/concrete_road_barrier/concrete_road_barrier_nor_gl_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/urban-prop/textures/concrete_road_barrier_arm_1k.jpg",
+        "bytes": 619502,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/concrete_road_barrier/concrete_road_barrier_arm_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/urban-prop/textures/concrete_road_barrier_diff_1k.jpg",
+        "bytes": 792641,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/concrete_road_barrier/concrete_road_barrier_diff_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/urban-prop/concrete_road_barrier.bin",
+        "bytes": 1374016,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/concrete_road_barrier/concrete_road_barrier.bin"
+      }
+    ],
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/concrete_road_barrier"
   },
   "architecture": {
-    "status": "unavailable",
-    "attempts": [
-      "modular_urban_apartments_facade: Missing glTF dependencies: ['textures/modular_urban_apartments_facade_objects_nor_gl_1k.jpg', 'textures/modular_urban_apartments_facade_objects_diff_1k.jpg', 'textures/modular_urban_apartments_facade_objects_arm_1k.jpg', 'textures/modular_urban_apartments_facade_trim_01_nor_gl_1k.jpg', 'textures/modular_urban_apartments_facade_trim_01_diff_1k.jpg', 'textures/modular_urban_apartments_facade_trim_01_arm_1k.jpg', 'textures/modular_urban_apartments_facade_trim_02_nor_gl_1k.jpg', 'textures/modular_urban_apartments_facade_trim_02_diff_1k.jpg']",
-      "modular_factory_facade: Missing glTF dependencies: ['textures/modular_factory_facade_trim_01_nor_gl_1k.jpg', 'textures/modular_factory_facade_trim_01_diff_1k.jpg', 'textures/modular_factory_facade_trim_01_arm_1k.jpg', 'textures/modular_factory_facade_windows_nor_gl_1k.jpg', 'textures/modular_factory_facade_windows_diff_1k.jpg', 'textures/modular_factory_facade_windows_arm_1k.jpg', 'textures/modular_factory_facade_windows_diff_1k.jpg', 'textures/modular_factory_facade_garage_nor_gl_1k.jpg']"
-    ]
+    "status": "downloaded",
+    "asset_id": "modular_urban_apartments_facade",
+    "asset_name": "Modular Urban Apartments Facade",
+    "files": [
+      {
+        "path": "realistic-assets/professional-models/architecture/modular_urban_apartments_facade_1k.gltf",
+        "bytes": 270799,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/modular_urban_apartments_facade/modular_urban_apartments_facade_1k.gltf"
+      },
+      {
+        "path": "realistic-assets/professional-models/architecture/textures/modular_urban_apartments_facade_plaster_arm_1k.jpg",
+        "bytes": 533411,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_urban_apartments_facade/modular_urban_apartments_facade_plaster_arm_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/architecture/textures/modular_urban_apartments_facade_plaster_nor_gl_1k.jpg",
+        "bytes": 1003277,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_urban_apartments_facade/modular_urban_apartments_facade_plaster_nor_gl_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/architecture/textures/modular_urban_apartments_facade_objects_nor_gl_1k.jpg",
+        "bytes": 544638,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_urban_apartments_facade/modular_urban_apartments_facade_objects_nor_gl_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/architecture/textures/modular_urban_apartments_facade_objects_diff_1k.jpg",
+        "bytes": 576336,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_urban_apartments_facade/modular_urban_apartments_facade_objects_diff_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/architecture/textures/modular_urban_apartments_facade_trim_01_diff_1k.jpg",
+        "bytes": 553769,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_urban_apartments_facade/modular_urban_apartments_facade_trim_01_diff_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/architecture/textures/modular_urban_apartments_facade_trim_01_arm_1k.jpg",
+        "bytes": 651756,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_urban_apartments_facade/modular_urban_apartments_facade_trim_01_arm_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/architecture/textures/modular_urban_apartments_facade_trim_02_nor_gl_1k.jpg",
+        "bytes": 820776,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_urban_apartments_facade/modular_urban_apartments_facade_trim_02_nor_gl_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/architecture/textures/modular_urban_apartments_facade_trim_01_nor_gl_1k.jpg",
+        "bytes": 850037,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_urban_apartments_facade/modular_urban_apartments_facade_trim_01_nor_gl_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/architecture/textures/modular_urban_apartments_facade_objects_arm_1k.jpg",
+        "bytes": 790231,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_urban_apartments_facade/modular_urban_apartments_facade_objects_arm_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/architecture/textures/modular_urban_apartments_facade_trim_02_diff_1k.jpg",
+        "bytes": 499399,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_urban_apartments_facade/modular_urban_apartments_facade_trim_02_diff_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/architecture/modular_urban_apartments_facade.bin",
+        "bytes": 8168772,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/modular_urban_apartments_facade/modular_urban_apartments_facade.bin"
+      },
+      {
+        "path": "realistic-assets/professional-models/architecture/textures/modular_urban_apartments_facade_trim_02_arm_1k.jpg",
+        "bytes": 706292,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_urban_apartments_facade/modular_urban_apartments_facade_trim_02_arm_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/professional-models/architecture/textures/modular_urban_apartments_facade_plaster_diff_1k.jpg",
+        "bytes": 519200,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modular_urban_apartments_facade/modular_urban_apartments_facade_plaster_diff_1k.jpg"
+      }
+    ],
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/modular_urban_apartments_facade"
   }
 }
