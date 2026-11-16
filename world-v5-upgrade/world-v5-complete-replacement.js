@@ -10,6 +10,8 @@ import {createApartmentExperience} from './apartment-interiors.js';
 import {createDealership} from './zerconda-dealership.js';
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 import {addAirDancers} from './air-dancers.js';
+import {createZercondaBeach} from './zerconda-beach.js';
+import {createCityMap} from './top-city-map.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -316,6 +318,7 @@ const coffeeShop=createCoffeeShop(scene,{x:-34,z:-48});
 // Walk-in showroom just west of Brewstone Coffee, with three fictional display vehicles.
 const dealership=createDealership(scene,{x:-72,z:-48});
 const airDancers=addAirDancers(scene,{x:-72,z:-48});
+const southBeach=createZercondaBeach(scene);
 let dealerInside=false;
 // Separate commercial parcels with an actual paved access road, curb and pedestrian sidewalks.
 box(8,.13,83,-51.5,-.025,-48,asphalt);
@@ -439,6 +442,7 @@ async function populate(){
 populate();
 addPremiumPlazaFurniture(scene,{cx:48,cz:48});
 const keys=new Set(),player={x:48,z:15},clock=new THREE.Clock();
+const cityMap=createCityMap({player});
 let activeCar=null,yaw=0,pitch=.1,drag=false,lastX=0,lastY=0;
 let onObservationDeck=false;
 // Initialize camera BEFORE the first frame. A blank sky must never be the default.
@@ -570,7 +574,7 @@ function walkable(x,z){
  if(apartmentSession)return apartments.contains(x,z);
   if(cafeInside)return coffeeShop.isInside(x,z);
   if(coffeeShop.isInside(x,z))return false;
- if(Math.abs(x)>168||Math.abs(z)>168)return false;
+ if(Math.abs(x)>168||z< -168||z>247)return false;
  if(onObservationDeck)return observationNeedle.isOnDeck(x,z);
  if(Math.hypot(x-observationNeedle.x,z-observationNeedle.z)<5.3)return false;
  if(insideBuilding(x,z,1.2))return false;
@@ -581,6 +585,8 @@ let elapsed=0;
 function animate(){
  requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);elapsed+=dt;
  airDancers.update(elapsed);
+ southBeach.update(dt);
+ cityMap.draw();
  if(realisticPlaza)realisticPlaza.update(dt);
  cloudSky.update(dt);
  const f=Number(keys.has('KeyW')||keys.has('ArrowUp'))-Number(keys.has('KeyS')||keys.has('ArrowDown'));
