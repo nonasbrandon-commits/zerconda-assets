@@ -15,6 +15,21 @@ export function createOwnableHomes(scene){
  const palette=[0x9fbeaa,0xc6a3a2,0xb5b7d8,0xe2c38e];
  const savedKey='zerconda-v5-demo-home';
  let owned=null;try{owned=JSON.parse(localStorage.getItem(savedKey)||'null');}catch(e){}
+
+ // Demo-only local ownership. A production multiplayer server must be authoritative.
+ function safeName(value){return String(value||'').trim().replace(/[^a-zA-Z0-9_ .-]/g,'').slice(0,24);}
+ function doorLabel(home,name){
+  if(home.namePlate){home.group.remove(home.namePlate);home.namePlate.geometry.dispose();home.namePlate.material.map?.dispose();home.namePlate.material.dispose();}
+  const canvas=document.createElement('canvas');canvas.width=512;canvas.height=128;
+  const ctx=canvas.getContext('2d');ctx.fillStyle='#14252c';ctx.fillRect(0,0,512,128);
+  ctx.strokeStyle='#d9c9a4';ctx.lineWidth=7;ctx.strokeRect(5,5,502,118);
+  ctx.fillStyle='#fff8e8';ctx.font='bold 46px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(name||'FOR SALE',256,65,470);
+  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
+  const plate=new THREE.Mesh(new THREE.PlaneGeometry(3.5,.88),new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide}));
+  plate.position.set(-3.4,3.3,-7.72);plate.rotation.y=Math.PI;
+  home.group.add(plate);home.namePlate=plate;
+ }
  const homes=[];
  function box(g,w,h,d,x,y,z,mat){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;g.add(o);return o;}
  // Two outlying rows on the western and eastern edge of the city, well
@@ -54,13 +69,25 @@ export function createOwnableHomes(scene){
   furniture.visible=!!owned&&owned.id===id;
   const sign=box(g,1.7,.85,.08,-5.5,1.15,-10,new THREE.MeshStandardMaterial({color:owned?.id===id?0x4e8d6e:0x204b69}));
   box(g,.09,1.4,.09,-5.5,.7,-10,wood);
-  homes.push({id,x,z,group:g,body,furniture,sign,baseColor:(id-1)%wall.length});
+  const home={id,x,z,group:g,body,furniture,sign,baseColor:(id-1)%wall.length};
+  homes.push(home);doorLabel(home,owned?.id===id?safeName(owned.username)||'OWNER':'FOR SALE');
  }
  function closest(x,z,max=8){let best=null,dist=max;for(const home of homes){const d=Math.hypot(home.x-x,home.z-10-z);if(d<dist){best=home;dist=d;}}return best;}
- function buy(home){if(owned&&owned.id!==home.id)return {ok:false,message:'You already own a home in this demo.'};
-  if(!owned){owned={id:home.id,color:home.baseColor,balance:100};try{localStorage.setItem(savedKey,JSON.stringify(owned));}catch(e){}}
-  homes.forEach(h=>{h.furniture.visible=h.id===owned.id;h.sign.material.color.setHex(h.id===owned.id?0x4e8d6e:0x204b69);});
-  return {ok:true,message:'Home '+home.id+' is yours! Demo price: 200 Zer Bucks. Starter furniture and garage included.'};
+ function buy(home,username){
+  if(owned&&owned.id!==home.id)return {ok:false,message:'You can own only one home.'};
+  if(owned?.id===home.id)return {ok:false,message:'This home is already yours.'};
+  const name=safeName(username);
+  if(!name)return {ok:false,message:'Enter your player username before buying a home.'};
+  // Prototype-only: account currency and cross-player property availability
+  // require server-side transactional validation before public launch.
+  owned={id:home.id,color:home.baseColor,balance:100,username:name};
+  try{localStorage.setItem(savedKey,JSON.stringify(owned));}catch(e){}
+  homes.forEach(h=>{
+   h.furniture.visible=h.id===owned.id;
+   h.sign.material.color.setHex(h.id===owned.id?0x4e8d6e:0x204b69);
+   doorLabel(h,h.id===owned.id?owned.username:'FOR SALE');
+  });
+  return {ok:true,message:'Home '+home.id+' reserved for '+name+' in this browser demo. 200 Zer Bucks is the planned price; no account currency was charged.'};
  }
  function decorate(){if(!owned)return {ok:false,message:'Buy a home first.'};owned.color=(owned.color+1)%wall.length;
   const h=homes.find(h=>h.id===owned.id);if(h)h.body.material=wall[owned.color];
