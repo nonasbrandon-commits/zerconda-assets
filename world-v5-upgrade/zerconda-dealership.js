@@ -35,6 +35,56 @@ export function createDealership(scene,{x=-62,z=-48}={}){
  sign.position.set(12.22,7.15,0);sign.rotation.y=Math.PI/2;root.add(sign);
  const url='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/dealership/zerconda-auto-center-sign.svg';
  new THREE.TextureLoader().load(url,t=>{t.colorSpace=THREE.SRGBColorSpace;sign.material.map=t;sign.material.needsUpdate=true;},undefined,()=>{sign.material.color.set(0x0b314f);});
+ // Architectural facade upgrade: layered graphite cladding, bright storefront,
+ // illuminated brand fascia and metal details, all real 3D scene geometry.
+ const fascia=mat(0x17252e,.27,.62),reveal=mat(0x0a151b,.38,.5);
+ const blueGlow=new THREE.MeshBasicMaterial({color:0x21a9f7});
+ // The west side previously appeared as a huge featureless white wall.
+ box(root,.09,7.7,27.6,-12.24,4.4,0,fascia);
+ for(const zz of [-12,-8,-4,0,4,8,12]){
+  box(root,.16,7.7,.10,-12.36,4.4,zz,silver);
+ }
+ for(const yy of [1.3,4.6,7.8]){
+  box(root,.16,.10,27.5,-12.37,yy,0,reveal);
+ }
+ // Full-height corner columns and a deep roof parapet create a readable silhouette.
+ for(const zz of [-13.8,13.8]){
+  box(root,.85,9.6,.85,12.25,4.8,zz,fascia);
+  box(root,.12,8.5,.16,12.76,4.25,zz,blueGlow);
+ }
+ box(root,.72,1.65,29.6,12.35,8.95,0,fascia);
+ box(root,.12,.10,29.4,12.82,7.99,0,blueGlow);
+ box(root,.12,.10,29.4,12.82,9.65,0,silver);
+ // Raised canopy with thin luminous front edge.
+ box(root,3.8,.34,10,13.35,7.42,0,fascia);
+ box(root,.12,.09,10,15.29,7.29,0,blueGlow);
+ // Lit sign as a procedural canvas texture: no remote image or SVG loader dependency.
+ const brandCanvas=document.createElement('canvas');brandCanvas.width=2048;brandCanvas.height=512;
+ const brandCtx=brandCanvas.getContext('2d');
+ brandCtx.fillStyle='#15252e';brandCtx.fillRect(0,0,2048,512);
+ brandCtx.textAlign='center';brandCtx.fillStyle='#f7fafb';
+ brandCtx.font='bold 170px Arial';brandCtx.fillText('ZERCONDA MOTORS',1024,245);
+ brandCtx.fillStyle='#42baff';brandCtx.font='bold 91px Arial';brandCtx.fillText('AUTO CENTER',1024,375);
+ const brandTex=new THREE.CanvasTexture(brandCanvas);brandTex.colorSpace=THREE.SRGBColorSpace;brandTex.anisotropy=8;
+ // Facade faces +X: text plane normal is rotated to point out toward the street.
+ const brandPanel=new THREE.Mesh(new THREE.PlaneGeometry(20,4.2),new THREE.MeshBasicMaterial({map:brandTex,side:THREE.DoubleSide,depthTest:true}));
+ brandPanel.rotation.y=Math.PI/2;brandPanel.position.set(12.84,8.78,0);root.add(brandPanel);
+ // Vertical glass bays and mullion trim add depth to the transparent frontage.
+ for(const zz of [-11,-7.5,-4,4,7.5,11]){
+  box(root,.09,5.7,3.3,12.04,3.05,zz,glass);
+  box(root,.17,5.9,.09,12.21,3.05,zz+1.65,silver);
+ }
+ for(const yy of [1.2,3.4,5.85])box(root,.12,.07,27.5,12.28,yy,0,silver);
+ // Exterior concrete pavers and planters are authored as scene meshes.
+ const paver=mat(0xb5b8b3,.93),planterDark=mat(0x343d3c,.78),leaf=mat(0x3d784c,.88);
+ for(let k=0;k<10;k++){
+  box(root,4.4,.035,2.2,15.8,.012,-12.1+k*2.7,paver);
+ }
+ for(const zz of [-11,11]){
+  box(root,1.8,.8,1.8,16.1,.4,zz,planterDark);
+  const plant=new THREE.Mesh(new THREE.IcosahedronGeometry(1.05,2),leaf);
+  plant.position.set(16.1,1.65,zz);root.add(plant);
+ }
  // Three cars, each a distinctly styled fictional model (no real logos).
  const cars=[];const worldZ=z;
  function car({name,color,z,type='sedan'}){
