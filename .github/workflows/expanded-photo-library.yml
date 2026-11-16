@@ -1,0 +1,58 @@
+name: Build expanded photographic environment library
+on:
+  push:
+    paths:
+      - '.github/workflows/expanded-photo-library.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  create-images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pillow
+      - name: Create high quality photo-based terrain and facade materials
+        run: |
+          python - <<'PY'
+          from PIL import Image,ImageEnhance,ImageFilter
+          from pathlib import Path
+          root=Path('realistic-assets')
+          out=root/'photographic-environment-v2'
+          out.mkdir(parents=True,exist_ok=True)
+          sources=[
+            ('natural-grass','pbr/Ground037/Ground037_1K-JPG_Color.jpg',1.02,1.03),
+            ('darker-grass','pbr/Ground037/Ground037_1K-JPG_Color.jpg',.79,.94),
+            ('warm-paving','pbr/PavingStones070/PavingStones070_1K-JPG_Color.jpg',1.12,.86),
+            ('aged-paving','pbr/PavingStones070/PavingStones070_1K-JPG_Color.jpg',.86,.81),
+            ('paving-normal','pbr/PavingStones070/PavingStones070_1K-JPG_NormalGL.jpg',1,1),
+            ('paving-roughness','pbr/PavingStones070/PavingStones070_1K-JPG_Roughness.jpg',1,1),
+            ('asphalt','pbr/RoadLines001/RoadLines001_1K-JPG_Color.jpg',.77,.78),
+            ('asphalt-normal','pbr/RoadLines001/RoadLines001_1K-JPG_NormalGL.jpg',1,1),
+            ('metal-weathered','pbr/Metal032/Metal032_1K-JPG_Color.jpg',.91,.8),
+            ('urban-brick','expanded-models/brick-building/textures/modular_factory_facade_brick_diff_1k.jpg',1.02,.92),
+            ('urban-plaster','expanded-models/urban-building/textures/modular_urban_apartments_facade_plaster_diff_1k.jpg',1.01,.92),
+            ('urban-trim','expanded-models/urban-building/textures/modular_urban_apartments_facade_trim_01_diff_1k.jpg',1.03,.9),
+            ('urban-windows','expanded-models/urban-building/textures/modular_urban_apartments_facade_objects_diff_1k.jpg',1.04,.93),
+            ('wooden-benches','plaza-assets/plaza-bench/textures/painted_wooden_bench_diff_1k.jpg',.98,.95),
+            ('flower-foliage','plaza-assets/flowering-plant/textures/flower_empodium_diff_1k.jpg',1.06,1.08),
+          ]
+          for name,src,brightness,saturation in sources:
+            image=Image.open(root/src).convert('RGB')
+            image=ImageEnhance.Brightness(image).enhance(brightness)
+            image=ImageEnhance.Color(image).enhance(saturation)
+            image.save(out/(name+'.jpg'),quality=90,optimize=True,subsampling=0)
+            print(name,(out/(name+'.jpg')).stat().st_size)
+          PY
+      - name: Commit photographic materials to GitHub
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add realistic-assets/photographic-environment-v2/
+          if ! git diff --cached --quiet; then
+            git commit -m "Add 15 photographic environment material images"
+            git push
+          fi
