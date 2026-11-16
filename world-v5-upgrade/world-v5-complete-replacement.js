@@ -170,6 +170,7 @@ function facadeTexture(base,trimColor,glassColor,cols=5,floors=5){
 }
 // Real CC0 architectural photographs replace hand-painted cartoon windows.
 const facadeMats=[
+ 'realistic-assets/facades/classic-brick-residences.svg',
  'realistic-assets/expanded-models/brick-building/textures/modular_factory_facade_brick_diff_1k.jpg',
  'realistic-assets/expanded-models/urban-building/textures/modular_urban_apartments_facade_plaster_diff_1k.jpg',
  'realistic-assets/expanded-models/urban-building/textures/modular_urban_apartments_facade_trim_01_diff_1k.jpg'
@@ -181,9 +182,9 @@ const facadeMats=[
 });
 const roof=M(0x34373a),metal=M(0x565c5e,.42,.55);
 const brickNormal=groundTexture('realistic-assets/expanded-models/brick-building/textures/modular_factory_facade_brick_nor_gl_1k.jpg',3);
-facadeMats[0].normalMap=brickNormal;facadeMats[0].normalScale.set(.35,.35);
+facadeMats[1].normalMap=brickNormal;facadeMats[1].normalScale.set(.35,.35);
 const plasterNormal=groundTexture('realistic-assets/expanded-models/urban-building/textures/modular_urban_apartments_facade_plaster_nor_gl_1k.jpg',3);
-facadeMats[1].normalMap=plasterNormal;facadeMats[1].normalScale.set(.4,.4);
+facadeMats[2].normalMap=plasterNormal;facadeMats[2].normalScale.set(.4,.4);
 const entranceAwning=new THREE.MeshStandardMaterial({color:0x3d4c50,metalness:.6,roughness:.38});
 const castStone=new THREE.MeshStandardMaterial({color:0xc9c1b2,roughness:.94});
 
