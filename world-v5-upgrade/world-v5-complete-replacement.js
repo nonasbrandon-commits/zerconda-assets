@@ -14,6 +14,7 @@ import {createZercondaBeach} from './zerconda-beach.js';
 import {createCityMap} from './top-city-map.js';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
+import {createOwnableHomes} from './ownable-suburban-homes.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const ZERCONDA_BUILD='2026-11-16-waterfront-repair';
@@ -307,6 +308,7 @@ for(let k=0;k<blocks.length;k++){
 
 // Ocean-view residential neighborhood: homes face the southern beach.
 const waterfrontHomes=addWaterfrontHomes(scene,{count:12});
+const ownableHomes=createOwnableHomes(scene);
 
 // Dedicated tower island in its own city block (0..96, -96..0).
 // The 7.5m loop road surrounds the landscaped tower plaza and connects
@@ -565,6 +567,11 @@ const actionButton=(id,label,bottom,callback)=>{
  el.style.cssText='position:fixed;right:14px;bottom:'+bottom+'px;z-index:9999;padding:12px 15px;background:#203d50;color:white;border:1px solid #a2bac9;border-radius:9px;font:700 13px system-ui;display:none;cursor:pointer';
  el.addEventListener('click',callback);document.body.appendChild(el);return el;
 };
+const homeButton=actionButton('zerconda-home-action','H · BUY HOME',365,()=>{
+ const home=ownableHomes.closest(player.x,player.z,11);if(!home)return;
+ const result=ownableHomes.owned?.id===home.id?ownableHomes.decorate():ownableHomes.buy(home);
+ alert(result.message+'\\n\\nThis is a local-browser prototype, not an account-backed Zer Bucks transaction.');
+});
 const towerButton=actionButton('zerconda-tower-button','ENTER TOWER / ELEVATOR',245,toggleObservationDeck);
 const doorButton=actionButton('zerconda-door-button','F · ENTER BUILDING',305,toggleNearbyDoor);
 const apartmentButton=actionButton('zerconda-apartment-action','E · ELEVATOR / EXIT',425,apartmentAction);
@@ -745,6 +752,9 @@ function animate(){
  try{renderer.render(scene,camera);}
  catch(err){renderFailure=String(err);console.error('ZERCONDA RENDER ERROR',err);}
  finally{if(activeCar)activeCar.group.visible=true;}
+ const nearHome=!activeCar?ownableHomes.closest(player.x,player.z,11):null;
+ homeButton.style.display=nearHome?'block':'none';
+ if(nearHome)homeButton.textContent=ownableHomes.owned?.id===nearHome.id?'H · CUSTOMIZE HOME':'H · BUY HOME · 200 ZB (DEMO)';
  const nearTower=!activeCar&&Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)<7;
  towerButton.style.display=(onObservationDeck||insideNeedleLobby||nearTower)?'block':'none';
  towerButton.textContent=onObservationDeck?'T · ELEVATOR DOWN':insideNeedleLobby?'T · ELEVATOR UP':'T · ENTER TOWER';
