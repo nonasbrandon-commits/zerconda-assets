@@ -19,7 +19,7 @@ import {createPedestrians} from './animated-pedestrians.js';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-16-eastside-golf-expansion';
+const ZERCONDA_BUILD='2026-11-16-rigged-real-humanoid';
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
 // Does not call any old tree/lamp/car spawn loops.
@@ -504,6 +504,54 @@ const cityMap=createCityMap({player});
 const pedestrianSystem=createPedestrians(scene,{count:18});
 const playerRig=pedestrianSystem.createHuman(0);
 const avatar=playerRig.root;avatar.name='Zerconda player avatar';scene.add(avatar);
+let realAvatar=null,realAvatarMixer=null,realAvatarWalk=null,realAvatarIdle=null;
+let avatarBones={};
+new GLTFLoader().load(BASE+'realistic-assets/characters/zerconda-humanoid.glb',gltf=>{
+ const model=gltf.scene;
+ model.updateMatrixWorld(true);
+ const bounds=new THREE.Box3().setFromObject(model),size=bounds.getSize(new THREE.Vector3());
+ if(!Number.isFinite(size.y)||size.y<.01)throw Error('Invalid humanoid GLB dimensions');
+ const scale=1.94/size.y;
+ model.scale.setScalar(scale);
+ model.position.y=-bounds.min.y*scale;
+ // Orient the imported model to the avatar's forward direction.
+ model.rotation.y=Math.PI;
+ model.traverse(o=>{if(o.isMesh||o.isSkinnedMesh){o.castShadow=true;o.receiveShadow=true;}if(o.isBone)avatarBones[o.name.toLowerCase()]=o;});
+ avatar.add(model);realAvatar=model;playerRig.torso.visible=false;
+ playerRig.arms.forEach(a=>a.visible=false);playerRig.legs.forEach(l=>l.hip.visible=false);
+ if(gltf.animations?.length){
+  realAvatarMixer=new THREE.AnimationMixer(model);
+  const find=(words)=>gltf.animations.find(c=>words.some(w=>c.name.toLowerCase().includes(w)));
+  const walk=find(['walk','run','jog']),idle=find(['idle','stand']);
+  if(walk)realAvatarWalk=realAvatarMixer.clipAction(walk);
+  if(idle)realAvatarIdle=realAvatarMixer.clipAction(idle);
+  if(realAvatarIdle)realAvatarIdle.play();
+ }
+ console.info('ZERCONDA: loaded rigged 3D humanoid GLB',gltf.animations.map(a=>a.name));
+},undefined,error=>console.error('Humanoid GLB not available: retaining articulated fallback character',error));
+function updateRealAvatar(dt,time,speed){
+ if(!realAvatar)return;
+ if(realAvatarMixer){
+  realAvatarMixer.update(dt);
+  if(realAvatarWalk){
+   const moving=speed>.16;
+   if(moving&&!realAvatarWalk.isRunning())realAvatarWalk.reset().play();
+   realAvatarWalk.setEffectiveWeight(moving?1:0);
+   if(realAvatarIdle)realAvatarIdle.setEffectiveWeight(moving?0:1);
+   realAvatarWalk.timeScale=Math.max(.65,Math.min(1.8,speed/2.4));
+   return;
+  }
+ }
+ // If the CC0 character has no bundled animation, animate its skeleton directly.
+ const moving=Math.min(1,speed/2.5),cycle=Math.sin(time*8.5);
+ for(const [name,bone] of Object.entries(avatarBones)){
+  if(/left.*(upperleg|upleg|thigh)/.test(name))bone.rotation.x=cycle*.43*moving;
+  if(/right.*(upperleg|upleg|thigh)/.test(name))bone.rotation.x=-cycle*.43*moving;
+  if(/left.*(arm|shoulder)/.test(name)&&!/fore|lower/.test(name))bone.rotation.x=-cycle*.31*moving;
+  if(/right.*(arm|shoulder)/.test(name)&&!/fore|lower/.test(name))bone.rotation.x=cycle*.31*moving;
+ }
+}
+
 
 let activeCar=null,yaw=0,pitch=0,drag=false,lastX=0,lastY=0;
 let driverLookYaw=0,driverLookPitch=0,driverSteer=0;
@@ -741,7 +789,9 @@ function animate(){
   avatar.visible=!onObservationDeck&&!insideNeedleLobby&&!apartmentSession;
   avatar.position.set(player.x,0,player.z);
   avatar.rotation.y=yaw;
-  playerRig.animate(elapsed,Math.hypot(movement.vx,movement.vz));
+  const walkingSpeed=Math.hypot(movement.vx,movement.vz);
+  if(!realAvatar)playerRig.animate(elapsed,walkingSpeed);
+  else updateRealAvatar(dt,elapsed,walkingSpeed);
  }
  if(!Number.isFinite(camera.position.x)||!Number.isFinite(camera.position.y)||!Number.isFinite(camera.position.z))resetView();
  // Prevent the driven car body from obstructing the first-person windshield view.
