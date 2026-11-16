@@ -1,0 +1,42 @@
+name: Verify Zerconda V5 scene and assets
+on:
+  push:
+    paths:
+      - 'world-v5-upgrade/**'
+      - 'realistic-assets/fountain/**'
+      - '.github/workflows/verify-world-v5.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check both ES module scripts parse
+        run: |
+          node --check world-v5-upgrade/world-v5-complete-replacement.js
+          node --check world-v5-upgrade/realistic-fountain.js
+      - name: Check real binary 3D assets and photographic texture dependencies
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          files=[
+            'realistic-assets/fountain/zerconda_walkable_fountain_plaza.glb',
+            'realistic-assets/trees-and-vehicles/trees/leafy-small-tree.glb',
+            'realistic-assets/trees-and-vehicles/trees/leafy-island-tree.glb',
+            'realistic-assets/trees-and-vehicles/vehicles/starter-graphite-sedan.glb',
+            'realistic-assets/pbr/PavingStones070/PavingStones070_1K-JPG_Color.jpg',
+            'realistic-assets/pbr/Ground037/Ground037_1K-JPG_Color.jpg',
+            'realistic-assets/pbr/RoadLines001/RoadLines001_1K-JPG_Color.jpg',
+            'realistic-assets/expanded-models/brick-building/textures/modular_factory_facade_brick_diff_1k.jpg',
+            'realistic-assets/expanded-models/urban-building/textures/modular_urban_apartments_facade_plaster_diff_1k.jpg'
+          ]
+          for f in files:
+            p=Path(f);assert p.is_file() and p.stat().st_size>1000, f
+            print('OK',f,p.stat().st_size)
+          src=Path('world-v5-upgrade/world-v5-complete-replacement.js').read_text()
+          assert 'jetMaterial.opacity' not in [line.strip() for line in src.splitlines() if not line.strip().startswith('//')], 'Stale jetMaterial'
+          assert 'diagnosticMarker=new THREE.Mesh' not in src,'Debug marker still in scene'
+          PY
