@@ -11,17 +11,32 @@ export function createObservationNeedle(scene,{x=48,z=-48}={}){
  function mesh(geometry,material,px,py,pz){const o=new THREE.Mesh(geometry,material);o.position.set(px,py,pz);o.castShadow=false;o.receiveShadow=true;root.add(o);return o;}
  function cyl(top,bottom,height,y,material,sides=48){return mesh(new THREE.CylinderGeometry(top,bottom,height,sides),material,0,y,0);}
  cyl(7.3,7.7,.65,.32,stone);cyl(5.1,6.8,11,5.8,stone);
- cyl(2.3,4.2,63,42.5,steel);cyl(4.1,2.7,8,77.5,trim);
+ // Tapered core and exposed sweeping support structure like the homepage needle.
+ cyl(2.1,3.6,67,44,steel);
+ for(let i=0;i<3;i++){
+  const a=i*Math.PI*2/3;
+  const points=[new THREE.Vector3(Math.cos(a)*9.5,1,Math.sin(a)*9.5),new THREE.Vector3(Math.cos(a)*6.4,30,Math.sin(a)*6.4),new THREE.Vector3(Math.cos(a)*3.5,74,Math.sin(a)*3.5)];
+  mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points),24,.82,12),steel,0,0,0);
+ }
+ for(const h of [22,44,67]){
+  const ring=mesh(new THREE.TorusGeometry(6.9-h*.045,.33,10,64),trim,0,h,0);ring.rotation.x=Math.PI/2;
+ }
+ cyl(4.1,2.7,8,77.5,trim);
  // Reinforced glass-walled observation lounge.
- cyl(12.5,10.6,1.5,82,stone);
+ cyl(11.4,9.5,1.6,81.9,stone);
+ const lowerDeck=mesh(new THREE.TorusGeometry(11.9,.68,14,96),trim,0,82.3,0);lowerDeck.rotation.x=Math.PI/2;
  // Open panoramic glazing; no opaque central wall obstructing the skyline.
  const glazing=cyl(11.4,11.4,5.8,85.6,windows,64);
  glazing.material.depthWrite=false;
  cyl(12.3,12.3,.9,88.9,stone);
  cyl(13.4,12.8,1.15,90.1,trim);
+ const roofRim=mesh(new THREE.TorusGeometry(13.15,.52,12,96),steel,0,90.8,0);roofRim.rotation.x=Math.PI/2;
+ const roofGlass=new THREE.MeshPhysicalMaterial({color:0x5b8391,roughness:.18,metalness:.22,transparent:true,opacity:.9,side:THREE.DoubleSide});
+ const dome=mesh(new THREE.SphereGeometry(11.2,64,24,0,Math.PI*2,0,Math.PI*.31),roofGlass,0,90.55,0);
+ dome.scale.y=.35;
  cyl(8.6,8.6,.28,89.05,stone);
- cyl(1.05,1.05,13,97.1,steel);
- cyl(.28,.28,7,106.8,trim);
+ cyl(.75,.9,10,95.4,steel);
+ cyl(.23,.23,7,103.6,trim);
  const railMat=new THREE.MeshStandardMaterial({color:0xb3c5c9,metalness:.8,roughness:.25});
  for(let i=0;i<48;i++){
   const a=i*Math.PI/24,xx=Math.cos(a)*11.6,zz=Math.sin(a)*11.6;
