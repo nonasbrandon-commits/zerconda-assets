@@ -26,3 +26,16 @@ export function installUrbanPBR({scene,buildings=[],roads=[],sidewalks=[]}={}){
  for(const mesh of sidewalks)if(mesh?.isMesh)mesh.material=pavement;
  return {brick,concrete,asphalt,pavement,materials:cache};
 }
+
+export function upgradeExistingMaterial(material,asset,repeat=[1,1]){
+ // No blank surfaces: apply only after the downloaded photographic color map is confirmed.
+ const url=BASE+asset+'_color.jpg';
+ const loader=new THREE.TextureLoader();
+ loader.load(url,color=>{
+  color.colorSpace=THREE.SRGBColorSpace;color.wrapS=color.wrapT=THREE.RepeatWrapping;color.repeat.set(...repeat);color.anisotropy=8;
+  material.map=color;material.color.set(0xffffff);material.needsUpdate=true;
+  for(const [suffix,prop] of [['normal','normalMap'],['roughness','roughnessMap']]){
+   loader.load(BASE+asset+'_'+suffix+'.jpg',t=>{t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(...repeat);t.anisotropy=8;material[prop]=t;material.needsUpdate=true;},undefined,()=>{});
+  }
+ },undefined,()=>{console.info('Using Zerconda existing material while CC0 download is unavailable:',asset);});
+}
