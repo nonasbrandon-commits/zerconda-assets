@@ -380,7 +380,7 @@ let onObservationDeck=false;
 camera.position.set(48,5,7);
 camera.lookAt(48,2,45);
 function resetView(){
- activeCar=null;player.x=48;player.z=15;yaw=0;pitch=.1;
+ activeCar=null;onObservationDeck=false;player.x=48;player.z=15;yaw=0;pitch=.1;
  camera.position.set(48,5,7);camera.lookAt(48,2,45);
  if(status)status.textContent='View reset · Walk forward with W';
 }
@@ -419,6 +419,42 @@ for(const b of document.querySelectorAll('[data-key]')){
  for(const evt of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(evt,()=>keys.delete(key));
 }
 const enter=document.getElementById('enter');if(enter)enter.onclick=toggleCar;
+// Context-sensitive actions: accessible on keyboard and touch screens.
+const actionButton=(id,label,bottom,callback)=>{
+ const el=document.createElement('button');el.id=id;el.type='button';el.textContent=label;
+ el.style.cssText='position:fixed;right:14px;bottom:'+bottom+'px;z-index:9999;padding:12px 15px;background:#203d50;color:white;border:1px solid #a2bac9;border-radius:9px;font:700 13px system-ui;display:none;cursor:pointer';
+ el.addEventListener('click',callback);document.body.appendChild(el);return el;
+};
+const towerButton=actionButton('zerconda-tower-button','T · OBSERVATION DECK',245,toggleObservationDeck);
+const doorButton=actionButton('zerconda-door-button','F · OPEN DOORS',305,toggleNearbyDoor);
+function nearestDoor(){
+ if(activeCar||onObservationDeck)return null;
+ let nearest=null,best=3.7;
+ for(const d of doors){const dist=Math.hypot(player.x-d.x,player.z-d.z);if(dist<best){best=dist;nearest=d;}}
+ return nearest;
+}
+function toggleNearbyDoor(){
+ const d=nearestDoor();if(!d)return;
+ const next=!d.manual;
+ for(const leaf of doors){
+  if(Math.abs(leaf.x-d.x)<.1&&Math.abs(leaf.z-d.z)<.1){
+   leaf.manual=next;leaf.holdUntil=next?elapsed+8:0;
+  }
+ }
+}
+function toggleObservationDeck(){
+ if(activeCar)return;
+ if(onObservationDeck){
+  onObservationDeck=false;
+  player.x=observationNeedle.entrance.x;player.z=observationNeedle.entrance.z+1;
+  camera.position.set(player.x,5,player.z-6);
+  if(status)status.textContent='Back at tower entrance · T to go up';return;
+ }
+ if(Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)>6)return;
+ onObservationDeck=true;player.x=observationNeedle.x;player.z=observationNeedle.z+8;
+ yaw=0;pitch=.1;camera.position.set(player.x,observationNeedle.deckY+4,player.z-5);
+ if(status)status.textContent='Observation deck · Walk with WASD · Drag to look · T to descend';
+}
 function toggleCar(){
  if(activeCar){player.x=activeCar.x+3;player.z=activeCar.z;activeCar=null;movement.vx=0;movement.vz=0;movement.wheelImpulse=0;return;}
  let closest=null,best=5;
@@ -475,7 +511,7 @@ function animate(){
  }
  for(const d of doors){
   const near=Math.hypot(player.x-d.x,player.z-d.z)<3.4;
-  d.open=THREE.MathUtils.damp(d.open,near?1:0,4,dt);
+  d.open=THREE.MathUtils.damp(d.open,near&&d.manual?1:0,4,dt);
   d.hinge.rotation.y=d.side*d.open*1.22;
  }
  // The old procedural fountain's jetMaterial was removed with that fountain.
