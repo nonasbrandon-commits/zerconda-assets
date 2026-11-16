@@ -1,0 +1,112 @@
+name: Import real photogrammetry models for Zerconda V5
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/import-professional-models.yml'
+permissions:
+  contents: write
+jobs:
+  import-models:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download genuine Poly Haven models with dependencies
+        run: |
+          cat > /tmp/import_models.py <<'PY'
+          import json,urllib.request,pathlib,os,re,hashlib,time
+          BASE='https://api.polyhaven.com'
+          HEAD={'User-Agent':'Zerconda-V5-Asset-Importer/1.0 (github.com/nonasbrandon-commits/zerconda-assets)'}
+          LIMIT=24_000_000
+          root=pathlib.Path('realistic-assets/professional-models');root.mkdir(parents=True,exist_ok=True)
+          def get(url):
+              req=urllib.request.Request(url,headers=HEAD)
+              with urllib.request.urlopen(req,timeout=100) as r:
+                  data=r.read(LIMIT+1)
+              if len(data)>LIMIT:raise ValueError('file over 24 MB limit')
+              return data
+          def js(url):return json.loads(get(url))
+          assets=js(BASE+'/assets?type=models')
+          targets=[
+              ('tree',['tree','oak','maple','birch','plant','bush'],['nature']),
+              ('street-light',['street lamp','streetlight','lamp post','street light','lantern'],['lighting','infrastructure']),
+              ('bench',['bench','park bench'],['furniture','outdoor']),
+              ('trash-bin',['trash bin','trash can','dumpster','garbage bin'],['containers','infrastructure']),
+              ('urban-prop',['hydrant','traffic cone','bollard','barrier','fire escape'],['infrastructure','industrial']),
+              ('architecture',['building','storefront','facade','shop front','brick wall'],['architecture']),
+          ]
+          def score(item,terms,cats):
+              a=assets[item];hay=(a.get('name','')+' '+' '.join(a.get('tags',[]))+' '+a.get('description','')).lower()
+              cat=a.get('category','').lower()
+              return sum((12 if t in a.get('name','').lower() else 3) for t in terms if t in hay)+sum(3 for c in cats if c in cat)
+          report={}
+          used=set()
+          for label,terms,cats in targets:
+              ranked=sorted(assets,key=lambda k:score(k,terms,cats),reverse=True)
+              choices=[k for k in ranked if score(k,terms,cats)>=8 and k not in used][:6]
+              errors=[]
+              for asset in choices:
+                  try:
+                      catalog=js(BASE+'/files/'+asset)
+                      # Poly Haven model formats usually provide gltf/1k/gltf with an include map.
+                      options=[]
+                      def discover(node,path=()):
+                          if isinstance(node,dict):
+                              if isinstance(node.get('url'),str):
+                                  options.append((path,node))
+                              else:
+                                  for k,v in node.items():discover(v,path+(str(k),))
+                      discover(catalog)
+                      main=[(p,n) for p,n in options if any(x.lower() in ('gltf','glb') for x in p) and str(n.get('url','')).split('?')[0].lower().endswith(('.gltf','.glb'))]
+                      main.sort(key=lambda x:(0 if '1k' in [z.lower() for z in x[0]] else 1,0 if x[1]['url'].lower().split('?')[0].endswith('.glb') else 1,len(x[0])))
+                      if not main:raise ValueError('No glTF/GLB download available')
+                      path,node=main[0]
+                      out=root/label
+                      out.mkdir(exist_ok=True)
+                      # Include dependencies from selected file. Preserve relative paths and reject unsafe paths.
+                      selected=[('model',node)]
+                      def deps(n):
+                          inc=n.get('include',{})
+                          if isinstance(inc,dict):
+                              for k,v in inc.items():
+                                  if isinstance(v,dict) and 'url' in v:selected.append((k,v))
+                                  elif isinstance(v,str):selected.append((k,{'url':v}))
+                      deps(node)
+                      saved=[]
+                      for key,item in selected:
+                          url=item['url']
+                          name=url.split('?')[0].rsplit('/',1)[-1]
+                          if not name:raise ValueError('No file name')
+                          if item.get('size',0)>LIMIT:raise ValueError('Dependency over 24 MB: '+name)
+                          data=get(url)
+                          dest=out/name
+                          dest.write_bytes(data)
+                          saved.append({'path':str(dest),'bytes':len(data),'source':url})
+                      if not saved:raise ValueError('No files saved')
+                      # glTF files may refer to external textures/buffers; report any missing dependencies.
+                      gltfs=list(out.glob('*.gltf'))
+                      missing=[]
+                      for gf in gltfs:
+                          doc=json.loads(gf.read_text())
+                          for obj in doc.get('buffers',[])+doc.get('images',[]):
+                              uri=obj.get('uri','')
+                              if uri and not uri.startswith('data:') and not (out/uri).exists():missing.append(uri)
+                      if missing:raise ValueError('Missing glTF dependencies: '+str(missing[:8]))
+                      report[label]={'status':'downloaded','asset_id':asset,'asset_name':assets[asset].get('name'),'files':saved,'license':'CC0','source':'https://polyhaven.com/a/'+asset}
+                      used.add(asset)
+                      break
+                  except Exception as exc:
+                      errors.append(asset+': '+str(exc))
+                      for p in (root/label).glob('*'):p.unlink()
+              if label not in report:report[label]={'status':'unavailable','attempts':errors}
+          (root/'IMPORT_REPORT.json').write_text(json.dumps(report,indent=2))
+          (root/'README.md').write_text('# Zerconda V5 professional models\n\nSource: Poly Haven (CC0). These are third-party authored models, not generated primitives.\n\nSee IMPORT_REPORT.json for verified downloaded models, dependencies, and failures. Files are individually limited to 24 MB. Use Three.js GLTFLoader. Do not substitute basic geometry for missing models.\n')
+          print(json.dumps({k:{'status':v['status'],'asset':v.get('asset_name'),'reason':v.get('attempts',[])[:2]} for k,v in report.items()},indent=2))
+          if not any(v['status']=='downloaded' for v in report.values()):raise SystemExit('No professional models could be imported')
+          PY
+          python3 /tmp/import_models.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add realistic-assets/professional-models
+          git diff --cached --quiet || (git commit -m "Import professional CC0 models for Zerconda V5" && git push)
