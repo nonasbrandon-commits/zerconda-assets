@@ -6,6 +6,7 @@ import {createCloudSky} from './cloud-sky.js';
 import {addCityDepth} from './city-depth-assets.js';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js';
+import {createApartmentExperience} from './apartment-interiors.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -310,6 +311,9 @@ coffeeShop.root.rotation.y=Math.PI/2; // Entrance and patio face east toward the
 for(const seat of coffeeShop.seats){const lx=seat.x+34,lz=seat.z+48;seat.x=-34+lz;seat.z=-48-lx;}
 // Populate tower surroundings and distant horizon with detailed 3D architecture.
 const cityDepth=addCityDepth({scene,asphalt,paving,grass});
+const apartments=createApartmentExperience({scene,x:1050,z:1050});
+apartments.root.visible=false;
+let apartmentSession=null,apartmentFloor=0;
 // The old cartoon fountain, tiled boxes, sphere bushes, and procedural benches
 // have been REMOVED. The GLB supplies the entire detailed plaza instead.
 let realisticPlaza=null;
@@ -436,6 +440,7 @@ let onObservationDeck=false;
 camera.position.set(48,5,7);
 camera.lookAt(48,2,45);
 function resetView(){
+ if(apartmentSession){apartmentSession=null;apartments.root.visible=false;}
  activeCar=null;onObservationDeck=false;player.x=48;player.z=15;yaw=0;pitch=.1;
  camera.position.set(48,5,7);camera.lookAt(48,2,45);
  if(status)status.textContent='View reset · Walk forward with W';
@@ -466,7 +471,7 @@ renderer.domElement.addEventListener('wheel',e=>{
  movement.wheelImpulse=THREE.MathUtils.clamp(
   movement.wheelImpulse+dir*WHEEL_STEP,-WHEEL_MAX,WHEEL_MAX);
 },{passive:false});
-addEventListener('keydown',e=>{keys.add(e.code);if(e.code==='KeyE'&&!e.repeat)toggleCar();if(e.code==='KeyF'&&!e.repeat)toggleNearbyDoor();if(e.code==='KeyT'&&!e.repeat)toggleObservationDeck();
+addEventListener('keydown',e=>{keys.add(e.code);if(e.code==='KeyE'&&!e.repeat){if(apartmentSession)apartmentAction();else toggleCar();}if(e.code==='KeyF'&&!e.repeat)toggleNearbyDoor();if(e.code==='KeyT'&&!e.repeat)toggleObservationDeck();
  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();});
 addEventListener('keyup',e=>keys.delete(e.code));
 for(const b of document.querySelectorAll('[data-key]')){
@@ -483,6 +488,15 @@ const actionButton=(id,label,bottom,callback)=>{
 };
 const towerButton=actionButton('zerconda-tower-button','T · OBSERVATION DECK',245,toggleObservationDeck);
 const doorButton=actionButton('zerconda-door-button','F · ENTER BUILDING',305,toggleNearbyDoor);
+const apartmentButton=actionButton('zerconda-apartment-action','E · ELEVATOR / EXIT',425,apartmentAction);
+const floorPanel=document.createElement('div');floorPanel.id='zerconda-apartment-floors';
+floorPanel.style.cssText='position:fixed;left:14px;top:85px;z-index:10001;background:rgba(15,30,42,.92);color:white;border-radius:10px;padding:12px;display:none;font:13px system-ui;max-width:290px';
+floorPanel.innerHTML='<b>ZERCONDA APARTMENTS</b><p>Choose a floor to visit:</p>';
+for(let f=0;f<=4;f++){const btn=document.createElement('button');btn.textContent=f===0?'LOBBY':('FLOOR '+f);btn.style.cssText='margin:3px;padding:9px;background:#315568;color:white;border:1px solid #87a5b6;border-radius:6px;cursor:pointer';btn.addEventListener('click',()=>setApartmentFloor(f));floorPanel.appendChild(btn);}
+document.body.appendChild(floorPanel);
+function setApartmentFloor(f){if(!apartmentSession)return;apartmentFloor=f;apartments.showFloor(f);player.x=apartments.x;player.z=apartments.z+6;movement.vx=0;movement.vz=0;if(status)status.textContent=f===0?'Apartment lobby · reception and elevator':'Apartment floor '+f+' · furnished rooms';}
+function apartmentAction(){if(!apartmentSession)return;if(apartmentFloor!==0){setApartmentFloor(0);return;}const back=apartmentSession;apartmentSession=null;apartments.root.visible=false;floorPanel.style.display='none';player.x=back.x;player.z=back.z+3.4;movement.vx=0;movement.vz=0;if(status)status.textContent='Exited apartment building';}
+function enterApartment(d){if(apartmentSession)return;apartmentSession={x:d.x,z:d.z};apartments.root.visible=true;floorPanel.style.display='block';activeCar=null;setApartmentFloor(0);}
 // Legacy overlay cleanup: older Airo button can survive alongside the new UI.
 const fixLegacyDoorLabels=()=>{for(const b of document.querySelectorAll('button')){if(b!==doorButton&&/^(?:F\\s*[·:.\\-]\\s*)?(?:OPEN|CLOSE)\\s+DOORS?$/i.test((b.textContent||'').trim())){b.textContent='F · ENTER BUILDING';b.onclick=()=>toggleNearbyDoor();}}};
 fixLegacyDoorLabels();
@@ -493,7 +507,7 @@ let sittingSeat=null;
 function toggleCafeSeat(){if(sittingSeat){sittingSeat=null;return;}const seat=coffeeShop.nearestSeat(player.x,player.z,2.5);if(!seat)return;sittingSeat=seat;player.x=seat.x;player.z=seat.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Seated at Brewstone Coffee · Press C or use button to stand';}
 addEventListener('keydown',e=>{if(e.code==='KeyC'&&!e.repeat&&(sittingSeat||coffeeShop.nearestSeat(player.x,player.z,2.5)))toggleCafeSeat();});
 function nearestDoor(){
- if(activeCar||onObservationDeck)return null;
+ if(activeCar||onObservationDeck||apartmentSession)return null;
  let nearest=null,best=3.7;
  for(const d of doors){const dist=Math.hypot(player.x-d.x,player.z-d.z);if(dist<best){best=dist;nearest=d;}}
  return nearest;
