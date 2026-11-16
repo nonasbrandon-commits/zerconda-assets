@@ -13,6 +13,7 @@ def choose(asset,key):
   for ext in ("jpg","png"):
    options=formats.get(resolution,{}).get(ext)
    if isinstance(options,dict):
+    if options.get('url'):return options['url']
     for val in options.values():
      if isinstance(val,dict) and val.get("url"):return val["url"]
      if isinstance(val,list):
