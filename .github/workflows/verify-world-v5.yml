@@ -14,10 +14,21 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Check both ES module scripts parse
+      - name: Parse every world ES module and check dependencies
         run: |
-          node --check world-v5-upgrade/world-v5-complete-replacement.js
-          node --check world-v5-upgrade/realistic-fountain.js
+          set -eu
+          find world-v5-upgrade -type f -name '*.js' -exec node --check {} \;
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          missing=[]
+          for p in Path('world-v5-upgrade').glob('*.js'):
+              for name in re.findall(r"from\s+['\"](\./[^'\"]+\.js)['\"]",p.read_text()):
+                  if not (p.parent/name).exists():missing.append(str(p)+': '+name)
+          assert not missing,'Missing imports: '+', '.join(missing)
+          print('All world module imports found')
+          PY
+          python -m py_compile world-v5-upgrade/download-urban-pbr.py
       - name: Check real binary 3D assets and photographic texture dependencies
         run: |
           python - <<'PY'
