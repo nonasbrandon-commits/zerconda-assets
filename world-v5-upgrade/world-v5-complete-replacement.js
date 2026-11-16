@@ -474,10 +474,10 @@ const actionButton=(id,label,bottom,callback)=>{
 };
 const towerButton=actionButton('zerconda-tower-button','T · OBSERVATION DECK',245,toggleObservationDeck);
 const doorButton=actionButton('zerconda-door-button','F · ENTER BUILDING',305,toggleNearbyDoor);
-const cafeButton=actionButton('zerconda-cafe-button','S · SIT DOWN',365,toggleCafeSeat);
+const cafeButton=actionButton('zerconda-cafe-button','C · SIT DOWN',365,toggleCafeSeat);
 let sittingSeat=null;
-function toggleCafeSeat(){if(sittingSeat){sittingSeat=null;return;}const seat=coffeeShop.nearestSeat(player.x,player.z,2.5);if(!seat)return;sittingSeat=seat;player.x=seat.x;player.z=seat.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Seated at Brewstone Coffee · Press S or use button to stand';}
-addEventListener('keydown',e=>{if(e.code==='KeyS'&&!e.repeat&&coffeeShop.nearestSeat(player.x,player.z,2.5)&&!keys.has('KeyW')&&!keys.has('KeyA')&&!keys.has('KeyD'))toggleCafeSeat();});
+function toggleCafeSeat(){if(sittingSeat){sittingSeat=null;return;}const seat=coffeeShop.nearestSeat(player.x,player.z,2.5);if(!seat)return;sittingSeat=seat;player.x=seat.x;player.z=seat.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Seated at Brewstone Coffee · Press C or use button to stand';}
+addEventListener('keydown',e=>{if(e.code==='KeyC'&&!e.repeat&&(sittingSeat||coffeeShop.nearestSeat(player.x,player.z,2.5)))toggleCafeSeat();});
 function nearestDoor(){
  if(activeCar||onObservationDeck)return null;
  let nearest=null,best=3.7;
@@ -588,7 +588,7 @@ function animate(){
  if(door)doorButton.textContent='F · ENTER BUILDING';
  const nearSeat=coffeeShop.nearestSeat(player.x,player.z,2.5);
  cafeButton.style.display=(sittingSeat||nearSeat)&&!activeCar?'block':'none';
- cafeButton.textContent=sittingSeat?'STAND UP':'S · SIT AT TABLE';
+ cafeButton.textContent=sittingSeat?'STAND UP':'C · SIT AT TABLE';
  if((diagnosticFrames++%30)===0){
   const p=camera.position;
   diag.textContent='RENDER '+(contextLost?'CONTEXT LOST':'ACTIVE')+
