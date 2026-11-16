@@ -66,7 +66,22 @@ function groundPBR(folder,name,repeat,tint=0xffffff){
   roughness:1,metalness:0
  });
 }
-const asphalt=groundPBR('RoadLines001','RoadLines001',25,0x777777);
+// Neutral procedural asphalt: previous RoadLines001 photograph contained painted
+// markings that repeated across the ENTIRE road, causing a giant zebra pattern.
+const roadCanvas=document.createElement('canvas');roadCanvas.width=512;roadCanvas.height=512;
+const roadCtx=roadCanvas.getContext('2d');
+const roadPixels=roadCtx.createImageData(512,512);
+let roadSeed=83971;
+for(let i=0;i<roadPixels.data.length;i+=4){
+ roadSeed=(Math.imul(roadSeed,1664525)+1013904223)>>>0;
+ const grain=39+(roadSeed>>>24)%24;
+ roadPixels.data[i]=grain;roadPixels.data[i+1]=grain;roadPixels.data[i+2]=grain;roadPixels.data[i+3]=255;
+}
+roadCtx.putImageData(roadPixels,0,0);
+const roadTexture=new THREE.CanvasTexture(roadCanvas);
+roadTexture.colorSpace=THREE.SRGBColorSpace;roadTexture.wrapS=roadTexture.wrapT=THREE.RepeatWrapping;
+roadTexture.repeat.set(45,45);roadTexture.anisotropy=8;
+const asphalt=new THREE.MeshStandardMaterial({map:roadTexture,roughness:.96,metalness:0});
 const paving=groundPBR('PavingStones070','PavingStones070',18,0xe4ddd0);
 const curb=M(0xd7d2c8);
 const grass=groundPBR('Ground037','Ground037',65,0x94a68a);
@@ -134,8 +149,8 @@ for(const c of roadLines){
  }
  for(let p=-166;p<=166;p+=12){
   if(!roadLines.some(k=>Math.abs(p-k)<15)){
-   box(.14,.014,5,c,.035,p,lane);
-   box(5,.014,.14,p,.038,c,lane);
+   box(.14,.014,5,c,.035,p,yellow);
+   box(5,.014,.14,p,.038,c,yellow);
   }
  }
 }
@@ -573,7 +588,7 @@ addEventListener('pointerup',()=>drag=false);
 addEventListener('pointermove',e=>{if(!drag)return;
  const dx=e.clientX-lastX,dy=e.clientY-lastY;
  if(activeCar){driverLookYaw=THREE.MathUtils.clamp(driverLookYaw-dx*.003,-1.25,1.25);driverLookPitch=THREE.MathUtils.clamp(driverLookPitch+dy*.0025,-.45,.55);}
- else{yaw-=dx*.003;pitch=THREE.MathUtils.clamp(pitch+dy*.0025,-.4,.75);}
+ else{yaw-=dx*.003;pitch=THREE.MathUtils.clamp(pitch-dy*.004,-1.05,1.05);}
  lastX=e.clientX;lastY=e.clientY;});
 function walkable(x,z){
  if(apartmentSession)return apartments.contains(x,z);
@@ -647,10 +662,10 @@ function animate(){
  }else{
   const dist=onObservationDeck?2.8:5,eye=onObservationDeck?observationNeedle.deckY+1.7:2.1;
   const target=new THREE.Vector3(player.x,eye,player.z);
-  const desired=new THREE.Vector3(player.x-Math.sin(yaw)*dist,eye+2+pitch*dist,player.z-Math.cos(yaw)*dist);
+  const desired=new THREE.Vector3(player.x-Math.sin(yaw)*dist,eye+2+Math.sin(pitch)*dist,player.z-Math.cos(yaw)*dist);
   camera.position.lerp(desired,Math.min(1,dt*8));
   camera.position.y=Math.max(onObservationDeck?observationNeedle.deckY+1.25:1.75,camera.position.y);
-  camera.lookAt(target);
+  camera.lookAt(target.clone().add(new THREE.Vector3(0,Math.sin(pitch)*3.5,0)));
  }
  if(!Number.isFinite(camera.position.x)||!Number.isFinite(camera.position.y)||!Number.isFinite(camera.position.z))resetView();
  // Prevent the driven car body from obstructing the first-person windshield view.
