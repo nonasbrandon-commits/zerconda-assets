@@ -13,6 +13,7 @@ import {addAirDancers} from './air-dancers.js';
 import {createZercondaBeach} from './zerconda-beach.js';
 import {createCityMap} from './top-city-map.js';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js';
+import {upgradeExistingMaterial} from './urban-pbr-materials.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -188,6 +189,11 @@ const facadeMats=[
  t.repeat.set(1,1);t.anisotropy=8; // prevent crushed/over-tiled facade photography
  return new THREE.MeshStandardMaterial({map:t,roughness:.93,color:0xffffff});
 });
+// Upgrade existing materials only after the photographic files have loaded.
+upgradeExistingMaterial(facadeMats[4],'brick',[2,3]);
+upgradeExistingMaterial(facadeMats[5],'concrete',[2,3]);
+upgradeExistingMaterial(asphalt,'asphalt',[12,12]);
+upgradeExistingMaterial(paving,'sidewalk',[8,8]);
 const roof=M(0x34373a),metal=M(0x565c5e,.42,.55);
 const brickNormal=groundTexture('realistic-assets/expanded-models/brick-building/textures/modular_factory_facade_brick_nor_gl_1k.jpg',3);
 facadeMats[4].normalMap=brickNormal;facadeMats[4].normalScale.set(.35,.35);
