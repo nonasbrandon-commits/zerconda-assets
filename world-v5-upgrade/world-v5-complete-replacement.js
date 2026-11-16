@@ -58,8 +58,28 @@ const paving=groundPBR('PavingStones070','PavingStones070',18,0xe4ddd0);
 const curb=M(0xd7d2c8);
 const grass=groundPBR('Ground037','Ground037',65,0x94a68a);
 const lane=M(0xeae5d7),yellow=M(0xc4ad62),dark=M(0x252a2d),stone=M(0xc4bcae);
-const bronze=M(0x6b5c48,.38,.62),wood=M(0x6a4a31),windowMat=M(0x28434f,.23,.38);
-const glass=M(0x31576a,.15,.35),doorMat=M(0x473e38,.48,.25);
+const bronze=M(0x6b5c48,.38,.62),wood=M(0x6a4a31);
+const glass=new THREE.MeshPhysicalMaterial({color:0x9dbfce,metalness:.08,roughness:.095,transparent:true,opacity:.83,clearcoat:1,clearcoatRoughness:.045,side:THREE.DoubleSide,depthWrite:true});
+const windowMat=glass,doorMat=M(0x655343,.42,.18);
+const windowFrame=M(0x43494a,.42,.5),windowSill=M(0xd7cec0,.9);
+const windowReflection=new THREE.MeshBasicMaterial({color:0xd8f0ff,transparent:true,opacity:.18,depthWrite:false,side:THREE.DoubleSide});
+function architecturalWindow(group,cx,cy,cz,width,height,face='front'){
+ const outer=new THREE.Group();outer.position.set(cx,cy,cz);
+ if(face==='side')outer.rotation.y=Math.PI/2;
+ group.add(outer);
+ // A bright interior backing, glazing, highlights and actual raised frame.
+ box(width,height,.035,0,0,-.11,new THREE.MeshBasicMaterial({color:0x78909a}),outer);
+ box(width-.12,height-.12,.045,0,0,.015,glass,outer);
+ box(.075,height+.12,.18,-width/2,0,.08,windowFrame,outer);
+ box(.075,height+.12,.18,width/2,0,.08,windowFrame,outer);
+ box(width+.12,.075,.18,0,height/2,.08,windowFrame,outer);
+ box(width+.12,.075,.18,0,-height/2,.08,windowFrame,outer);
+ box(.06,height,.09,0,0,.12,windowFrame,outer);
+ box(width,.06,.09,0,-height*.06,.12,windowFrame,outer);
+ box(width+.34,.14,.31,0,-height/2-.11,.06,windowSill,outer);
+ const glint=box(width*.16,height*.81,.006,-width*.25,0,.153,windowReflection,outer);
+ glint.rotation.z=-.13;glint.castShadow=false;glint.receiveShadow=false;
+}
 const geo=new THREE.BoxGeometry(1,1,1);
 function box(w,h,d,x,y,z,material,parent=scene){
  const o=new THREE.Mesh(geo,material);o.scale.set(w,h,d);o.position.set(x,y,z);
@@ -200,7 +220,7 @@ function makeBuilding(x,z,w,d,h,type){
   hinge.position.set(x+s*1.42,0,z+d/2+.41);
   const panel=box(1.37,2.7,.09,-s*.685,1.37,0,doorMat,hinge);
   box(.07,.16,.08,-s*1.12,1.3,.09,bronze,hinge);
-  scene.add(hinge);doors.push({hinge,x,z:z+d/2+.41,side:s,open:0});
+  scene.add(hinge);doors.push({hinge,x,z:z+d/2+.41,side:s,open:0,manual:false,holdUntil:0});
  }
  // Entrance canopy and sconces.
  box(4.3,.22,1.2,0,3.25,d/2+.65,metal,g);
@@ -387,7 +407,7 @@ renderer.domElement.addEventListener('wheel',e=>{
  movement.wheelImpulse=THREE.MathUtils.clamp(
   movement.wheelImpulse+dir*WHEEL_STEP,-WHEEL_MAX,WHEEL_MAX);
 },{passive:false});
-addEventListener('keydown',e=>{keys.add(e.code);if(e.code==='KeyE'&&!e.repeat)toggleCar();
+addEventListener('keydown',e=>{keys.add(e.code);if(e.code==='KeyE'&&!e.repeat)toggleCar();if(e.code==='KeyF'&&!e.repeat)toggleNearbyDoor();
  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();});
 addEventListener('keyup',e=>keys.delete(e.code));
 for(const b of document.querySelectorAll('[data-key]')){
