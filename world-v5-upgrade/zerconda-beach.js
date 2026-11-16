@@ -1,3 +1,4 @@
+import {addRealisticBeachPalms} from './realistic-beach-palms.js';
 import * as THREE from 'three';
 // Zerconda South Beach, reachable on foot from the southern city edge at z=168.
 // Tiled sand PBR, animated layered water, foam, dunes, boardwalk, umbrellas and palms.
@@ -73,15 +74,8 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
   const pole=mesh(new THREE.CylinderGeometry(.045,.055,2.7,10),leg,x+2,1.45,z);
   const canopy=mesh(new THREE.ConeGeometry(1.65,.68,12),fabric[(i+1)%4],x+2,2.9,z);
  }
- // Palm clusters with segmented trunks and layered curved fronds.
- const trunk=new THREE.MeshStandardMaterial({color:0x7d6245,roughness:1});
- const frond=new THREE.MeshStandardMaterial({color:0x356d3c,roughness:.85,side:THREE.DoubleSide});
- for(let i=0;i<30;i++){
-  const x=-154+(i*61)%308,z=191+(i*23)%24;if(Math.abs(x)<10&&z<201)continue;
-  const height=5+(i%5)*.6;
-  const stem=mesh(new THREE.CylinderGeometry(.19,.36,height,9),trunk,x,height/2,z);stem.rotation.z=(i%3-1)*.08;
-  for(let k=0;k<9;k++){const a=k*Math.PI*2/9;const leaf=mesh(new THREE.ConeGeometry(.52,4.7,4),frond,x+Math.sin(a)*1.6,height-.35,z+Math.cos(a)*1.6);leaf.rotation.z=Math.sin(a)*1.15;leaf.rotation.x=Math.cos(a)*1.15;}
- }
+ // Detailed coconut palms with individual curved fronds, no low-poly cone foliage.
+ addRealisticBeachPalms(root,{count:30});
  let elapsed=0;
  return {root,update(dt){elapsed+=dt;const arr=pos.array;for(let i=0;i<pos.count;i++){const xx=original[i*3],yy=original[i*3+1];arr[i*3+2]=Math.sin(xx*.038+yy*.013+elapsed*1.3)*.21+Math.sin(yy*.095-xx*.022+elapsed*2.1)*.10+Math.sin(xx*.17+yy*.11-elapsed*2.7)*.035;}pos.needsUpdate=true;ocean.geometry.computeVertexNormals();if(water.map){water.map.offset.x=(elapsed*.003)%1;water.map.offset.y=(elapsed*.005)%1;}wash.position.z=242+Math.sin(elapsed*.7)*2;wash.material.opacity=.08+.06*(.5+.5*Math.sin(elapsed*.7));shore.forEach((s,i)=>{s.position.z=241+i*1.35+Math.sin(elapsed*.9+i*.7)*1.5;s.material.opacity=.14+.18*(.5+.5*Math.sin(elapsed*.9+i*.7));});},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
 }
