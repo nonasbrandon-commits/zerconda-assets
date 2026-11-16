@@ -9,6 +9,7 @@ import {createCoffeeShop} from './brewstone-coffee.js';
 import {createApartmentExperience} from './apartment-interiors.js';
 import {createDealership} from './zerconda-dealership.js';
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
+import {addAirDancers} from './air-dancers.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -314,6 +315,7 @@ const observationNeedle=createObservationNeedle(scene,{x:48,z:-48});
 const coffeeShop=createCoffeeShop(scene,{x:-34,z:-48});
 // Walk-in showroom just west of Brewstone Coffee, with three fictional display vehicles.
 const dealership=createDealership(scene,{x:-72,z:-48});
+const airDancers=addAirDancers(scene,{x:-72,z:-48});
 let dealerInside=false;
 // Separate commercial parcels with an actual paved access road, curb and pedestrian sidewalks.
 box(8,.13,83,-51.5,-.025,-48,asphalt);
@@ -578,6 +580,7 @@ function walkable(x,z){
 let elapsed=0;
 function animate(){
  requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);elapsed+=dt;
+ airDancers.update(elapsed);
  if(realisticPlaza)realisticPlaza.update(dt);
  cloudSky.update(dt);
  const f=Number(keys.has('KeyW')||keys.has('ArrowUp'))-Number(keys.has('KeyS')||keys.has('ArrowDown'));
