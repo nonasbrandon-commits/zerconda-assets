@@ -4,7 +4,7 @@ export function addAirDancers(scene,{x=-72,z=-48}={}){
  const group=new THREE.Group();group.position.set(x,0,z);scene.add(group);
  const dancers=[];
  for(let i=0;i<3;i++){
-  const root=new THREE.Group();root.position.set(26.2,0,-8+i*8);group.add(root);
+  const root=new THREE.Group();root.position.set(8.5,0,-18-i*4.2);group.add(root);
   const orange=new THREE.MeshStandardMaterial({color:i===1?0xff8126:i===2?0xf35b21:0xffa02c,roughness:.86,side:THREE.DoubleSide});
   const black=new THREE.MeshStandardMaterial({color:0x14191c,roughness:.8});
   const white=new THREE.MeshBasicMaterial({color:0xfafafa});
