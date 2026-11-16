@@ -1,0 +1,184 @@
+{
+  "fountain": {
+    "status": "unavailable",
+    "attempts": []
+  },
+  "statue": {
+    "status": "downloaded",
+    "asset_id": "marble_bust_01",
+    "asset_name": "Marble Bust 01",
+    "files": [
+      {
+        "path": "realistic-assets/plaza-assets/statue/marble_bust_01_1k.gltf",
+        "bytes": 2793,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/marble_bust_01/marble_bust_01_1k.gltf"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/statue/marble_bust_01.bin",
+        "bytes": 416608,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/marble_bust_01/marble_bust_01.bin"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/statue/textures/marble_bust_01_nor_gl_1k.jpg",
+        "bytes": 124627,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/marble_bust_01/marble_bust_01_nor_gl_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/statue/textures/marble_bust_01_diff_1k.jpg",
+        "bytes": 160337,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/marble_bust_01/marble_bust_01_diff_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/statue/textures/marble_bust_01_rough_1k.jpg",
+        "bytes": 193918,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/marble_bust_01/marble_bust_01_rough_1k.jpg"
+      }
+    ],
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/marble_bust_01"
+  },
+  "planter": {
+    "status": "downloaded",
+    "asset_id": "planter_box_01",
+    "asset_name": "Planter Box 01",
+    "files": [
+      {
+        "path": "realistic-assets/plaza-assets/planter/planter_box_01_1k.gltf",
+        "bytes": 2787,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/planter_box_01/planter_box_01_1k.gltf"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/planter/textures/planter_box_01_nor_gl_1k.jpg",
+        "bytes": 707323,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/planter_box_01/planter_box_01_nor_gl_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/planter/textures/planter_box_01_arm_1k.jpg",
+        "bytes": 745610,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/planter_box_01/planter_box_01_arm_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/planter/planter_box_01.bin",
+        "bytes": 250580,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/planter_box_01/planter_box_01.bin"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/planter/textures/planter_box_01_diff_1k.jpg",
+        "bytes": 633117,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/planter_box_01/planter_box_01_diff_1k.jpg"
+      }
+    ],
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/planter_box_01"
+  },
+  "flowering-plant": {
+    "status": "downloaded",
+    "asset_id": "flower_empodium",
+    "asset_name": "Flower Empodium",
+    "files": [
+      {
+        "path": "realistic-assets/plaza-assets/flowering-plant/flower_empodium_1k.gltf",
+        "bytes": 8859,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/flower_empodium/flower_empodium_1k.gltf"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/flowering-plant/textures/flower_empodium_arm_1k.jpg",
+        "bytes": 267088,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/flower_empodium/flower_empodium_arm_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/flowering-plant/textures/flower_empodium_diff_1k.jpg",
+        "bytes": 173921,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/flower_empodium/flower_empodium_diff_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/flowering-plant/flower_empodium.bin",
+        "bytes": 101936,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/flower_empodium/flower_empodium.bin"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/flowering-plant/textures/flower_empodium_nor_gl_1k.jpg",
+        "bytes": 346423,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/flower_empodium/flower_empodium_nor_gl_1k.jpg"
+      }
+    ],
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/flower_empodium"
+  },
+  "plaza-bench": {
+    "status": "downloaded",
+    "asset_id": "painted_wooden_bench",
+    "asset_name": "Painted Wooden Bench",
+    "files": [
+      {
+        "path": "realistic-assets/plaza-assets/plaza-bench/painted_wooden_bench_1k.gltf",
+        "bytes": 2835,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/painted_wooden_bench/painted_wooden_bench_1k.gltf"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/plaza-bench/textures/painted_wooden_bench_diff_1k.jpg",
+        "bytes": 545216,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/painted_wooden_bench/painted_wooden_bench_diff_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/plaza-bench/textures/painted_wooden_bench_nor_gl_1k.jpg",
+        "bytes": 830104,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/painted_wooden_bench/painted_wooden_bench_nor_gl_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/plaza-bench/textures/painted_wooden_bench_arm_1k.jpg",
+        "bytes": 586040,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/painted_wooden_bench/painted_wooden_bench_arm_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/plaza-bench/painted_wooden_bench.bin",
+        "bytes": 25444,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/painted_wooden_bench/painted_wooden_bench.bin"
+      }
+    ],
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/painted_wooden_bench"
+  },
+  "paving": {
+    "status": "unavailable",
+    "attempts": []
+  },
+  "decorative-light": {
+    "status": "downloaded",
+    "asset_id": "Lantern_01",
+    "asset_name": "Lantern 01",
+    "files": [
+      {
+        "path": "realistic-assets/plaza-assets/decorative-light/Lantern_01_1k.gltf",
+        "bytes": 4866,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/Lantern_01/Lantern_01_1k.gltf"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/decorative-light/textures/Lantern_01_brass_arm_1k.jpg",
+        "bytes": 229054,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/Lantern_01/Lantern_01_brass_arm_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/decorative-light/Lantern_01.bin",
+        "bytes": 864852,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/Lantern_01/Lantern_01.bin"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/decorative-light/textures/Lantern_01_brass_nor_gl_1k.jpg",
+        "bytes": 180646,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/Lantern_01/Lantern_01_brass_nor_gl_1k.jpg"
+      },
+      {
+        "path": "realistic-assets/plaza-assets/decorative-light/textures/Lantern_01_brass_diff_1k.jpg",
+        "bytes": 140998,
+        "source": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/Lantern_01/Lantern_01_brass_diff_1k.jpg"
+      }
+    ],
+    "license": "CC0",
+    "source": "https://polyhaven.com/a/Lantern_01"
+  },
+  "bollard": {
+    "status": "unavailable",
+    "attempts": []
+  }
+}
