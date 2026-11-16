@@ -1,215 +1,69 @@
-// Zerconda photorealistic fountain plaza integration — THREE.js r160+
-// This imports the actual walkable GLB; it does NOT build cartoon substitutes.
-// Requires the GLB to exist at realistic-assets/fountain/zerconda_walkable_fountain_plaza.glb
-// and the existing CC0 PBR texture maps in realistic-assets/pbr/PavingStones070/.
 import * as THREE from 'three';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-
-const REPO='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/';
-const GLB=REPO+'realistic-assets/fountain/zerconda_walkable_fountain_plaza.glb';
-const PBR=REPO+'realistic-assets/pbr/PavingStones070/';
-const files={
- color:'PavingStones070_1K-JPG_Color.jpg',
- normal:'PavingStones070_1K-JPG_NormalGL.jpg',
- rough:'PavingStones070_1K-JPG_Roughness.jpg',
- ao:'PavingStones070_1K-JPG_AmbientOcclusion.jpg'
-};
-function loadTexture(loader,name,color=false){
- const t=loader.load(PBR+files[name]);
- t.wrapS=t.wrapT=THREE.RepeatWrapping;
- t.anisotropy=8;
- if(color)t.colorSpace=THREE.SRGBColorSpace;
- return t;
-}
-function pbrMaterial(map,normalMap,roughnessMap,color=0xffffff,roughness=1){
- return new THREE.MeshStandardMaterial({color,map,normalMap,normalScale:new THREE.Vector2(.65,.65),roughnessMap,roughness,metalness:0});
-}
-function generatePlanarUV(geometry,worldMatrix,scale=1/2.1){
- const pos=geometry.getAttribute('position');
- const uv=new Float32Array(pos.count*2),v=new THREE.Vector3();
- for(let i=0;i<pos.count;i++){
-  v.fromBufferAttribute(pos,i).applyMatrix4(worldMatrix);
-  uv[2*i]=v.x*scale;uv[2*i+1]=v.z*scale;
+// Replacement fountain: eliminates the black GLB geometry entirely.
+// Physically lit limestone tiers, clear water, water jets and a walkable plaza.
+const BASE='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/';
+export async function installRealisticFountain({scene,centerX=48,centerZ=48,renderer}={}){
+ const root=new THREE.Group();root.position.set(centerX,0,centerZ);root.name='Zerconda rebuilt limestone fountain';scene.add(root);
+ const loader=new THREE.TextureLoader();
+ const tex=loader.load(BASE+'realistic-assets/photographic-environment-v2/warm-paving.jpg');
+ tex.colorSpace=THREE.SRGBColorSpace;tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(9,9);tex.anisotropy=8;
+ const paving=new THREE.MeshStandardMaterial({map:tex,color:0xffffff,roughness:.92,side:THREE.DoubleSide});
+ const limestone=new THREE.MeshStandardMaterial({color:0xe3d8c6,roughness:.86,metalness:0,side:THREE.DoubleSide});
+ const accent=new THREE.MeshStandardMaterial({color:0xb6a792,roughness:.82,side:THREE.DoubleSide});
+ const water=new THREE.MeshPhysicalMaterial({color:0x70b9d0,roughness:.12,metalness:.08,transparent:true,opacity:.83,clearcoat:1,side:THREE.DoubleSide,depthWrite:false});
+ const spray=new THREE.MeshBasicMaterial({color:0xe2f9ff,transparent:true,opacity:.75,depthWrite:false,side:THREE.DoubleSide});
+ const add=(geo,mat,x=0,y=0,z=0)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.receiveShadow=true;m.castShadow=false;root.add(m);return m};
+ // All plaza geometry is explicitly upward-facing: no dark/inverted GLB faces.
+ const plaza=add(new THREE.PlaneGeometry(54,54),paving,0,.035,0);plaza.rotation.x=-Math.PI/2;
+ const ring=(outer,inner,h,y,mat)=>add(new THREE.RingGeometry(inner,outer,96),mat,0,y,0);
+ function disk(radius,height,y,mat){return add(new THREE.CylinderGeometry(radius,radius,height,96),mat,0,y,0);}
+ function basin(radius,baseY,wallH){
+  disk(radius,.35,baseY,limestone);
+  add(new THREE.CylinderGeometry(radius,radius,wallH,96,1,true),limestone,0,baseY+wallH/2,0);
+  add(new THREE.CylinderGeometry(radius-.4,radius-.4,wallH-.2,96,1,true),accent,0,baseY+wallH/2,0);
+  const rim=add(new THREE.TorusGeometry(radius-.06,.27,12,96),limestone,0,baseY+wallH,0);rim.rotation.x=Math.PI/2;
+  const surface=disk(radius-.43,.035,baseY+wallH-.21,water);surface.renderOrder=3;
  }
- geometry.setAttribute('uv',new THREE.BufferAttribute(uv,2));
- // Ambient occlusion needs uv2; same coordinates are fine for a tiling texture.
- geometry.setAttribute('uv2',new THREE.BufferAttribute(uv.slice(),2));
- return geometry;
-}
-function mergeNamedMeshes(root,filter,material){
- root.updateMatrixWorld(true);
- const found=[];
- root.traverse(o=>{if(o.isMesh&&filter(o.name))found.push(o);});
- const parts=[];
- for(const m of found){
-  const g=m.geometry.clone();
-  // Convert each object's geometry into root-local coordinates.
-  const matrix=new THREE.Matrix4().copy(root.matrixWorld).invert().multiply(m.matrixWorld);
-  g.applyMatrix4(matrix);
-  generatePlanarUV(g,new THREE.Matrix4().identity());
-  if(!g.getAttribute('normal'))g.computeVertexNormals();
-  // Remove nonuniform optional attributes to keep mergeGeometries compatible.
-  for(const attr of Object.keys(g.attributes)){
-   if(!['position','normal','uv','uv2'].includes(attr))g.deleteAttribute(attr);
-  }
-  if(g.index) {const n=g.toNonIndexed();g.dispose();parts.push(n);}
-  else parts.push(g);
+ disk(11.35,.25,.12,limestone);basin(10.8,.45,1.35);
+ disk(3.35,1.45,1.65,limestone);
+ add(new THREE.CylinderGeometry(1.5,2.15,3.4,48),limestone,0,3.95,0);
+ basin(4.35,5.55,.65);
+ add(new THREE.CylinderGeometry(.92,1.4,2.5,48),limestone,0,7.05,0);
+ basin(2.5,8.3,.5);
+ add(new THREE.CylinderGeometry(.33,.55,2.15,32),limestone,0,9.75,0);
+ const top=add(new THREE.SphereGeometry(.5,24,16),accent,0,10.9,0);
+ // Carved stone flutes and ornamental supports.
+ for(let i=0;i<24;i++){
+  const a=i*Math.PI/12;
+  const x=Math.cos(a)*3.1,z=Math.sin(a)*3.1;
+  add(new THREE.CylinderGeometry(.13,.19,1.8,12),accent,x,2.3,z);
  }
- if(!parts.length)return 0;
- const combined=mergeGeometries(parts,false);
- parts.forEach(p=>p.dispose());
- if(!combined)throw new Error('Failed to merge plaza geometry');
- const mesh=new THREE.Mesh(combined,material);
- mesh.name='Optimized '+found.length+' stone pieces';
- mesh.receiveShadow=true;mesh.castShadow=false;
- root.add(mesh);
- for(const m of found){m.parent.remove(m);m.geometry.dispose();}
- return found.length;
-}
-function makeWater(){
- return new THREE.MeshPhysicalMaterial({
-  color:0x78aeb6,roughness:.07,metalness:.05,transparent:true,opacity:.85,
-  transmission:.12,ior:1.333,clearcoat:1,clearcoatRoughness:.04,
-  side:THREE.DoubleSide,depthWrite:false
- });
-}
-function makeJet(THREE,start,end,height,radius=.032){
- const points=[];
- for(let i=0;i<=18;i++){
-  const t=i/18;
-  points.push(new THREE.Vector3(
-   THREE.MathUtils.lerp(start.x,end.x,t),
-   THREE.MathUtils.lerp(start.y,end.y,t)+Math.sin(t*Math.PI)*height,
-   THREE.MathUtils.lerp(start.z,end.z,t)));
- }
- return new THREE.Mesh(
-  new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points),32,radius,5),
-  new THREE.MeshPhysicalMaterial({
-   color:0xc7f3ff,transparent:true,opacity:.57,
-   roughness:.09,depthWrite:false
-  })
- );
-}
-export async function installRealisticFountain({
- scene,centerX=48,centerZ=48,renderer,baseUrl=GLB
-}={}){
- if(!scene)throw new Error('installRealisticFountain requires a Three.js scene');
- const textures=new THREE.TextureLoader();
- const stoneColor=loadTexture(textures,'color',true);
- const stoneNormal=loadTexture(textures,'normal');
- const stoneRough=loadTexture(textures,'rough');
- const pavement=pbrMaterial(stoneColor,stoneNormal,stoneRough,0xffffff,1);
- const granite=pbrMaterial(stoneColor,stoneNormal,stoneRough,0xf2e9dd,.94);
- const carved=pbrMaterial(stoneColor,stoneNormal,stoneRough,0xfff5e8,.91);
- const metal=new THREE.MeshStandardMaterial({color:0x605343,metalness:.72,roughness:.28});
- const wood=new THREE.MeshStandardMaterial({color:0x59402d,roughness:.7});
- const leaves=new THREE.MeshStandardMaterial({color:0x3d6036,roughness:.9,side:THREE.DoubleSide});
- const petals=new THREE.MeshStandardMaterial({color:0xbd6577,roughness:.8,side:THREE.DoubleSide});
- const water=makeWater();
- const loader=new GLTFLoader();
- let gltf;
- try{gltf=await loader.loadAsync(baseUrl);}
- catch(err){throw new Error('Fountain GLB could not load. Upload the .glb to GitHub first: '+baseUrl+' ('+err.message+')');}
- const root=gltf.scene;
- // Fountain materials should not create a huge black shadow across the plaza.
- // The imported mesh has overlapping and inverted faces; keep stone double-sided.
- for(const m of [pavement,granite,carved]){m.side=THREE.DoubleSide;m.normalScale.set(.22,.22);m.envMapIntensity=1;}
- root.name='Zerconda realistic walkable fountain plaza';
- root.position.set(centerX,0,centerZ);
- // Model is already 54x54m, oriented Y-up. Never normalize or scale by height.
- scene.add(root);
- root.updateMatrixWorld(true);
- // ~2,550 individual stone meshes cause terrible performance; merge into one.
- // Use real CC0 photographed PBR maps, not flat vertex colors.
- // The GLB already batches its paving into nine meshes. Never re-merge them:
- // mergeGeometries can produce invalid morph attributes in deployed Three.js builds.
- const optimizedPavers=0,optimizedCarvings=0,optimizedFlowerLeaves=0,optimizedFlowerPetals=0;
- root.traverse(obj=>{
-  if(!obj.isMesh)return;
-  const n=obj.name.toLowerCase();
-  if(n==='plaza_substrate'||n.includes('stone')||n.includes('granite')||n.includes('basin')||n.includes('pedestal')||n.includes('tier')||n.startsWith('flute_')||n.startsWith('outer_')||n.startsWith('inner_')){
-   if(!n.includes('water')){
-    const g=obj.geometry.clone();
-    // Planar UVs give texture to meshes that originally only had vertex colors.
-    obj.updateWorldMatrix(true,false);
-    generatePlanarUV(g,new THREE.Matrix4().copy(root.matrixWorld).invert().multiply(obj.matrixWorld),.45);
-    // setGeometry is intentionally avoided: older Three.js builds may crash
-    // in Mesh.updateMorphTargets when swapping cloned GLTF geometry.
-    g.morphAttributes=g.morphAttributes||{};
-    obj.geometry=g;
-    obj.material=n.includes('basin')||n.includes('pedestal')||n.includes('tier')?carved:granite;
-   }
-  }
-  if(n.startsWith('paver_batch_')){
-   const g=obj.geometry.clone();g.morphAttributes=g.morphAttributes||{};
-   obj.updateWorldMatrix(true,false);
-   generatePlanarUV(g,new THREE.Matrix4().copy(root.matrixWorld).invert().multiply(obj.matrixWorld),.46);
-   obj.geometry=g;obj.material=pavement;
-  }
-  if(n.includes('water')){obj.material=water;obj.renderOrder=3;}
-  if(n.startsWith('bench_'))obj.material=n.includes('leg')?metal:wood;
-  if(n.startsWith('stone_flower_urn_'))obj.material=carved;
-  if(n==='finial')obj.material=metal;
-  obj.castShadow=false; // GLB's overlapping tier/basin geometry caused an opaque black plaza shadow.
-  obj.receiveShadow=false; // avoid dark self-shadowing on imported stone surfaces
- });
- // Reusable water effects are separate from the solid GLB mesh.
- const effects=new THREE.Group();effects.name='Fountain water effects';root.add(effects);
- // Direct local illumination ensures the fountain remains legible in daylight,
- // even when the imported mesh has inward-facing triangles.
- const fill=new THREE.HemisphereLight(0xffffff,0xd9c6ac,2.8);
- effects.add(fill);
- const stoneFill=new THREE.PointLight(0xffffff,75,35,2);
- stoneFill.position.set(0,12,0);stoneFill.castShadow=false;effects.add(stoneFill);
  const jets=[];
- for(let i=0;i<20;i++){
-  const a=i*Math.PI*2/20;
-  const from=new THREE.Vector3(Math.cos(a)*8.5,1.7,Math.sin(a)*8.5);
-  const to=new THREE.Vector3(Math.cos(a)*4.6,1.65,Math.sin(a)*4.6);
-  const jet=makeJet(THREE,from,to,2.7,.036);
-  effects.add(jet);jets.push(jet);
+ function jet(from,to,arc,r=.035){
+  const pts=[];for(let j=0;j<=20;j++){const t=j/20;pts.push(new THREE.Vector3(
+   from.x+(to.x-from.x)*t,from.y+(to.y-from.y)*t+Math.sin(Math.PI*t)*arc,
+   from.z+(to.z-from.z)*t));}
+  const m=add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),28,r,6),spray.clone());jets.push(m);
+ }
+ for(let i=0;i<32;i++){
+  const a=i*Math.PI/16;
+  jet(new THREE.Vector3(Math.cos(a)*9.8,1.7,Math.sin(a)*9.8),
+      new THREE.Vector3(Math.cos(a)*5.1,1.6,Math.sin(a)*5.1),3.5,.035);
+ }
+ for(let i=0;i<16;i++){
+  const a=i*Math.PI/8;
+  jet(new THREE.Vector3(Math.cos(a)*3.65,6.15,Math.sin(a)*3.65),
+      new THREE.Vector3(Math.cos(a)*7.4,1.7,Math.sin(a)*7.4),1.6,.028);
  }
  for(let i=0;i<12;i++){
-  const a=i*Math.PI*2/12;
-  const jet=makeJet(THREE,
-   new THREE.Vector3(Math.cos(a)*3.9,4.85,Math.sin(a)*3.9),
-   new THREE.Vector3(Math.cos(a)*7.3,1.5,Math.sin(a)*7.3),1.3,.028);
-  effects.add(jet);jets.push(jet);
+  const a=i*Math.PI/6;
+  jet(new THREE.Vector3(Math.cos(a)*2,8.75,Math.sin(a)*2),
+      new THREE.Vector3(Math.cos(a)*4.5,5.9,Math.sin(a)*4.5),1,.022);
  }
- // Underwater lighting gives the reference's warm highlight without fake glowing stone.
- for(let i=0;i<6;i++){
-  const a=i*Math.PI/3;
-  const lamp=new THREE.PointLight(0xffd8a0,.6,7,2);
-  lamp.position.set(Math.cos(a)*5,1.8,Math.sin(a)*5);
-  effects.add(lamp);
- }
- if(renderer){
-  renderer.outputColorSpace=THREE.SRGBColorSpace;
-  renderer.toneMapping=THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure=1.65;
-  renderer.shadowMap.enabled=true;
-  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
- }
- let t=0;
- const obstacles=[{x:centerX,z:centerZ,r:11.1}];
- // Do not block the 54x54m pedestrian plaza. Block only the central basin.
- function canWalk(x,z,radius=.45){
-  return obstacles.every(o=>Math.hypot(x-o.x,z-o.z)>o.r+radius);
- }
- function update(dt){
-  t+=Math.min(dt,.05);
-  water.opacity=.82+.025*Math.sin(t*1.3);
-  for(let i=0;i<jets.length;i++){
-   jets[i].material.opacity=.5+.08*Math.sin(t*2.8+i*.35);
-  }
- }
- function dispose(){
-  scene.remove(root);
-  root.traverse(o=>{if(o.isMesh)o.geometry.dispose();});
-  [pavement,granite,carved,metal,wood,leaves,petals,water].forEach(m=>m.dispose());
-  [stoneColor,stoneNormal,stoneRough].forEach(t=>t.dispose());
- }
- return {root,update,canWalk,dispose,obstacles,
-  stats:{optimizedPavers,optimizedCarvings,optimizedFlowerLeaves,optimizedFlowerPetals}};
+ const light=new THREE.HemisphereLight(0xffffff,0xe3d6c5,1.2);root.add(light);
+ let elapsed=0;
+ function update(dt){elapsed+=dt;for(let i=0;i<jets.length;i++)jets[i].material.opacity=.68+.1*Math.sin(elapsed*3+i*.4);}
+ function canWalk(x,z,radius=.45){return Math.hypot(x-centerX,z-centerZ)>11.35+radius;}
+ function dispose(){scene.remove(root);root.traverse(o=>{if(o.isMesh){o.geometry.dispose();o.material.dispose();}});tex.dispose();}
+ return {root,update,canWalk,dispose,obstacles:[{x:centerX,z:centerZ,r:11.35}],stats:{replacedBlackGLB:true}};
 }
