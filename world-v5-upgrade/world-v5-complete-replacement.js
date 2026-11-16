@@ -176,7 +176,7 @@ const facadeMats=[
 ].map((path,i)=>{
  const t=groundLoader.load(BASE+path);
  t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;
- t.repeat.set(3,2);t.anisotropy=8;
+ t.repeat.set(1,1);t.anisotropy=8; // prevent crushed/over-tiled facade photography
  return new THREE.MeshStandardMaterial({map:t,roughness:.93,color:0xffffff});
 });
 const roof=M(0x34373a),metal=M(0x565c5e,.42,.55);
