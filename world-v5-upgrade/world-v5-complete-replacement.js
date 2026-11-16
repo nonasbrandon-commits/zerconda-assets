@@ -15,9 +15,10 @@ import {createCityMap} from './top-city-map.js';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 import {createOwnableHomes} from './ownable-suburban-homes.js';
+import {createPedestrians} from './animated-pedestrians.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-16-waterfront-repair';
+const ZERCONDA_BUILD='2026-11-16-walking-people-map-fix';
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
 // Does not call any old tree/lamp/car spawn loops.
@@ -498,21 +499,9 @@ const keys=new Set(),player={x:48,z:15},clock=new THREE.Clock();
 const cityMap=createCityMap({player});
 // Third-person walking avatar: forward-facing, visible from the default camera.
 // Kept lightweight so mobile devices do not need an additional model download.
-const avatar=new THREE.Group();avatar.name='Zerconda player avatar';scene.add(avatar);
-const avatarClothes=new THREE.MeshStandardMaterial({color:0x263b50,roughness:.91});
-const avatarPants=new THREE.MeshStandardMaterial({color:0x202932,roughness:.94});
-const avatarSkin=new THREE.MeshStandardMaterial({color:0xb88465,roughness:.92});
-const avatarShoes=new THREE.MeshStandardMaterial({color:0x171b22,roughness:.95});
-function avatarPart(geo,mat,x,y,z,parent=avatar){
- const part=new THREE.Mesh(geo,mat);part.position.set(x,y,z);part.castShadow=true;part.receiveShadow=true;parent.add(part);return part;
-}
-avatarPart(new THREE.CapsuleGeometry(.32,.56,5,10),avatarClothes,0,1.28,0);
-avatarPart(new THREE.SphereGeometry(.21,12,10),avatarSkin,0,1.94,.025);
-for(const side of [-1,1]){
- avatarPart(new THREE.CapsuleGeometry(.115,.55,4,8),avatarClothes,side*.43,1.24,0).rotation.z=side*.1;
- avatarPart(new THREE.CapsuleGeometry(.13,.58,4,8),avatarPants,side*.17,.49,0);
- avatarPart(new THREE.BoxGeometry(.24,.16,.43),avatarShoes,side*.17,.12,.12);
-}
+const pedestrianSystem=createPedestrians(scene,{count:18});
+const playerRig=pedestrianSystem.createHuman(0);
+const avatar=playerRig.root;avatar.name='Zerconda player avatar';scene.add(avatar);
 
 let activeCar=null,yaw=0,pitch=0,drag=false,lastX=0,lastY=0;
 let driverLookYaw=0,driverLookPitch=0,driverSteer=0;
@@ -680,6 +669,7 @@ function animate(){
  requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);elapsed+=dt;
  airDancers.update(elapsed);
  southBeach.update(dt);
+ pedestrianSystem.update(dt,elapsed);
  cityMap.draw();
  if(realisticPlaza)realisticPlaza.update(dt);
  cloudSky.update(dt);
@@ -747,6 +737,7 @@ function animate(){
   avatar.visible=!onObservationDeck&&!insideNeedleLobby&&!apartmentSession;
   avatar.position.set(player.x,0,player.z);
   avatar.rotation.y=yaw;
+  playerRig.animate(elapsed,Math.hypot(movement.vx,movement.vz));
  }
  if(!Number.isFinite(camera.position.x)||!Number.isFinite(camera.position.y)||!Number.isFinite(camera.position.z))resetView();
  // Prevent the driven car body from obstructing the first-person windshield view.
