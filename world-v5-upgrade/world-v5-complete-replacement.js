@@ -548,6 +548,7 @@ addEventListener('pointermove',e=>{if(!drag)return;yaw-=(e.clientX-lastX)*.003;
  pitch=THREE.MathUtils.clamp(pitch+(e.clientY-lastY)*.0025,-.4,.75);
  lastX=e.clientX;lastY=e.clientY;});
 function walkable(x,z){
+ if(apartmentSession)return apartments.contains(x,z);
  if(Math.abs(x)>168||Math.abs(z)>168)return false;
  if(onObservationDeck)return observationNeedle.isOnDeck(x,z);
  if(Math.hypot(x-observationNeedle.x,z-observationNeedle.z)<5.3)return false;
