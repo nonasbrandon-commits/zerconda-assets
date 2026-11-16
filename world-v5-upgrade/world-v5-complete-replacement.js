@@ -569,7 +569,9 @@ const actionButton=(id,label,bottom,callback)=>{
 };
 const homeButton=actionButton('zerconda-home-action','H · BUY HOME',365,()=>{
  const home=ownableHomes.closest(player.x,player.z,11);if(!home)return;
- const result=ownableHomes.owned?.id===home.id?ownableHomes.decorate():ownableHomes.buy(home);
+ const username=ownableHomes.owned?.username||window.prompt('Enter your Zerconda username for the nameplate on your front door:');
+ if(!ownableHomes.owned&&username===null)return;
+ const result=ownableHomes.owned?.id===home.id?ownableHomes.decorate():ownableHomes.buy(home,username);
  alert(result.message+'\\n\\nThis is a local-browser prototype, not an account-backed Zer Bucks transaction.');
 });
 const towerButton=actionButton('zerconda-tower-button','ENTER TOWER / ELEVATOR',245,toggleObservationDeck);
