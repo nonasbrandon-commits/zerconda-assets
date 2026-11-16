@@ -3,9 +3,13 @@ import * as THREE from 'three';
 // Tiled sand PBR, animated layered water, foam, dunes, boardwalk, umbrellas and palms.
 export function createZercondaBeach(scene,{base='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/'}={}){
  const root=new THREE.Group();root.name='Zerconda South Beach';scene.add(root);
- const loader=new THREE.TextureLoader();
- const sandMap=loader.load(base+'realistic-assets/pbr/Ground037/Ground037_1K-JPG_Color.jpg');
- sandMap.colorSpace=THREE.SRGBColorSpace;sandMap.wrapS=sandMap.wrapT=THREE.RepeatWrapping;sandMap.repeat.set(18,8);sandMap.anisotropy=8;
+ // Original grain-scale sand texture; avoids using green grass photography as sand.
+ const canvas=document.createElement('canvas');canvas.width=512;canvas.height=512;
+ const ctx=canvas.getContext('2d');const image=ctx.createImageData(512,512);
+ let seed=18357;const random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
+ for(let y=0;y<512;y++)for(let x=0;x<512;x++){const i=(y*512+x)*4,noise=(random()-.5)*47,ripple=Math.sin(y*.085+Math.sin(x*.024)*1.5)*7;image.data[i]=Math.max(0,Math.min(255,218+noise+ripple));image.data[i+1]=Math.max(0,Math.min(255,194+noise+ripple));image.data[i+2]=Math.max(0,Math.min(255,151+noise+ripple));image.data[i+3]=255;}
+ ctx.putImageData(image,0,0);
+ const sandMap=new THREE.CanvasTexture(canvas);sandMap.colorSpace=THREE.SRGBColorSpace;sandMap.wrapS=sandMap.wrapT=THREE.RepeatWrapping;sandMap.repeat.set(18,8);sandMap.anisotropy=8;
  const sand=new THREE.MeshStandardMaterial({color:0xe5ceaa,roughness:1,map:sandMap});
  const wood=new THREE.MeshStandardMaterial({color:0x927055,roughness:.87});
  const water=new THREE.MeshPhysicalMaterial({color:0x0b7893,metalness:.08,roughness:.16,transparent:true,opacity:.91,clearcoat:1,clearcoatRoughness:.08,side:THREE.DoubleSide});
