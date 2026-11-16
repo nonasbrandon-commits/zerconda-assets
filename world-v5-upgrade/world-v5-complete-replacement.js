@@ -514,6 +514,7 @@ function nearestDoor(){
 }
 function toggleNearbyDoor(){
  const d=nearestDoor();if(!d)return;
+ enterApartment(d);
  const next=true;
  for(const leaf of doors){
   if(Math.abs(leaf.x-d.x)<.1&&Math.abs(leaf.z-d.z)<.1){
