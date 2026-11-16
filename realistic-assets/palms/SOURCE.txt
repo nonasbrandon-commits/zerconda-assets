@@ -1,0 +1,3 @@
+Asset: palm-detailed.glb
+Source: https://www.innerscene.com/tools/library/3d-parts/palm-detailed-a8777b8c
+License: CC0 1.0 public domain (as stated by source)
