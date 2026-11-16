@@ -1,10 +1,11 @@
 // Top-center live Zerconda city map. Canvas overlay uses the same world coordinates as player movement.
 export function createCityMap({player,beach={x:0,z:212}}){
- const shell=document.createElement('div');shell.style.cssText='position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:9997;background:rgba(12,27,40,.88);border:1px solid #7a9cb0;border-radius:12px;padding:6px 10px;color:white;box-shadow:0 4px 20px #0005;font:12px Arial;max-width:95vw';
+ const shell=document.createElement('div');shell.style.cssText='position:fixed;top:10px;right:10px;z-index:9997;background:rgba(12,27,40,.88);border:1px solid #7a9cb0;border-radius:12px;padding:6px 10px;color:white;box-shadow:0 4px 20px #0005;font:12px Arial;max-width:95vw';
  const heading=document.createElement('div');heading.textContent='ZERCONDA  •  CITY MAP';heading.style.cssText='font-weight:700;text-align:center;letter-spacing:1px;margin-bottom:3px';shell.appendChild(heading);
- const canvas=document.createElement('canvas');canvas.width=360;canvas.height=170;canvas.style.cssText='width:min(360px,85vw);height:auto;display:block;border-radius:6px';shell.appendChild(canvas);document.body.appendChild(shell);
+ const canvas=document.createElement('canvas');canvas.width=360;canvas.height=170;canvas.style.cssText='width:min(260px,42vw);height:auto;display:block;border-radius:6px';shell.appendChild(canvas);document.body.appendChild(shell);
  const ctx=canvas.getContext('2d');
  const legend=document.createElement('div');legend.textContent='🔵 YOU ARE HERE';legend.style.cssText='text-align:center;font-weight:bold;color:#9ce8ff;margin-top:4px;letter-spacing:.5px';shell.appendChild(legend);
+ shell.style.pointerEvents='none';
  let frame=0;
  const scale=170/520,tx=x=>180+x*scale,tz=z=>26+(z+175)*scale;
  function label(x,z,name,color='#f7fafc'){ctx.fillStyle=color;ctx.font='bold 10px Arial';ctx.fillText(name,tx(x)+5,tz(z)-5);}
