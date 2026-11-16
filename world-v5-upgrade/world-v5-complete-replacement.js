@@ -5,6 +5,7 @@ import {createObservationNeedle} from './observation-needle.js';
 import {createCloudSky} from './cloud-sky.js';
 import {addCityDepth} from './city-depth-assets.js';
 import {addBuildingIdentity} from './nine-building-styles.js';
+import {createCoffeeShop} from './brewstone-coffee.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -99,6 +100,7 @@ const roadLines=[-96,0,96],ROAD_HALF=9.5,SIDEWALK_EDGE=14;
 const nearRoad=(x,z,margin=0)=>roadLines.some(v=>Math.abs(x-v)<ROAD_HALF+margin||Math.abs(z-v)<ROAD_HALF+margin);
 const inIntersection=(x,z,margin=0)=>roadLines.some(a=>Math.abs(x-a)<ROAD_HALF+margin)&&roadLines.some(b=>Math.abs(z-b)<ROAD_HALF+margin);
 const buildings=[],doors=[],trees=[],lamps=[],cars=[],loaded={};
+const entranceClearance=5.8;
 const plazaCenter={x:48,z:48},plazaRadius=24;
 const inPlaza=(x,z,extra=0)=>Math.hypot(x-plazaCenter.x,z-plazaCenter.z)<plazaRadius+extra;
 const insideBuilding=(x,z,pad=0)=>buildings.some(b=>Math.abs(x-b.x)<b.w/2+pad&&Math.abs(z-b.z)<b.d/2+pad);
@@ -254,6 +256,7 @@ for(let k=0;k<blocks.length;k++){
  if(Math.abs(bx)>100||Math.abs(bz)>100)continue; // avoid outside-city half blocks
  for(const [i,j] of [[-1,-1],[1,-1],[-1,1],[1,1]]){
   const x=bx+i*17,z=bz+j*17;
+  if(bx===-48&&bz===-48&&i===1)continue; // Reserve east side for Brewstone cafe opposite the Needle.
   makeBuilding(x,z,24,23,18+Math.floor(rand()*5)*3.2,k+Math.round(rand()*4));
  }
 }
@@ -292,6 +295,10 @@ for(const dz of [-28.8,28.8]){
 }
 for(const dx of [-28.8,28.8])box(.3,.18,57,48+dx,.17,-48,curbMaterial);
 const observationNeedle=createObservationNeedle(scene,{x:48,z:-48});
+const coffeeShop=createCoffeeShop(scene,{x:-34,z:-48});
+coffeeShop.root.rotation.y=Math.PI/2; // Entrance and patio face east toward the Needle.
+// Convert authored local chair locations to rotated world coordinates.
+for(const seat of coffeeShop.seats){const lx=seat.x+34,lz=seat.z+48;seat.x=-34+lz;seat.z=-48-lx;}
 // Populate tower surroundings and distant horizon with detailed 3D architecture.
 const cityDepth=addCityDepth({scene,asphalt,paving,grass});
 // The old cartoon fountain, tiled boxes, sphere bushes, and procedural benches
@@ -315,7 +322,7 @@ for(const c of roadLines){
    // 16.5m from centerline: beyond 9.5m asphalt and 4m sidewalk.
    for(const [x,z] of [[c+side*16.5,p],[p,c+side*16.5]]){
     if(Math.abs(x)>162||Math.abs(z)>162)continue;
-    if(nearRoad(x,z,5.1)||insideBuilding(x,z,1.5)||inPlaza(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39)continue;
+    if(nearRoad(x,z,5.1)||insideBuilding(x,z,1.5)||inPlaza(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39||doors.some(d=>Math.hypot(x-d.x,z-d.z)<entranceClearance)||Math.abs(x+34)<22&&Math.abs(z+48)<23)continue;
     if(treeSpots.some(([a,b])=>Math.hypot(x-a,z-b)<10))continue;
     treeSpots.push([x,z]);
    }
@@ -466,7 +473,11 @@ const actionButton=(id,label,bottom,callback)=>{
  el.addEventListener('click',callback);document.body.appendChild(el);return el;
 };
 const towerButton=actionButton('zerconda-tower-button','T · OBSERVATION DECK',245,toggleObservationDeck);
-const doorButton=actionButton('zerconda-door-button','F · OPEN DOORS',305,toggleNearbyDoor);
+const doorButton=actionButton('zerconda-door-button','F · ENTER BUILDING',305,toggleNearbyDoor);
+const cafeButton=actionButton('zerconda-cafe-button','S · SIT DOWN',365,toggleCafeSeat);
+let sittingSeat=null;
+function toggleCafeSeat(){if(sittingSeat){sittingSeat=null;return;}const seat=coffeeShop.nearestSeat(player.x,player.z,2.5);if(!seat)return;sittingSeat=seat;player.x=seat.x;player.z=seat.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Seated at Brewstone Coffee · Press S or use button to stand';}
+addEventListener('keydown',e=>{if(e.code==='KeyS'&&!e.repeat&&coffeeShop.nearestSeat(player.x,player.z,2.5)&&!keys.has('KeyW')&&!keys.has('KeyA')&&!keys.has('KeyD'))toggleCafeSeat();});
 function nearestDoor(){
  if(activeCar||onObservationDeck)return null;
  let nearest=null,best=3.7;
@@ -574,7 +585,10 @@ function animate(){
  towerButton.style.display=(onObservationDeck||nearTower)?'block':'none';
  towerButton.textContent=onObservationDeck?'T · RETURN TO GROUND':'ENTER NEEDLE · GO TO TOP';
  const door=nearestDoor();doorButton.style.display=door?'block':'none';
- if(door)doorButton.textContent=door.manual?'F · CLOSE DOOR':'F · OPEN DOOR';
+ if(door)doorButton.textContent='F · ENTER BUILDING';
+ const nearSeat=coffeeShop.nearestSeat(player.x,player.z,2.5);
+ cafeButton.style.display=(sittingSeat||nearSeat)&&!activeCar?'block':'none';
+ cafeButton.textContent=sittingSeat?'STAND UP':'S · SIT AT TABLE';
  if((diagnosticFrames++%30)===0){
   const p=camera.position;
   diag.textContent='RENDER '+(contextLost?'CONTEXT LOST':'ACTIVE')+
