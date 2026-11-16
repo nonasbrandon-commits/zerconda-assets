@@ -14,6 +14,7 @@ import {createZercondaBeach} from './zerconda-beach.js';
 import {createCityMap} from './top-city-map.js';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js';
 import {upgradeExistingMaterial} from './urban-pbr-materials.js';
+import {addUrbanStreetDetail} from './urban-street-detail.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -114,6 +115,7 @@ function cylinder(rt,rb,h,x,y,z,material,parent=scene,n=48){
 }
 let seed=2451;function rand(){seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;}
 const roadLines=[-96,0,96],ROAD_HALF=9.5,SIDEWALK_EDGE=14;
+addUrbanStreetDetail(scene,{roadLines,extent:210});
 const nearRoad=(x,z,margin=0)=>roadLines.some(v=>Math.abs(x-v)<ROAD_HALF+margin||Math.abs(z-v)<ROAD_HALF+margin);
 const inIntersection=(x,z,margin=0)=>roadLines.some(a=>Math.abs(x-a)<ROAD_HALF+margin)&&roadLines.some(b=>Math.abs(z-b)<ROAD_HALF+margin);
 const buildings=[],doors=[],trees=[],lamps=[],cars=[],loaded={};
