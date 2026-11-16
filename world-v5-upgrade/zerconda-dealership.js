@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {createDetailedCar} from './detailed-fictional-cars.js';
 // Zerconda Motors: original interactive 3D showroom with three fictional unbranded cars.
 export function createDealership(scene,{x=-62,z=-48}={}){
  const root=new THREE.Group();root.position.set(x,0,z);root.name='Zerconda Motors - walk-in dealership';scene.add(root);
@@ -32,33 +33,19 @@ export function createDealership(scene,{x=-62,z=-48}={}){
  // Realistic dealership sign as authored image asset loaded from GitHub.
  const sign=new THREE.Mesh(new THREE.PlaneGeometry(19,3.4),new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide}));
  sign.position.set(12.22,7.15,0);sign.rotation.y=Math.PI/2;root.add(sign);
- const url='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/dealership/zerconda-motors-sign.svg';
+ const url='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/dealership/zerconda-auto-center-sign.svg';
  new THREE.TextureLoader().load(url,t=>{t.colorSpace=THREE.SRGBColorSpace;sign.material.map=t;sign.material.needsUpdate=true;},undefined,()=>{sign.material.color.set(0x0b314f);});
  // Three cars, each a distinctly styled fictional model (no real logos).
  const cars=[];const worldZ=z;
- function car({name,color,z,bodyHeight=1.25,roofHeight=.62,length=4.9}){
-  const g=new THREE.Group();g.position.set(-2.5,0,z);g.rotation.y=-Math.PI/2;root.add(g);
-  const paint=new THREE.MeshPhysicalMaterial({color,metalness:.66,roughness:.22,clearcoat:1,clearcoatRoughness:.12});
-  const windowMat=new THREE.MeshPhysicalMaterial({color:0x1c3d51,metalness:.3,roughness:.08,transparent:true,opacity:.84,clearcoat:1});
-  const rubber=mat(0x161b20,.96),wheelMetal=mat(0xb4bcc4,.26,.75);
-  box(g,2.05,bodyHeight,length,0,.76,0,paint);
-  box(g,1.77,roofHeight,length*.48,0,1.33+roofHeight*.25,-.12,paint);
-  box(g,1.79,roofHeight*.72,length*.43,0,1.37+roofHeight*.24,-.12,windowMat);
-  for(const sx of [-1,1])for(const sz of [-1,1]){
-   const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.44,.44,.22,24),rubber);
-   wheel.rotation.z=Math.PI/2;wheel.position.set(sx*1.04,.43,sz*(length*.34));g.add(wheel);
-   const hub=new THREE.Mesh(new THREE.CylinderGeometry(.23,.23,.24,20),wheelMetal);
-   hub.rotation.z=Math.PI/2;hub.position.copy(wheel.position);g.add(hub);
-  }
-  for(const sx of [-.7,.7]){box(g,.46,.2,.08,sx,.9,length/2+.05,white);box(g,.48,.17,.08,sx,.8,-length/2-.05,mat(0x9d1d20));}
-  // Raised display platform and placard.
-  const podium=new THREE.Mesh(new THREE.CylinderGeometry(3.6,3.6,.12,48),mat(0xd9e0e4,.3));podium.position.set(-2.5,.015,z);root.add(podium);
-  const placard=box(root,2.7,1.2,.14,2.5,.9,z,steel);
+ function car({name,color,z,type='sedan'}){
+  const vehicle=createDetailedCar({color,type});vehicle.position.set(-2.5,.12,z);vehicle.rotation.y=-Math.PI/2;root.add(vehicle);
+  const podium=new THREE.Mesh(new THREE.CylinderGeometry(3.15,3.15,.12,64),mat(0x939da3,.35,.25));podium.position.set(-2.5,.03,z);root.add(podium);
+  const placard=box(root,1.7,.72,.11,2.5,.74,z,steel);
   cars.push({name,position:{x:x-2.5,z:worldZ+z}});
  }
- car({name:'Zerconda City Sedan',color:0xe4e7e8,z:-8,length:4.8});
- car({name:'Zerconda Sport Coupe',color:0x1766a6,z:0,length:4.55,bodyHeight:1.05,roofHeight:.5});
- car({name:'Zerconda Touring SUV',color:0x991f28,z:8,length:5.1,bodyHeight:1.6,roofHeight:.8});
+ car({name:'Zerconda City Sedan',color:0xbec6cc,z:-8,type:'sedan'});
+ car({name:'Zerconda Sport Coupe',color:0x155f9f,z:0,type:'coupe'});
+ car({name:'Zerconda Touring SUV',color:0x9b2733,z:8,type:'suv'});
  // Reception, lounge, illuminated ceiling fixtures, offices and showroom plants.
  box(root,5,1.15,1.6,-8, .6,0,wood);box(root,5.4,.16,1.85,-8,1.25,0,white);
  for(const zz of [-10,10]){box(root,2.6,.65,1.25,-8,.45,zz,mat(0x526779));box(root,2.6,.7,.24,-8,.96,zz-.65,mat(0x526779));box(root,1.4,.38,1.1,-5.2,.4,zz,wood);}
@@ -73,16 +60,8 @@ export function createDealership(scene,{x=-62,z=-48}={}){
   const bush=new THREE.Mesh(new THREE.IcosahedronGeometry(1,2),mat(0x3c754a));bush.position.set(23.5,1.35,zz);root.add(bush);
   box(root,.2,7,.2,23,3.5,zz,steel);box(root,1.7,.2,.8,23,7.1,zz,new THREE.MeshBasicMaterial({color:0xfff2db}));
  }
- function displayCar(px,pz,color){
-  const g=new THREE.Group();g.position.set(px,0,pz);root.add(g);
-  const paint=new THREE.MeshPhysicalMaterial({color,metalness:.52,roughness:.24,clearcoat:1});
-  box(g,2.1,.8,4.8,0,.83,0,paint);box(g,1.75,.6,2.4,0,1.55,-.22,paint);
-  box(g,1.76,.44,2.15,0,1.58,-.22,mat(0x28485c,.13,.32));
-  for(const xx of [-1.08,1.08])for(const zz of [-1.5,1.5]){
-   const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.43,.43,.2,24),mat(0x171b20));wheel.rotation.z=Math.PI/2;wheel.position.set(xx,.43,zz);g.add(wheel);
-  }
- }
- displayCar(19,-7,0x9d2433);displayCar(19,7,0x34597a);
+ function displayCar(px,pz,color,type='sedan'){const g=createDetailedCar({color,type});g.position.set(px,.02,pz);root.add(g);}
+ displayCar(19,-7,0x9d2433);displayCar(19,7,0x34597a,'suv');
  // Exterior road-facing banner.
  const banner=box(root,.2,4.5,1.5,15,2.35,12.7,steel);
  return {root,x,z,cars,entrance:{x:x+14,z},isNear(px,pz,r=4.5){return Math.hypot(px-(x+14),pz-z)<r;},inside(px,pz){return px>x-11.4&&px<x+11.7&&Math.abs(pz-z)<13.6},nearestCar(px,pz,max=4.5){let best=null,d=max;for(const c of cars){const dist=Math.hypot(px-c.position.x,pz-c.position.z);if(dist<d){d=dist;best=c;}}return best;}};
