@@ -7,8 +7,7 @@ import pathlib, urllib.request, json, struct
 BASE="https://raw.githubusercontent.com/Hidencod/tge-assets/main/packs/"
 SETS={
  "commercial":[f"building-{chr(c)}" for c in range(ord("a"),ord("n")+1)]+[f"building-skyscraper-{c}" for c in "abcde"],
- "suburban":[f"building-{c}" for c in "abcdefgh"],
- "industrial":[f"building-{c}" for c in "abcdef"],
+ "suburban":[f"building-type-{c}" for c in "abcdefghijklmnop"],
 }
 OUT=pathlib.Path("realistic-assets/cc0-city-buildings")
 OUT.mkdir(parents=True,exist_ok=True)
