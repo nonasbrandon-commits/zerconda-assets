@@ -112,3 +112,40 @@ export function createApartmentLobby({scene,x=0,z=0,width=16,depth=19,floors=4,v
  b(root,2.8,2.65,.08,0,1.34,depth/2-.1,glass);
  return {root,lift,stairs,dispose(){scene.remove(root);}};
 }
+
+export function createApartmentExperience({scene,x=1050,z=1050}={}){
+ const lobby=createApartmentLobby({scene,x,z,width:18,depth:22,floors:4});
+ const root=lobby.root;
+ // Furnished accessible residential levels. Only one floor is displayed at a time.
+ const floors=4,levelGroups=[];
+ const bedMat=mat(0xd9d4ca),kitchen=mat(0xaaa49c),accent=mat(0x526d81),floorMat=stoneFloor;
+ for(let f=0;f<floors;f++){
+  const g=group(root,0,0,0);g.name='Apartment floor '+(f+1);levelGroups.push(g);
+  const y=0; // Separate virtual floors share ground plane; floor selector changes visibility.
+  b(g,18,.2,22,0,-.17,0,floorMat);
+  // Central corridor and four individually furnished rooms.
+  for(const sx of [-1,1]){
+   const xx=sx*5.1;
+   b(g,.2,3.4,19,sx*2.1,1.7,0,plaster);
+   b(g,.2,3.4,19,sx*8.85,1.7,0,plaster);
+   for(const zz of [-5,5]){
+    b(g,6.5,3.4,.2,xx,1.7,zz+5,plaster);
+    // Bedroom: bed, pillows, side tables, wardrobe, lamp.
+    b(g,2.1,.45,2.7,xx,.36,zz-1,wood);
+    b(g,1.94,.28,2.52,xx,.74,zz-1,bedMat);
+    b(g,1.7,.15,.48,xx,.95,zz-2,plaster);
+    b(g,.65,.65,.65,xx+sx*1.55,.4,zz-2,wood);
+    b(g,1.65,.85,.72,xx, .5,zz+1.65,fabric);
+    b(g,1.6,.17,.8,xx,.47,zz+3.1,wood);
+    b(g,1.7,2.3,.65,xx-sx*1.8,1.15,zz+3.4,kitchen);
+    b(g,1.2,.8,.62,xx+sx*1.8,.5,zz+3.4,accent);
+    const light=new THREE.PointLight(0xffdfb6,1.4,8);light.position.set(xx,2.9,zz);g.add(light);
+   }
+  }
+  b(g,1.6,.1,16,0,-.05,0,marble);
+ }
+ // Keep reception on floor 0, residential floors swap to fully furnished floor.
+ function showFloor(f){const floor=Math.max(0,Math.min(floors,f|0));lobby.root.children.forEach(c=>{if(!levelGroups.includes(c))c.visible=floor===0;});for(let i=0;i<floors;i++)levelGroups[i].visible=floor===i+1;}
+ showFloor(0);
+ return {root,showFloor,floorCount:5,x,z,contains(px,pz){return Math.abs(px-x)<8.6&&Math.abs(pz-z)<10.5},dispose:lobby.dispose};
+}
