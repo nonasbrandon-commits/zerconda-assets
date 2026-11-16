@@ -43,7 +43,7 @@ jobs:
                   report['vehicles'][label]={'status':'downloaded','bytes':len(data),'source':'https://www.innerscene.com/tools/library/3d-parts/'+slug,'license':'CC0'}
               except Exception as e:report['vehicles'][label]={'status':'failed','reason':str(e)}
           blender_script=pathlib.Path('/tmp/optimize_tree.py')
-          blender_script.write_text("""
+          blender_script.write_text(__import__("textwrap").dedent("""
           import bpy,sys,os
           args=sys.argv[sys.argv.index('--')+1:]
           src,dst=args
@@ -59,7 +59,7 @@ jobs:
                   bpy.ops.object.modifier_apply(modifier=mod.name)
           bpy.ops.export_scene.gltf(filepath=dst,export_format='GLB',export_image_format='JPEG',export_texcoords=True,export_normals=True,export_materials='EXPORT',export_yup=True)
           print('EXPORT',dst,os.path.getsize(dst))
-          """)
+          """))
           for label,asset in [('leafy-small-tree','tree_small_02'),('leafy-jacaranda','jacaranda_tree'),('leafy-fir','fir_tree_01'),('leafy-island-tree','island_tree_01')]:
               tmp=pathlib.Path('/tmp/zerconda-tree-'+label)
               try:
