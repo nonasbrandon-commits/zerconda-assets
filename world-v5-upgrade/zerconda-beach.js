@@ -26,25 +26,25 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  const oceanMap=new THREE.CanvasTexture(oceanCanvas);
  oceanMap.colorSpace=THREE.SRGBColorSpace;
  oceanMap.wrapS=oceanMap.wrapT=THREE.RepeatWrapping;
- oceanMap.repeat.set(13,10);oceanMap.anisotropy=8;
- const water=new THREE.MeshPhysicalMaterial({color:0xb4ffff,map:oceanMap,metalness:.03,roughness:.22,transparent:true,opacity:.96,clearcoat:1,clearcoatRoughness:.12,side:THREE.DoubleSide});
+ oceanMap.repeat.set(24,17);oceanMap.anisotropy=8;
+ const water=new THREE.MeshPhysicalMaterial({color:0x9bdde2,map:oceanMap,metalness:.08,roughness:.13,transparent:false,clearcoat:1,clearcoatRoughness:.07,side:THREE.DoubleSide});
 // Optional repository image asset; canvas remains the safe fallback if unavailable.
  new THREE.TextureLoader().load(base+'realistic-assets/beach/turquoise-ocean-surface.svg',texture=>{
   texture.colorSpace=THREE.SRGBColorSpace;
-  texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(13,10);texture.anisotropy=8;
+  texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(24,17);texture.anisotropy=8;
   water.map=texture;water.needsUpdate=true;
  },undefined,()=>console.warn('Beach ocean image unavailable; using procedural texture'));
  const foam=new THREE.MeshBasicMaterial({color:0xe6f9f8,transparent:true,opacity:.42,depthWrite:false,side:THREE.DoubleSide});
  const fabric=[0xf5f2e8,0x237aaf,0xe79a60,0xe7d2a2].map(color=>new THREE.MeshStandardMaterial({color,roughness:.82,side:THREE.DoubleSide}));
  function mesh(geo,mat,x,y,z){const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.receiveShadow=true;root.add(o);return o;}
- const land=mesh(new THREE.PlaneGeometry(330,82),sand,0,.08,202);land.rotation.x=-Math.PI/2;
+ const land=mesh(new THREE.PlaneGeometry(520,91),sand,0,.085,199.5);land.rotation.x=-Math.PI/2;
  // Road connection across the former boundary to the promenade.
  const asphalt=new THREE.MeshStandardMaterial({color:0x45474a,roughness:.96});
  const access=mesh(new THREE.PlaneGeometry(19,38),asphalt,0,.14,171);access.rotation.x=-Math.PI/2;
  const boardwalk=mesh(new THREE.PlaneGeometry(320,10),wood,0,.17,186);boardwalk.rotation.x=-Math.PI/2;
  for(let x=-158;x<159;x+=2.1){const plank=mesh(new THREE.BoxGeometry(1.98,.05,9.5),wood,x,.19,186);}
  // Ocean begins past the beach and extends toward the far horizon.
- const ocean=mesh(new THREE.PlaneGeometry(2200,2200,80,80),water,0,-.1,1325);ocean.rotation.x=-Math.PI/2;
+ const ocean=mesh(new THREE.PlaneGeometry(2200,2200,100,100),water,0,-.09,1340);ocean.rotation.x=-Math.PI/2;
  const pos=ocean.geometry.attributes.position;const original=new Float32Array(pos.array);
  // Thin moving wavefronts at the shoreline, not white opaque slabs.
  const shore=[];
@@ -83,5 +83,5 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
   for(let k=0;k<9;k++){const a=k*Math.PI*2/9;const leaf=mesh(new THREE.ConeGeometry(.52,4.7,4),frond,x+Math.sin(a)*1.6,height-.35,z+Math.cos(a)*1.6);leaf.rotation.z=Math.sin(a)*1.15;leaf.rotation.x=Math.cos(a)*1.15;}
  }
  let elapsed=0;
- return {root,update(dt){elapsed+=dt;const arr=pos.array;for(let i=0;i<pos.count;i++){const xx=original[i*3],yy=original[i*3+1];arr[i*3+2]=Math.sin(xx*.045+elapsed*1.2)*.13+Math.sin(yy*.08+elapsed*1.7)*.08;}pos.needsUpdate=true;ocean.geometry.computeVertexNormals();if(water.map){water.map.offset.x=(elapsed*.003)%1;water.map.offset.y=(elapsed*.005)%1;}wash.position.z=242+Math.sin(elapsed*.7)*2;wash.material.opacity=.08+.06*(.5+.5*Math.sin(elapsed*.7));shore.forEach((s,i)=>{s.position.z=241+i*1.35+Math.sin(elapsed*.9+i*.7)*1.5;s.material.opacity=.14+.18*(.5+.5*Math.sin(elapsed*.9+i*.7));});},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
+ return {root,update(dt){elapsed+=dt;const arr=pos.array;for(let i=0;i<pos.count;i++){const xx=original[i*3],yy=original[i*3+1];arr[i*3+2]=Math.sin(xx*.038+yy*.013+elapsed*1.3)*.21+Math.sin(yy*.095-xx*.022+elapsed*2.1)*.10+Math.sin(xx*.17+yy*.11-elapsed*2.7)*.035;}pos.needsUpdate=true;ocean.geometry.computeVertexNormals();if(water.map){water.map.offset.x=(elapsed*.003)%1;water.map.offset.y=(elapsed*.005)%1;}wash.position.z=242+Math.sin(elapsed*.7)*2;wash.material.opacity=.08+.06*(.5+.5*Math.sin(elapsed*.7));shore.forEach((s,i)=>{s.position.z=241+i*1.35+Math.sin(elapsed*.9+i*.7)*1.5;s.material.opacity=.14+.18*(.5+.5*Math.sin(elapsed*.9+i*.7));});},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
 }
