@@ -119,10 +119,9 @@ export async function installRealisticFountain({
  root.updateMatrixWorld(true);
  // ~2,550 individual stone meshes cause terrible performance; merge into one.
  // Use real CC0 photographed PBR maps, not flat vertex colors.
- const optimizedPavers=mergeNamedMeshes(root,n=>n.startsWith('paver_'),pavement);
- const optimizedCarvings=mergeNamedMeshes(root,n=>n.startsWith('carved_basin_panel_'),carved);
- const optimizedFlowerLeaves=mergeNamedMeshes(root,n=>n.startsWith('flower_leaf_'),leaves);
- const optimizedFlowerPetals=mergeNamedMeshes(root,n=>n.startsWith('flower_bloom_'),petals);
+ // The GLB already batches its paving into nine meshes. Never re-merge them:
+ // mergeGeometries can produce invalid morph attributes in deployed Three.js builds.
+ const optimizedPavers=0,optimizedCarvings=0,optimizedFlowerLeaves=0,optimizedFlowerPetals=0;
  root.traverse(obj=>{
   if(!obj.isMesh)return;
   const n=obj.name.toLowerCase();
@@ -132,9 +131,18 @@ export async function installRealisticFountain({
     // Planar UVs give texture to meshes that originally only had vertex colors.
     obj.updateWorldMatrix(true,false);
     generatePlanarUV(g,new THREE.Matrix4().copy(root.matrixWorld).invert().multiply(obj.matrixWorld),.45);
+    // setGeometry is intentionally avoided: older Three.js builds may crash
+    // in Mesh.updateMorphTargets when swapping cloned GLTF geometry.
+    g.morphAttributes=g.morphAttributes||{};
     obj.geometry=g;
     obj.material=n.includes('basin')||n.includes('pedestal')||n.includes('tier')?carved:granite;
    }
+  }
+  if(n.startsWith('paver_batch_')){
+   const g=obj.geometry.clone();g.morphAttributes=g.morphAttributes||{};
+   obj.updateWorldMatrix(true,false);
+   generatePlanarUV(g,new THREE.Matrix4().copy(root.matrixWorld).invert().multiply(obj.matrixWorld),.46);
+   obj.geometry=g;obj.material=pavement;
   }
   if(n.includes('water'))obj.material=water;
   if(n.startsWith('bench_'))obj.material=n.includes('leg')?metal:wood;
