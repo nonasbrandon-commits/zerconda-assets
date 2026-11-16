@@ -14,7 +14,7 @@ export function createObservationNeedle(scene,{x=48,z=-48}={}){
  for(const t of [coolColor,coolNormal]){t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(2,5);t.anisotropy=8;}
  coolColor.colorSpace=THREE.SRGBColorSpace;
  const steel=new THREE.MeshStandardMaterial({map:coolColor,normalMap:coolNormal,normalScale:new THREE.Vector2(.28,.28),color:0xe3e6e5,metalness:.03,roughness:.78,emissive:0x414747,emissiveIntensity:.24});
- const trim=new THREE.MeshStandardMaterial({color:0x869ba3,metalness:.4,roughness:.36,emissive:0x24313a,emissiveIntensity:.2});
+ const trim=new THREE.MeshStandardMaterial({color:0xaebfc7,metalness:.68,roughness:.3,emissive:0x182b38,emissiveIntensity:.12});
  const windows=new THREE.MeshPhysicalMaterial({color:0x9ec9d7,metalness:.12,roughness:.09,transparent:true,opacity:.72,side:THREE.DoubleSide,clearcoat:1});
  const lit=new THREE.MeshBasicMaterial({color:0xe3f5ff});
  function mesh(geometry,material,px,py,pz){const o=new THREE.Mesh(geometry,material);o.position.set(px,py,pz);o.castShadow=false;o.receiveShadow=false;root.add(o);return o;}
@@ -31,6 +31,15 @@ export function createObservationNeedle(scene,{x=48,z=-48}={}){
   const ring=mesh(new THREE.TorusGeometry(6.9-h*.045,.33,10,64),trim,0,h,0);ring.rotation.x=Math.PI/2;
  }
  cyl(4.1,2.7,8,77.5,trim);
+ // Additional architectural detailing, steel radial ribs and layered deck.
+ const darkGlass=new THREE.MeshPhysicalMaterial({color:0x17495b,metalness:.36,roughness:.11,transparent:true,opacity:.82,clearcoat:1,side:THREE.DoubleSide});
+ for(let k=0;k<48;k++){
+  const a=k*Math.PI/24;
+  const rib=mesh(new THREE.BoxGeometry(.11,5.3,.18),trim,Math.cos(a)*11.43,85.7,Math.sin(a)*11.43);rib.rotation.y=-a;
+  const pane=mesh(new THREE.BoxGeometry(.18,3.9,.9),darkGlass,Math.cos(a)*11.3,85.6,Math.sin(a)*11.3);pane.rotation.y=-a;
+ }
+ for(const yy of [82.7,84.4,87.6,88.6]){const ring=mesh(new THREE.TorusGeometry(11.55,.12,10,96),trim,0,yy,0);ring.rotation.x=Math.PI/2;}
+ for(let k=0;k<16;k++){const a=k*Math.PI/8;const spoke=mesh(new THREE.BoxGeometry(.24,.24,7.1),trim,Math.cos(a)*8.9,81.35,Math.sin(a)*8.9);spoke.rotation.y=-a+Math.PI/2;}
  // Reinforced glass-walled observation lounge.
  cyl(11.4,9.5,1.6,81.9,stone);
  const lowerDeck=mesh(new THREE.TorusGeometry(11.9,.68,14,96),trim,0,82.3,0);lowerDeck.rotation.x=Math.PI/2;
@@ -97,6 +106,9 @@ export function createObservationNeedle(scene,{x=48,z=-48}={}){
   const scope=mesh(new THREE.CylinderGeometry(.16,.2,.75,16),trim,px,90.5,pz);
   scope.rotation.z=Math.PI/2;
  }
+ // Blue LED accent rings.
+ const led=new THREE.MeshBasicMaterial({color:0x32b9ec});
+ for(const yy of [81.15,82.55,89.55]){const ring=mesh(new THREE.TorusGeometry(11.8,.055,8,96),led,0,yy,0);ring.rotation.x=Math.PI/2;}
  const beacon=new THREE.PointLight(0xf2faff,3,15);beacon.position.set(0,89.4,0);root.add(beacon);
  return {root,x,z,entrance:{x,z:z+10.4},deckY:90.1,deckRadius:10.7,
    // The tower shaft is solid; the public observation ring is walkable.
