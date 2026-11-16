@@ -65,13 +65,13 @@ export function createDealership(scene,{x=-62,z=-48}={}){
  for(const zz of [-9,0,9]){const light=new THREE.PointLight(0xf1f6ff,2.1,14);light.position.set(0,7.8,zz);root.add(light);box(root,1.6,.08,5.4,0,8.25,zz,new THREE.MeshBasicMaterial({color:0xe8f5ff}));}
  // Asphalt forecourt with parking bays, concrete curbs, lighting and landscape islands.
  const asphalt=mat(0x353b40,.95),stripe=mat(0xe8e7df,.8),curb=mat(0xbfc4c3,.9);
- box(root,15,.09,28,20,-.12,0,asphalt);
- for(const zz of [-11,-5.5,0,5.5,11])box(root,9,.014,.11,22,.01,zz,stripe);
- box(root,1,.26,28,28,.03,0,curb);
+ box(root,10.5,.09,28,18.75,-.12,0,asphalt);
+ for(const zz of [-11,-5.5,0,5.5,11])box(root,7,.014,.11,19,.01,zz,stripe);
+ box(root,.8,.26,28,24,.03,0,curb);
  for(const zz of [-12,12]){
-  box(root,2.4,.4,2.4,28,.2,zz,curb);
-  const bush=new THREE.Mesh(new THREE.IcosahedronGeometry(1,2),mat(0x3c754a));bush.position.set(28,1.35,zz);root.add(bush);
-  box(root,.2,7,.2,26,3.5,zz,steel);box(root,1.7,.2,.8,26,7.1,zz,new THREE.MeshBasicMaterial({color:0xfff2db}));
+  box(root,2.4,.4,2.4,23.5,.2,zz,curb);
+  const bush=new THREE.Mesh(new THREE.IcosahedronGeometry(1,2),mat(0x3c754a));bush.position.set(23.5,1.35,zz);root.add(bush);
+  box(root,.2,7,.2,23,3.5,zz,steel);box(root,1.7,.2,.8,23,7.1,zz,new THREE.MeshBasicMaterial({color:0xfff2db}));
  }
  function displayCar(px,pz,color){
   const g=new THREE.Group();g.position.set(px,0,pz);root.add(g);
@@ -82,7 +82,7 @@ export function createDealership(scene,{x=-62,z=-48}={}){
    const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.43,.43,.2,24),mat(0x171b20));wheel.rotation.z=Math.PI/2;wheel.position.set(xx,.43,zz);g.add(wheel);
   }
  }
- displayCar(21,-7,0x9d2433);displayCar(21,7,0x34597a);
+ displayCar(19,-7,0x9d2433);displayCar(19,7,0x34597a);
  // Exterior road-facing banner.
  const banner=box(root,.2,4.5,1.5,15,2.35,12.7,steel);
  return {root,x,z,cars,entrance:{x:x+14,z},isNear(px,pz,r=4.5){return Math.hypot(px-(x+14),pz-z)<r;},inside(px,pz){return px>x-11.4&&px<x+11.7&&Math.abs(pz-z)<13.6},nearestCar(px,pz,max=4.5){let best=null,d=max;for(const c of cars){const dist=Math.hypot(px-c.position.x,pz-c.position.z);if(dist<d){d=dist;best=c;}}return best;}};
