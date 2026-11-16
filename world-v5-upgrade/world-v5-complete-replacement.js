@@ -182,25 +182,22 @@ for(let k=0;k<blocks.length;k++){
 }
 
 // CENTRAL PLAZA — detailed stone paving, tiered masonry fountain and landscaping.
-function stoneTileTexture(){
- const c=document.createElement('canvas');c.width=c.height=1024;const ctx=c.getContext('2d');
- ctx.fillStyle='#918d84';ctx.fillRect(0,0,1024,1024);
- let k=317;const random=()=>{k=(Math.imul(k,1664525)+1013904223)>>>0;return k/4294967296;};
- for(let row=0;row<16;row++)for(let col=0;col<16;col++){
-  const x=col*64+(row%2)*32,y=row*64;
-  const n=130+Math.floor(random()*44);
-  ctx.fillStyle='rgb('+n+','+(n-2)+','+(n-8)+')';
-  ctx.fillRect(x+2,y+2,60,60);
-  for(let i=0;i<90;i++){
-   const xx=x+3+random()*58,yy=y+3+random()*58;
-   ctx.fillStyle=random()>.5?'rgba(255,255,255,.055)':'rgba(20,20,20,.055)';
-   ctx.fillRect(xx,yy,2+random()*4,1+random()*3);
-  }
- }
- const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;
- t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(4,4);t.anisotropy=8;return t;
+// Actual photographed CC0 PBR stone maps already uploaded in this GitHub repo.
+// These are image textures, NOT generated color squares or canvas placeholders.
+const textureLoader=new THREE.TextureLoader();
+function pbrTexture(file,repeat=4,color=false){
+ const t=textureLoader.load(BASE+'realistic-assets/pbr/PavingStones070/'+file);
+ t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(repeat,repeat);
+ t.anisotropy=renderer.capabilities.getMaxAnisotropy();
+ if(color)t.colorSpace=THREE.SRGBColorSpace;
+ return t;
 }
-const plazaStone=new THREE.MeshStandardMaterial({map:stoneTileTexture(),roughness:.96});
+const plazaStone=new THREE.MeshStandardMaterial({
+ map:pbrTexture('PavingStones070_1K-JPG_Color.jpg',3,true),
+ normalMap:pbrTexture('PavingStones070_1K-JPG_NormalGL.jpg',3),
+ roughnessMap:pbrTexture('PavingStones070_1K-JPG_Roughness.jpg',3),
+ roughness:1,metalness:0
+});
 const granite=M(0x99938a,.88),carvedStone=M(0xc5bdb0,.9);
 const copper=M(0x6b6457,.32,.7);
 box(62,.18,62,48,.055,48,plazaStone);
@@ -249,46 +246,9 @@ for(let i=0;i<24;i++){
  const jet=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),40,.052,6),jetMaterial);
  fountain.add(jet);jets.push(jet);
 }
-// Larger, substantial curved seating groups and raised planted beds.
-const flowerColors=[0xb63f58,0xe8b646,0xe7e1d6,0x8855a5];
-const flowerMats=flowerColors.map(x=>M(x));
-const leafMat=M(0x315d38),soil=M(0x453b30);
-function plantedBed(x,z,angle=0){
- const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=angle;scene.add(g);
- box(5.8,.9,2.1,0,.48,0,granite,g);
- box(5.45,.1,1.75,0,.97,0,soil,g);
- for(let i=0;i<34;i++){
-  const px=(rand()-.5)*4.9,pz=(rand()-.5)*1.45;
-  const h=.45+rand()*.48;
-  const stem=cylinder(.045,.055,h,px,1.06+h/2,pz,leafMat,g,6);
-  const bloom=new THREE.Mesh(new THREE.IcosahedronGeometry(.15+rand()*.09,1),flowerMats[i%4]);
-  bloom.position.set(px,1.06+h,pz);g.add(bloom);
- }
-}
-function largeBench(x,z,angle){
- const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=angle;scene.add(g);
- box(4.1,.18,1.1,0,.66,0,wood,g);
- box(4.1,1.0,.18,0,1.22,-.53,wood,g);
- for(const dx of [-1.65,1.65]){
-  box(.16,.7,.85,dx,.36,0,copper,g);
-  box(.16,.19,1.2,dx,.85,-.1,copper,g);
- }
-}
-for(let i=0;i<8;i++){
- const a=i*Math.PI/4,rad=20;
- largeBench(48+Math.cos(a)*rad,48+Math.sin(a)*rad,-a+Math.PI/2);
-}
-for(let i=0;i<8;i++){
- const a=(i+.5)*Math.PI/4,rad=26.1;
- plantedBed(48+Math.cos(a)*rad,48+Math.sin(a)*rad,-a+Math.PI/2);
-}
-// Four garden corners: stone planters, shrubs, flowering trees.
-for(const [dx,dz] of [[-25,-25],[25,-25],[-25,25],[25,25]]){
- const x=48+dx,z=48+dz;
- cylinder(1.6,1.85,1.05,x,.58,z,granite);
- const shrub=new THREE.Mesh(new THREE.IcosahedronGeometry(1.32,3),leafMat);
- shrub.position.set(x,1.8,z);shrub.castShadow=true;scene.add(shrub);
-}
+// Real bench/planter/flower GLTF assets are loaded in populate() below.
+// Do not generate the old cartoon wooden boxes or green polygon shrubs here.
+// Their model textures and normal maps are part of the repository.
 // Trees are only placed in designated landscape strips on blocks.
 // NEVER on road, parking lanes, intersections, or inside fountain plaza.
 const treeSpots=[];
@@ -332,7 +292,7 @@ for(const c of roadLines){
    for(const vertical of [true,false]){
     const x=vertical?c+side*6.8:p,z=vertical?p:c+side*6.8;
     if(Math.abs(x)>155||Math.abs(z)>155)continue;
-    if(inIntersection(x,z,12)||inPlaza(x,z,14))continue;
+    if(inIntersection(x,z,12)||inPlaza(x,z,2))continue;
     if(parking.some(q=>Math.hypot(x-q[0],z-q[1])<9.5))continue;
     parking.push([x,z,vertical?0:Math.PI/2]);
    }
@@ -369,22 +329,29 @@ async function populate(){
   else {cylinder(.09,.12,4.3,x,2.15,z,dark,scene,12);
     box(.5,.55,.5,x,4.6,z,stone);}
  }
- const carModels=['sedan','white','sport','sedan','white','sport','sedan','white','sedan','sport','white','sedan','sport','white','sedan','white'];
+ const carModels=Array.from({length:32},(_,i)=>['sedan','white','sport','white','sedan'][i%5]);
  for(let i=0;i<Math.min(carModels.length,parking.length);i++){
   const [x,z,angle]=parking[i],src=loaded[carModels[i]];
   if(!src)continue;
   const g=cloneNormalized(src,x,z,1.55,angle);
   if(g)cars.push({group:g,x,z,angle,speed:0});
  }
- // Real imported plaza decorations; do not put models inside fountain.
- const decor=[
-  ['statue',48,76,2.5],['planter',30,30,1.5],
-  ['planter',66,30,1.5],['planter',30,66,1.5],['planter',66,66,1.5],
-  ['flower',48,75,1.25],['flower',75,48,1.25]
- ];
- for(const [key,x,z,height] of decor)if(loaded[key])cloneNormalized(loaded[key],x,z,height);
- if(loaded.bench)for(const [x,z] of [[28,38],[68,38],[28,58],[68,58]]){
-  cloneNormalized(loaded.bench,x,z,1.05);
+ // Place actual photographed PBR textured GLTF assets around the plaza.
+ // Plant models are clustered in planters, never scattered over the walkway.
+ const decor=[];
+ for(let i=0;i<8;i++){
+  const a=i*Math.PI/4;
+  decor.push(['bench',48+Math.cos(a)*23,48+Math.sin(a)*23,1.5,-a+Math.PI/2]);
+ }
+ for(let i=0;i<12;i++){
+  const a=(i+.5)*Math.PI/6;
+  const x=48+Math.cos(a)*28,z=48+Math.sin(a)*28;
+  decor.push(['planter',x,z,1.8,-a+Math.PI/2]);
+  decor.push(['flower',x,z,1.7,-a+Math.PI/2]);
+ }
+ decor.push(['statue',48,77,2.8,0]);
+ for(const [key,x,z,height,angle] of decor){
+  if(loaded[key])cloneNormalized(loaded[key],x,z,height,angle);
  }
  if(status)status.textContent='Loaded '+Object.keys(loaded).length+'/'+keys.length+' model types · Fountain plaza at (48,48)';
 }
