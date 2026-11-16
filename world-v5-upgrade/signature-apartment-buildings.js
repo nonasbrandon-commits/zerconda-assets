@@ -3,7 +3,30 @@ import * as THREE from 'three';
 // historic brick fire-escape apartments, glass terrace residences, modern white-frame condos.
 // All elements are actual 3D meshes, not photo billboards.
 export function addSignatureArchitecture(group,{w,d,h,style=0}={}){
- const brick=new THREE.MeshStandardMaterial({color:0x974e3f,roughness:.94});
+ // Seeded, seamless masonry texture with mortar joints and granular variation.
+ // Generated in-browser so Airo needs no extra asset upload or CORS configuration.
+ const masonry=document.createElement('canvas');masonry.width=1024;masonry.height=1024;
+ const ctx=masonry.getContext('2d');let seed=49231;
+ const rnd=()=>((seed=(1664525*seed+1013904223)>>>0)/4294967296);
+ ctx.fillStyle='#b3a49b';ctx.fillRect(0,0,1024,1024);
+ const bw=128,bh=48;
+ for(let row=0;row<22;row++)for(let col=-1;col<9;col++){
+  const x=col*bw+(row%2?bw/2:0),y=row*bh;
+  const tone=Math.round(80+rnd()*50),red=Math.min(180,tone+38);
+  ctx.fillStyle='rgb('+red+','+Math.round(tone*.68)+','+Math.round(tone*.58)+')';
+  ctx.fillRect(x+3,y+3,bw-6,bh-6);
+  for(let k=0;k<95;k++){
+   const px=x+4+rnd()*(bw-8),py=y+4+rnd()*(bh-8),v=Math.floor(rnd()*110);
+   ctx.fillStyle=rnd()>.5?'rgba(22,18,16,.13)':'rgba(242,202,166,.15)';
+   ctx.fillRect(px,py,1+rnd()*4,1+rnd()*2);
+  }
+ }
+ const masonryTex=new THREE.CanvasTexture(masonry);
+ masonryTex.colorSpace=THREE.SRGBColorSpace;
+ masonryTex.wrapS=masonryTex.wrapT=THREE.RepeatWrapping;
+ masonryTex.repeat.set(2,3);
+ masonryTex.anisotropy=8;
+ const brick=new THREE.MeshStandardMaterial({map:masonryTex,color:0xffffff,roughness:.9});
  const mortar=new THREE.MeshStandardMaterial({color:0xc7a696,roughness:1});
  const iron=new THREE.MeshStandardMaterial({color:0x493f3e,metalness:.63,roughness:.54});
  const white=new THREE.MeshStandardMaterial({color:0xd8dce0,roughness:.65});
