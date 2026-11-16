@@ -20,14 +20,14 @@ const PATH={
 };
 const status=document.getElementById('status');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0xaacbdf);
-scene.fog=new THREE.Fog(0xaacbdf,190,390);
+scene.fog=new THREE.FogExp2(0xaacbdf,.0016);
 const camera=new THREE.PerspectiveCamera(66,innerWidth/innerHeight,.1,600);
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
-renderer.setPixelRatio(Math.min(devicePixelRatio,1));renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.35;
 // Temporarily disable costly shadow maps while diagnosing blank WebGL output.
-renderer.shadowMap.enabled=false;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 document.body.prepend(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xe6f4ff,0x737569,2.1));
 const sun=new THREE.DirectionalLight(0xffefdc,3.1);sun.position.set(-70,135,85);sun.castShadow=true;
@@ -142,6 +142,13 @@ const facadeMats=[
  return new THREE.MeshStandardMaterial({map:t,roughness:.93,color:0xffffff});
 });
 const roof=M(0x34373a),metal=M(0x565c5e,.42,.55);
+const brickNormal=groundTexture('realistic-assets/expanded-models/brick-building/textures/modular_factory_facade_brick_nor_gl_1k.jpg',3);
+facadeMats[0].normalMap=brickNormal;facadeMats[0].normalScale.set(.35,.35);
+const plasterNormal=groundTexture('realistic-assets/expanded-models/urban-building/textures/modular_urban_apartments_facade_plaster_nor_gl_1k.jpg',3);
+facadeMats[1].normalMap=plasterNormal;facadeMats[1].normalScale.set(.4,.4);
+const entranceAwning=new THREE.MeshStandardMaterial({color:0x3d4c50,metalness:.6,roughness:.38});
+const castStone=new THREE.MeshStandardMaterial({color:0xc9c1b2,roughness:.94});
+
 function makeBuilding(x,z,w,d,h,type){
  const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
  const facade=facadeMats[type%facadeMats.length];
@@ -152,6 +159,25 @@ function makeBuilding(x,z,w,d,h,type){
  box(w+.5,.38,d+.5,0,3.35,0,metal,g);
  box(w+.65,.55,d+.65,0,h+.28,0,stone,g);
  box(w+.2,.35,d+.2,0,h+.72,0,roof,g);
+ // Architecture: separate inset facade bands, masonry pilasters and window bays
+ // create actual depth instead of a single photo pasted onto a cube.
+ for(const sign of [-1,1]){
+  const faceZ=sign*(d/2+.13);
+  for(let floor=1;floor<Math.max(2,Math.floor(h/3.25));floor++){
+   const y=floor*3.25+.35;
+   box(w+.15,.16,.26,0,y,faceZ,castStone,g);
+   for(let bay=1;bay<Math.floor(w/4.6);bay++){
+    const px=-w/2+bay*(w/Math.floor(w/4.6));
+    box(.18,2.9,.22,px,y+1.55,faceZ,castStone,g);
+   }
+  }
+  // Aged ground-floor canopy with a real overhang and visible brackets.
+  box(w-.8,.24,1.25,0,3.45,sign*(d/2+.65),entranceAwning,g);
+  for(let k=0;k<Math.floor(w/5);k++){
+   const px=-w/2+2.5+k*5;
+   box(.14,.65,.8,px,3.13,sign*(d/2+.5),metal,g);
+  }
+ }
  // Rooftop HVAC and mechanical screening.
  for(let i=0;i<2;i++){
   box(2.3,1.1,2.5,-w*.23+i*w*.45,h+1.45,-d*.15,metal,g);
@@ -352,13 +378,6 @@ renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();c
 renderer.domElement.addEventListener('webglcontextrestored',()=>{contextLost=false;renderFailure='WebGL context restored';});
 // Unlit diagnostic marker at (48,2,29), in front of the player.
 // If this is invisible despite nonzero draw calls, investigate canvas overlay/CSS.
-const diagnosticMarker=new THREE.Mesh(
- new THREE.BoxGeometry(1.6,3.2,1.6),
- new THREE.MeshBasicMaterial({color:0xff00ff,depthTest:false})
-);
-diagnosticMarker.position.set(48,1.8,29);
-diagnosticMarker.renderOrder=999;
-scene.add(diagnosticMarker);
 let diagnosticFrames=0;
 renderer.domElement.addEventListener('wheel',e=>{
  e.preventDefault();
