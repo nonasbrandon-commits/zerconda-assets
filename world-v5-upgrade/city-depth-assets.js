@@ -44,13 +44,16 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    const angle=2*Math.PI*(i+.24*(rnd()-.5))/n;
    const x=Math.cos(angle)*(radius+(rnd()-.5)*22);
    const z=Math.sin(angle)*(radius+(rnd()-.5)*22);
+   // South Beach and the ocean must remain completely free of city towers.
+   if(z>155)continue;
    const w=12+rnd()*15,d=12+rnd()*15,h=25+rnd()*58+(ring===1?20:0);
    skylineTower(x,z,w,d,h,total++);
   }
  }
  // Road extensions outside the playable area prevent the asphalt ending abruptly.
  for(const c of [-96,0,96]){
-  b(root,c,-.15,0,19,.1,790,asphalt);
+  // Terminate the north/south road at the beach promenade, never under the sea.
+  b(root,c,-.15,-117,19,.1,554,asphalt);
   b(root,0,-.145,c,790,.1,19,asphalt);
  }
  // Rich tower island details. All objects are outside the elevator approach.
