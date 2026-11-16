@@ -59,3 +59,12 @@ Install these files alongside world.js (ES module relative imports):
 - `world-v5-upgrade/world-v5-complete-replacement.js` -> `/world-v5/world.js`
 - Sign image: `realistic-assets/dealership/zerconda-auto-center-sign.svg` (loads from GitHub raw URL).
 Verify five cars (three indoors, two outdoors), E entry/exit, sign loads without 404, three moving orange inflatable figures, observation deck access, and no collision with cafe or roads. The inflatable dancers are modeled animation, not photographic assets. These vehicle meshes are a geometry upgrade, not photo-real car scans. Clear cache and check browser console errors.
+
+
+## South Beach and top-center map — November 16, 2026
+Install these two NEW ES modules alongside existing `/world-v5/world.js`:
+- `world-v5-upgrade/zerconda-beach.js` -> `/world-v5/zerconda-beach.js`
+- `world-v5-upgrade/top-city-map.js` -> `/world-v5/top-city-map.js`
+Then replace `/world-v5/world.js` with the latest `world-v5-upgrade/world-v5-complete-replacement.js`.
+
+South Beach is at x approximately -165..165, z=168..248, connected by an access road from the south city edge. The top-center map shows the plaza, needle, coffee, auto center, beach, and moving player. Test walking along the access road to the beach, shore collision at z=247, moving water, camera height, performance on mobile, and console for missing imports. This is procedural original sand and water rendering, not a scanned or photographic beach asset; photorealism remains unverified until deployed and viewed in browser.
