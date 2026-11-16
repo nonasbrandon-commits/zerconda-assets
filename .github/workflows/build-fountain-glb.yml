@@ -1,0 +1,42 @@
+name: Build and upload walkable fountain GLB
+on:
+  push:
+    paths:
+      - 'world-v5-upgrade/build-fountain-glb.py'
+      - '.github/workflows/build-fountain-glb.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install 3D export dependencies
+        run: pip install numpy trimesh
+      - name: Generate actual 3D GLB asset
+        run: python world-v5-upgrade/build-fountain-glb.py
+      - name: Verify asset format and contents
+        run: |
+          python - <<'PY'
+          import os,struct,trimesh
+          p='realistic-assets/fountain/zerconda_walkable_fountain_plaza.glb'
+          with open(p,'rb') as f:
+              assert f.read(4)==b'glTF','Invalid GLB magic'
+          s=trimesh.load(p,force='scene')
+          assert len(s.geometry)>50, 'Missing model components'
+          assert os.stat(p).st_size>20000, 'Model unexpectedly small'
+          print('Verified:',len(s.geometry),'3D meshes',os.stat(p).st_size,'bytes')
+          PY
+      - name: Commit GLB directly to GitHub repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add realistic-assets/fountain/zerconda_walkable_fountain_plaza.glb
+          if ! git diff --cached --quiet; then
+            git commit -m "Upload walkable 3D fountain GLB asset"
+            git push
+          fi
