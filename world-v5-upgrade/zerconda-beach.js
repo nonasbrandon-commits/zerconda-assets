@@ -28,6 +28,12 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  oceanMap.wrapS=oceanMap.wrapT=THREE.RepeatWrapping;
  oceanMap.repeat.set(13,10);oceanMap.anisotropy=8;
  const water=new THREE.MeshPhysicalMaterial({color:0xb4ffff,map:oceanMap,metalness:.03,roughness:.22,transparent:true,opacity:.96,clearcoat:1,clearcoatRoughness:.12,side:THREE.DoubleSide});
+// Optional repository image asset; canvas remains the safe fallback if unavailable.
+ new THREE.TextureLoader().load(base+'realistic-assets/beach/turquoise-ocean-surface.svg',texture=>{
+  texture.colorSpace=THREE.SRGBColorSpace;
+  texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(13,10);texture.anisotropy=8;
+  water.map=texture;water.needsUpdate=true;
+ },undefined,()=>console.warn('Beach ocean image unavailable; using procedural texture'));
  const foam=new THREE.MeshBasicMaterial({color:0xe6f9f8,transparent:true,opacity:.42,depthWrite:false,side:THREE.DoubleSide});
  const fabric=[0xf5f2e8,0x237aaf,0xe79a60,0xe7d2a2].map(color=>new THREE.MeshStandardMaterial({color,roughness:.82,side:THREE.DoubleSide}));
  function mesh(geo,mat,x,y,z){const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.receiveShadow=true;root.add(o);return o;}
@@ -70,5 +76,5 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
   for(let k=0;k<9;k++){const a=k*Math.PI*2/9;const leaf=mesh(new THREE.ConeGeometry(.52,4.7,4),frond,x+Math.sin(a)*1.6,height-.35,z+Math.cos(a)*1.6);leaf.rotation.z=Math.sin(a)*1.15;leaf.rotation.x=Math.cos(a)*1.15;}
  }
  let elapsed=0;
- return {root,update(dt){elapsed+=dt;const arr=pos.array;for(let i=0;i<pos.count;i++){const xx=original[i*3],yy=original[i*3+1];arr[i*3+2]=Math.sin(xx*.045+elapsed*1.2)*.13+Math.sin(yy*.08+elapsed*1.7)*.08;}pos.needsUpdate=true;ocean.geometry.computeVertexNormals();oceanMap.offset.x=(elapsed*.003)%1;oceanMap.offset.y=(elapsed*.005)%1;shore.forEach((s,i)=>{s.position.z=241+i*1.35+Math.sin(elapsed*.9+i*.7)*1.5;s.material.opacity=.32;});},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
+ return {root,update(dt){elapsed+=dt;const arr=pos.array;for(let i=0;i<pos.count;i++){const xx=original[i*3],yy=original[i*3+1];arr[i*3+2]=Math.sin(xx*.045+elapsed*1.2)*.13+Math.sin(yy*.08+elapsed*1.7)*.08;}pos.needsUpdate=true;ocean.geometry.computeVertexNormals();if(water.map){water.map.offset.x=(elapsed*.003)%1;water.map.offset.y=(elapsed*.005)%1;}shore.forEach((s,i)=>{s.position.z=241+i*1.35+Math.sin(elapsed*.9+i*.7)*1.5;s.material.opacity=.32;});},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
 }
