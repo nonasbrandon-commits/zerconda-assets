@@ -1,0 +1,52 @@
+name: Generate realistic city surface image assets
+on:
+  push:
+    paths: ['.github/workflows/build-city-photo-assets.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pillow
+      - name: Produce city surface JPGs from existing photographic source materials
+        run: |
+          python - <<'PY'
+          from PIL import Image,ImageEnhance,ImageFilter
+          from pathlib import Path
+          root=Path('realistic-assets')
+          out=root/'city-photographic-v3'
+          out.mkdir(exist_ok=True)
+          specs=[
+            ('premium-stone-walkway','pbr/PavingStones070/PavingStones070_1K-JPG_Color.jpg',1.18,.94),
+            ('wet-city-sidewalk','pbr/PavingStones070/PavingStones070_1K-JPG_Color.jpg',.78,.86),
+            ('realistic-road','pbr/RoadLines001/RoadLines001_1K-JPG_Color.jpg',.78,.72),
+            ('natural-landscape','pbr/Ground037/Ground037_1K-JPG_Color.jpg',.96,1.1),
+            ('plaster-highrise','expanded-models/urban-building/textures/modular_urban_apartments_facade_plaster_diff_1k.jpg',1.08,.9),
+            ('brick-streetfront','expanded-models/brick-building/textures/modular_factory_facade_brick_diff_1k.jpg',1.05,.96),
+            ('metal-window-trim','expanded-models/urban-building/textures/modular_urban_apartments_facade_trim_01_diff_1k.jpg',1.03,.88),
+            ('glass-facade-detail','expanded-models/urban-building/textures/modular_urban_apartments_facade_objects_diff_1k.jpg',1.1,1.0),
+            ('natural-wood-furniture','plaza-assets/plaza-bench/textures/painted_wooden_bench_diff_1k.jpg',.98,.96)
+          ]
+          for name,src,brightness,sat in specs:
+            p=root/src
+            if not p.exists():
+              print('SKIP missing source',p)
+              continue
+            im=Image.open(p).convert('RGB')
+            im=ImageEnhance.Brightness(im).enhance(brightness)
+            im=ImageEnhance.Color(im).enhance(sat)
+            im.save(out/(name+'.jpg'),quality=93,optimize=True,subsampling=0)
+            print('CREATED',name)
+          PY
+      - name: Commit new JPG image assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add realistic-assets/city-photographic-v3/
+          if ! git diff --cached --quiet; then git commit -m "Upload realistic city photographic JPG texture assets"; git push; fi
