@@ -391,6 +391,17 @@ async function populate(){
 populate();
 const keys=new Set(),player={x:48,z:15},clock=new THREE.Clock();
 let activeCar=null,yaw=0,pitch=.1,drag=false,lastX=0,lastY=0;
+const movement={vx:0,vz:0,wheelImpulse:0};
+const WALK_SPEED=5.2,RUN_SPEED=10.5,ACCELERATION=13,DECELERATION=17;
+const WHEEL_STEP=5.5,WHEEL_MAX=15;
+renderer.domElement.addEventListener('wheel',e=>{
+ e.preventDefault();
+ if(activeCar)return;
+ const dir=Math.sign(-e.deltaY);
+ if(!dir)return;
+ movement.wheelImpulse=THREE.MathUtils.clamp(
+  movement.wheelImpulse+dir*WHEEL_STEP,-WHEEL_MAX,WHEEL_MAX);
+},{passive:false});
 addEventListener('keydown',e=>{keys.add(e.code);if(e.code==='KeyE'&&!e.repeat)toggleCar();
  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();});
 addEventListener('keyup',e=>keys.delete(e.code));
@@ -401,11 +412,11 @@ for(const b of document.querySelectorAll('[data-key]')){
 }
 const enter=document.getElementById('enter');if(enter)enter.onclick=toggleCar;
 function toggleCar(){
- if(activeCar){player.x=activeCar.x+3;player.z=activeCar.z;activeCar=null;return;}
+ if(activeCar){player.x=activeCar.x+3;player.z=activeCar.z;activeCar=null;movement.vx=0;movement.vz=0;movement.wheelImpulse=0;return;}
  let closest=null,best=5;
  for(const c of cars){const d=Math.hypot(c.x-player.x,c.z-player.z);
   if(d<best){best=d;closest=c;}}
- if(closest)activeCar=closest;
+ if(closest){activeCar=closest;movement.vx=0;movement.vz=0;movement.wheelImpulse=0;}
 }
 renderer.domElement.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;lastY=e.clientY;});
 addEventListener('pointerup',()=>drag=false);
@@ -432,11 +443,24 @@ function animate(){
   }else c.speed=0;
   c.group.rotation.y=c.angle;player.x=c.x;player.z=c.z;yaw=c.angle;
  }else{
-  const len=Math.hypot(f,side)||1,step=(keys.has('ShiftLeft')?9:5)*dt;
-  const dx=(Math.sin(yaw)*f+Math.cos(yaw)*side)/len*step;
-  const dz=(Math.cos(yaw)*f-Math.sin(yaw)*side)/len*step;
-  if(walkable(player.x+dx,player.z))player.x+=dx;
-  if(walkable(player.x,player.z+dz))player.z+=dz;
+  const len=Math.hypot(f,side)||1;
+  const speed=keys.has('ShiftLeft')||keys.has('ShiftRight')?RUN_SPEED:WALK_SPEED;
+  const desiredX=(Math.sin(yaw)*f+Math.cos(yaw)*side)/len*speed;
+  const desiredZ=(Math.cos(yaw)*f-Math.sin(yaw)*side)/len*speed;
+  const damping=(f||side)?ACCELERATION:DECELERATION;
+  movement.vx=THREE.MathUtils.damp(movement.vx,desiredX,damping,dt);
+  movement.vz=THREE.MathUtils.damp(movement.vz,desiredZ,damping,dt);
+  const wheelDistance=movement.wheelImpulse*(1-Math.exp(-11*dt));
+  movement.wheelImpulse-=wheelDistance;
+  const dx=movement.vx*dt+Math.sin(yaw)*wheelDistance;
+  const dz=movement.vz*dt+Math.cos(yaw)*wheelDistance;
+  const count=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.45));
+  for(let n=0;n<count;n++){
+   if(walkable(player.x+dx/count,player.z))player.x+=dx/count;
+   else movement.vx=0;
+   if(walkable(player.x,player.z+dz/count))player.z+=dz/count;
+   else movement.vz=0;
+  }
  }
  for(const d of doors){
   const near=Math.hypot(player.x-d.x,player.z-d.z)<3.4;
