@@ -248,6 +248,7 @@ const blocks=[
 for(let k=0;k<blocks.length;k++){
  const [bx,bz]=blocks[k];
  if(bx===48&&bz===48)continue; // Central fountain park: no buildings.
+ if(bx===48&&bz===-48)continue; // Dedicated observation needle district: no buildings.
  if(Math.abs(bx)>100||Math.abs(bz)>100)continue; // avoid outside-city half blocks
  for(const [i,j] of [[-1,-1],[1,-1],[-1,1],[1,1]]){
   const x=bx+i*17,z=bz+j*17;
@@ -255,6 +256,39 @@ for(let k=0;k<blocks.length;k++){
  }
 }
 
+// Dedicated tower island in its own city block (0..96, -96..0).
+// The 7.5m loop road surrounds the landscaped tower plaza and connects
+// to the city street grid through north/south access lanes.
+const towerDistrict={x:48,z:-48,outer:37,inner:29};
+const loopRoadMaterial=asphalt;
+const towerPavingMaterial=paving;
+const towerLawnMaterial=grass;
+function towerSurface(w,d,x,z,material,y=.045){
+ const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,d),material);
+ mesh.rotation.x=-Math.PI/2;mesh.position.set(x,y,z);
+ mesh.receiveShadow=true;scene.add(mesh);return mesh;
+}
+// Four sides of a continuous road loop, 7.5 meters wide.
+for(const dz of [-33.25,33.25])towerSurface(74,7.5,48,-48+dz,loopRoadMaterial,.065);
+for(const dx of [-33.25,33.25])towerSurface(7.5,59,48+dx,-48,loopRoadMaterial,.065);
+// Connect loop to the existing grid road at z=0 and z=-96.
+towerSurface(9,11,48,-5.5,loopRoadMaterial,.067);
+towerSurface(9,11,48,-90.5,loopRoadMaterial,.067);
+// Raised inner pedestrian island, with generous room around the tower.
+towerSurface(57.5,57.5,48,-48,towerPavingMaterial,.09);
+// Landscape pockets at the four corners of the tower island.
+for(const dx of [-21,21])for(const dz of [-21,21]){
+ const bed=new THREE.Mesh(new THREE.CircleGeometry(6,32),towerLawnMaterial);
+ bed.rotation.x=-Math.PI/2;bed.position.set(48+dx,.108,-48+dz);
+ bed.receiveShadow=true;scene.add(bed);
+}
+// Lane-edge curbs: do not block the 9m entrance/exit road openings.
+const curbMaterial=stone;
+for(const dz of [-28.8,28.8]){
+ box(27,.18,.3,16.2,.17,-48+dz,curbMaterial);
+ box(27,.18,.3,79.8,.17,-48+dz,curbMaterial);
+}
+for(const dx of [-28.8,28.8])box(.3,.18,57,48+dx,.17,-48,curbMaterial);
 const observationNeedle=createObservationNeedle(scene,{x:48,z:-48});
 // The old cartoon fountain, tiled boxes, sphere bushes, and procedural benches
 // have been REMOVED. The GLB supplies the entire detailed plaza instead.
@@ -277,7 +311,7 @@ for(const c of roadLines){
    // 16.5m from centerline: beyond 9.5m asphalt and 4m sidewalk.
    for(const [x,z] of [[c+side*16.5,p],[p,c+side*16.5]]){
     if(Math.abs(x)>162||Math.abs(z)>162)continue;
-    if(nearRoad(x,z,5.1)||insideBuilding(x,z,1.5)||inPlaza(x,z,2))continue;
+    if(nearRoad(x,z,5.1)||insideBuilding(x,z,1.5)||inPlaza(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39)continue;
     if(treeSpots.some(([a,b])=>Math.hypot(x-a,z-b)<10))continue;
     treeSpots.push([x,z]);
    }
@@ -293,7 +327,7 @@ for(const c of roadLines){
   for(const side of [-1,1]){
    const a=[c+side*11.5,p],b=[p,c+side*11.5];
    for(const [x,z] of [a,b]){
-    if(nearRoad(x,z,.6)||inPlaza(x,z,3)||insideBuilding(x,z,2))continue;
+    if(nearRoad(x,z,.6)||inPlaza(x,z,3)||insideBuilding(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39)continue;
     if(treeSpots.some(([tx,tz])=>Math.hypot(x-tx,z-tz)<4))continue;
     if(lampSpots.some(([lx,lz])=>Math.hypot(x-lx,z-lz)<8))continue;
     lampSpots.push([x,z]);
