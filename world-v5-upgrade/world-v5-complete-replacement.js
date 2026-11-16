@@ -4,6 +4,7 @@ import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
 import {createCloudSky} from './cloud-sky.js';
 import {addCityDepth} from './city-depth-assets.js';
+import {addBuildingIdentity} from './nine-building-styles.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -428,8 +429,8 @@ const resetButton=document.createElement('button');resetButton.textContent='RESE
 resetButton.type='button';resetButton.style.cssText='position:fixed;right:12px;top:12px;z-index:9999;padding:12px 16px;background:#203b49;color:white;border:1px solid #9ab5c4;border-radius:8px;cursor:pointer';
 resetButton.addEventListener('click',resetView);document.body.appendChild(resetButton);
 const movement={vx:0,vz:0,wheelImpulse:0};
-const WALK_SPEED=5.2,RUN_SPEED=10.5,ACCELERATION=13,DECELERATION=17;
-const WHEEL_STEP=5.5,WHEEL_MAX=15;
+const WALK_SPEED=2.5,RUN_SPEED=5.3,ACCELERATION=7,DECELERATION=12;
+const WHEEL_STEP=1.5,WHEEL_MAX=4;
 // Live diagnostics: distinguish a blank render from a covered/lost WebGL canvas.
 const diag=document.createElement('div');
 diag.id='zerconda-render-diagnostics';
@@ -489,7 +490,7 @@ function toggleObservationDeck(){
   camera.position.set(player.x,5,player.z-6);
   if(status)status.textContent='Back at tower entrance · T to go up';return;
  }
- if(Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)>6)return;
+ if(Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)>7)return;
  onObservationDeck=true;player.x=observationNeedle.x;player.z=observationNeedle.z+8;
  yaw=0;pitch=.1;camera.position.set(player.x,observationNeedle.deckY+4,player.z-5);
  if(status)status.textContent='Observation deck · Walk with WASD · Drag to look · T to descend';
@@ -504,12 +505,12 @@ function toggleCar(){
 renderer.domElement.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;lastY=e.clientY;});
 addEventListener('pointerup',()=>drag=false);
 addEventListener('pointermove',e=>{if(!drag)return;yaw-=(e.clientX-lastX)*.003;
- pitch=THREE.MathUtils.clamp(pitch+(e.clientY-lastY)*.0025,-1.15,1.25);
+ pitch=THREE.MathUtils.clamp(pitch+(e.clientY-lastY)*.0025,-.4,.75);
  lastX=e.clientX;lastY=e.clientY;});
 function walkable(x,z){
  if(Math.abs(x)>168||Math.abs(z)>168)return false;
  if(onObservationDeck)return observationNeedle.isOnDeck(x,z);
- if(Math.hypot(x-observationNeedle.x,z-observationNeedle.z)<6.7)return false;
+ if(Math.hypot(x-observationNeedle.x,z-observationNeedle.z)<5.3)return false;
  if(insideBuilding(x,z,1.2))return false;
  if(Math.hypot(x-48,z-48)<11.55)return false; // actual 3D basin collision
  return true;
@@ -563,10 +564,17 @@ function animate(){
  const target=new THREE.Vector3(player.x,eye,player.z);
  const desired=new THREE.Vector3(player.x-Math.sin(yaw)*dist,
  eye+2+pitch*dist,player.z-Math.cos(yaw)*dist);
- camera.position.lerp(desired,Math.min(1,dt*8));camera.lookAt(target);
+ camera.position.lerp(desired,Math.min(1,dt*8));
+ camera.position.y=Math.max(onObservationDeck?observationNeedle.deckY+1.25:1.75,camera.position.y);
+ camera.lookAt(target);
  if(!Number.isFinite(camera.position.x)||!Number.isFinite(camera.position.y)||!Number.isFinite(camera.position.z))resetView();
  try{renderer.render(scene,camera);}
  catch(err){renderFailure=String(err);console.error('ZERCONDA RENDER ERROR',err);}
+ const nearTower=!activeCar&&Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)<7;
+ towerButton.style.display=(onObservationDeck||nearTower)?'block':'none';
+ towerButton.textContent=onObservationDeck?'T · RETURN TO GROUND':'ENTER NEEDLE · GO TO TOP';
+ const door=nearestDoor();doorButton.style.display=door?'block':'none';
+ if(door)doorButton.textContent=door.manual?'F · CLOSE DOOR':'F · OPEN DOOR';
  if((diagnosticFrames++%30)===0){
   const p=camera.position;
   diag.textContent='RENDER '+(contextLost?'CONTEXT LOST':'ACTIVE')+
