@@ -13,6 +13,7 @@ import {addAirDancers} from './air-dancers.js';
 import {createZercondaBeach} from './zerconda-beach.js';
 import {createCityMap} from './top-city-map.js';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js';
+import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -301,6 +302,9 @@ for(let k=0;k<blocks.length;k++){
   makeBuilding(x,z,24,23,18+Math.floor(rand()*5)*3.2,k+Math.round(rand()*4));
  }
 }
+
+// Ocean-view residential neighborhood: homes face the southern beach.
+const waterfrontHomes=addWaterfrontHomes(scene,{count:12});
 
 // Dedicated tower island in its own city block (0..96, -96..0).
 // The 7.5m loop road surrounds the landscaped tower plaza and connects
