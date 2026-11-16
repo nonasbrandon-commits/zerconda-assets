@@ -94,10 +94,11 @@ jobs:
                               target.parent.mkdir(parents=True,exist_ok=True)
                               shutil.copy2(matches[0],target)
                       if not target.exists():raise ValueError('Missing dependency '+uri)
-                  dest=root/'trees'/(label+'.glb')
+                  dest=(root/'trees'/(label+'.glb')).resolve()
                   dest.parent.mkdir(parents=True,exist_ok=True)
                   p=subprocess.run(['blender','-b','--python',str(blender_script),'--',str(gltf),str(dest)],capture_output=True,text=True,timeout=350)
                   if p.returncode:raise ValueError('Blender conversion failed: '+(p.stderr+p.stdout)[-1200:])
+                  if not dest.exists():raise ValueError('Blender did not create output: '+(p.stdout+p.stderr)[-1600:])
                   if dest.stat().st_size>24000000:
                       dest.unlink();raise ValueError('Optimized GLB exceeds 24 MB')
                   if dest.read_bytes()[:4]!=b'glTF':raise ValueError('Invalid exported GLB')
