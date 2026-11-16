@@ -1,0 +1,59 @@
+name: Generate fountain water and tower concrete image textures
+on:
+  push:
+    paths: ['.github/workflows/build-water-concrete.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: pip install pillow numpy
+      - name: Generate tileable detailed textures and normals
+        run: |
+          python - <<'PY'
+          import numpy as np
+          from PIL import Image
+          from pathlib import Path
+          out=Path('realistic-assets/water-concrete-v1');out.mkdir(parents=True,exist_ok=True)
+          rng=np.random.default_rng(1407);N=512
+          y,x=np.mgrid[:N,:N];x=x/N;y=y/N
+          def save(name,a):
+            Image.fromarray(np.uint8(np.clip(a,0,255)),'RGB').save(out/name,quality=94,subsampling=0)
+          def normal(height,name,strength=1.4):
+            gy,gx=np.gradient(height)
+            v=np.stack([-gx*strength,-gy*strength,np.ones_like(gx)],axis=-1)
+            v/=np.linalg.norm(v,axis=-1,keepdims=True)
+            save(name,(v*.5+.5)*255)
+          def waves(k):
+            return sum(np.sin(2*np.pi*(x*np.cos(a)+y*np.sin(a))*f+p)*amp for a,f,p,amp in k)
+          water=waves([(0.15,19,.4,.32),(1.7,27,1.5,.23),(.7,49,2.8,.13),(2.4,73,.8,.06)])
+          water+=rng.normal(0,.022,(N,N))
+          glints=np.clip((water-.19)*3.2,0,1)
+          waterRGB=np.stack([47+glints*95+water*20,119+glints*92+water*22,151+glints*84+water*23],axis=-1)
+          save('fountain-water-color.jpg',waterRGB)
+          normal(water,'fountain-water-normal.jpg',2.2)
+          foam=np.clip(np.abs(waves([(0.4,26,0,.6),(1.5,37,.6,.4)]))-.48,0,1)
+          save('fountain-water-foam.jpg',np.stack([125+foam*125,164+foam*91,183+foam*72],axis=-1))
+          for name,base,grain in [('tower-concrete-warm',(174,170,161),15),('tower-concrete-cool',(147,153,156),17)]:
+            coarse=rng.normal(0,1,(64,64))
+            coarse=np.array(Image.fromarray(np.uint8(np.clip(coarse*35+127,0,255))).resize((N,N),Image.Resampling.BICUBIC),dtype=float)-127
+            fine=rng.normal(0,1,(N,N))
+            pores=(rng.random((N,N))>.992)*-30
+            h=coarse*.32+fine*grain+pores
+            streak=(np.sin(x*75+np.sin(y*11)*.6)+1)*2
+            img=np.stack([np.clip(c+h-streak,0,255) for c in base],axis=-1)
+            save(name+'-color.jpg',img)
+            normal(h/60,name+'-normal.jpg',2)
+          print('Generated 7 image textures')
+          PY
+      - name: Commit image assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add realistic-assets/water-concrete-v1/
+          if ! git diff --cached --quiet; then git commit -m "Add water surface, foam and realistic tower concrete JPG textures"; git push; fi
