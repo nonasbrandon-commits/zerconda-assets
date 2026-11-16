@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Blender for optimized 3D tree exports
-        run: sudo apt-get update -qq && sudo apt-get install -y blender >/dev/null
+        run: sudo apt-get update -qq && sudo apt-get install -y blender python3-numpy >/dev/null
       - name: Download and validate genuine CC0 assets
         run: |
           cat > /tmp/assets.py <<'PY'
