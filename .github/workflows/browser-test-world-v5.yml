@@ -1,0 +1,60 @@
+name: Browser render test for Zerconda V5
+on:
+  push:
+    paths:
+      - 'world-v5-upgrade/**'
+      - '.github/workflows/browser-test-world-v5.yml'
+  workflow_dispatch:
+jobs:
+  browser-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test tools
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Start local web server
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/zerconda-http.log 2>&1 &
+          sleep 3
+      - name: Render world and capture screenshot
+        run: |
+          mkdir -p test-results
+          cat > /tmp/test-world.cjs <<'JS'
+          const {chromium}=require(process.cwd()+'/node_modules/playwright');
+          (async()=>{
+           const browser=await chromium.launch({headless:true,args:['--use-gl=angle','--use-angle=swiftshader','--enable-webgl','--disable-web-security']});
+           const page=await browser.newPage({viewport:{width:1366,height:768}});
+           const errors=[];
+           page.on('pageerror',e=>errors.push(e.message));
+           page.on('console',m=>{if(m.type()==='error')console.log('BROWSER:',m.text().slice(0,500));});
+           await page.goto('http://127.0.0.1:8765/world-v5-upgrade/',{waitUntil:'domcontentloaded',timeout:45000});
+           await page.waitForTimeout(12000);
+           await page.screenshot({path:'test-results/zerconda-world.png',fullPage:true});
+           const state=await page.evaluate(()=>{
+            const c=document.querySelector('canvas');
+            return {canvas:!!c,width:c?.width,height:c?.height,status:document.getElementById('status')?.textContent,
+              diagnostics:document.getElementById('zerconda-render-diagnostics')?.textContent};
+           });
+           console.log('WORLD STATE:',JSON.stringify(state));
+           console.log('PAGE ERRORS:',JSON.stringify(errors));
+           await browser.close();
+           if(!state.canvas||state.width<300||state.height<300)throw Error('Three.js canvas missing or too small');
+           if(errors.length)throw Error('Runtime errors: '+errors.join('; '));
+           if(!state.diagnostics?.includes('draw calls '))throw Error('Render loop not running');
+           const draw=Number(state.diagnostics.match(/draw calls (\d+)/)?.[1]||0);
+           if(draw<20)throw Error('Too few draw calls: '+draw);
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+          node /tmp/test-world.cjs
+      - name: Upload screenshot and diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zerconda-browser-render-screenshot
+          path: test-results/
