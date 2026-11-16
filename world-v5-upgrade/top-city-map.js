@@ -4,6 +4,8 @@ export function createCityMap({player,beach={x:0,z:212}}){
  const heading=document.createElement('div');heading.textContent='ZERCONDA  •  CITY MAP';heading.style.cssText='font-weight:700;text-align:center;letter-spacing:1px;margin-bottom:3px';shell.appendChild(heading);
  const canvas=document.createElement('canvas');canvas.width=360;canvas.height=170;canvas.style.cssText='width:min(360px,85vw);height:auto;display:block;border-radius:6px';shell.appendChild(canvas);document.body.appendChild(shell);
  const ctx=canvas.getContext('2d');
+ const legend=document.createElement('div');legend.textContent='🔵 YOU ARE HERE';legend.style.cssText='text-align:center;font-weight:bold;color:#9ce8ff;margin-top:4px;letter-spacing:.5px';shell.appendChild(legend);
+ let frame=0;
  const scale=170/520,tx=x=>180+x*scale,tz=z=>26+(z+175)*scale;
  function label(x,z,name,color='#f7fafc'){ctx.fillStyle=color;ctx.font='bold 10px Arial';ctx.fillText(name,tx(x)+5,tz(z)-5);}
  function draw(){
@@ -16,7 +18,12 @@ export function createCityMap({player,beach={x:0,z:212}}){
   ctx.fillStyle='#3fbbe8';ctx.beginPath();ctx.arc(tx(48),tz(-48),6,0,Math.PI*2);ctx.fill();label(48,-48,'NEEDLE');
   ctx.fillStyle='#f5f6e9';ctx.beginPath();ctx.arc(tx(48),tz(48),6,0,Math.PI*2);ctx.fill();label(48,48,'PLAZA');
   label(-72,-48,'AUTO');label(-34,-48,'COFFEE');label(-20,212,'BEACH','#ffffff');
-  ctx.fillStyle='#ffe36d';ctx.beginPath();ctx.arc(tx(player.x),tz(player.z),5,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#13202b';ctx.lineWidth=2;ctx.stroke();
+  // Highly visible live player marker, drawn last so roads and labels never cover it.
+  const px=tx(player.x),py=tz(player.z);frame++;
+  const pulse=8+3*Math.sin(frame*.08);
+  ctx.beginPath();ctx.arc(px,py,pulse,0,Math.PI*2);ctx.fillStyle='rgba(0,183,255,.2)';ctx.fill();
+  ctx.beginPath();ctx.arc(px,py,6,0,Math.PI*2);ctx.fillStyle='#00baff';ctx.fill();ctx.lineWidth=2.5;ctx.strokeStyle='#ffffff';ctx.stroke();
+  ctx.fillStyle='#ffffff';ctx.font='bold 10px Arial';ctx.textAlign='center';ctx.fillText('YOU',px,py-13);ctx.textAlign='start';
  }
  draw();return {draw,element:shell};
 }
