@@ -345,6 +345,29 @@ const coffeeShop=createCoffeeShop(scene,{x:-34,z:-48});
 const dealership=createDealership(scene,{x:-72,z:-48});
 const airDancers=addAirDancers(scene,{x:-72,z:-48});
 const southBeach=createZercondaBeach(scene);
+
+// Ocean safety: remove legacy oversized pyramid/mountain meshes if a previous
+// scene module adds them. Never remove the observation needle or beach umbrellas.
+function removeLegacyOceanPyramids(){
+ const rejected=[];
+ scene.updateMatrixWorld(true);
+ scene.traverse(object=>{
+  if(!object.isMesh||!object.geometry)return;
+  const geo=object.geometry;
+  if(!geo.boundingBox)geo.computeBoundingBox();
+  const bb=geo.boundingBox;if(!bb)return;
+  const size=bb.getSize(new THREE.Vector3());
+  const worldPos=object.getWorldPosition(new THREE.Vector3());
+  const scale=object.getWorldScale(new THREE.Vector3());
+  const height=size.y*Math.abs(scale.y),width=Math.max(size.x*Math.abs(scale.x),size.z*Math.abs(scale.z));
+  const pyramidShape=/ConeGeometry|TetrahedronGeometry|CylinderGeometry/.test(geo.type);
+  if(pyramidShape&&width>25&&height>18&&worldPos.z>155)rejected.push(object);
+ });
+ for(const object of rejected){object.parent?.remove(object);}
+ if(rejected.length)console.warn('Removed legacy ocean pyramids:',rejected.length);
+}
+removeLegacyOceanPyramids();
+
 let dealerInside=false;
 // Separate commercial parcels with an actual paved access road, curb and pedestrian sidewalks.
 box(8,.13,83,-51.5,-.025,-48,asphalt);
