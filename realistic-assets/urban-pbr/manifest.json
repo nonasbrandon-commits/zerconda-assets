@@ -1,20 +1,24 @@
 {
   "brick": {
+    "source": "red_bricks_04",
     "color": "realistic-assets/urban-pbr/brick_color.jpg",
     "normal": "realistic-assets/urban-pbr/brick_normal.jpg",
     "roughness": "realistic-assets/urban-pbr/brick_roughness.jpg"
   },
   "concrete": {
+    "source": "concrete_floor_01",
     "color": "realistic-assets/urban-pbr/concrete_color.jpg",
     "normal": "realistic-assets/urban-pbr/concrete_normal.jpg",
     "roughness": "realistic-assets/urban-pbr/concrete_roughness.jpg"
   },
   "asphalt": {
+    "source": "asphalt_02",
     "color": "realistic-assets/urban-pbr/asphalt_color.jpg",
     "normal": "realistic-assets/urban-pbr/asphalt_normal.jpg",
     "roughness": "realistic-assets/urban-pbr/asphalt_roughness.jpg"
   },
   "sidewalk": {
+    "source": "dirty_concrete",
     "color": "realistic-assets/urban-pbr/sidewalk_color.jpg",
     "normal": "realistic-assets/urban-pbr/sidewalk_normal.jpg",
     "roughness": "realistic-assets/urban-pbr/sidewalk_roughness.jpg"
