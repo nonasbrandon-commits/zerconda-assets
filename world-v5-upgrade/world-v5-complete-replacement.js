@@ -181,47 +181,114 @@ for(let k=0;k<blocks.length;k++){
  }
 }
 
-// Center fountain plaza at (48,48), fully inside a 96x96 city block.
-box(56,.16,56,48,.035,48,paving);
-const fountain=new THREE.Group();fountain.position.set(48,0,48);scene.add(fountain);
-cylinder(9.7,9.9,.8,0,.54,0,stone,fountain);
-cylinder(9.2,9.2,.17,0,1.02,0,curb,fountain);
-const water=new THREE.MeshPhysicalMaterial({color:0x3c9ab2,metalness:.08,roughness:.11,
- transparent:true,opacity:.86,clearcoat:1,clearcoatRoughness:.07,side:THREE.DoubleSide});
-cylinder(8.8,8.8,.045,0,1.13,0,water,fountain);
-cylinder(1.65,2.2,2.7,0,2.53,0,stone,fountain);
-cylinder(4.35,4.55,.48,0,4.08,0,curb,fountain);
-cylinder(4.1,4.1,.05,0,4.37,0,water,fountain);
-cylinder(.75,1.12,2.1,0,5.32,0,stone,fountain);
-cylinder(2.1,2.25,.35,0,6.52,0,curb,fountain);
-cylinder(1.9,1.9,.05,0,6.73,0,water,fountain);
-cylinder(.18,.25,.65,0,7.13,0,bronze,fountain);
-const jetMaterial=new THREE.MeshPhysicalMaterial({color:0xb3efff,transparent:true,opacity:.55,
- depthWrite:false,roughness:.08});
-const jets=[];
-for(let i=0;i<16;i++){
- const a=i*Math.PI*2/16,r=7.5;
- const pts=[];for(let j=0;j<=20;j++){
-  const t=j/20;pts.push(new THREE.Vector3(Math.cos(a)*r*(1-t*.42),
-  1.3+Math.sin(t*Math.PI)*2.2,Math.sin(a)*r*(1-t*.42)));
+// CENTRAL PLAZA — detailed stone paving, tiered masonry fountain and landscaping.
+function stoneTileTexture(){
+ const c=document.createElement('canvas');c.width=c.height=1024;const ctx=c.getContext('2d');
+ ctx.fillStyle='#918d84';ctx.fillRect(0,0,1024,1024);
+ let k=317;const random=()=>{k=(Math.imul(k,1664525)+1013904223)>>>0;return k/4294967296;};
+ for(let row=0;row<16;row++)for(let col=0;col<16;col++){
+  const x=col*64+(row%2)*32,y=row*64;
+  const n=130+Math.floor(random()*44);
+  ctx.fillStyle='rgb('+n+','+(n-2)+','+(n-8)+')';
+  ctx.fillRect(x+2,y+2,60,60);
+  for(let i=0;i<90;i++){
+   const xx=x+3+random()*58,yy=y+3+random()*58;
+   ctx.fillStyle=random()>.5?'rgba(255,255,255,.055)':'rgba(20,20,20,.055)';
+   ctx.fillRect(xx,yy,2+random()*4,1+random()*3);
+  }
  }
- const m=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),32,.047,6),jetMaterial);
- fountain.add(m);jets.push(m);
+ const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;
+ t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(4,4);t.anisotropy=8;return t;
 }
-// Fountain plaza seats and decorative planters; model upgrades loaded below.
+const plazaStone=new THREE.MeshStandardMaterial({map:stoneTileTexture(),roughness:.96});
+const granite=M(0x99938a,.88),carvedStone=M(0xc5bdb0,.9);
+const copper=M(0x6b6457,.32,.7);
+box(62,.18,62,48,.055,48,plazaStone);
+// A stone border and four pedestrian approaches.
+for(const q of [-1,1]){
+ box(62,.12,.55,48,.17,48+q*30.7,granite);
+ box(.55,.12,62,48+q*30.7,.17,48,granite);
+ box(7,.13,10,48,.14,48+q*33,plazaStone);
+ box(10,.13,7,48+q*33,.14,48,plazaStone);
+}
+// Dark granite ring visually anchors the fountain to the paved square.
+const fountain=new THREE.Group();fountain.position.set(48,0,48);scene.add(fountain);
+cylinder(11.1,11.3,.23,0,.26,0,granite,fountain,96);
+cylinder(10.15,10.35,1.12,0,.84,0,carvedStone,fountain,96);
+cylinder(10.42,10.42,.22,0,1.45,0,granite,fountain,96);
+const water=new THREE.MeshPhysicalMaterial({color:0x397d8e,roughness:.12,metalness:.05,
+ transparent:true,opacity:.84,clearcoat:1,clearcoatRoughness:.04,side:THREE.DoubleSide});
+cylinder(9.75,9.75,.07,0,1.5,0,water,fountain,96);
+// Carved relief panels around the outer basin.
+for(let i=0;i<40;i++){
+ const a=i*Math.PI*2/40;
+ const p=new THREE.Mesh(new THREE.BoxGeometry(.72,.48,.13),i%2?carvedStone:granite);
+ p.position.set(Math.sin(a)*10.27,.92,Math.cos(a)*10.27);
+ p.rotation.y=a;fountain.add(p);
+}
+// Three ornamental basins and a bronze finial.
+cylinder(2.3,2.8,2.85,0,2.95,0,granite,fountain,64);
+cylinder(5.2,5.5,.52,0,4.6,0,carvedStone,fountain,96);
+cylinder(4.82,4.82,.07,0,4.91,0,water,fountain,96);
+cylinder(1.15,1.7,2.05,0,5.92,0,granite,fountain,64);
+cylinder(2.75,3.02,.38,0,7.13,0,carvedStone,fountain,96);
+cylinder(2.48,2.48,.05,0,7.37,0,water,fountain,96);
+cylinder(.24,.38,.86,0,7.86,0,copper,fountain,24);
+const finial=new THREE.Mesh(new THREE.SphereGeometry(.42,20,12),copper);
+finial.position.y=8.42;fountain.add(finial);
+const jetMaterial=new THREE.MeshPhysicalMaterial({color:0xc0ecf4,transparent:true,
+ opacity:.55,roughness:.1,depthWrite:false});
+const jets=[];
+for(let i=0;i<24;i++){
+ const a=i*Math.PI*2/24,r=8.4,pts=[];
+ for(let j=0;j<=24;j++){
+  const t=j/24;pts.push(new THREE.Vector3(
+   Math.cos(a)*r*(1-t*.5),1.6+Math.sin(t*Math.PI)*2.9,
+   Math.sin(a)*r*(1-t*.5)));
+ }
+ const jet=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),40,.052,6),jetMaterial);
+ fountain.add(jet);jets.push(jet);
+}
+// Larger, substantial curved seating groups and raised planted beds.
+const flowerColors=[0xb63f58,0xe8b646,0xe7e1d6,0x8855a5];
+const flowerMats=flowerColors.map(x=>M(x));
+const leafMat=M(0x315d38),soil=M(0x453b30);
+function plantedBed(x,z,angle=0){
+ const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=angle;scene.add(g);
+ box(5.8,.9,2.1,0,.48,0,granite,g);
+ box(5.45,.1,1.75,0,.97,0,soil,g);
+ for(let i=0;i<34;i++){
+  const px=(rand()-.5)*4.9,pz=(rand()-.5)*1.45;
+  const h=.45+rand()*.48;
+  const stem=cylinder(.045,.055,h,px,1.06+h/2,pz,leafMat,g,6);
+  const bloom=new THREE.Mesh(new THREE.IcosahedronGeometry(.15+rand()*.09,1),flowerMats[i%4]);
+  bloom.position.set(px,1.06+h,pz);g.add(bloom);
+ }
+}
+function largeBench(x,z,angle){
+ const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=angle;scene.add(g);
+ box(4.1,.18,1.1,0,.66,0,wood,g);
+ box(4.1,1.0,.18,0,1.22,-.53,wood,g);
+ for(const dx of [-1.65,1.65]){
+  box(.16,.7,.85,dx,.36,0,copper,g);
+  box(.16,.19,1.2,dx,.85,-.1,copper,g);
+ }
+}
 for(let i=0;i<8;i++){
- const a=i*Math.PI/4,r=19.4,x=48+Math.cos(a)*r,z=48+Math.sin(a)*r;
- const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=-a+Math.PI/2;scene.add(g);
- box(2.5,.16,.7,0,.65,0,wood,g);box(2.5,.8,.13,0,1.03,-.38,wood,g);
- for(const dx of [-.95,.95])box(.12,.65,.55,dx,.33,0,bronze,g);
+ const a=i*Math.PI/4,rad=20;
+ largeBench(48+Math.cos(a)*rad,48+Math.sin(a)*rad,-a+Math.PI/2);
 }
 for(let i=0;i<8;i++){
- const a=(i+.5)*Math.PI/4,r=23,x=48+Math.cos(a)*r,z=48+Math.sin(a)*r;
- cylinder(.92,1.12,.7,x,.38,z,stone);
- const shrub=new THREE.Mesh(new THREE.IcosahedronGeometry(.83,2),M(0x3f6940));
- shrub.position.set(x,1.08,z);shrub.castShadow=true;scene.add(shrub);
+ const a=(i+.5)*Math.PI/4,rad=26.1;
+ plantedBed(48+Math.cos(a)*rad,48+Math.sin(a)*rad,-a+Math.PI/2);
 }
-
+// Four garden corners: stone planters, shrubs, flowering trees.
+for(const [dx,dz] of [[-25,-25],[25,-25],[-25,25],[25,25]]){
+ const x=48+dx,z=48+dz;
+ cylinder(1.6,1.85,1.05,x,.58,z,granite);
+ const shrub=new THREE.Mesh(new THREE.IcosahedronGeometry(1.32,3),leafMat);
+ shrub.position.set(x,1.8,z);shrub.castShadow=true;scene.add(shrub);
+}
 // Trees are only placed in designated landscape strips on blocks.
 // NEVER on road, parking lanes, intersections, or inside fountain plaza.
 const treeSpots=[];
@@ -258,14 +325,22 @@ for(const c of roadLines){
 }
 // Parking bays in straight road segments, 20m away from intersections.
 const parking=[];
-for(const c of roadLines)for(const p of [-143,-118,-73,-48,48,73,118,143]){
- for(const s of [-1,1]){
-  const x=c+s*6.6,z=p;
-  if(Math.abs(x)>155||Math.abs(z)>155||inIntersection(x,z,12))continue;
-  if(parking.some(q=>Math.hypot(x-q[0],z-q[1])<10))continue;
-  parking.push([x,z,0]);
+for(const c of roadLines){
+ for(const p of [-149,-130,-111,-77,-59,-40,40,59,77,111,130,149]){
+  if(roadLines.some(v=>Math.abs(p-v)<21))continue;
+  for(const side of [-1,1]){
+   for(const vertical of [true,false]){
+    const x=vertical?c+side*6.8:p,z=vertical?p:c+side*6.8;
+    if(Math.abs(x)>155||Math.abs(z)>155)continue;
+    if(inIntersection(x,z,12)||inPlaza(x,z,14))continue;
+    if(parking.some(q=>Math.hypot(x-q[0],z-q[1])<9.5))continue;
+    parking.push([x,z,vertical?0:Math.PI/2]);
+   }
+  }
  }
 }
+// Place most cars near central plaza first, along adjacent road edges.
+parking.sort((a,b)=>Math.hypot(a[0]-48,a[1]-48)-Math.hypot(b[0]-48,b[1]-48));
 const loader=new GLTFLoader();
 function load(key){
  return new Promise((resolve,reject)=>loader.load(BASE+PATH[key],g=>resolve(g.scene),undefined,reject));
@@ -294,7 +369,7 @@ async function populate(){
   else {cylinder(.09,.12,4.3,x,2.15,z,dark,scene,12);
     box(.5,.55,.5,x,4.6,z,stone);}
  }
- const carModels=['sedan','white','sport','sedan','white'];
+ const carModels=['sedan','white','sport','sedan','white','sport','sedan','white','sedan','sport','white','sedan','sport','white','sedan','white'];
  for(let i=0;i<Math.min(carModels.length,parking.length);i++){
   const [x,z,angle]=parking[i],src=loaded[carModels[i]];
   if(!src)continue;
@@ -303,11 +378,12 @@ async function populate(){
  }
  // Real imported plaza decorations; do not put models inside fountain.
  const decor=[
-  ['statue',48,70,2.2],['planter',32,48,1.2],
-  ['planter',64,48,1.2],['flower',48,24,1.1]
+  ['statue',48,76,2.5],['planter',30,30,1.5],
+  ['planter',66,30,1.5],['planter',30,66,1.5],['planter',66,66,1.5],
+  ['flower',48,75,1.25],['flower',75,48,1.25]
  ];
  for(const [key,x,z,height] of decor)if(loaded[key])cloneNormalized(loaded[key],x,z,height);
- if(loaded.bench)for(const [x,z] of [[32,36],[64,36],[32,60],[64,60]]){
+ if(loaded.bench)for(const [x,z] of [[28,38],[68,38],[28,58],[68,58]]){
   cloneNormalized(loaded.bench,x,z,1.05);
  }
  if(status)status.textContent='Loaded '+Object.keys(loaded).length+'/'+keys.length+' model types · Fountain plaza at (48,48)';
