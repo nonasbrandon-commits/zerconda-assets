@@ -100,8 +100,8 @@ export async function installRealisticFountain({
  const stoneNormal=loadTexture(textures,'normal');
  const stoneRough=loadTexture(textures,'rough');
  const pavement=pbrMaterial(stoneColor,stoneNormal,stoneRough,0xffffff,1);
- const granite=pbrMaterial(stoneColor,stoneNormal,stoneRough,0xada79f,.94);
- const carved=pbrMaterial(stoneColor,stoneNormal,stoneRough,0xe4d8c9,.91);
+ const granite=pbrMaterial(stoneColor,stoneNormal,stoneRough,0xf2e9dd,.94);
+ const carved=pbrMaterial(stoneColor,stoneNormal,stoneRough,0xfff5e8,.91);
  const metal=new THREE.MeshStandardMaterial({color:0x605343,metalness:.72,roughness:.28});
  const wood=new THREE.MeshStandardMaterial({color:0x59402d,roughness:.7});
  const leaves=new THREE.MeshStandardMaterial({color:0x3d6036,roughness:.9,side:THREE.DoubleSide});
@@ -112,6 +112,9 @@ export async function installRealisticFountain({
  try{gltf=await loader.loadAsync(baseUrl);}
  catch(err){throw new Error('Fountain GLB could not load. Upload the .glb to GitHub first: '+baseUrl+' ('+err.message+')');}
  const root=gltf.scene;
+ // Fountain materials should not create a huge black shadow across the plaza.
+ // The imported mesh has overlapping and inverted faces; keep stone double-sided.
+ for(const m of [pavement,granite,carved]){m.side=THREE.DoubleSide;m.normalScale.set(.22,.22);m.envMapIntensity=1;}
  root.name='Zerconda realistic walkable fountain plaza';
  root.position.set(centerX,0,centerZ);
  // Model is already 54x54m, oriented Y-up. Never normalize or scale by height.
@@ -144,15 +147,21 @@ export async function installRealisticFountain({
    generatePlanarUV(g,new THREE.Matrix4().copy(root.matrixWorld).invert().multiply(obj.matrixWorld),.46);
    obj.geometry=g;obj.material=pavement;
   }
-  if(n.includes('water'))obj.material=water;
+  if(n.includes('water')){obj.material=water;obj.renderOrder=3;}
   if(n.startsWith('bench_'))obj.material=n.includes('leg')?metal:wood;
   if(n.startsWith('stone_flower_urn_'))obj.material=carved;
   if(n==='finial')obj.material=metal;
-  obj.castShadow=!n.includes('water')&&!n.startsWith('paver_');
-  obj.receiveShadow=true;
+  obj.castShadow=false; // GLB's overlapping tier/basin geometry caused an opaque black plaza shadow.
+  obj.receiveShadow=false; // avoid dark self-shadowing on imported stone surfaces
  });
  // Reusable water effects are separate from the solid GLB mesh.
  const effects=new THREE.Group();effects.name='Fountain water effects';root.add(effects);
+ // Direct local illumination ensures the fountain remains legible in daylight,
+ // even when the imported mesh has inward-facing triangles.
+ const fill=new THREE.HemisphereLight(0xffffff,0xd9c6ac,2.8);
+ effects.add(fill);
+ const stoneFill=new THREE.PointLight(0xffffff,75,35,2);
+ stoneFill.position.set(0,12,0);stoneFill.castShadow=false;effects.add(stoneFill);
  const jets=[];
  for(let i=0;i<20;i++){
   const a=i*Math.PI*2/20;
@@ -178,7 +187,7 @@ export async function installRealisticFountain({
  if(renderer){
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure=1.15;
+  renderer.toneMappingExposure=1.65;
   renderer.shadowMap.enabled=true;
   renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  }
