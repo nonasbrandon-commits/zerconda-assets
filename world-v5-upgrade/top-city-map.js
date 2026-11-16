@@ -17,7 +17,7 @@ export function createCityMap({player,beach={x:0,z:212}}){
  }
 
  let frame=0;
- const scale=170/520,tx=x=>180+x*scale,tz=z=>26+(z+175)*scale;
+ const scale=360/805,tx=x=>(x+185)*scale,tz=z=>(z+210)*170/460;
  function label(x,z,name,color='#f7fafc'){ctx.fillStyle=color;ctx.font='bold 10px Arial';ctx.fillText(name,tx(x)+5,tz(z)-5);}
  function draw(){
   ctx.fillStyle='#284c3b';ctx.fillRect(0,0,360,170);
@@ -25,9 +25,12 @@ export function createCityMap({player,beach={x:0,z:212}}){
   ctx.fillStyle='#187c9e';ctx.fillRect(0,tz(240),360,170-tz(240));
   ctx.strokeStyle='#737e83';ctx.lineWidth=7;
   for(const n of [-144,-48,48,144]){ctx.beginPath();ctx.moveTo(tx(n),tz(-175));ctx.lineTo(tx(n),tz(175));ctx.stroke();ctx.beginPath();ctx.moveTo(0,tz(n));ctx.lineTo(360,tz(n));ctx.stroke();}
-  ctx.fillStyle='#b4c6d1';for(const [x,z,w,h] of [[-72,-48,24,28],[-34,-48,24,25]])ctx.fillRect(tx(x-w/2),tz(z-h/2),w*scale,h*scale);
+  ctx.fillStyle='#b4c6d1';for(const [x,z,w,h] of [[-72,-48,24,28],[-34,-48,24,25]])ctx.fillRect(tx(x-w/2),tz(z-h/2),w*scale,h*170/460);
   ctx.fillStyle='#3fbbe8';ctx.beginPath();ctx.arc(tx(48),tz(-48),6,0,Math.PI*2);ctx.fill();label(48,-48,'NEEDLE');
   ctx.fillStyle='#f5f6e9';ctx.beginPath();ctx.arc(tx(48),tz(48),6,0,Math.PI*2);ctx.fill();label(48,48,'PLAZA');
+  ctx.fillStyle='#81ac59';ctx.beginPath();ctx.ellipse(tx(425),tz(-48),57,32,0,0,Math.PI*2);ctx.fill();
+  label(425,-48,'GOLF CLUB','#ffffff');
+  label(245,-20,'HOMES','#ffffff');
   label(-72,-48,'AUTO');label(-34,-48,'COFFEE');label(-20,212,'BEACH','#ffffff');
   // Highly visible live player marker, drawn last so roads and labels never cover it.
   const px=tx(player.x),py=tz(player.z);frame++;
