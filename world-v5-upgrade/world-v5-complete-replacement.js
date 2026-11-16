@@ -309,6 +309,18 @@ async function populate(){
 populate();
 const keys=new Set(),player={x:48,z:15},clock=new THREE.Clock();
 let activeCar=null,yaw=0,pitch=.1,drag=false,lastX=0,lastY=0;
+// Initialize camera BEFORE the first frame. A blank sky must never be the default.
+camera.position.set(48,5,7);
+camera.lookAt(48,2,45);
+function resetView(){
+ activeCar=null;player.x=48;player.z=15;yaw=0;pitch=.1;
+ camera.position.set(48,5,7);camera.lookAt(48,2,45);
+ if(status)status.textContent='View reset · Walk forward with W';
+}
+addEventListener('keydown',e=>{if(e.code==='KeyR')resetView();});
+const resetButton=document.createElement('button');resetButton.textContent='RESET VIEW';
+resetButton.type='button';resetButton.style.cssText='position:fixed;right:12px;top:12px;z-index:9999;padding:12px 16px;background:#203b49;color:white;border:1px solid #9ab5c4;border-radius:8px;cursor:pointer';
+resetButton.addEventListener('click',resetView);document.body.appendChild(resetButton);
 const movement={vx:0,vz:0,wheelImpulse:0};
 const WALK_SPEED=5.2,RUN_SPEED=10.5,ACCELERATION=13,DECELERATION=17;
 const WHEEL_STEP=5.5,WHEEL_MAX=15;
@@ -388,10 +400,13 @@ function animate(){
  }
  jetMaterial.opacity=.48+.09*Math.sin(elapsed*2);
  const dist=activeCar?9:5,eye=activeCar?3.4:2.1;
+ // Recover from a nonfinite camera/player coordinate instead of rendering blank sky.
+ if(!Number.isFinite(player.x)||!Number.isFinite(player.z)||!Number.isFinite(yaw)||!Number.isFinite(pitch))resetView();
  const target=new THREE.Vector3(player.x,eye,player.z);
  const desired=new THREE.Vector3(player.x-Math.sin(yaw)*dist,
  eye+2+pitch*dist,player.z-Math.cos(yaw)*dist);
  camera.position.lerp(desired,Math.min(1,dt*8));camera.lookAt(target);
+ if(!Number.isFinite(camera.position.x)||!Number.isFinite(camera.position.y)||!Number.isFinite(camera.position.z))resetView();
  renderer.render(scene,camera);
 }
 animate();
