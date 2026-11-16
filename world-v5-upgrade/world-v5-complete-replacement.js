@@ -673,7 +673,7 @@ function animate(){
   const direction=new THREE.Vector3(Math.sin(heading),-Math.sin(driverLookPitch),Math.cos(heading));
   camera.lookAt(eyePos.clone().addScaledVector(direction,25));
  }else{
-  const dist=onObservationDeck?2.8:5,eye=onObservationDeck?observationNeedle.deckY+1.7:2.1;
+  const dist=onObservationDeck?2.8:insideNeedleLobby?1.6:5,eye=onObservationDeck?observationNeedle.deckY+1.7:2.1;
   const target=new THREE.Vector3(player.x,eye,player.z);
   const desired=new THREE.Vector3(player.x-Math.sin(yaw)*dist,eye+2+Math.sin(pitch)*dist,player.z-Math.cos(yaw)*dist);
   camera.position.lerp(desired,Math.min(1,dt*8));
@@ -687,8 +687,8 @@ function animate(){
  catch(err){renderFailure=String(err);console.error('ZERCONDA RENDER ERROR',err);}
  finally{if(activeCar)activeCar.group.visible=true;}
  const nearTower=!activeCar&&Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)<7;
- towerButton.style.display=(onObservationDeck||nearTower)?'block':'none';
- towerButton.textContent=onObservationDeck?'T · RETURN TO GROUND':'ENTER NEEDLE · GO TO TOP';
+ towerButton.style.display=(onObservationDeck||insideNeedleLobby||nearTower)?'block':'none';
+ towerButton.textContent=onObservationDeck?'T · ELEVATOR DOWN':insideNeedleLobby?'T · ELEVATOR UP':'T · ENTER TOWER';
  const door=nearestDoor();doorButton.style.display=door?'block':'none';
  if(door)doorButton.textContent='F · ENTER BUILDING';
  const nearSeat=coffeeShop.nearestSeat(player.x,player.z,2.5);
