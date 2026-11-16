@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
+import {createObservationNeedle} from './observation-needle.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -252,6 +253,7 @@ for(let k=0;k<blocks.length;k++){
  }
 }
 
+const observationNeedle=createObservationNeedle(scene,{x:48,z:-48});
 // The old cartoon fountain, tiled boxes, sphere bushes, and procedural benches
 // have been REMOVED. The GLB supplies the entire detailed plaza instead.
 let realisticPlaza=null;
@@ -373,6 +375,7 @@ async function populate(){
 populate();
 const keys=new Set(),player={x:48,z:15},clock=new THREE.Clock();
 let activeCar=null,yaw=0,pitch=.1,drag=false,lastX=0,lastY=0;
+let onObservationDeck=false;
 // Initialize camera BEFORE the first frame. A blank sky must never be the default.
 camera.position.set(48,5,7);
 camera.lookAt(48,2,45);
@@ -407,7 +410,7 @@ renderer.domElement.addEventListener('wheel',e=>{
  movement.wheelImpulse=THREE.MathUtils.clamp(
   movement.wheelImpulse+dir*WHEEL_STEP,-WHEEL_MAX,WHEEL_MAX);
 },{passive:false});
-addEventListener('keydown',e=>{keys.add(e.code);if(e.code==='KeyE'&&!e.repeat)toggleCar();if(e.code==='KeyF'&&!e.repeat)toggleNearbyDoor();
+addEventListener('keydown',e=>{keys.add(e.code);if(e.code==='KeyE'&&!e.repeat)toggleCar();if(e.code==='KeyF'&&!e.repeat)toggleNearbyDoor();if(e.code==='KeyT'&&!e.repeat)toggleObservationDeck();
  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();});
 addEventListener('keyup',e=>keys.delete(e.code));
 for(const b of document.querySelectorAll('[data-key]')){
@@ -430,6 +433,8 @@ addEventListener('pointermove',e=>{if(!drag)return;yaw-=(e.clientX-lastX)*.003;
  lastX=e.clientX;lastY=e.clientY;});
 function walkable(x,z){
  if(Math.abs(x)>168||Math.abs(z)>168)return false;
+ if(onObservationDeck)return observationNeedle.isOnDeck(x,z);
+ if(Math.hypot(x-observationNeedle.x,z-observationNeedle.z)<6.7)return false;
  if(insideBuilding(x,z,1.2))return false;
  if(Math.hypot(x-48,z-48)<11.55)return false; // actual 3D basin collision
  return true;
@@ -476,7 +481,7 @@ function animate(){
  // The old procedural fountain's jetMaterial was removed with that fountain.
  // Its stale animation line caused ReferenceError every frame BEFORE renderer.render().
  // Animated water is now updated by realisticPlaza.update(dt) above.
- const dist=activeCar?9:5,eye=activeCar?3.4:2.1;
+ const dist=onObservationDeck?2.8:(activeCar?9:5),eye=onObservationDeck?observationNeedle.deckY+1.7:(activeCar?3.4:2.1);
  // Recover from a nonfinite camera/player coordinate instead of rendering blank sky.
  if(!Number.isFinite(player.x)||!Number.isFinite(player.z)||!Number.isFinite(yaw)||!Number.isFinite(pitch))resetView();
  const target=new THREE.Vector3(player.x,eye,player.z);
