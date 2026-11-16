@@ -44,11 +44,18 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  const boardwalk=mesh(new THREE.PlaneGeometry(320,10),wood,0,.17,186);boardwalk.rotation.x=-Math.PI/2;
  for(let x=-158;x<159;x+=2.1){const plank=mesh(new THREE.BoxGeometry(1.98,.05,9.5),wood,x,.19,186);}
  // Ocean begins past the beach and extends toward the far horizon.
- const ocean=mesh(new THREE.PlaneGeometry(1100,850,60,50),water,0,-.1,660);ocean.rotation.x=-Math.PI/2;
+ const ocean=mesh(new THREE.PlaneGeometry(2200,2200,80,80),water,0,-.1,1325);ocean.rotation.x=-Math.PI/2;
  const pos=ocean.geometry.attributes.position;const original=new Float32Array(pos.array);
  // Thin moving wavefronts at the shoreline, not white opaque slabs.
  const shore=[];
- for(let j=0;j<10;j++){const line=mesh(new THREE.PlaneGeometry(330,.12+j*.12),foam,0,.18,241+j*1.35);line.rotation.x=-Math.PI/2;shore.push(line);}
+ // Separate translucent surf materials for natural independent fading.
+ for(let j=0;j<10;j++){
+  const line=mesh(new THREE.PlaneGeometry(330,.10+j*.09),foam.clone(),0,.18,241+j*1.35);
+  line.rotation.x=-Math.PI/2;shore.push(line);
+ }
+ const washMat=new THREE.MeshBasicMaterial({color:0xcaf5ee,transparent:true,opacity:.12,depthWrite:false,side:THREE.DoubleSide});
+ const wash=mesh(new THREE.PlaneGeometry(330,4.5),washMat,0,.115,242);
+ wash.rotation.x=-Math.PI/2;
  // Sand ripples and dune clusters.
  const duneMat=new THREE.MeshStandardMaterial({color:0xd7bb88,roughness:1});
  for(let i=0;i<90;i++){const x=((i*73)%317)-158,z=192+((i*31)%39);if(Math.abs(x)<12&&z<202)continue;const o=mesh(new THREE.SphereGeometry(1,10,6),duneMat,x,.1,z);o.scale.set(1.3+(i%4),.1+(i%3)*.04,.6+(i%5)*.3);}
@@ -76,5 +83,5 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
   for(let k=0;k<9;k++){const a=k*Math.PI*2/9;const leaf=mesh(new THREE.ConeGeometry(.52,4.7,4),frond,x+Math.sin(a)*1.6,height-.35,z+Math.cos(a)*1.6);leaf.rotation.z=Math.sin(a)*1.15;leaf.rotation.x=Math.cos(a)*1.15;}
  }
  let elapsed=0;
- return {root,update(dt){elapsed+=dt;const arr=pos.array;for(let i=0;i<pos.count;i++){const xx=original[i*3],yy=original[i*3+1];arr[i*3+2]=Math.sin(xx*.045+elapsed*1.2)*.13+Math.sin(yy*.08+elapsed*1.7)*.08;}pos.needsUpdate=true;ocean.geometry.computeVertexNormals();if(water.map){water.map.offset.x=(elapsed*.003)%1;water.map.offset.y=(elapsed*.005)%1;}shore.forEach((s,i)=>{s.position.z=241+i*1.35+Math.sin(elapsed*.9+i*.7)*1.5;s.material.opacity=.32;});},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
+ return {root,update(dt){elapsed+=dt;const arr=pos.array;for(let i=0;i<pos.count;i++){const xx=original[i*3],yy=original[i*3+1];arr[i*3+2]=Math.sin(xx*.045+elapsed*1.2)*.13+Math.sin(yy*.08+elapsed*1.7)*.08;}pos.needsUpdate=true;ocean.geometry.computeVertexNormals();if(water.map){water.map.offset.x=(elapsed*.003)%1;water.map.offset.y=(elapsed*.005)%1;}wash.position.z=242+Math.sin(elapsed*.7)*2;wash.material.opacity=.08+.06*(.5+.5*Math.sin(elapsed*.7));shore.forEach((s,i)=>{s.position.z=241+i*1.35+Math.sin(elapsed*.9+i*.7)*1.5;s.material.opacity=.14+.18*(.5+.5*Math.sin(elapsed*.9+i*.7));});},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
 }
