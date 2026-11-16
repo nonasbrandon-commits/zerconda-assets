@@ -87,13 +87,6 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
  // Central plaza perimeter: planters and benches only outside fountain basin.
  for(const [x,z,rot] of [[29,26,0],[67,26,0],[29,70,Math.PI],[67,70,Math.PI]])bench(x,z,rot);
  for(const [x,z] of [[24,25],[72,25],[24,71],[72,71]])planter(x,z);
- // distant hills behind skyline, subtle earth-toned silhouettes
- const hill=new T.MeshStandardMaterial({color:0x78918b,roughness:1});
- for(let i=0;i<20;i++){
-  const a=i*Math.PI/10;
-  const rad=460;
-  const o=new T.Mesh(new T.ConeGeometry(50+rnd()*45,45+rnd()*70,5),hill);
-  o.position.set(Math.cos(a)*rad,15,Math.sin(a)*rad);o.rotation.y=a;root.add(o);
- }
+ // Keep the waterfront horizon unobstructed: no low-poly cone mountains.
  return {root,skylineCount:total,dispose(){scene.remove(root);}};
 }
