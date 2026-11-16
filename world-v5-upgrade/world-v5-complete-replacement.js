@@ -65,7 +65,15 @@ const curb=M(0xd7d2c8);
 const grass=groundPBR('Ground037','Ground037',65,0x94a68a);
 const lane=M(0xeae5d7),yellow=M(0xc4ad62),dark=M(0x252a2d),stone=M(0xc4bcae);
 const bronze=M(0x6b5c48,.38,.62),wood=M(0x6a4a31);
-const glass=new THREE.MeshPhysicalMaterial({color:0x9dbfce,metalness:.08,roughness:.095,transparent:true,opacity:.83,clearcoat:1,clearcoatRoughness:.045,side:THREE.DoubleSide,depthWrite:true});
+const glassCanvas=document.createElement('canvas');glassCanvas.width=512;glassCanvas.height=512;
+ const gc=glassCanvas.getContext('2d'),gr=gc.createLinearGradient(0,0,512,512);
+ gr.addColorStop(0,'#28485e');gr.addColorStop(.38,'#8ab4c8');gr.addColorStop(.7,'#476b82');gr.addColorStop(1,'#1d3649');
+ gc.fillStyle=gr;gc.fillRect(0,0,512,512);
+ gc.globalAlpha=.26;for(let i=0;i<28;i++){const xx=(i*73)%512,yy=220+(i*47)%180;gc.fillStyle=i%3?'#243b50':'#c6dce5';gc.fillRect(xx,yy,14+(i%5)*8,512-yy);}
+ gc.globalAlpha=.22;gc.fillStyle='#f8fafc';for(let i=0;i<11;i++){gc.beginPath();gc.ellipse((i*97)%512,55+(i*41)%150,52,9,-.25,0,Math.PI*2);gc.fill();}
+ gc.globalAlpha=.48;gc.strokeStyle='#d8e9ef';gc.lineWidth=4;gc.beginPath();gc.moveTo(32,0);gc.lineTo(260,512);gc.stroke();gc.globalAlpha=1;
+ const glassTexture=new THREE.CanvasTexture(glassCanvas);glassTexture.colorSpace=THREE.SRGBColorSpace;glassTexture.anisotropy=8;
+ const glass=new THREE.MeshPhysicalMaterial({map:glassTexture,color:0xffffff,metalness:.16,roughness:.12,transparent:true,opacity:.93,clearcoat:1,clearcoatRoughness:.055,side:THREE.DoubleSide,depthWrite:true});
 const windowMat=glass,doorMat=M(0x655343,.42,.18);
 const windowFrame=M(0x43494a,.42,.5),windowSill=M(0xd7cec0,.9);
 const windowReflection=new THREE.MeshBasicMaterial({color:0xd8f0ff,transparent:true,opacity:.18,depthWrite:false,side:THREE.DoubleSide});
@@ -385,7 +393,7 @@ async function populate(){
  result.forEach((r,i)=>{if(r.status==='fulfilled')loaded[keys[i]]=r.value;});
  for(let i=0;i<treeSpots.length;i++){
   const [x,z]=treeSpots[i],src=loaded[i%2?'tree2':'tree']||loaded.tree||loaded.tree2;
-  if(src)cloneNormalized(src,x,z,7+rand()*2.5,rand()*6.28);
+  if(src&&!doors.some(d=>Math.hypot(x-d.x,z-d.z)<13)&&!(Math.abs(x+34)<24&&Math.abs(z+48)<24))cloneNormalized(src,x,z,7+rand()*2.5,rand()*6.28);
  }
  for(const [x,z] of lampSpots){
   if(loaded.lamp)cloneNormalized(loaded.lamp,x,z,4.4);
@@ -474,6 +482,11 @@ const actionButton=(id,label,bottom,callback)=>{
 };
 const towerButton=actionButton('zerconda-tower-button','T · OBSERVATION DECK',245,toggleObservationDeck);
 const doorButton=actionButton('zerconda-door-button','F · ENTER BUILDING',305,toggleNearbyDoor);
+// Legacy overlay cleanup: older Airo button can survive alongside the new UI.
+const fixLegacyDoorLabels=()=>{for(const b of document.querySelectorAll('button')){if(b!==doorButton&&/^(?:F\\s*[·:.\\-]\\s*)?(?:OPEN|CLOSE)\\s+DOORS?$/i.test((b.textContent||'').trim())){b.textContent='F · ENTER BUILDING';b.onclick=()=>toggleNearbyDoor();}}};
+fixLegacyDoorLabels();
+const legacyDoorObserver=new MutationObserver(fixLegacyDoorLabels);
+legacyDoorObserver.observe(document.body,{subtree:true,childList:true});
 const cafeButton=actionButton('zerconda-cafe-button','C · SIT DOWN',365,toggleCafeSeat);
 let sittingSeat=null;
 function toggleCafeSeat(){if(sittingSeat){sittingSeat=null;return;}const seat=coffeeShop.nearestSeat(player.x,player.z,2.5);if(!seat)return;sittingSeat=seat;player.x=seat.x;player.z=seat.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Seated at Brewstone Coffee · Press C or use button to stand';}
@@ -486,7 +499,7 @@ function nearestDoor(){
 }
 function toggleNearbyDoor(){
  const d=nearestDoor();if(!d)return;
- const next=!d.manual;
+ const next=true;
  for(const leaf of doors){
   if(Math.abs(leaf.x-d.x)<.1&&Math.abs(leaf.z-d.z)<.1){
    leaf.manual=next;leaf.holdUntil=next?elapsed+8:0;
