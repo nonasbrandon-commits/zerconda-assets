@@ -12,6 +12,7 @@ import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 import {addAirDancers} from './air-dancers.js';
 import {createZercondaBeach} from './zerconda-beach.js';
 import {createCityMap} from './top-city-map.js';
+import {addSignatureArchitecture} from './signature-apartment-buildings.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -261,6 +262,7 @@ function makeBuilding(x,z,w,d,h,type){
    box(.2,.14,1.78,side*(w/2+.16),4.04+f*3.2,zz,stone,g);
   }
  }
+ if(type%5===0||type%5===2||type%5===4)addSignatureArchitecture(g,{w,d,h,style:type%5===0?0:type%5===2?1:2});
  buildings.push({x,z,w,d,h});
 }
 const blocks=[
