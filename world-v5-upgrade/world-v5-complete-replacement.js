@@ -130,16 +130,17 @@ function facadeTexture(base,trimColor,glassColor,cols=5,floors=5){
  const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;
  return t;
 }
-const palettes=[
- ['#9c806c','#e3d4bf','#1c3846'],
- ['#b9b4a6','#e9e0ce','#1c3443'],
- ['#8e7567','#c9a98a','#253f4b'],
- ['#b1b4b0','#e3e5df','#294552'],
- ['#a06f5e','#d5a98f','#203b49']
-];
-const facadeMats=palettes.map(([a,b,c],i)=>new THREE.MeshStandardMaterial({
- map:facadeTexture(a,b,c,5,6),roughness:.93
-}));
+// Real CC0 architectural photographs replace hand-painted cartoon windows.
+const facadeMats=[
+ 'realistic-assets/expanded-models/brick-building/textures/modular_factory_facade_brick_diff_1k.jpg',
+ 'realistic-assets/expanded-models/urban-building/textures/modular_urban_apartments_facade_plaster_diff_1k.jpg',
+ 'realistic-assets/expanded-models/urban-building/textures/modular_urban_apartments_facade_trim_01_diff_1k.jpg'
+].map((path,i)=>{
+ const t=groundLoader.load(BASE+path);
+ t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;
+ t.repeat.set(3,2);t.anisotropy=8;
+ return new THREE.MeshStandardMaterial({map:t,roughness:.93,color:0xffffff});
+});
 const roof=M(0x34373a),metal=M(0x565c5e,.42,.55);
 function makeBuilding(x,z,w,d,h,type){
  const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
@@ -303,8 +304,24 @@ async function populate(){
   const g=cloneNormalized(src,x,z,1.55,angle);
   if(g)cars.push({group:g,x,z,angle,speed:0});
  }
- // All fountain-area benches, urns, paving and flowers are contained in
- // zerconda_walkable_fountain_plaza.glb. Do not spawn duplicate props here.
+ // Populate the plaza perimeter with real scanned GLTF street furniture.
+ // Unlike primitive placeholder meshes these contain authored textures and normals.
+ const decorate=(key,x,z,height,angle=0)=>{
+  const src=loaded[key];if(!src)return;
+  return cloneNormalized(src,x,z,height,angle);
+ };
+ for(let i=0;i<8;i++){
+  const a=i*Math.PI/4;
+  const x=48+Math.cos(a)*25,z=48+Math.sin(a)*25;
+  decorate('bench',x,z,1.15,-a+Math.PI/2);
+ }
+ for(let i=0;i<12;i++){
+  const a=i*Math.PI/6;
+  const x=48+Math.cos(a)*29,z=48+Math.sin(a)*29;
+  decorate('planter',x,z,1.1,a);
+  if(i%2===0)decorate('flower',x+.7,z+.7,.8,a);
+ }
+
  if(status)status.textContent='Loaded '+Object.keys(loaded).length+'/'+keys.length+' model types · Fountain plaza at (48,48)';
 }
 populate();
