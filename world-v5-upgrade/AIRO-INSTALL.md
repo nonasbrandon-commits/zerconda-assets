@@ -48,3 +48,14 @@ Deploy `zerconda-dealership.js` alongside `world.js`. Its sign texture loads fro
 
 ## Commercial block layout and entry controls
 The newest `world-v5-complete-replacement.js` reserves the block west of the Observation Needle for Brewstone Coffee and Zerconda Motors. An 8m access road separates the two buildings. Remove all old duplicated world spawn scripts. The coffee shop requires E ENTER before C SIT; the dealership requires E ENTER before inspecting display cars; apartment buildings require F ENTER. Check brick facade proportions and ensure no building overlaps either business. Keep the same import map and deploy the newest complete file, not partial snippets.
+
+
+## Dealership visual upgrade — November 16, 2026
+Install these files alongside world.js (ES module relative imports):
+- `world-v5-upgrade/zerconda-dealership.js` -> `/world-v5/zerconda-dealership.js`
+- `world-v5-upgrade/detailed-fictional-cars.js` -> `/world-v5/detailed-fictional-cars.js`
+- `world-v5-upgrade/air-dancers.js` -> `/world-v5/air-dancers.js`
+- `world-v5-upgrade/observation-needle.js` -> `/world-v5/observation-needle.js`
+- `world-v5-upgrade/world-v5-complete-replacement.js` -> `/world-v5/world.js`
+- Sign image: `realistic-assets/dealership/zerconda-auto-center-sign.svg` (loads from GitHub raw URL).
+Verify five cars (three indoors, two outdoors), E entry/exit, sign loads without 404, three moving orange inflatable figures, observation deck access, and no collision with cafe or roads. The inflatable dancers are modeled animation, not photographic assets. These vehicle meshes are a geometry upgrade, not photo-real car scans. Clear cache and check browser console errors.
