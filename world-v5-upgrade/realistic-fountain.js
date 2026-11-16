@@ -10,7 +10,9 @@ export async function installRealisticFountain({scene,centerX=48,centerZ=48,rend
  const paving=new THREE.MeshStandardMaterial({map:tex,color:0xffffff,roughness:.92,side:THREE.DoubleSide});
  const limestone=new THREE.MeshStandardMaterial({color:0xe3d8c6,roughness:.86,metalness:0,side:THREE.DoubleSide});
  const accent=new THREE.MeshStandardMaterial({color:0xb6a792,roughness:.82,side:THREE.DoubleSide});
- const water=new THREE.MeshPhysicalMaterial({color:0x70b9d0,roughness:.12,metalness:.08,transparent:true,opacity:.83,clearcoat:1,side:THREE.DoubleSide,depthWrite:false});
+ const loadWater=(name,repeat=3)=>{const t=loader.load('https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/water-concrete-v1/'+name);t.colorSpace=name.includes('normal')?THREE.NoColorSpace:THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(repeat,repeat);t.anisotropy=8;return t;};
+ const waterMap=loadWater('fountain-water-color.jpg',5),waterNormal=loadWater('fountain-water-normal.jpg',5);
+ const water=new THREE.MeshPhysicalMaterial({map:waterMap,normalMap:waterNormal,normalScale:new THREE.Vector2(.2,.2),color:0xffffff,roughness:.14,metalness:.08,transparent:true,opacity:.9,clearcoat:1,clearcoatRoughness:.09,side:THREE.DoubleSide,depthWrite:false});
  const spray=new THREE.MeshBasicMaterial({color:0xe2f9ff,transparent:true,opacity:.75,depthWrite:false,side:THREE.DoubleSide});
  const add=(geo,mat,x=0,y=0,z=0)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.receiveShadow=true;m.castShadow=false;root.add(m);return m};
  // All plaza geometry is explicitly upward-facing: no dark/inverted GLB faces.
@@ -62,8 +64,8 @@ export async function installRealisticFountain({scene,centerX=48,centerZ=48,rend
  }
  const light=new THREE.HemisphereLight(0xffffff,0xe3d6c5,1.2);root.add(light);
  let elapsed=0;
- function update(dt){elapsed+=dt;for(let i=0;i<jets.length;i++)jets[i].material.opacity=.68+.1*Math.sin(elapsed*3+i*.4);}
+ function update(dt){elapsed+=dt;waterMap.offset.x=(elapsed*.009)%1;waterMap.offset.y=(elapsed*.014)%1;waterNormal.offset.x=(-elapsed*.015)%1;waterNormal.offset.y=(elapsed*.011)%1;for(let i=0;i<jets.length;i++)jets[i].material.opacity=.68+.1*Math.sin(elapsed*3+i*.4);}
  function canWalk(x,z,radius=.45){return Math.hypot(x-centerX,z-centerZ)>11.35+radius;}
- function dispose(){scene.remove(root);root.traverse(o=>{if(o.isMesh){o.geometry.dispose();o.material.dispose();}});tex.dispose();}
+ function dispose(){scene.remove(root);root.traverse(o=>{if(o.isMesh){o.geometry.dispose();o.material.dispose();}});tex.dispose();waterMap.dispose();waterNormal.dispose();}
  return {root,update,canWalk,dispose,obstacles:[{x:centerX,z:centerZ,r:11.35}],stats:{replacedBlackGLB:true}};
 }
