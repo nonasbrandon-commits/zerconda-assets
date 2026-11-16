@@ -2,7 +2,7 @@
 
 Target URL: https://zerconda.com/world-v5/
 
-## Deploy these four files
+## Deploy these five files
 
 Source repository: https://github.com/nonasbrandon-commits/zerconda-assets
 
@@ -12,6 +12,7 @@ Source repository: https://github.com/nonasbrandon-commits/zerconda-assets
 | `world-v5-upgrade/world-v5-complete-replacement.js` | `/world-v5/world-v5-complete-replacement.js` |
 | `world-v5-upgrade/realistic-fountain.js` | `/world-v5/realistic-fountain.js` |
 | `world-v5-upgrade/observation-needle.js` | `/world-v5/observation-needle.js` |
+| `world-v5-upgrade/cloud-sky.js` | `/world-v5/cloud-sky.js` |
 
 The Observation Needle near (48,-48) has a ground elevator. Walk near its entrance and press T (or tap the on-screen button) to travel to the 90-meter viewing deck. Press T again to descend. The deck has 360-degree views and a walkable safety-railed perimeter.
 
@@ -30,7 +31,7 @@ If a check fails, report the exact browser console error and screenshot. Do not 
 
 ## Current quality boundary
 
-The current model is a lightweight real 3D fountain with PBR materials; it is not a photogrammetric replica of the concept image. Do not advertise it as photorealistic until visually reviewed.
+The old fountain GLB is deliberately no longer loaded because it rendered as a solid black shape. The replacement fountain is generated from textured stone geometry. The tower has been reshaped to better match the homepage reference; neither model is a photogrammetric replica. Do not advertise it as photorealistic until visually reviewed.
 
 ## Source verification
 
