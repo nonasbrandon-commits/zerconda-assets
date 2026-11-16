@@ -17,6 +17,7 @@ Source repository: https://github.com/nonasbrandon-commits/zerconda-assets
 | `world-v5-upgrade/nine-building-styles.js` | `/world-v5/nine-building-styles.js` |
 | `world-v5-upgrade/brewstone-coffee.js` | `/world-v5/brewstone-coffee.js` |
 | `world-v5-upgrade/apartment-interiors.js` | `/world-v5/apartment-interiors.js` |
+| `world-v5-upgrade/zerconda-dealership.js` | `/world-v5/zerconda-dealership.js` |
 
 The Observation Needle near (48,-48) has a ground elevator. Walk near its entrance and press T (or tap the on-screen button) to travel to the 90-meter viewing deck. Press T again to descend. The deck has 360-degree views and a walkable safety-railed perimeter.
 
@@ -40,3 +41,7 @@ The old fountain GLB is deliberately no longer loaded because it rendered as a s
 ## Source verification
 
 GitHub Actions workflow `Browser render test for Zerconda V5` launches Chromium, renders the exact HTML entry point and uploads a screenshot. Review its latest result before installing. Workflow `Verify Zerconda V5 scene and assets` checks syntax and required files.
+
+
+## Zerconda Motors showroom
+Deploy `zerconda-dealership.js` alongside `world.js`. Its sign texture loads from `realistic-assets/dealership/zerconda-motors-sign.svg` on the GitHub raw URL. Verify E ENTER DEALERSHIP beside Brewstone Coffee, all three showroom vehicles, and E EXIT DEALERSHIP. This is a 3D showroom, not a flat image billboard.
