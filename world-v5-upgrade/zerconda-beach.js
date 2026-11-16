@@ -12,7 +12,22 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  const sandMap=new THREE.CanvasTexture(canvas);sandMap.colorSpace=THREE.SRGBColorSpace;sandMap.wrapS=sandMap.wrapT=THREE.RepeatWrapping;sandMap.repeat.set(18,8);sandMap.anisotropy=8;
  const sand=new THREE.MeshStandardMaterial({color:0xe5ceaa,roughness:1,map:sandMap});
  const wood=new THREE.MeshStandardMaterial({color:0x927055,roughness:.87});
- const water=new THREE.MeshPhysicalMaterial({color:0x0b7893,metalness:.08,roughness:.16,transparent:true,opacity:.91,clearcoat:1,clearcoatRoughness:.08,side:THREE.DoubleSide});
+ // Turquoise ocean surface with independently tiled wave highlights. No opaque blocks.
+ const oceanCanvas=document.createElement('canvas');oceanCanvas.width=512;oceanCanvas.height=512;
+ const oc=oceanCanvas.getContext('2d');
+ const grad=oc.createLinearGradient(0,0,512,512);
+ grad.addColorStop(0,'#078c9c');grad.addColorStop(.5,'#20b4b5');grad.addColorStop(1,'#067a92');
+ oc.fillStyle=grad;oc.fillRect(0,0,512,512);
+ for(let i=0;i<360;i++){
+  const xx=random()*512,yy=random()*512;
+  oc.beginPath();oc.ellipse(xx,yy,4+random()*22,.4+random()*1.5,random()*.3,0,Math.PI*2);
+  oc.strokeStyle='rgba(207,255,248,'+(.035+random()*.18)+')';oc.lineWidth=.5+random()*1.5;oc.stroke();
+ }
+ const oceanMap=new THREE.CanvasTexture(oceanCanvas);
+ oceanMap.colorSpace=THREE.SRGBColorSpace;
+ oceanMap.wrapS=oceanMap.wrapT=THREE.RepeatWrapping;
+ oceanMap.repeat.set(13,10);oceanMap.anisotropy=8;
+ const water=new THREE.MeshPhysicalMaterial({color:0xb4ffff,map:oceanMap,metalness:.03,roughness:.22,transparent:true,opacity:.96,clearcoat:1,clearcoatRoughness:.12,side:THREE.DoubleSide});
  const foam=new THREE.MeshBasicMaterial({color:0xe6f9f8,transparent:true,opacity:.42,depthWrite:false,side:THREE.DoubleSide});
  const fabric=[0xf5f2e8,0x237aaf,0xe79a60,0xe7d2a2].map(color=>new THREE.MeshStandardMaterial({color,roughness:.82,side:THREE.DoubleSide}));
  function mesh(geo,mat,x,y,z){const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.receiveShadow=true;root.add(o);return o;}
@@ -27,7 +42,7 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  const pos=ocean.geometry.attributes.position;const original=new Float32Array(pos.array);
  // Thin moving wavefronts at the shoreline, not white opaque slabs.
  const shore=[];
- for(let j=0;j<6;j++){const line=mesh(new THREE.PlaneGeometry(330,.15),foam,0,.16,240+j*3.2);line.rotation.x=-Math.PI/2;shore.push(line);}
+ for(let j=0;j<10;j++){const line=mesh(new THREE.PlaneGeometry(330,.12+j*.12),foam,0,.18,241+j*1.35);line.rotation.x=-Math.PI/2;shore.push(line);}
  // Sand ripples and dune clusters.
  const duneMat=new THREE.MeshStandardMaterial({color:0xd7bb88,roughness:1});
  for(let i=0;i<90;i++){const x=((i*73)%317)-158,z=192+((i*31)%39);if(Math.abs(x)<12&&z<202)continue;const o=mesh(new THREE.SphereGeometry(1,10,6),duneMat,x,.1,z);o.scale.set(1.3+(i%4),.1+(i%3)*.04,.6+(i%5)*.3);}
@@ -55,5 +70,5 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
   for(let k=0;k<9;k++){const a=k*Math.PI*2/9;const leaf=mesh(new THREE.ConeGeometry(.52,4.7,4),frond,x+Math.sin(a)*1.6,height-.35,z+Math.cos(a)*1.6);leaf.rotation.z=Math.sin(a)*1.15;leaf.rotation.x=Math.cos(a)*1.15;}
  }
  let elapsed=0;
- return {root,update(dt){elapsed+=dt;const arr=pos.array;for(let i=0;i<pos.count;i++){const xx=original[i*3],yy=original[i*3+1];arr[i*3+2]=Math.sin(xx*.045+elapsed*1.2)*.13+Math.sin(yy*.08+elapsed*1.7)*.08;}pos.needsUpdate=true;ocean.geometry.computeVertexNormals();shore.forEach((s,i)=>{s.position.z=240+i*3.2+Math.sin(elapsed*.9+i*.7)*1.7;s.material.opacity=.32;});},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
+ return {root,update(dt){elapsed+=dt;const arr=pos.array;for(let i=0;i<pos.count;i++){const xx=original[i*3],yy=original[i*3+1];arr[i*3+2]=Math.sin(xx*.045+elapsed*1.2)*.13+Math.sin(yy*.08+elapsed*1.7)*.08;}pos.needsUpdate=true;ocean.geometry.computeVertexNormals();oceanMap.offset.x=(elapsed*.003)%1;oceanMap.offset.y=(elapsed*.005)%1;shore.forEach((s,i)=>{s.position.z=241+i*1.35+Math.sin(elapsed*.9+i*.7)*1.5;s.material.opacity=.32;});},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
 }
