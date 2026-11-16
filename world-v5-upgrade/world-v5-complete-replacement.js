@@ -33,7 +33,29 @@ const sun=new THREE.DirectionalLight(0xffefdc,3.1);sun.position.set(-70,135,85);
 sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-160;sun.shadow.camera.right=160;
 sun.shadow.camera.top=160;sun.shadow.camera.bottom=-160;sun.shadow.normalBias=.045;scene.add(sun);
 const M=(color,roughness=.86,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
-const asphalt=M(0x363b3d),paving=M(0xb6b3ab),curb=M(0xd7d2c8),grass=M(0x71865c);
+// Existing photographic CC0 PBR textures already in GitHub (no cartoon flat ground).
+const groundLoader=new THREE.TextureLoader();
+function groundTexture(path,repeat,color=false){
+ const t=groundLoader.load(BASE+path,undefined,undefined,e=>console.warn('PBR ground texture unavailable',path,e));
+ t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(repeat,repeat);
+ t.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),8);
+ if(color)t.colorSpace=THREE.SRGBColorSpace;
+ return t;
+}
+function groundPBR(folder,name,repeat,tint=0xffffff){
+ const prefix='realistic-assets/pbr/'+folder+'/'+name+'_1K-JPG_';
+ return new THREE.MeshStandardMaterial({
+  color:tint,
+  map:groundTexture(prefix+'Color.jpg',repeat,true),
+  normalMap:groundTexture(prefix+'NormalGL.jpg',repeat),
+  roughnessMap:groundTexture(prefix+'Roughness.jpg',repeat),
+  roughness:1,metalness:0
+ });
+}
+const asphalt=groundPBR('RoadLines001','RoadLines001',25,0x777777);
+const paving=groundPBR('PavingStones070','PavingStones070',18,0xe4ddd0);
+const curb=M(0xd7d2c8);
+const grass=groundPBR('Ground037','Ground037',65,0x94a68a);
 const lane=M(0xeae5d7),yellow=M(0xc4ad62),dark=M(0x252a2d),stone=M(0xc4bcae);
 const bronze=M(0x6b5c48,.38,.62),wood=M(0x6a4a31),windowMat=M(0x28434f,.23,.38);
 const glass=M(0x31576a,.15,.35),doorMat=M(0x473e38,.48,.25);
