@@ -33,8 +33,10 @@
   },
   "trees": {
     "leafy-small-tree": {
-      "status": "failed",
-      "reason": "Blender did not create output: np\nModuleNotFoundError: No module named 'numpy'\nTraceback (most recent call last):\n  File \"/tmp/optimize_tree.py\", line 6, in <module>\n    bpy.ops.import_scene.gltf(filepath=src)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^\n  File \"/usr/lib/blender/scripts/modules/bpy/ops.py\", line 109, in __call__\n    ret = _op_call(self.idname_py(), kw)\nRuntimeError: Error: Python: Traceback (most recent call last):\n  File \"/usr/lib/blender/scripts/addons_core/io_scene_gltf2/__init__.py\", line 2013, in execute\n    return self.import_gltf2(context)\n           ~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"/usr/lib/blender/scripts/addons_core/io_scene_gltf2/__init__.py\", line 2045, in import_gltf2\n    return self.unit_import(self.filepath, import_settings)\n           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/blender/scripts/addons_core/io_scene_gltf2/__init__.py\", line 2050, in unit_import\n    from .blender.imp.blender_gltf import BlenderGlTF\n  File \"/usr/lib/blender/scripts/addons_core/io_scene_gltf2/blender/imp/blender_gltf.py\", line 8, in <module>\n    from .scene import BlenderScene\n  File \"/usr/lib/blender/scripts/addons_core/io_scene_gltf2/blender/imp/scene.py\", line 7, in <module>\n    from .node import BlenderNode\n  File \"/usr/lib/blender/scripts/addons_core/io_scene_gltf2/blender/imp/node.py\", line 10, in <module>\n    from .mesh import BlenderMesh\n  File \"/usr/lib/blender/scripts/addons_core/io_scene_gltf2/blender/imp/mesh.py\", line 7, in <module>\n    import numpy as np\nModuleNotFoundError: No module named 'numpy'\nLocation: /usr/lib/blender/scripts/modules/bpy/ops.py:109\n\n"
+      "status": "downloaded",
+      "bytes": 17139504,
+      "source": "https://polyhaven.com/a/tree_small_02",
+      "license": "CC0"
     },
     "leafy-jacaranda": {
       "status": "failed",
@@ -45,8 +47,10 @@
       "reason": "Download exceeds safety limit"
     },
     "leafy-island-tree": {
-      "status": "failed",
-      "reason": "Blender did not create output: np\nModuleNotFoundError: No module named 'numpy'\nTraceback (most recent call last):\n  File \"/tmp/optimize_tree.py\", line 6, in <module>\n    bpy.ops.import_scene.gltf(filepath=src)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^\n  File \"/usr/lib/blender/scripts/modules/bpy/ops.py\", line 109, in __call__\n    ret = _op_call(self.idname_py(), kw)\nRuntimeError: Error: Python: Traceback (most recent call last):\n  File \"/usr/lib/blender/scripts/addons_core/io_scene_gltf2/__init__.py\", line 2013, in execute\n    return self.import_gltf2(context)\n           ~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"/usr/lib/blender/scripts/addons_core/io_scene_gltf2/__init__.py\", line 2045, in import_gltf2\n    return self.unit_import(self.filepath, import_settings)\n           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/blender/scripts/addons_core/io_scene_gltf2/__init__.py\", line 2050, in unit_import\n    from .blender.imp.blender_gltf import BlenderGlTF\n  File \"/usr/lib/blender/scripts/addons_core/io_scene_gltf2/blender/imp/blender_gltf.py\", line 8, in <module>\n    from .scene import BlenderScene\n  File \"/usr/lib/blender/scripts/addons_core/io_scene_gltf2/blender/imp/scene.py\", line 7, in <module>\n    from .node import BlenderNode\n  File \"/usr/lib/blender/scripts/addons_core/io_scene_gltf2/blender/imp/node.py\", line 10, in <module>\n    from .mesh import BlenderMesh\n  File \"/usr/lib/blender/scripts/addons_core/io_scene_gltf2/blender/imp/mesh.py\", line 7, in <module>\n    import numpy as np\nModuleNotFoundError: No module named 'numpy'\nLocation: /usr/lib/blender/scripts/modules/bpy/ops.py:109\n\n"
+      "status": "downloaded",
+      "bytes": 13324252,
+      "source": "https://polyhaven.com/a/island_tree_01",
+      "license": "CC0"
     }
   }
 }
