@@ -2,7 +2,7 @@
 
 Target URL: https://zerconda.com/world-v5/
 
-## Deploy exactly these three files
+## Deploy these four files
 
 Source repository: https://github.com/nonasbrandon-commits/zerconda-assets
 
@@ -11,6 +11,9 @@ Source repository: https://github.com/nonasbrandon-commits/zerconda-assets
 | `world-v5-upgrade/index.html` | `/world-v5/index.html` |
 | `world-v5-upgrade/world-v5-complete-replacement.js` | `/world-v5/world-v5-complete-replacement.js` |
 | `world-v5-upgrade/realistic-fountain.js` | `/world-v5/realistic-fountain.js` |
+| `world-v5-upgrade/observation-needle.js` | `/world-v5/observation-needle.js` |
+
+The Observation Needle near (48,-48) has a ground elevator. Walk near its entrance and press T (or tap the on-screen button) to travel to the 90-meter viewing deck. Press T again to descend. The deck has 360-degree views and a walkable safety-railed perimeter.
 
 Do not mix this build with an old `world.js` or old `index.html`. The new HTML already includes a pinned Three.js import map, desktop/mobile controls and the correct module entry point. Keep the paths and filenames identical. The 3D assets and photo textures are loaded from the public GitHub repository by absolute URL and do not need to be copied to GoDaddy.
 
