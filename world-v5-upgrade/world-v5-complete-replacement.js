@@ -825,7 +825,7 @@ function visitDealership(){
  if(dealerInside){dealerInside=false;player.x=dealership.x+15;player.z=dealership.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Exited Zerconda Motors';}
 }
 let sittingSeat=null,cafeInside=false;
-const cafeEntry={x:-72,z:-132+9};
+const cafeEntry={x:coffeeShop.entrance.x,z:coffeeShop.entrance.z};
 function nearCafeEntrance(){return Math.hypot(player.x-cafeEntry.x,player.z-cafeEntry.z)<4.5;}
 function enterCafe(){if(sittingSeat){sittingSeat=null;}if(cafeInside){cafeInside=false;player.x=cafeEntry.x;player.z=cafeEntry.z+3.3;}else{cafeInside=true;player.x=cafeEntry.x;player.z=cafeEntry.z-3.6;}movement.vx=0;movement.vz=0;if(status)status.textContent=cafeInside?'Inside Brewstone Coffee · Find a table and press C':'Exited Brewstone Coffee';}
 const cafeEntryButton=actionButton('zerconda-cafe-enter','E · ENTER COFFEE SHOP',445,enterCafe);
