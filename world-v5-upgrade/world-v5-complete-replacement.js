@@ -225,6 +225,7 @@ const castStone=new THREE.MeshStandardMaterial({color:0xc9c1b2,roughness:.94});
 function makeBuilding(x,z,w,d,h,type){
  const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
  const facade=facadeMats[type%facadeMats.length];
+ const hasSignature=type%7!==3;
  // Textured front/back and side walls with complete solid mass.
  box(w,h,d,0,h/2,0,facade,g);
  // Contrasting ground-floor stone base, pilasters and cornice.
@@ -234,7 +235,7 @@ function makeBuilding(x,z,w,d,h,type){
  box(w+.2,.35,d+.2,0,h+.72,0,roof,g);
  // Architecture: separate inset facade bands, masonry pilasters and window bays
  // create actual depth instead of a single photo pasted onto a cube.
- for(const sign of [-1,1]){
+ if(!hasSignature)for(const sign of [-1,1]){
   const faceZ=sign*(d/2+.13);
   for(let floor=1;floor<Math.max(2,Math.floor(h/3.25));floor++){
    const y=floor*3.25+.35;
@@ -257,7 +258,7 @@ function makeBuilding(x,z,w,d,h,type){
  }
  // Storefront bays at street level on front elevation.
  const bays=Math.max(2,Math.floor(w/5));
- for(let i=0;i<bays;i++){
+ if(!hasSignature)for(let i=0;i<bays;i++){
   const px=-w/2+(i+.5)*w/bays;
   box(w/bays*.73,2.35,.11,px,1.68,d/2+.13,glass,g);
   box(w/bays*.82,.27,.23,px,2.95,d/2+.22,metal,g);
@@ -280,7 +281,7 @@ function makeBuilding(x,z,w,d,h,type){
  for(const s of [-1,1])cylinder(.12,.12,.48,s*2.2,2.5,d/2+.3,bronze,g,12);
  // Realistic architectural window rows on side elevation.
  const floors=Math.floor((h-4)/3.2);
- for(let f=0;f<floors;f++)for(const side of [-1,1]){
+ if(!hasSignature)for(let f=0;f<floors;f++)for(const side of [-1,1]){
   for(let i=0;i<Math.max(2,Math.floor(d/4.3));i++){
    const count=Math.max(2,Math.floor(d/4.3));
    const zz=-d/2+(i+.5)*d/count;
@@ -290,7 +291,7 @@ function makeBuilding(x,z,w,d,h,type){
  }
  // Most residential streets use warm brick apartments, with contrasting modern
  // and historic styles interspersed to avoid repetitive skyline silhouettes.
- if(type%7!==3){
+ if(hasSignature){
   const architectureStyle=(type%7===0||type%7===1||type%7===4||type%7===6)?3:(type%7===2?0:type%7===5?1:2);
   addSignatureArchitecture(g,{w,d,h,style:architectureStyle});
  }
