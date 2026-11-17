@@ -146,7 +146,7 @@ const insideBuilding=(x,z,pad=0)=>buildings.some(b=>Math.abs(x-b.x)<b.w/2+pad&&M
 // Entire city road/sidewalk grid. Roads are continuous; sidewalks NEVER cross lanes.
 // Seamless mainland under the skyline: stops the blue sky void and floating towers.
 // Southern edge ends before the beach/ocean; city roads and landscaping sit above it.
-box(1250,.18,940,165,-.11,-305,grass);
+box(1250,.18,940,165,-.28,-305,grass);
 box(350,.12,350,0,-.16,0,grass);
 for(const c of roadLines){
  box(19,.12,350,c,-.04,0,asphalt);
