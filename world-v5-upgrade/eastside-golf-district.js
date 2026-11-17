@@ -66,7 +66,7 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  for(const side of [-1,1]){
   const centerZ=roadZ+side*(span/2+rampLength/2);
   const ramp=new THREE.Group();ramp.position.set(bx,deckY/2,centerZ);
-  ramp.rotation.x=-side*angle;bridge.add(ramp);
+  ramp.rotation.x=side*angle;bridge.add(ramp);
   box(ramp,0,0,0,width,.3,rampLength,deck);
   for(const edge of [-1,1]){
    const xx=edge*(width/2-.1);
