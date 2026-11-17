@@ -11,7 +11,7 @@ export function createClothedPlayer(){
  const hair=new THREE.MeshStandardMaterial({color:0x332a26,roughness:1});
  const white=new THREE.MeshStandardMaterial({color:0xd5d9d9,roughness:.75});
  function mesh(parent,geo,mat,x,y,z){const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
- const ell=(p,r,m,x,y,z)=>mesh(p,new THREE.SphereGeometry(1,16,12),m,x,y,z).scale.set(...r);
+ const ell=(p,r,m,x,y,z)=>{const obj=mesh(p,new THREE.SphereGeometry(1,16,12),m,x,y,z);obj.scale.set(...r);return obj;};
  const cyl=(p,r1,r2,h,m,x,y,z)=>mesh(p,new THREE.CylinderGeometry(r1,r2,h,12),m,x,y,z);
  // Adult human proportions: ~1.85 m total height, shoulders narrower than leg length.
  ell(root,[.215,.295,.125],blue,0,1.32,0);
