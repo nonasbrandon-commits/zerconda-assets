@@ -1,3 +1,4 @@
+import {createModernPickup} from './modern-pickup.js?v=20261117-needle-lounge-v90';
 import * as THREE from 'three';
 import {createDetailedCar} from './detailed-fictional-cars.js?v=20261117-commerce-restore-v69';
 import {createNaturalShrub} from './realistic-landscape-assets.js?v=20261117-commerce-restore-v69';
@@ -100,6 +101,8 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0}={}){
  car({name:'Zerconda City Sedan',color:0xbec6cc,z:-8,type:'sedan'});
  car({name:'Zerconda Sport Coupe',color:0x155f9f,z:0,type:'coupe'});
  car({name:'Zerconda Touring SUV',color:0x9b2733,z:8,type:'suv'});
+ const pickup=createModernPickup({color:0x7b9fa9});pickup.position.set(5.2,.03,-8);pickup.rotation.y=-Math.PI/2;root.add(pickup);cars.push({name:'Zerconda Horizon Pickup',position:world(5.2,-8),type:'pickup'});
+
  // Reception, lounge, illuminated ceiling fixtures, offices and showroom plants.
  box(root,5,1.15,1.6,-8, .6,0,wood);box(root,5.4,.16,1.85,-8,1.25,0,white);
  for(const zz of [-10,10]){box(root,2.6,.65,1.25,-8,.45,zz,mat(0x526779));box(root,2.6,.7,.24,-8,.96,zz-.65,mat(0x526779));box(root,1.4,.38,1.1,-5.2,.4,zz,wood);}

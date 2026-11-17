@@ -1,215 +1,47 @@
 import * as THREE from 'three';
-// Original fictional Zerconda observation needle, not a real-world landmark.
-// 88m open-air observation deck, elevator interaction and 360 degree view.
-export function createObservationNeedle(scene,{x=48,z=-48}={}){
- const root=new THREE.Group();root.position.set(x,0,z);root.name='Zerconda Needle Observation Tower';scene.add(root);
- const textureLoader=new THREE.TextureLoader();
- const concreteColor=textureLoader.load('https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/water-concrete-v1/tower-concrete-warm-color.jpg');
- const concreteNormal=textureLoader.load('https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/water-concrete-v1/tower-concrete-warm-normal.jpg');
- for(const t of [concreteColor,concreteNormal]){t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(2,5);t.anisotropy=8;}
- concreteColor.colorSpace=THREE.SRGBColorSpace;
- const stone=new THREE.MeshStandardMaterial({map:concreteColor,normalMap:concreteNormal,normalScale:new THREE.Vector2(.32,.32),color:0xf0ede5,roughness:.85,metalness:0,emissive:0x3b3935,emissiveIntensity:.24});
- const coolColor=textureLoader.load('https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/water-concrete-v1/tower-concrete-cool-color.jpg');
- const coolNormal=textureLoader.load('https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/water-concrete-v1/tower-concrete-cool-normal.jpg');
- for(const t of [coolColor,coolNormal]){t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(2,5);t.anisotropy=8;}
- coolColor.colorSpace=THREE.SRGBColorSpace;
- const steel=new THREE.MeshStandardMaterial({map:coolColor,normalMap:coolNormal,normalScale:new THREE.Vector2(.28,.28),color:0xe3e6e5,metalness:.03,roughness:.78,emissive:0x414747,emissiveIntensity:.24});
- const trim=new THREE.MeshStandardMaterial({color:0xaebfc7,metalness:.68,roughness:.3,emissive:0x182b38,emissiveIntensity:.12});
- const windows=new THREE.MeshPhysicalMaterial({color:0x9ec9d7,metalness:.12,roughness:.09,transparent:true,opacity:.72,side:THREE.DoubleSide,clearcoat:1});
- const lit=new THREE.MeshBasicMaterial({color:0xe3f5ff});
- function mesh(geometry,material,px,py,pz){const o=new THREE.Mesh(geometry,material);o.position.set(px,py,pz);o.castShadow=false;o.receiveShadow=false;root.add(o);return o;}
- function cyl(top,bottom,height,y,material,sides=48){return mesh(new THREE.CylinderGeometry(top,bottom,height,sides),material,0,y,0);}
- cyl(7.3,7.7,.65,.32,stone);cyl(5.1,6.8,11,5.8,stone);
- // Tapered core and exposed sweeping support structure like the homepage needle.
- cyl(2.1,3.6,67,44,steel);
- for(let i=0;i<3;i++){
-  const a=i*Math.PI*2/3;
-  const points=[new THREE.Vector3(Math.cos(a)*9.5,1,Math.sin(a)*9.5),new THREE.Vector3(Math.cos(a)*6.4,30,Math.sin(a)*6.4),new THREE.Vector3(Math.cos(a)*3.5,74,Math.sin(a)*3.5)];
-  mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points),24,.82,12),steel,0,0,0);
- }
- for(const h of [22,44,67]){
-  const ring=mesh(new THREE.TorusGeometry(6.9-h*.045,.33,10,64),trim,0,h,0);ring.rotation.x=Math.PI/2;
- }
- cyl(4.1,2.7,8,77.5,trim);
- // Additional architectural detailing, steel radial ribs and layered deck.
- const darkGlass=new THREE.MeshPhysicalMaterial({color:0x17495b,metalness:.36,roughness:.11,transparent:true,opacity:.82,clearcoat:1,side:THREE.DoubleSide});
- for(let k=0;k<48;k++){
-  const a=k*Math.PI/24;
-  const rib=mesh(new THREE.BoxGeometry(.11,5.3,.18),trim,Math.cos(a)*11.43,85.7,Math.sin(a)*11.43);rib.rotation.y=-a;
-  const pane=mesh(new THREE.BoxGeometry(.18,3.9,.9),darkGlass,Math.cos(a)*11.3,85.6,Math.sin(a)*11.3);pane.rotation.y=-a;
- }
- for(const yy of [82.7,84.4,87.6,88.6]){const ring=mesh(new THREE.TorusGeometry(11.55,.12,10,96),trim,0,yy,0);ring.rotation.x=Math.PI/2;}
- for(let k=0;k<16;k++){const a=k*Math.PI/8;const spoke=mesh(new THREE.BoxGeometry(.24,.24,7.1),trim,Math.cos(a)*8.9,81.35,Math.sin(a)*8.9);spoke.rotation.y=-a+Math.PI/2;}
- // Reinforced glass-walled observation lounge.
- cyl(11.4,9.5,1.6,81.9,stone);
- const lowerDeck=mesh(new THREE.TorusGeometry(11.9,.68,14,96),trim,0,82.3,0);lowerDeck.rotation.x=Math.PI/2;
- // Open panoramic glazing; no opaque central wall obstructing the skyline.
- const glazing=cyl(11.4,11.4,5.8,85.6,windows,64);
- glazing.material.depthWrite=false;
- cyl(12.3,12.3,.9,88.9,stone);
- cyl(13.4,12.8,1.15,90.1,trim);
- const roofRim=mesh(new THREE.TorusGeometry(13.15,.52,12,96),steel,0,90.8,0);roofRim.rotation.x=Math.PI/2;
- const roofGlass=new THREE.MeshPhysicalMaterial({color:0x5b8391,roughness:.18,metalness:.22,transparent:true,opacity:.9,side:THREE.DoubleSide});
- const dome=mesh(new THREE.SphereGeometry(11.2,64,24,0,Math.PI*2,0,Math.PI*.31),roofGlass,0,90.55,0);
- dome.scale.y=.35;
- cyl(8.6,8.6,.28,89.05,stone);
- cyl(.75,.9,10,95.4,steel);
- cyl(.23,.23,7,103.6,trim);
- const railMat=new THREE.MeshStandardMaterial({color:0xb3c5c9,metalness:.8,roughness:.25});
- for(let i=0;i<48;i++){
-  const a=i*Math.PI/24,xx=Math.cos(a)*11.6,zz=Math.sin(a)*11.6;
-  mesh(new THREE.CylinderGeometry(.065,.065,2.05,8),railMat,xx,90.1,zz);
- }
- const railing=mesh(new THREE.TorusGeometry(11.6,.075,8,96),railMat,0,91.1,0);railing.rotation.x=Math.PI/2;
- // Four steel support legs provide a readable architectural silhouette.
- for(let i=0;i<4;i++){
-  const a=i*Math.PI/2+.785;
-  const dx=Math.cos(a),dz=Math.sin(a);
-  const points=[new THREE.Vector3(dx*5.4,1,dz*5.4),new THREE.Vector3(dx*3.2,28,dz*3.2),new THREE.Vector3(dx*2.3,65,dz*2.3)];
-  const beam=mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points),16,.36,8,false),steel,0,0,0);
- }
- // Concrete horizontal collar rings, vertical ribs and architectural cross-bracing.
- for(const h of [12,25,38,51,64,76]){
-  const ring=mesh(new THREE.TorusGeometry(Math.max(2.5,5.8-h*.035),.25,10,64),stone,0,h,0);
-  ring.rotation.x=Math.PI/2;
- }
- for(let i=0;i<8;i++){
-  const a=i*Math.PI/4;
-  const radius=3.1;
-  const rib=mesh(new THREE.BoxGeometry(.24,49,.34),stone,Math.cos(a)*radius,42,Math.sin(a)*radius);
-  rib.rotation.y=-a;
- }
- // Structural realism: inset metallic vertical flutes, diagonal trusses and deck fins.
- const brushed=new THREE.MeshStandardMaterial({color:0x89979a,metalness:.75,roughness:.38});
- const shadowSteel=new THREE.MeshStandardMaterial({color:0x3b4d56,metalness:.64,roughness:.48});
- for(let i=0;i<12;i++){
-  const a=i*Math.PI/6;
-  const radius=2.85;
-  const rib=mesh(new THREE.BoxGeometry(.12,55,.22),brushed,Math.cos(a)*radius,43,Math.sin(a)*radius);
-  rib.rotation.y=-a;
- }
- for(let h=14;h<70;h+=14){
-  for(let i=0;i<6;i++){
-   const a=i*Math.PI/3;
-   const r=5.8-h*.04;
-   const p0=new THREE.Vector3(Math.cos(a)*r,h,Math.sin(a)*r);
-   const p1=new THREE.Vector3(Math.cos(a+Math.PI/3)*(r-.6),h+12,Math.sin(a+Math.PI/3)*(r-.6));
-   const delta=p1.clone().sub(p0);
-   const brace=mesh(new THREE.CylinderGeometry(.12,.12,delta.length(),8),shadowSteel,...p0.clone().add(p1).multiplyScalar(.5).toArray());
-   brace.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.normalize());
-  }
- }
- for(let i=0;i<48;i++){
-  const a=i*Math.PI/24;
-  const fin=mesh(new THREE.BoxGeometry(.14,3.4,1.25),brushed,Math.cos(a)*12.1,86.0,Math.sin(a)*12.1);
-  fin.rotation.y=-a;
- }
- for(const h of [7,18,31,45,59,72]){
-  const band=mesh(new THREE.TorusGeometry(Math.max(2.4,6-h*.048),.14,8,64),shadowSteel,0,h,0);
-  band.rotation.x=Math.PI/2;
- }
- // Reference-inspired silhouette: four outward-splayed sculptural legs and
- // exposed triangular braces support a broad circular, glazed observation saucer.
- // These are genuine 3D meshes, not a billboard image.
- const ivory=new THREE.MeshStandardMaterial({color:0xd4d9d8,metalness:.22,roughness:.46});
- const innerSteel=new THREE.MeshStandardMaterial({color:0x52646d,metalness:.67,roughness:.34});
- const cyanGlow=new THREE.MeshBasicMaterial({color:0x39c5ed});
- const beamBetween=(a,b,r,material)=>{
-  const v=new THREE.Vector3().subVectors(b,a);
-  const part=mesh(new THREE.CylinderGeometry(r*.78,r,v.length(),12),material,
-   (a.x+b.x)/2,(a.y+b.y)/2,(a.z+b.z)/2);
-  part.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),v.normalize());
-  return part;
- };
- // Four prominent tapered A-frame legs, much wider at street level.
- for(let i=0;i<4;i++){
-  const a=Math.PI/4+i*Math.PI/2,dx=Math.cos(a),dz=Math.sin(a);
-  const path=new THREE.CatmullRomCurve3([
-   new THREE.Vector3(dx*13.5,.7,dz*13.5),
-   new THREE.Vector3(dx*11.1,17,dz*11.1),
-   new THREE.Vector3(dx*7.4,40,dz*7.4),
-   new THREE.Vector3(dx*4.4,66,dz*4.4),
-   new THREE.Vector3(dx*3.9,79,dz*3.9)
-  ]);
-  mesh(new THREE.TubeGeometry(path,48,.78,12,false),ivory,0,0,0);
-  const inner=new THREE.CatmullRomCurve3([
-   new THREE.Vector3(dx*10.8,3,dz*10.8),
-   new THREE.Vector3(dx*7.5,30,dz*7.5),
-   new THREE.Vector3(dx*4.5,66,dz*4.5)
-  ]);
-  mesh(new THREE.TubeGeometry(inner,32,.24,8,false),innerSteel,0,0,0);
- }
- // Alternating diagonal members create an open lattice visible against the sky.
- for(const h of [11,23,35,47,59,70]){
-  const lowerR=13.4-(h/80)*9.5,upperR=13.4-((h+10)/80)*9.5;
-  for(let i=0;i<4;i++){
-   const a=Math.PI/4+i*Math.PI/2,b=Math.PI/4+((i+1)%4)*Math.PI/2;
-   beamBetween(new THREE.Vector3(Math.cos(a)*lowerR,h,Math.sin(a)*lowerR),
-    new THREE.Vector3(Math.cos(b)*upperR,h+10,Math.sin(b)*upperR),.19,innerSteel);
-  }
- }
- // The wide top has an illuminated underside and distinct ring-shaped eaves.
- const under=mesh(new THREE.CylinderGeometry(10.5,5.8,3.1,82),ivory,0,79.4,0);
- const saucerBase=mesh(new THREE.CylinderGeometry(13.4,11.2,1.3,96),innerSteel,0,82.0,0);
- for(const [radius,y,tube,material] of [
-  [12.7,82.55,.25,ivory],[12.35,83.15,.085,cyanGlow],
-  [12.5,87.85,.11,cyanGlow],[13.2,89.4,.28,ivory],
-  [13.55,90.4,.17,innerSteel]
- ]){
-  const ring=mesh(new THREE.TorusGeometry(radius,tube,12,112),material,0,y,0);
-  ring.rotation.x=Math.PI/2;
- }
- // Individually framed blue-tinted glazing around the panoramic restaurant deck.
- const sapphire=new THREE.MeshPhysicalMaterial({
-  color:0x244e64,metalness:.15,roughness:.12,transparent:true,opacity:.72,
-  clearcoat:1,side:THREE.DoubleSide,depthWrite:false
- });
- for(let i=0;i<64;i++){
-  const a=i*Math.PI/32,r=12.1;
-  const pane=mesh(new THREE.BoxGeometry(.045,4.1,1.17),sapphire,
-   Math.cos(a)*r,85.6,Math.sin(a)*r);
-  pane.rotation.y=-a;
-  const frame=mesh(new THREE.BoxGeometry(.12,4.45,.12),ivory,
-   Math.cos(a)*12.23,85.6,Math.sin(a)*12.23);
-  frame.rotation.y=-a;
- }
- // Slim antenna mast and a subtle aviation beacon.
- const mast=mesh(new THREE.CylinderGeometry(.12,.22,9,12),ivory,0,105.5,0);
- const antennaTip=mesh(new THREE.SphereGeometry(.25,12,8),
-  new THREE.MeshBasicMaterial({color:0xff584c}),0,110.2,0);
- // Glass elevator doors at ground level and an illuminated arrival sign.
- // Visible street-level elevator lobby: pale stone, glass entry and a lit portal.
- const entry=mesh(new THREE.BoxGeometry(5.2,4.3,3.8),stone,0,2.15,6.8);
- const portal=mesh(new THREE.BoxGeometry(3.35,3.35,.2),trim,0,1.7,8.78);
- const door=mesh(new THREE.BoxGeometry(2.85,3.05,.22),windows,0,1.62,8.94);
- const entryLight=new THREE.PointLight(0xffffff,4,18);entryLight.position.set(0,3.5,9.3);root.add(entryLight);
- mesh(new THREE.BoxGeometry(3.1,.25,.32),trim,0,3.35,8.92);
- const sign=mesh(new THREE.BoxGeometry(3,.28,.09),lit,0,3.85,8.98);
- const signCanvas=document.createElement('canvas');signCanvas.width=512;signCanvas.height=128;
- const ctx=signCanvas.getContext('2d');ctx.fillStyle='#e8f2f5';ctx.fillRect(0,0,512,128);ctx.fillStyle='#19333e';ctx.font='bold 42px Arial';ctx.textAlign='center';ctx.fillText('OBSERVATION DECK',256,78);
- const tex=new THREE.CanvasTexture(signCanvas);tex.colorSpace=THREE.SRGBColorSpace;
- sign.material=new THREE.MeshBasicMaterial({map:tex});
- // Panoramic lounge: benches and binocular viewing stations around the rim.
- const seating=new THREE.MeshStandardMaterial({color:0x8b6e58,roughness:.82});
- for(let i=0;i<12;i++){
-  const a=i*Math.PI/6,px=Math.cos(a)*8.2,pz=Math.sin(a)*8.2;
-  const seat=mesh(new THREE.BoxGeometry(2.1,.23,.72),seating,px,89.65,pz);
-  seat.rotation.y=-a+Math.PI/2;
-  const back=mesh(new THREE.BoxGeometry(2.1,.8,.18),seating,px+Math.cos(a)*.3,90.04,pz+Math.sin(a)*.3);
-  back.rotation.y=seat.rotation.y;
- }
- for(let i=0;i<6;i++){
-  const a=i*Math.PI/3,px=Math.cos(a)*9.8,pz=Math.sin(a)*9.8;
-  mesh(new THREE.CylinderGeometry(.08,.14,1.3,10),steel,px,89.8,pz);
-  const scope=mesh(new THREE.CylinderGeometry(.16,.2,.75,16),trim,px,90.5,pz);
-  scope.rotation.z=Math.PI/2;
- }
- // Blue LED accent rings.
- const led=new THREE.MeshBasicMaterial({color:0x32b9ec});
- for(const yy of [81.15,82.55,89.55]){const ring=mesh(new THREE.TorusGeometry(11.8,.055,8,96),led,0,yy,0);ring.rotation.x=Math.PI/2;}
- const beacon=new THREE.PointLight(0xf2faff,3,15);beacon.position.set(0,89.4,0);root.add(beacon);
- return {root,x,z,entrance:{x,z:z+10.4},deckY:90.1,deckRadius:10.7,
-   // The tower shaft is solid; the public observation ring is walkable.
-   isOnDeck(px,pz){return Math.hypot(px-x,pz-z)<=10.7;},
-   dispose(){scene.remove(root);}};
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
+import {createRealisticHuman} from './realistic-human.js?v=20261117-needle-lounge-v90';
+import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
+export function createObservationNeedle(scene,{x=48,z=-48,getPlayer=()=>({x,z}),inLobby=()=>false,onMessage=()=>{},onTravel=()=>{}}={}){
+ const root=new THREE.Group();root.position.set(x,0,z);root.name='Zerconda Needle · panoramic lounge and skywalk';root.userData.customInterior=true;scene.add(root);const deckY=90.116,lobbyY=.18,deckRadius=15.55,innerRadius=10.2,seats=[],solids=[],parts=new Map();let access=false,ride=null,rideY=lobbyY;
+ const M=(c,r=.7,metalness=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness}),stone=M(0xd9dcd5,.86),steel=M(0x6d838c,.4,.55),dark=M(0x2b444d,.6),wood=M(0x9e8668,.82),cushion=M(0x9caeaa,.9),linen=M(0xddd8c9),metal=M(0xaebfbd,.3,.6),clear=new THREE.MeshPhysicalMaterial({color:0xf0faf7,roughness:.04,metalness:0,transparent:true,opacity:.035,depthWrite:false,side:THREE.DoubleSide}),warm=new THREE.MeshBasicMaterial({color:0xffe4b7});
+ function mesh(geo,m,px=0,py=0,pz=0,parent=null,rot=[0,0,0]){if(!geo.getAttribute('uv'))geo.setAttribute('uv',new THREE.Float32BufferAttribute(new Float32Array(geo.getAttribute('position').count*2),2));const o=new THREE.Mesh(geo,m);o.position.set(px,py,pz);o.rotation.set(...rot);o.receiveShadow=true;if(parent){parent.add(o);return o;}o.updateMatrix();const g=geo.clone().applyMatrix4(o.matrix),a=parts.get(m)||[];a.push(g.index?g.toNonIndexed():g);parts.set(m,a);geo.dispose();return o;}
+ const box=(w,h,d,px,py,pz,m=stone,p=null)=>mesh(new THREE.BoxGeometry(w,h,d),m,px,py,pz,p);
+ const cylinder=(r1,r2,h,y,m)=>mesh(new THREE.CylinderGeometry(r1,r2,h,64),m,0,y,0);
+ function beam(a,b,r,m=steel){const v=new THREE.Vector3(...a),w=new THREE.Vector3(...b),d=w.clone().sub(v),o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,d.length(),10),m);o.position.copy(v.add(w).multiplyScalar(.5));o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());o.updateMatrix();const g=o.geometry.clone().applyMatrix4(o.matrix),arr=parts.get(m)||[];arr.push(g.toNonIndexed());parts.set(m,arr);}
+ function ring(r,y,t=.07,m=metal){mesh(new THREE.TorusGeometry(r,t,8,128),m,0,y,0,null,[Math.PI/2,0,0]);}
+ function sign(text,px,py,pz,w=6,h=.6,ry=0){const c=document.createElement('canvas');c.width=1536;c.height=256;const a=c.getContext('2d');a.fillStyle='#25454f';a.fillRect(0,0,1536,256);a.fillStyle='#f5ecd5';a.textAlign='center';a.textBaseline='middle';a.font='bold 66px sans-serif';a.fillText(text,768,128,1490);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const o=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));o.position.set(px,py,pz);o.rotation.y=ry;root.add(o);}
+ // One clean structural system; the mast ends above the lounge roof, not inside it.
+ cylinder(4.2,4.6,.22,.11,stone);cylinder(2.05,3.1,79,40.5,steel);
+ for(let i=0;i<4;i++){const a=Math.PI/4+i*Math.PI/2,dx=Math.cos(a),dz=Math.sin(a);const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(dx*13.5,.6,dz*13.5),new THREE.Vector3(dx*10.5,22,dz*10.5),new THREE.Vector3(dx*6.0,58,dz*6.0),new THREE.Vector3(dx*4.2,82,dz*4.2)]);mesh(new THREE.TubeGeometry(curve,40,.7,10,false),stone);}
+ for(const h of[18,35,52,69]){ring(5.8-h*.036,h,.2,steel);for(let i=0;i<4;i++){const a=Math.PI/4+i*Math.PI/2,b=a+Math.PI/2,r=11.8-h*.086;beam([Math.cos(a)*r,h,Math.sin(a)*r],[Math.cos(b)*(r-1),h+12,Math.sin(b)*(r-1)],.12,steel);}}
+ cylinder(15.8,4.6,6,86.7,stone);cylinder(16.1,15.8,.4,89.9,dark);ring(15.9,89.9,.12,metal);
+ // Same-level indoor lounge and outdoor promenade. No domes, opaque view bands or eye-level rings.
+ cylinder(16,16,.32,89.94,stone);mesh(new THREE.CircleGeometry(innerRadius,96),linen,0,deckY,0,null,[-Math.PI/2,0,0]);mesh(new THREE.RingGeometry(innerRadius,16,128),wood,0,deckY,0,null,[-Math.PI/2,0,0]);
+ const portalHalf=Math.PI/16,portal=a=>Math.abs(Math.atan2(Math.sin(a*4),Math.cos(a*4)))/4<portalHalf+.00001;
+ for(let i=0;i<64;i++){const a0=i*Math.PI/32,a1=(i+1)*Math.PI/32,mid=(a0+a1)/2;if(portal(mid))continue;const pos=[];for(const [a,y]of[[a0,deckY+.18],[a1,deckY+.18],[a0,deckY+4.2],[a1,deckY+4.2]])pos.push(Math.cos(a)*innerRadius,y,Math.sin(a)*innerRadius);const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex([0,1,2,1,3,2]);g.computeVertexNormals();mesh(g,clear);if(i%8===4)box(.07,4.3,.07,Math.cos(a0)*innerRadius,deckY+2.15,Math.sin(a0)*innerRadius,metal);}
+ ring(innerRadius,deckY+4.25,.08,metal);cylinder(10.8,10.8,.30,deckY+4.5,stone);ring(10.75,deckY+4.55,.08,metal);cylinder(.16,.24,12,deckY+10.6,metal);mesh(new THREE.SphereGeometry(.18,10,8),new THREE.MeshBasicMaterial({color:0xf5745d}),0,deckY+16.7,0);
+ // Low, nearly clear perimeter guard stays below the seated/standing horizon.
+ mesh(new THREE.CylinderGeometry(16,16,1.10,128,1,true),clear,0,deckY+.65,0);ring(16,deckY+1.24,.055,metal);for(let i=0;i<32;i++){const a=i*Math.PI/16;box(.055,1.24,.055,Math.cos(a)*16,deckY+.62,Math.sin(a)*16,metal);}
+ function sofa(px,pz,width,facing,outdoor=false){const g=new THREE.Group();g.position.set(px,deckY,pz);g.rotation.y=facing;root.add(g);box(width,.16,1.0,0,.37,0,outdoor?wood:dark,g);box(width,.65,.13,0,.85,-.44,outdoor?wood:cushion,g);for(const xx of[-width/2+.15,width/2-.15])for(const zz of[-.3,.3])box(.08,.3,.08,xx,.15,zz,metal,g);const n=Math.max(1,Math.round(width/1.15));for(let k=0;k<n;k++){const xx=-width/2+(k+.5)*width/n;mesh(new RoundedBoxGeometry(width/n-.10,.18,.88,2,.04),outdoor?linen:cushion,xx,.55,.02,g);mesh(new RoundedBoxGeometry(width/n-.12,.44,.12,2,.04),outdoor?linen:cushion,xx,.88,-.35,g);seats.push({x:x+px+Math.cos(facing)*xx,z:z+pz-Math.sin(facing)*xx,facing,sitHeight:deckY+.66,kind:outdoor?'Needle outdoor skywalk seat':'Needle indoor lounge seat'});}solids.push({x:px,z:pz,w:Math.abs(Math.cos(facing))*width+Math.abs(Math.sin(facing)),d:Math.abs(Math.sin(facing))*width+Math.abs(Math.cos(facing))});}
+ // Furnishing clusters keep all four radial doorways and the outer loop open.
+ for(let i=1;i<4;i++){const a=Math.PI/4+i*Math.PI/2,px=Math.cos(a)*6.5,pz=Math.sin(a)*6.5,facing=Math.PI/2-a;sofa(px,pz,3.5,facing);const tx=px-Math.cos(a)*1.7,tz=pz-Math.sin(a)*1.7;mesh(new THREE.CylinderGeometry(.65,.65,.10,24),wood,tx,deckY+.65,tz);mesh(new THREE.CylinderGeometry(.07,.13,.6,12),metal,tx,deckY+.30,tz);solids.push({x:tx,z:tz,w:1.5,d:1.5});}
+ for(let i=0;i<8;i++){const a=Math.PI/8+i*Math.PI/4,px=Math.cos(a)*12.5,pz=Math.sin(a)*12.5;sofa(px,pz,2.3,Math.PI/2-a,true);}
+ // Spacious ground-level reception, fully open front door and real glazing.
+ box(12,.24,10,0,.06,8,stone);box(12,.25,10,0,4.65,8,stone);box(12,4.5,.16,0,2.4,3,stone);for(const side of[-1,1]){box(.06,4.3,10,side*6,2.35,8,clear);box(.16,4.5,.16,side*6,2.4,13,metal);box(3.9,4.2,.06,side*4.05,2.3,13,clear);}box(6,.25,3.2,0,4.4,13.8,stone);box(4,.18,4,0,.06,14.7,stone);sign('ZERCONDA NEEDLE · WELCOME',0,4.0,13.22,10,.7);
+ box(4.2,1.0,1.7,-3.5,.68,9.7,wood);box(4.4,.12,1.9,-3.5,1.24,9.7,linen);sign('RECEPTION · ASK ABOUT THE VIEW',-3.5,2.9,3.12,4.7,.5);sign('PANORAMIC GLASS ELEVATOR →',0,3.2,3.12,7,.65);
+ const stand=new THREE.Group();stand.position.set(-3.5,lobbyY,8.3);root.add(stand);const attendant=createRealisticHuman({shirt:0x385d6c,pants:0x515b5b});stand.add(attendant.root);
+ // Exposed scenic lift: transparent cabin and slim rails, no opaque shaft in front of the view.
+ const liftX=3,liftZ=6,cabin=new THREE.Group();cabin.name='Scenic glass elevator cabin';cabin.position.set(liftX,lobbyY,liftZ);root.add(cabin);box(3.5,.16,3.5,0,-.08,0,dark,cabin);box(3.6,.14,3.6,0,2.95,0,stone,cabin);for(const sx of[-1,1])for(const sz of[-1,1])box(.075,2.9,.075,sx*1.7,1.45,sz*1.7,metal,cabin);for(const sx of[-1,1])box(.035,2.7,3.3,sx*1.71,1.42,0,clear,cabin);box(3.3,2.7,.035,0,1.42,-1.71,clear,cabin);const cabinDoors=new THREE.Group();cabin.add(cabinDoors);box(3.3,2.7,.035,0,1.42,1.71,clear,cabinDoors);
+ for(const sx of[-1,1])box(.09,deckY-lobbyY,.12,liftX+sx*1.85,(deckY+lobbyY)/2,liftZ-1.65,steel);sign('PUBLIC LOUNGE & OUTDOOR SKYWALK',3,3.6,7.95,5,.55);sign('ELEVATOR DOWN · RECEPTION',3,deckY+3.1,7.95,5,.55);
+ const receptionButton=document.createElement('button');receptionButton.style.display='none';document.body.appendChild(receptionButton);receptionButton.onclick=()=>{access=true;onMessage('Welcome to the Needle. Please step over to the glass elevator, then tap Ride elevator up. Enjoy the indoor lounge and outdoor skywalk.');};registerTownAction(receptionButton,{id:'needle-attendant',label:'Ask attendant for elevator access',priority:135,target:()=>({x:x-3.5,y:1.5,z:z+10.6})});
+ function startRide(up,arrive=()=>{}){if(ride)return false;const from=up?lobbyY:deckY,to=up?deckY:lobbyY;rideY=from;cabin.position.y=from;ride={up,from,to,elapsed:0,duration:18,arrive};cabinDoors.visible=true;onTravel(x+liftX,rideY,z+liftZ);return true;}
+ function update(dt){attendant.update(dt,0);const p=getPlayer();receptionButton.style.display=inLobby()&&!ride&&!access&&Math.hypot(p.x-(x-3.5),p.z-(z+10.6))<4.5?'block':'none';if(ride){ride.elapsed=Math.min(ride.duration,ride.elapsed+dt);const t=ride.elapsed/ride.duration,e=t*t*(3-2*t);rideY=THREE.MathUtils.lerp(ride.from,ride.to,e);cabin.position.y=rideY;onTravel(x+liftX,rideY,z+liftZ);if(t===1){const done=ride.arrive;ride=null;cabinDoors.visible=false;done();}}else cabinDoors.visible=false;}
+ function isOnDeck(px,pz){const xx=px-x,zz=pz-z,r=Math.hypot(xx,zz);if(r>deckRadius)return false;if(Math.abs(r-innerRadius)<.25&&!portal(Math.atan2(zz,xx)))return false;return !solids.some(s=>Math.abs(xx-s.x)<s.w/2+.25&&Math.abs(zz-s.z)<s.d/2+.25);}
+ function isInLobby(px,pz){const xx=px-x,zz=pz-z;return Math.abs(xx)<5.6&&zz>3.4&&zz<12.7&&!(xx>-5.9&&xx< -1.1&&zz>8.5&&zz<10.85)&&!(Math.hypot(xx,zz)<4.8);}
+ function nearLift(px,pz){return Math.hypot(px-(x+liftX),pz-(z+8.8))<4;}
+ function clampCamera(p,level){if(level==='deck'){const dx=p.x-x,dz=p.z-z,r=Math.hypot(dx,dz);if(r>15.3){p.x=x+dx/r*15.3;p.z=z+dz/r*15.3;}const player=getPlayer(),pr=Math.hypot(player.x-x,player.z-z);if(pr<9.9){const cr=Math.hypot(p.x-x,p.z-z);if(cr>9.9){p.x=x+(p.x-x)/cr*9.9;p.z=z+(p.z-z)/cr*9.9;}p.y=THREE.MathUtils.clamp(p.y,deckY+1.4,deckY+3.9);}else p.y=Math.max(p.y,deckY+1.4);}else{p.x=THREE.MathUtils.clamp(p.x,x-5.5,x+5.5);p.z=THREE.MathUtils.clamp(p.z,z+3.5,z+14.2);p.y=THREE.MathUtils.clamp(p.y,1.6,4.25);}}
+ for(const[m,geos]of parts){const o=new THREE.Mesh(mergeGeometries(geos,false),m);o.receiveShadow=true;o.castShadow=false;root.add(o);for(const g of geos)g.dispose();}
+ return{root,x,z,seats,attendant,cabin,entrance:{x,z:z+15.4},lobbyY,deckY,deckRadius,arrival:{x:x+liftX,z:z+9},lobbyArrival:{x:x+liftX,z:z+9.1},startRide,update,isOnDeck,isInLobby,nearLift,clampCamera,get authorized(){return access;},get riding(){return !!ride;},get riderY(){return rideY;},get travelProgress(){return ride?ride.elapsed/ride.duration:null;},nearestSeat(px,pz,max=2.6){let best=null;for(const s of seats){const d=Math.hypot(px-s.x,pz-s.z);if(d<max){max=d;best=s;}}return best;},updateCamera(camera){if(ride)camera.position.set(x+liftX,rideY+1.65,z+liftZ);},reset(){ride=null;rideY=lobbyY;cabin.position.y=lobbyY;cabinDoors.visible=false;},dispose(){root.parent?.remove(root);}};
 }
