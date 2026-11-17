@@ -58,12 +58,13 @@ export function createCoffeeShop(scene,{x=48,z=48}={}){
   }
  }
  for(const [tx,tz] of [[-7,1],[0,1],[7,1],[-7,5],[0,5],[7,5],[-7,14],[0,14],[7,14]])table(tx,tz);
+ const shrubContainers=[];
  const foliage=[mat(0x315d38,.96),mat(0x427b44,.96),mat(0x538b4b,.96),mat(0x668b43,.96)];
  function shrub(px,pz,seed=0){
   // Raised stone planter with dark soil, branching stems and layered leaf geometry.
   box(px,.33,pz,1.45,.66,1.45,plaster);
   box(px,.69,pz,1.28,.08,1.28,mat(0x493d31,.99));
-  const shrubRoot=new THREE.Group();shrubRoot.position.set(px,.72,pz);root.add(shrubRoot);
+  const shrubRoot=new THREE.Group();shrubRoot.position.set(px,.72,pz);root.add(shrubRoot);shrubContainers.push(shrubRoot);
   const stem=mat(0x4d4932,.98);
   const rand=(n)=>{const t=Math.sin(n*78.233+seed*43.19)*43758.5453;return t-Math.floor(t);};
   for(let i=0;i<23;i++){
@@ -81,6 +82,19 @@ export function createCoffeeShop(scene,{x=48,z=48}={}){
   }
  }
  for(const px of [-10,10])for(const pz of [11,17])shrub(px,pz,Math.round(px+pz+20));
+ // Load a real, textured botanical GLTF already stored in this GitHub repository.
+ // The procedural leaf cluster is only the fallback if the asset request fails.
+ const plantUrl='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/expanded-models/foliage/nettle_plant_1k.gltf';
+ new GLTFLoader().load(plantUrl,gltf=>{
+  const base=gltf.scene;const bb=new THREE.Box3().setFromObject(base);const size=bb.getSize(new THREE.Vector3());
+  if(size.y<.001)return;
+  shrubContainers.forEach((holder,i)=>{
+   holder.clear();const plant=base.clone(true);const scale=(1.12+(i%3)*.14)/size.y;
+   plant.scale.setScalar(scale);plant.position.set(-bb.getCenter(new THREE.Vector3()).x*scale,-bb.min.y*scale,-bb.getCenter(new THREE.Vector3()).z*scale);
+   plant.rotation.y=i*1.3;plant.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});holder.add(plant);
+  });
+  console.info('ZERCONDA: textured botanical GLTF loaded at Brewstone Coffee');
+ },undefined,e=>console.warn('Botanical GLTF failed; detailed leaf fallback retained',e));
  // Legible front fascia: fit full name within the available width and keep roof above it.
  const cv=document.createElement('canvas');cv.width=2048;cv.height=384;
  const ctx=cv.getContext('2d');ctx.fillStyle='#223432';ctx.fillRect(0,0,2048,384);
