@@ -20,7 +20,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-park-courts-clothed-avatar-botanical-bushes';
+const ZERCONDA_BUILD='2026-11-17-natural-arms-pond-golf-city-density';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -591,7 +591,7 @@ function updateRealAvatar(dt,time,speed){
   const left=name.includes('left')||name.endsWith('l'),right=name.includes('right')||name.endsWith('r');
   const side=left?1:right?-1:0;
   if(/^upperarm[lr]$/.test(name)||/upperarm/.test(name)){
-   bone.rotation.z+=side*1.12;
+   bone.rotation.z-=side*1.12;
    bone.rotation.x+=side*phase*.32*intensity;
   }
   if(/(upperleg|upleg|thigh)/.test(name))bone.rotation.x+=side*phase*.48*intensity;
