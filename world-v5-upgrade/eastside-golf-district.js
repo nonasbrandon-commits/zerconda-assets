@@ -103,16 +103,59 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
   const px=Math.cos(a)*108,pz=Math.sin(a)*92;
   oval(course,px,pz,4.2,3.4,walk,.055);
  }
- for(const [cx,cz] of [[-118,-115],[-109,-115],[104,-103]]){
-  const cart=new THREE.Group();cart.position.set(cx,.12,cz);course.add(cart);
-  box(cart,0,.56,0,2.2,.22,3.4,trim);box(cart,0,1.35,-.7,2.1,.18,1.4,wood);
-  box(cart,0,2.25,0,2.4,.16,3.4,roof);
-  for(const dx of [-1,1])for(const dz of [-1.2,1.2]){
-   box(cart,dx*.98,1.5,dz,.07,1.5,.07,roof);
-   const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.38,.38,.22,12),roof);
-   wheel.rotation.z=Math.PI/2;wheel.position.set(dx*1.13,.34,dz);cart.add(wheel);
+ // Four-seat resort-style carts: sculpted body, windscreen, canopy, seatbacks, golf bags and wheels.
+ for(const [cx,cz,angle] of [[-118,-115,.1],[-109,-115,-.25],[104,-103,.7]]){
+  const cart=new THREE.Group();cart.position.set(cx,.15,cz);cart.rotation.y=angle;course.add(cart);
+  const body=mat(0xecece5,.42),dark=mat(0x20272b,.62),seat=mat(0xbcb6a7,.82),chrome=mat(0xb0b7b9,.25);
+  box(cart,0,.64,0,2.08,.5,3.35,body);
+  box(cart,0,.98,-1.13,2,.36,1.04,body);
+  box(cart,0,.98,.45,2,.18,1.65,dark);
+  box(cart,0,1.21,.28,1.86,.18,1.12,seat);
+  box(cart,0,1.58,.76,1.86,.67,.16,seat);
+  box(cart,0,2.35,0,2.35,.13,3.65,body);
+  for(const xx of [-.99,.99])for(const zz of [-1.25,1.25]){
+   box(cart,xx,1.69,zz,.065,1.34,.065,chrome);
+   const tire=new THREE.Mesh(new THREE.CylinderGeometry(.43,.43,.23,20),dark);
+   tire.rotation.z=Math.PI/2;tire.position.set(xx*1.07,.44,zz);cart.add(tire);
+   const hub=new THREE.Mesh(new THREE.CylinderGeometry(.22,.22,.245,20),chrome);
+   hub.rotation.z=Math.PI/2;hub.position.copy(tire.position);cart.add(hub);
+  }
+  const windshield=new THREE.Mesh(new THREE.PlaneGeometry(1.95,.98),new THREE.MeshPhysicalMaterial({color:0xb8d9df,transparent:true,opacity:.34,roughness:.12,side:THREE.DoubleSide}));
+  windshield.position.set(0,1.77,-1.1);cart.add(windshield);
+  const steering=new THREE.Mesh(new THREE.TorusGeometry(.27,.038,8,20),dark);steering.position.set(-.48,1.48,-.91);steering.rotation.x=.55;cart.add(steering);
+  for(const xx of [-.38,.38]){
+   const bag=new THREE.Mesh(new THREE.CylinderGeometry(.24,.19,1.02,12),dark);
+   bag.position.set(xx,1.31,1.63);bag.rotation.x=-.16;cart.add(bag);
+   for(let k=0;k<3;k++)box(cart,xx+(k-1)*.08,2.02,1.65,.04,.5,.04,chrome);
   }
  }
+ // Modern golf-course homes face inward onto fairways, outside playable boundaries.
+ // Architectural reference: low, wide two-storey stone-and-glass clubhouse-style residences.
+ const stone=mat(0xb7aa96,.92),stucco=mat(0xd7d2c7,.85),steel=mat(0x29343a,.44);
+ const homeGlass=new THREE.MeshPhysicalMaterial({color:0x6592a8,roughness:.17,metalness:.18,transparent:true,opacity:.78});
+ function modernHome(px,pz,rotation,variant){
+  const home=new THREE.Group();home.position.set(px,0,pz);home.rotation.y=rotation;course.add(home);
+  const width=18+variant%3*2;
+  box(home,0,2.2,0,width,4.4,13,stone);
+  box(home,-3,6.05,-.6,width-5,3.4,11,stucco);
+  box(home,0,7.88,0,width+1,.36,14,steel);
+  box(home,3,4.5,0,width*.47,.25,13.5,steel);
+  for(const level of [2.1,5.9])for(let col=0;col<5;col++){
+   const xx=-width*.39+col*width*.195;
+   box(home,xx,level,-6.57,width*.16,level===2.1?2.8:2.5,.08,homeGlass);
+   box(home,xx,level,6.57,width*.16,level===2.1?2.8:2.5,.08,homeGlass);
+   box(home,xx,level,-6.67,.075,level===2.1?2.95:2.65,.11,steel);
+  }
+  box(home,0,4.15,-7.4,width*.82,.17,2.3,steel);
+  for(const xx of [-width*.4,width*.4])box(home,xx,2.1,-7.35,.16,4.2,.16,steel);
+  box(home,0,.13,-10,width*.7,.18,6,walk);
+  // Native landscape strips instead of geometric lollipop trees.
+  for(const xx of [-width*.5,width*.5])for(let j=0;j<4;j++){
+   const shrub=new THREE.Mesh(new THREE.IcosahedronGeometry(.6+j*.07,2),mat(0x416a40,.98));
+   shrub.position.set(xx,.42,-4+j*2.3);home.add(shrub);
+  }
+ }
+ for(const [hx,hz,rot,v] of [[-116,151,Math.PI,0],[-76,151,Math.PI,1],[-36,151,Math.PI,2],[10,151,Math.PI,3],[55,151,Math.PI,4],[100,151,Math.PI,5],[-116,-153,0,6],[-68,-153,0,7],[14,-153,0,8],[84,-153,0,9]])modernHome(hx,hz,rot,v);
  // Clubhouse: covered entrance, glazing, porch, terrace and sign.
  const club=new THREE.Group();club.position.set(-125,0,-122);course.add(club);
  box(club,0,3.3,0,25,6.6,14,brick);
