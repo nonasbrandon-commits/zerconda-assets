@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {trimGolfGround} from './golf-road-clearance.js?v=20261117-golf-clearance-v64';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Zerconda Eastside: residential approach and playable-scale three-hole public golf park.
 // Located about three 96m blocks east of the Needle at (48,-48).
@@ -28,24 +29,18 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
   parent.updateWorldMatrix(true,false);
   const location=parent.localToWorld(new THREE.Vector3(x,0,z));
   if([-96,0,96].some(c=>Math.abs(location.x-c)<18||Math.abs(location.z-c)<18))return;
-  if(location.x>257&&location.x<404&&Math.abs(location.z+48)<17)return;
   const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);parent.add(g);treeInstances.push({g,seed});
   // No cartoon placeholder crown. Model is loaded below; failed loads leave an empty planting location instead of lollipop trees.
  }
- // Keep golf access paving inside the golf district. The old x=86..386
- // boulevard cut through the residential block east of the x=96 city street.
- const accessWest=x-150,accessEast=386;
- const accessLength=accessEast-accessWest,accessCenter=(accessWest+accessEast)/2;
- box(root,accessCenter,-.12,-48,accessLength,.16,14,road);
- for(const side of [-1,1]){
-  box(root,accessCenter,.02,-48+side*8,accessLength,.12,2.4,walk);
-  for(let i=0;i<22;i++)tree(root,105+i*12,-48+side*19, .65+(i%3)*.07,i);
- }
+ // The obsolete access boulevard and its sidewalks are removed.
+ // The existing city grid supplies the road through the golf district.
+ for(const side of [-1,1])for(let i=0;i<22;i++)
+  tree(root,105+i*12,-48+side*19,.65+(i%3)*.07,i);
  // Steel truss pedestrian crossing with vehicle clearance and grounded access ramps.
  const bridge=new THREE.Group();bridge.name='Eastside steel pedestrian bridge';root.add(bridge);
  const steel=mat(0x334954,.48),concrete=mat(0x929d9f,.9),deck=mat(0xb7bbb8,.82),glassRail=mat(0x748e99,.48);
- const bx=290,roadZ=-48,deckY=7.0,width=4.4,span=32;
- // The deck underside is 6.7m above the road; no support stands in traffic.
+ const bx=290,roadZ=0,deckY=10.5,width=4.4,span=38;
+ // More than 9.9m of clear height above the boulevard; supports stay beyond sidewalks.
  box(bridge,bx,deckY,roadZ,width,.32,span,deck);
  for(const edge of [-1,1]){
   const xx=bx+edge*(width/2-.1);
@@ -66,23 +61,25 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  // Four columns land beyond the traffic envelope and sidewalk.
  for(const zz of [roadZ-span/2-1.4,roadZ+span/2+1.4])
   for(const xx of [bx-width/2+.3,bx+width/2-.3]){
-   box(bridge,xx,3.4,zz,.65,6.8,.65,concrete);
+   box(bridge,xx,deckY/2,zz,.65,deckY,.65,concrete);
    box(bridge,xx,.28,zz,1.5,.56,1.5,concrete);
   }
- // Approach ramps rise from grade to bridge height. Every railing follows the slope.
- const rampLength=84,angle=Math.atan2(deckY,rampLength);
+ // Short, steeper approaches turn alongside the road instead of reaching
+ // across the neighboring city streets. The deck meets both ramps at full height.
+ const rampLength=25,landingY=.24,rise=deckY-landingY;
+ const angle=Math.atan2(rise,rampLength),rampDeckLength=Math.hypot(rampLength,rise);
  for(const side of [-1,1]){
-  const centerZ=roadZ+side*(span/2+rampLength/2);
-  const ramp=new THREE.Group();ramp.position.set(bx,deckY/2,centerZ);
-  ramp.rotation.x=side*angle;bridge.add(ramp);
-  box(ramp,0,0,0,width,.3,rampLength,deck);
+  const rampZ=roadZ+side*(span/2-width/2);
+  const rampStartX=bx+width/2,centerX=rampStartX+rampLength/2;
+  const ramp=new THREE.Group();ramp.position.set(centerX,(deckY+landingY)/2,rampZ);
+  ramp.rotation.z=-angle;bridge.add(ramp);
+  box(ramp,0,0,0,rampDeckLength,.3,width,deck);
   for(const edge of [-1,1]){
-   const xx=edge*(width/2-.1);
-   for(const h of [.55,1.15])box(ramp,xx,h,0,.12,.12,rampLength,steel);
-   for(let j=0;j<=28;j++)box(ramp,xx,.58,j*rampLength/28-rampLength/2,.12,1.2,.12,steel);
+   const zz=edge*(width/2-.1);
+   for(const h of [.55,1.15])box(ramp,0,h,zz,rampDeckLength,.12,.12,steel);
+   for(let j=0;j<=12;j++)box(ramp,j*rampDeckLength/12-rampDeckLength/2,.58,zz,.12,1.2,.12,steel);
   }
-  // Landing at ground end, away from the boulevard.
-  box(bridge,bx,.12,roadZ+side*(span/2+rampLength),width+.8,.24,5,concrete);
+  box(bridge,rampStartX+rampLength+2,.12,rampZ,4,.24,width+.8,concrete);
  }
  // Do not allow any fairway turf to cover the existing paved boulevard.
  // Golf turf is drawn on either side of the street, never as one giant overlapping rectangle.
@@ -118,9 +115,7 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  // Two separate playable parcels. Keep a permanent 26m-wide clear road corridor.
  box(course,0,-.15,-76.5,300,.25,107,rough);
  box(course,0,-.15,76.5,300,.25,107,rough);
- // Restore the road corridor above turf with an asphalt strip and matching sidewalk.
- box(root,accessCenter,.28,-48,accessLength,.16,20,road);
- for(const side of [-1,1])box(root,accessCenter,.39,-48+side*11.3,accessLength,.13,2.4,walk);
+
  for(const [fx,fz,rx,rz,rotation] of [[-68,-63,65,25,-.28],[53,-5,85,26,.33],[-28,73,73,26,-.23]]){
   const safeZ=fz<0?Math.min(fz,-37-rz):Math.max(fz,37+rz);const f=oval(course,fx,safeZ,rx,rz,fairway,.04);f.rotation.z=rotation;
  }
@@ -314,6 +309,12 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
  const sign=new THREE.Mesh(new THREE.PlaneGeometry(15,2.65),new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide}));
  sign.position.set(0,5.1,7.28);club.add(sign);
- // The access boulevard above owns the course entrance; no duplicate road slab.
+ // Trim every ground layer, including rotated fairways, bunkers and mowing bands.
+ // Their full transformed footprints must leave city roads and sidewalks exposed.
+ const groundMaterials=new Set([grass,fairway,rough,green,sand,water,mowA,mowB,walk]);
+ for(const mesh of course.children){
+  if(mesh.isMesh&&groundMaterials.has(mesh.material)&&mesh.position.y<.3)trimGolfGround(mesh,z);
+ }
+ // No access-road slabs remain on the landscaped golf land.
  return {root,center:{x,z},holes:holes.length,residentialBuildings:49,bounds:{minX:100,maxX:575,minZ:-200,maxZ:110}};
 }
