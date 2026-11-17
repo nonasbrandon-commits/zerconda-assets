@@ -20,7 +20,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-16-needle-park-and-city-repair';
+const ZERCONDA_BUILD='2026-11-16-visible-needle-park-and-cafe-furniture';
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
 // Does not call any old tree/lamp/car spawn loops.
@@ -389,10 +389,10 @@ for(const seat of coffeeShop.seats){const lx=seat.x+34,lz=seat.z+48;seat.x=-34+l
 // Populate tower surroundings and distant horizon with detailed 3D architecture.
 const cityDepth=addCityDepth({scene,asphalt,paving,grass});
 // Dedicated green space behind the Needle, outside the downtown building grid.
-const needleSportsPark=createNeedleSportsPark(scene,{x:48,z:-224});
+const needleSportsPark=createNeedleSportsPark(scene,{x:48,z:-139});
 // Extend pedestrian access north from the existing street grid to the park entrance.
-box(5,.065,77,48,.005,-180,paving);
-for(const zz of [-156,-180,-205]){box(.18,.025,2,48,.06,zz,yellow);}
+box(5,.065,37,48,.005,-78,paving);
+for(const zz of [-65,-78,-90]){box(.18,.025,2,48,.06,zz,yellow);}
 const apartments=createApartmentExperience({scene,x:1050,z:1050});
 apartments.root.visible=false;
 let apartmentSession=null,apartmentFloor=0;
