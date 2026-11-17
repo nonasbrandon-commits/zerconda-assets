@@ -11,7 +11,7 @@ import {createApartmentExperience} from './apartment-interiors.js';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 import {addAirDancers} from './air-dancers.js';
-import {createZercondaBeach} from './zerconda-beach.js?v=20261117-ocean-v43';
+import {createZercondaBeach} from './zerconda-beach.js?v=20261117-ocean-wall-v49';
 import {createCityMap} from './top-city-map.js?v=20261117-open-beach-v18';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
