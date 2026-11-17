@@ -524,7 +524,7 @@ for(const c of roadLines){
     if(Math.abs(x)>162||Math.abs(z)>162)continue;
     // Coastal houses occupy z=135, with walls and balconies extending beyond the lot.
     // Reserve the complete residential frontage plus tree-canopy clearance.
-    if(z>113&&z<158&&Math.abs(x)<177)continue;
+    if(z>72&&z<172&&Math.abs(x)<185)continue; // Protect entire beachside residential blocks, including full tree canopies
     if(x>12&&x<84&&z> -250&&z< -135||Math.abs(x+51.5)<12&&Math.abs(z+48)<44||Math.abs(x+72)<17&&Math.abs(z+48)<19||nearRoad(x,z,5.1)||insideBuilding(x,z,1.5)||inPlaza(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39||doors.some(d=>Math.hypot(x-d.x,z-d.z)<entranceClearance)||Math.abs(x+34)<22&&Math.abs(z+48)<23)continue;
     if(treeSpots.some(([a,b])=>Math.hypot(x-a,z-b)<10))continue;
     treeSpots.push([x,z]);
@@ -600,7 +600,7 @@ async function populate(){
  populateOuterForest();
  for(let i=0;i<treeSpots.length;i++){
   const [x,z]=treeSpots[i],src=loaded[i%2?'tree2':'tree']||loaded.tree||loaded.tree2;
-  if(z>113&&z<158&&Math.abs(x)<177)continue;
+  if(z>72&&z<172&&Math.abs(x)<185)continue; // Protect entire beachside residential blocks, including full tree canopies
   if(src&&!doors.some(d=>Math.hypot(x-d.x,z-d.z)<13)&&!(Math.abs(x+34)<24&&Math.abs(z+48)<24))cloneNormalized(src,x,z,7+rand()*2.5,rand()*6.28);
  }
  for(const [x,z] of lampSpots){
