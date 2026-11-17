@@ -17,7 +17,7 @@ import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=202
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-clear-all-lots-v27';
 import {createPedestrians} from './animated-pedestrians.js';
-import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-golf-reserve-v30';
+import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-road-gate-v32';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
@@ -238,7 +238,36 @@ function wallSegment(x1,z1,x2,z2){
 }
 // The southern coastline is intentionally OPEN: no wall across the beach or ocean.
 wallSegment(-276,-285,570,-285);
-wallSegment(-276,-285,-276,174);wallSegment(570,-285,570,174);
+wallSegment(-276,-285,-276,174);
+// Main east gate: a clear 26-metre entrance aligned with the golf access road.
+wallSegment(570,-285,570,-61);wallSegment(570,-35,570,174);
+const gateMetal=new THREE.MeshStandardMaterial({color:0x303c43,metalness:.7,roughness:.37});
+const gateGlass=new THREE.MeshStandardMaterial({color:0x7797a5,metalness:.2,roughness:.3});
+const gateUniform=new THREE.MeshStandardMaterial({color:0x273d50,roughness:.88});
+const gateSkin=new THREE.MeshStandardMaterial({color:0xb98b70,roughness:.9});
+const gateSignCanvas=document.createElement('canvas');gateSignCanvas.width=768;gateSignCanvas.height=128;
+const gateCtx=gateSignCanvas.getContext('2d');gateCtx.fillStyle='#1c333c';gateCtx.fillRect(0,0,768,128);
+gateCtx.fillStyle='#ffffff';gateCtx.font='bold 55px Arial';gateCtx.textAlign='center';gateCtx.fillText('ZERCONDA CITY GATE',384,82);
+const gateSignTex=new THREE.CanvasTexture(gateSignCanvas);gateSignTex.colorSpace=THREE.SRGBColorSpace;
+box(1.2,7,1.2,570,3.5,-62,gateMetal);
+box(1.2,7,1.2,570,3.5,-34,gateMetal);
+box(1.2,1,29,570,7.3,-48,gateMetal);
+const gateBoard=new THREE.Mesh(new THREE.PlaneGeometry(19,3.2),new THREE.MeshBasicMaterial({map:gateSignTex,side:THREE.DoubleSide}));
+gateBoard.rotation.y=Math.PI/2;gateBoard.position.set(569.25,9.1,-48);scene.add(gateBoard);
+for(const zz of [-66,-30]){
+ box(4,3.3,4,565,1.65,zz,wallStone);
+ box(3.1,1.55,.12,565,2.15,zz+(zz< -48?2.08:-2.08),gateGlass);
+ box(4.5,.25,4.5,565,3.43,zz,gateMetal);
+ // Two original uniformed security figures stand beside the guard booths.
+ const guard=new THREE.Group();guard.position.set(559,0,zz);scene.add(guard);
+ box(.62,1.02,.36,0,1.42,0,gateUniform,guard);
+ box(.20,.84,.22,-.19,.44,0,gateUniform,guard);
+ box(.20,.84,.22,.19,.44,0,gateUniform,guard);
+ box(.18,.76,.20,-.43,1.33,0,gateUniform,guard);
+ box(.18,.76,.20,.43,1.33,0,gateUniform,guard);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.19,12,10),gateSkin);head.position.y=2.14;guard.add(head);
+ box(.42,.12,.34,0,2.35,0,gateUniform,guard);
+}
 // Actual three-dimensional mountain terrain beyond the perimeter, with
 // rugged triangulated slopes and snow-capped upper elevations.
 const mountainRock=new THREE.MeshStandardMaterial({color:0x69746e,roughness:1,flatShading:true,side:THREE.DoubleSide});
