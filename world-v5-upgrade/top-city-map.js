@@ -30,6 +30,8 @@ export function createCityMap({player,beach={x:0,z:212}}){
   ctx.fillStyle='#f5f6e9';ctx.beginPath();ctx.arc(tx(48),tz(48),6,0,Math.PI*2);ctx.fill();label(48,48,'PLAZA');
   ctx.fillStyle='#81ac59';ctx.beginPath();ctx.ellipse(tx(425),tz(-48),57,32,0,0,Math.PI*2);ctx.fill();
   label(425,-48,'GOLF CLUB','#ffffff');
+  ctx.fillStyle='#5cae5a';ctx.fillRect(tx(-20),tz(-190),136*scale,105*170/460);
+  label(48,-139,'SPORTS PARK','#ffffff');
   label(245,-20,'HOMES','#ffffff');
   label(-72,-48,'AUTO');label(-34,-48,'COFFEE');label(-20,212,'BEACH','#ffffff');
   // Highly visible live player marker, drawn last so roads and labels never cover it.
