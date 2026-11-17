@@ -18,8 +18,7 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  function oval(parent,x,z,rx,rz,m,y=.07){const mesh=new THREE.Mesh(new THREE.CircleGeometry(1,48),m);mesh.rotation.x=-Math.PI/2;mesh.scale.set(rx,rz,1);mesh.position.set(x,y,z);mesh.receiveShadow=true;parent.add(mesh);return mesh;}
  function tree(parent,x,z,scale=1,seed=0){
   const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);parent.add(g);treeInstances.push({g,seed});
-  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.32,.5,5,10),bark);trunk.position.y=2.5;trunk.castShadow=true;g.add(trunk);
-  for(let k=0;k<5;k++){const o=new THREE.Mesh(new THREE.IcosahedronGeometry(2.25+(k%2)*.5,2),leaf[(seed+k)%leaf.length]);o.scale.set(1.1,.72,1.05);o.position.set(Math.sin(k*2.4)*1.05,5.5+(k%3)*1.05,Math.cos(k*2.4)*.9);o.castShadow=true;g.add(o);}
+  // No cartoon placeholder crown. Model is loaded below; failed loads leave an empty planting location instead of lollipop trees.
  }
  // Access boulevard from the existing eastern city edge. 3 blocks east of Needle.
  box(root,236,-.12,-48,300,.16,14,road);
