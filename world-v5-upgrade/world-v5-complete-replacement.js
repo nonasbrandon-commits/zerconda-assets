@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-window-rebuild-v3';
+const ZERCONDA_BUILD='2026-11-17-new-stucco-buildings-v4';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -224,82 +224,45 @@ const entranceAwning=new THREE.MeshStandardMaterial({color:0x3d4c50,metalness:.6
 const castStone=new THREE.MeshStandardMaterial({color:0xc9c1b2,roughness:.94});
 
 function makeBuilding(x,z,w,d,h,type){
+ // Entirely new low-rise stucco residences, replacing the defective brick towers.
+ // No signature kit, blue ornaments, glass layering, or legacy facade textures.
  const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
- const hasSignature=type%7!==3;
- // Signature kits already construct their own windows. A photographed window
- // texture underneath them creates the duplicated, scrambled glazing seen in-game.
- const facade=hasSignature?new THREE.MeshStandardMaterial({color:type%2?0x9b6754:0xae806d,roughness:.94}):facadeMats[type%facadeMats.length];
- // Textured front/back and side walls with complete solid mass.
- box(w,h,d,0,h/2,0,facade,g);
- // Contrasting ground-floor stone base, pilasters and cornice.
- box(w+.15,3.3,d+.15,0,1.65,0,stone,g);
- box(w+.5,.38,d+.5,0,3.35,0,metal,g);
- box(w+.65,.55,d+.65,0,h+.28,0,stone,g);
- box(w+.2,.35,d+.2,0,h+.72,0,roof,g);
- // Architecture: separate inset facade bands, masonry pilasters and window bays
- // create actual depth instead of a single photo pasted onto a cube.
- if(!hasSignature)for(const sign of [-1,1]){
-  const faceZ=sign*(d/2+.13);
-  for(let floor=1;floor<Math.max(2,Math.floor(h/3.25));floor++){
-   const y=floor*3.25+.35;
-   box(w+.15,.16,.26,0,y,faceZ,castStone,g);
-   for(let bay=1;bay<Math.floor(w/4.6);bay++){
-    const px=-w/2+bay*(w/Math.floor(w/4.6));
-    box(.18,2.9,.22,px,y+1.55,faceZ,castStone,g);
+ const plaster=new THREE.MeshStandardMaterial({color:type%2?0xe5dfd2:0xd9d7cf,roughness:.92});
+ const accent=new THREE.MeshStandardMaterial({color:0xb8b4aa,roughness:.9});
+ const roofMat=new THREE.MeshStandardMaterial({color:0x535960,roughness:.82});
+ const windowGlass=new THREE.MeshStandardMaterial({color:0x304650,metalness:.16,roughness:.3});
+ const windowFrame=new THREE.MeshStandardMaterial({color:0xf5f3e9,roughness:.78});
+ const entrance=new THREE.MeshStandardMaterial({color:0x524f4a,roughness:.72});
+ const H=Math.min(h,13.5),levels=3;
+ box(w,H,d,0,H/2,0,plaster,g);
+ box(w+.7,.32,d+.7,0,H+.16,0,roofMat,g);
+ box(w+.4,.22,d+.4,0,3.45,0,accent,g);
+ for(let floor=0;floor<levels;floor++){
+  const yy=2.0+floor*3.55;
+  for(const sign of [-1,1]){
+   const frontCount=Math.max(3,Math.floor(w/5));
+   for(let k=0;k<frontCount;k++){
+    const xx=-w/2+(k+.5)*w/frontCount;
+    if(floor===0&&sign===1&&Math.abs(xx)<2)continue;
+    // Each opening has a single glass pane, a single frame and a sill.
+    box(1.85,2.0,.12,xx,yy,sign*(d/2+.12),windowFrame,g);
+    box(1.63,1.78,.14,xx,yy,sign*(d/2+.22),windowGlass,g);
+    box(2.05,.13,.27,xx,yy-1.08,sign*(d/2+.18),accent,g);
+   }
+   const sideCount=Math.max(3,Math.floor(d/5));
+   for(let k=0;k<sideCount;k++){
+    const zz=-d/2+(k+.5)*d/sideCount;
+    box(.12,2.0,1.85,sign*(w/2+.12),yy,zz,windowFrame,g);
+    box(.14,1.78,1.63,sign*(w/2+.22),yy,zz,windowGlass,g);
+    box(.27,.13,2.05,sign*(w/2+.18),yy-1.08,zz,accent,g);
    }
   }
-  // Aged ground-floor canopy with a real overhang and visible brackets.
-  box(w-.8,.24,1.25,0,3.45,sign*(d/2+.65),entranceAwning,g);
-  for(let k=0;k<Math.floor(w/5);k++){
-   const px=-w/2+2.5+k*5;
-   box(.14,.65,.8,px,3.13,sign*(d/2+.5),metal,g);
-  }
  }
- // Rooftop HVAC and mechanical screening.
- for(let i=0;i<2;i++){
-  box(2.3,1.1,2.5,-w*.23+i*w*.45,h+1.45,-d*.15,metal,g);
- }
- // Storefront bays at street level on front elevation.
- const bays=Math.max(2,Math.floor(w/5));
- if(!hasSignature)for(let i=0;i<bays;i++){
-  const px=-w/2+(i+.5)*w/bays;
-  box(w/bays*.73,2.35,.11,px,1.68,d/2+.13,glass,g);
-  box(w/bays*.82,.27,.23,px,2.95,d/2+.22,metal,g);
-  box(.15,2.65,.28,px-w/bays*.4,1.65,d/2+.24,stone,g);
- }
- // Ground-level front entrance with paired moving door leaves.
- // Visible opening is a dark inset vestibule. For actual indoor access,
- // wall geometry must be rebuilt into separated segments.
- box(3.1,3.05,.23,0,1.53,d/2+.23,dark,g);
- box(3.3,.28,.5,0,3.05,d/2+.36,stone,g);
- for(const s of [-1,1]){
-  const hinge=new THREE.Group();
-  hinge.position.set(x+s*1.42,0,z+d/2+.41);
-  const panel=box(1.37,2.7,.09,-s*.685,1.37,0,doorMat,hinge);
-  box(.07,.16,.08,-s*1.12,1.3,.09,bronze,hinge);
-  scene.add(hinge);doors.push({hinge,x,z:z+d/2+.41,side:s,open:0,manual:false,holdUntil:0});
- }
- // Entrance canopy and sconces.
- box(4.3,.22,1.2,0,3.25,d/2+.65,metal,g);
- for(const s of [-1,1])cylinder(.12,.12,.48,s*2.2,2.5,d/2+.3,bronze,g,12);
- // Realistic architectural window rows on side elevation.
- const floors=Math.floor((h-4)/3.2);
- if(!hasSignature)for(let f=0;f<floors;f++)for(const side of [-1,1]){
-  for(let i=0;i<Math.max(2,Math.floor(d/4.3));i++){
-   const count=Math.max(2,Math.floor(d/4.3));
-   const zz=-d/2+(i+.5)*d/count;
-   box(.09,1.75,1.45,side*(w/2+.08),5+f*3.2,zz,windowMat,g);
-   box(.2,.14,1.78,side*(w/2+.16),4.04+f*3.2,zz,stone,g);
-  }
- }
- // Most residential streets use warm brick apartments, with contrasting modern
- // and historic styles interspersed to avoid repetitive skyline silhouettes.
- if(hasSignature){
-  const architectureStyle=3; // force clean four-sided facade on all signature apartments
-  addSignatureArchitecture(g,{w,d,h,style:architectureStyle});
- }
- buildings.push({x,z,w,d,h});
+ box(2.6,3.0,.13,0,1.5,d/2+.18,entrance,g);
+ box(3.6,.22,1.2,0,3.15,d/2+.65,roofMat,g);
+ buildings.push({x,z,w,d,h:H});
 }
+
 const blocks=[
  [-48,-48],[48,-48],[-48,48],[48,48],
  [-144,-48],[144,-48],[-48,144],[48,144],
