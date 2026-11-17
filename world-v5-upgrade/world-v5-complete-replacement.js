@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-avatar-v46';
+import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-avatar-v47';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
