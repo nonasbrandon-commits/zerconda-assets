@@ -49,8 +49,10 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  // Fill the exposed water channels where the perimeter walls meet the sea.
  // These are water surfaces, not walkable terrain; the world collision boundary
  // prevents avatars from bypassing either wall.
- for(const [cx,width] of [[-268,18],[415,310]]){
-  const channel=mesh(new THREE.PlaneGeometry(width,95,20,12),water,cx,.018,215);
+ // Side channels cover the entire water corridor up to the submerged wall ends.
+ // Lift above the world ground plane, otherwise the underlying flat blue terrain hides the ocean.
+ for(const [cx,width] of [[-230,94],[425,290]]){
+  const channel=mesh(new THREE.PlaneGeometry(width,195,24,24),water,cx,.115,252.5);
   channel.rotation.x=-Math.PI/2;
  }
  const pos=ocean.geometry.attributes.position;const original=new Float32Array(pos.array);
