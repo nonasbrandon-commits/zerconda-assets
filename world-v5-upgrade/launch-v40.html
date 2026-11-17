@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zerconda | Walkable 3D World</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#a9c6d8;font:14px system-ui,Arial,sans-serif}
+canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:none}
+#hud{position:fixed;top:12px;left:12px;z-index:10;color:#fff;background:rgba(8,18,25,.8);padding:12px 16px;border:1px solid #71848e;border-radius:10px;max-width:calc(100vw - 135px);pointer-events:none}
+#hud strong{font-size:17px;letter-spacing:.05em}#status{font-size:12px;line-height:1.5;margin-top:5px;color:#e6eef1}
+#help{position:fixed;bottom:12px;left:12px;color:#fff;background:rgba(8,18,25,.75);padding:10px;border-radius:9px;z-index:10}
+#mobile{position:fixed;bottom:22px;right:14px;display:grid;grid-template-columns:repeat(3,48px);gap:5px;z-index:20}
+#mobile button,#enter{touch-action:none;background:rgba(9,26,38,.85);border:1px solid #8ca5af;color:#fff;border-radius:8px;min-height:48px;font-weight:700}
+#mobile button:active,#enter:active{background:#47738b}#enter{position:fixed;right:14px;bottom:185px;z-index:20;padding:0 14px}
+@media(pointer:fine){#mobile{display:none}}@media(max-width:600px){#help{font-size:11px;bottom:8px;max-width:43vw}}
+</style>
+<script type="importmap">{"imports":{"three":"https://esm.sh/three@0.160.1","three/addons/":"https://esm.sh/three@0.160.1/examples/jsm/"}}</script>
+</head><body>
+<div id="hud"><strong>ZERCONDA</strong><div id="status">Loading realistic 3D world…</div></div>
+<div id="help">WASD: move · Drag: look · Shift: run · E: enter car · R: reset</div>
+<button id="enter">ENTER / EXIT CAR</button>
+<div id="mobile"><span></span><button data-key="KeyW" aria-label="Forward">▲</button><span></span><button data-key="KeyA" aria-label="Left">◀</button><button data-key="KeyS" aria-label="Back">▼</button><button data-key="KeyD" aria-label="Right">▶</button></div>
+<script>
+(function(){
+ const status=document.getElementById('status');
+ let loaded=false;
+ function report(msg){status.textContent=msg;status.style.color='#ffdfb2';console.error('ZERCONDA LOAD:',msg);}
+ window.addEventListener('error',e=>{report('3D loading error: '+(e.message||e.filename||'unknown script error'));});
+ window.addEventListener('unhandledrejection',e=>{report('3D module error: '+(e.reason?.message||String(e.reason)));});
+ window.addEventListener('zerconda-ready',()=>{loaded=true;});
+ setTimeout(()=>{if(!loaded&&status.textContent.includes('Loading'))report('3D module did not start. Open browser console for network or import errors.');},12000);
+})();
+</script>
+<script type="module">
+import('./world-v5-complete-replacement.js?v=20261117-body-v40')
+ .then(()=>window.dispatchEvent(new Event('zerconda-ready')))
+ .catch(async e=>{
+ const status=document.getElementById('status');
+ status.textContent='Finding failing 3D module...';
+ console.error('ZERCONDA MAIN IMPORT ERROR',e,e.stack);
+ const modules=['clothed-player','realistic-fountain','observation-needle','cloud-sky','city-depth-assets','nine-building-styles','brewstone-coffee','apartment-interiors','premium-plaza-furniture','air-dancers','zerconda-beach','top-city-map','signature-apartment-buildings','waterfront-ocean-view-homes','ownable-suburban-homes','animated-pedestrians','eastside-golf-district','needle-sports-park'];
+ const failed=[];
+ for(const name of modules){
+   try{await import('./'+name+'.js?v=diagnostic-v39');}
+   catch(err){failed.push(name+': '+err.message);console.error('ZERCONDA BROKEN MODULE:',name,err,err.stack);}
+ }
+ status.textContent=failed.length?'Broken module: '+failed.join(' | '):'Main module error: '+e.message+' (see Console)';
+});
+</script>
+</body></html>
