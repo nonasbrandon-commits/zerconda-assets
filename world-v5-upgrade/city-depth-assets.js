@@ -142,7 +142,7 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
  let total=0;
  for(let ring=0;ring<3;ring++){
   const radius=202+ring*65;
-  const n=ring===0?16:22;
+  const n=ring===0?36:46;
   for(let i=0;i<n;i++){
    const angle=2*Math.PI*(i+.24*(rnd()-.5))/n;
    const x=Math.cos(angle)*(radius+(rnd()-.5)*22);
@@ -150,12 +150,12 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    // South Beach and the ocean must remain completely free of city towers.
    if(z>55)continue; // Preserve a broad clear coastal setback: no floating towers over the beach
    // Protect Needle Park's courts, pond and sightline from surrounding skyline towers.
-   if(x> -40&&x<138&&z> -205&&z< -72)continue;
-   const w=14+rnd()*12,d=12+rnd()*13,h=12+rnd()*23+(ring===2&&total%8===0?20:0);
+   if(x>13&&x<83&&z> -250&&z< -135)continue;
+   const w=14+rnd()*12,d=12+rnd()*13,h=28+rnd()*40+(ring===2&&total%8===0?20:0);
    // Reserve full road and sidewalk corridors, including the actual building footprint.
    // The old radial placement allowed skyscrapers to intersect the extended roads.
    const roads=[-96,0,96];
-   if(roads.some(c=>Math.abs(x-c)<w/2+15||Math.abs(z-c)<d/2+15))continue;
+   if(roads.some(c=>Math.abs(x-c)<w/2+10||Math.abs(z-c)<d/2+10))continue;
    if(Math.abs(z+117)<d/2+12)continue;
    if(x+w/2>13&&x-w/2<83&&z+d/2> -250&&z-d/2< -135)continue;
    skylineTower(x,z,w,d,h,total++);
