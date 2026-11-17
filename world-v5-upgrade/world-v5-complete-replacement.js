@@ -592,7 +592,7 @@ function updateRealAvatar(dt,time,speed){
   const left=name.includes('left')||name.endsWith('l'),right=name.includes('right')||name.endsWith('r');
   const side=left?1:right?-1:0;
   if(/^upperarm[lr]$/.test(name)||/upperarm/.test(name)){
-   bone.rotation.z+=side*1.20;
+   bone.rotation.z-=side*1.20;
    bone.rotation.x+=side*phase*.24*intensity;
   }
   if(/(upperleg|upleg|thigh)/.test(name))bone.rotation.x+=side*phase*.48*intensity;
