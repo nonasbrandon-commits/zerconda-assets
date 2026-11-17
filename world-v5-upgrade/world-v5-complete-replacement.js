@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {createClothedPlayer} from './clothed-player.js?v=20261117-body-v43';
+import {createClothedPlayer} from './clothed-player.js?v=20261117-anatomy-v44';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
