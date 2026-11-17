@@ -514,18 +514,48 @@ const pedestrianSystem=createPedestrians(scene,{count:18});
 const playerRig=pedestrianSystem.createHuman(0);
 const avatar=playerRig.root;avatar.name='Zerconda player avatar';scene.add(avatar);
 let realAvatar=null,realAvatarMixer=null,realAvatarWalk=null,realAvatarIdle=null;
-let avatarBones={};
+const avatarBones={};
+const avatarRest={};
+function outfitVertexColors(model){
+ // Dress the actual rigged human mesh without breaking its skeleton or skin weights.
+ // Assign shirt, jeans, shoes, skin and hair to the original geometry vertices.
+ model.updateMatrixWorld(true);
+ const bounds=new THREE.Box3().setFromObject(model),height=bounds.max.y-bounds.min.y;
+ const tmp=new THREE.Vector3(),color=new THREE.Color();
+ const colors={shirt:new THREE.Color(0x254e78),jeans:new THREE.Color(0x253f63),
+  shoe:new THREE.Color(0xe8e7e1),skin:new THREE.Color(0xc8906d),hair:new THREE.Color(0x392d28)};
+ model.traverse(mesh=>{
+  if(!mesh.isMesh||!mesh.geometry?.attributes?.position)return;
+  const geo=mesh.geometry.clone(),pos=geo.attributes.position,arr=new Float32Array(pos.count*3);
+  for(let i=0;i<pos.count;i++){
+   tmp.fromBufferAttribute(pos,i);mesh.localToWorld(tmp);
+   const y=(tmp.y-bounds.min.y)/height;
+   // Dark hair at the crown, exposed skin on the head and hands.
+   const x=Math.abs(tmp.x-(bounds.min.x+bounds.max.x)/2)/height;
+   let material=y<.095?colors.shoe:y<.52?colors.jeans:y<.79?colors.shirt:colors.skin;
+   if(y>.91)material=colors.hair;
+   if(y>.52&&y<.85&&x>.23)material=colors.skin;
+   color.copy(material);
+   arr[i*3]=color.r;arr[i*3+1]=color.g;arr[i*3+2]=color.b;
+  }
+  geo.setAttribute('color',new THREE.BufferAttribute(arr,3));
+  mesh.geometry=geo;
+  const old=Array.isArray(mesh.material)?mesh.material[0]:mesh.material;
+  mesh.material=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.86,metalness:0,side:THREE.FrontSide,
+   skinning:!!mesh.isSkinnedMesh});
+  mesh.castShadow=true;mesh.receiveShadow=true;
+ });
+}
 new GLTFLoader().load(BASE+'realistic-assets/characters/zerconda-humanoid.glb',gltf=>{
  const model=gltf.scene;
  model.updateMatrixWorld(true);
  const bounds=new THREE.Box3().setFromObject(model),size=bounds.getSize(new THREE.Vector3());
  if(!Number.isFinite(size.y)||size.y<.01)throw Error('Invalid humanoid GLB dimensions');
- const scale=1.94/size.y;
- model.scale.setScalar(scale);
- model.position.y=-bounds.min.y*scale;
- // Orient the imported model to the avatar's forward direction.
- model.rotation.y=Math.PI;
- model.traverse(o=>{if(o.isMesh||o.isSkinnedMesh){o.castShadow=true;o.receiveShadow=true;}if(o.isBone)avatarBones[o.name.toLowerCase()]=o;});
+ // Previously this was PI, which made the character face the camera.
+ model.rotation.y=0;
+ outfitVertexColors(model);
+ const scale=1.94/size.y;model.scale.setScalar(scale);model.position.y=-bounds.min.y*scale;
+ model.traverse(o=>{if(o.isBone){const name=o.name.toLowerCase().replace(/[^a-z0-9]/g,'');avatarBones[name]=o;avatarRest[name]=o.rotation.clone();}});
  avatar.add(model);realAvatar=model;playerRig.torso.visible=false;
  playerRig.arms.forEach(a=>a.visible=false);playerRig.legs.forEach(l=>l.hip.visible=false);
  if(gltf.animations?.length){
@@ -536,8 +566,8 @@ new GLTFLoader().load(BASE+'realistic-assets/characters/zerconda-humanoid.glb',g
   if(idle)realAvatarIdle=realAvatarMixer.clipAction(idle);
   if(realAvatarIdle)realAvatarIdle.play();
  }
- console.info('ZERCONDA: loaded rigged 3D humanoid GLB',gltf.animations.map(a=>a.name));
-},undefined,error=>console.error('Humanoid GLB not available: retaining articulated fallback character',error));
+ console.info('ZERCONDA: loaded dressed humanoid',Object.keys(avatarBones),gltf.animations.map(a=>a.name));
+},undefined,error=>console.error('Humanoid GLB unavailable',error));
 function updateRealAvatar(dt,time,speed){
  if(!realAvatar)return;
  if(realAvatarMixer){
@@ -547,17 +577,23 @@ function updateRealAvatar(dt,time,speed){
    if(moving&&!realAvatarWalk.isRunning())realAvatarWalk.reset().play();
    realAvatarWalk.setEffectiveWeight(moving?1:0);
    if(realAvatarIdle)realAvatarIdle.setEffectiveWeight(moving?0:1);
-   realAvatarWalk.timeScale=Math.max(.65,Math.min(1.8,speed/2.4));
-   return;
+   realAvatarWalk.timeScale=Math.max(.65,Math.min(1.8,speed/2.4));return;
   }
  }
- // If the CC0 character has no bundled animation, animate its skeleton directly.
- const moving=Math.min(1,speed/2.5),cycle=Math.sin(time*8.5);
+ // Rig has no animation clips: lower the T-pose arms into a natural rest pose,
+ // then alternate hip/knee and arm swings while walking.
+ const intensity=Math.min(1,speed/2.5),phase=Math.sin(time*8.2);
  for(const [name,bone] of Object.entries(avatarBones)){
-  if(/left.*(upperleg|upleg|thigh)/.test(name))bone.rotation.x=cycle*.43*moving;
-  if(/right.*(upperleg|upleg|thigh)/.test(name))bone.rotation.x=-cycle*.43*moving;
-  if(/left.*(arm|shoulder)/.test(name)&&!/fore|lower/.test(name))bone.rotation.x=-cycle*.31*moving;
-  if(/right.*(arm|shoulder)/.test(name)&&!/fore|lower/.test(name))bone.rotation.x=cycle*.31*moving;
+  const rest=avatarRest[name];bone.rotation.copy(rest);
+  const left=name.includes('left')||name.startsWith('l_'),right=name.includes('right')||name.startsWith('r_');
+  const side=left?1:right?-1:0;
+  if(/(upperarm|arm)$/.test(name)&&!/(forearm|lowerarm)/.test(name)){
+   bone.rotation.z+=side*1.18;
+   bone.rotation.x+=side*phase*.33*intensity;
+  }
+  if(/(upperleg|upleg|thigh)/.test(name))bone.rotation.x+=side*phase*.42*intensity;
+  if(/(lowerleg|calf|shin|leg)$/.test(name)&&!/(upperleg|upleg)/.test(name))bone.rotation.x+=Math.max(0,-side*phase)*.48*intensity;
+  if(/(forearm|lowerarm)/.test(name))bone.rotation.x+=-.10;
  }
 }
 
