@@ -154,6 +154,17 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    // Golf course protected land: do not place background towers on fairways or clubhouse.
    if(x>258&&x<590&&z>-220&&z<112)continue;
    const w=14+rnd()*12,d=12+rnd()*13,h=28+rnd()*40+(ring===2&&total%8===0?20:0);
+   // Keep the full footprint of every ownable home clear of skyline towers.
+   // Includes a 5m separation gap so detached homes never merge into apartments.
+   const protectedHomes=[];
+   for(const sx of [-146,146])for(const hz of [-174,-139,-72,-22,32])
+     protectedHomes.push({x:sx,z:hz,w:16,d:23});
+   for(let hr=0;hr<5;hr++)for(let hc=0;hc<2;hc++)
+     protectedHomes.push({x:-210+hc*27,z:[-204,-166,-130,-62,-30][hr],w:21,d:25});
+   const touchesHome=protectedHomes.some(home=>
+     Math.abs(x-home.x)<(w+home.w)/2+5 &&
+     Math.abs(z-home.z)<(d+home.d)/2+5);
+   if(touchesHome)continue;
    // Reserve full road and sidewalk corridors, including the actual building footprint.
    // The old radial placement allowed skyscrapers to intersect the extended roads.
    const roads=[-96,0,96];
