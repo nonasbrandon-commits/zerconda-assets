@@ -27,10 +27,13 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
   const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);parent.add(g);treeInstances.push({g,seed});
   // No cartoon placeholder crown. Model is loaded below; failed loads leave an empty planting location instead of lollipop trees.
  }
- // Access boulevard from the existing eastern city edge. 3 blocks east of Needle.
- box(root,236,-.12,-48,300,.16,14,road);
+ // Keep golf access paving inside the golf district. The old x=86..386
+ // boulevard cut through the residential block east of the x=96 city street.
+ const accessWest=x-150,accessEast=386;
+ const accessLength=accessEast-accessWest,accessCenter=(accessWest+accessEast)/2;
+ box(root,accessCenter,-.12,-48,accessLength,.16,14,road);
  for(const side of [-1,1]){
-  box(root,236,.02,-48+side*8,300,.12,2.4,walk);
+  box(root,accessCenter,.02,-48+side*8,accessLength,.12,2.4,walk);
   for(let i=0;i<22;i++)tree(root,105+i*12,-48+side*19, .65+(i%3)*.07,i);
  }
  // Steel truss pedestrian crossing with vehicle clearance and grounded access ramps.
@@ -111,8 +114,8 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  box(course,0,-.15,-76.5,300,.25,107,rough);
  box(course,0,-.15,76.5,300,.25,107,rough);
  // Restore the road corridor above turf with an asphalt strip and matching sidewalk.
- box(root,236,.28,-48,300,.16,20,road);
- for(const side of [-1,1])box(root,236,.39,-48+side*11.3,300,.13,2.4,walk);
+ box(root,accessCenter,.28,-48,accessLength,.16,20,road);
+ for(const side of [-1,1])box(root,accessCenter,.39,-48+side*11.3,accessLength,.13,2.4,walk);
  for(const [fx,fz,rx,rz,rotation] of [[-68,-63,65,25,-.28],[53,-5,85,26,.33],[-28,73,73,26,-.23]]){
   const safeZ=fz<0?Math.min(fz,-37-rz):Math.max(fz,37+rz);const f=oval(course,fx,safeZ,rx,rz,fairway,.04);f.rotation.z=rotation;
  }
@@ -302,7 +305,6 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
  const sign=new THREE.Mesh(new THREE.PlaneGeometry(15,2.65),new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide}));
  sign.position.set(0,5.1,7.28);club.add(sign);
- // Entry connection, no blocking the coastal beach.
- box(root,306,-.10,-48,140,.16,11,road);
+ // The access boulevard above owns the course entrance; no duplicate road slab.
  return {root,center:{x,z},holes:holes.length,residentialBuildings:49,bounds:{minX:100,maxX:575,minZ:-200,maxZ:110}};
 }
