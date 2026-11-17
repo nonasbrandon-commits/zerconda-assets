@@ -36,7 +36,7 @@ export function addSignatureArchitecture(group,{w,d,h,style=0}={}){
   applyRealBrick(brick);
   const cream=new THREE.MeshStandardMaterial({color:0xd9c7aa,roughness:.9});
   const dark=new THREE.MeshStandardMaterial({color:0x242d33,metalness:.58,roughness:.42});
-  const glass=new THREE.MeshPhysicalMaterial({color:0x456779,metalness:.08,roughness:.16,transparent:true,opacity:.83,side:THREE.DoubleSide});
+  const glass=new THREE.MeshPhysicalMaterial({color:0x456779,metalness:.08,roughness:.26,transparent:false,opacity:1,side:THREE.FrontSide});
   const warm=new THREE.MeshBasicMaterial({color:0xbda079});
   const foliage=new THREE.MeshStandardMaterial({color:0x3c6544,roughness:.97});
   const B=(ww,hh,dd,x,y,z,m)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(ww,hh,dd),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;group.add(o);return o;};
@@ -116,7 +116,7 @@ export function addSignatureArchitecture(group,{w,d,h,style=0}={}){
  const iron=new THREE.MeshStandardMaterial({color:0x493f3e,metalness:.63,roughness:.54});
  const white=new THREE.MeshStandardMaterial({color:0xd8dce0,roughness:.65});
  const dark=new THREE.MeshStandardMaterial({color:0x303a44,metalness:.42,roughness:.32});
- const glass=new THREE.MeshPhysicalMaterial({color:0x83a9bd,metalness:.12,roughness:.09,transparent:true,opacity:.6,clearcoat:1,side:THREE.DoubleSide});
+ const glass=new THREE.MeshPhysicalMaterial({color:0x537c91,metalness:.12,roughness:.22,transparent:false,opacity:1,clearcoat:.25,side:THREE.FrontSide});
  const lit=new THREE.MeshBasicMaterial({color:0xe6ba7e,transparent:true,opacity:.64});
  const plant=new THREE.MeshStandardMaterial({color:0x346b41,roughness:.96});
  const mat=(style===0?brick:style===1?dark:white);
