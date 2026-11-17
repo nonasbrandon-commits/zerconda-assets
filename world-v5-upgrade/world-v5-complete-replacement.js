@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-walk-cycle-v52';
+import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-grounded-walk-v58';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
@@ -22,7 +22,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-east-security-gate-v57';
+const ZERCONDA_BUILD='2026-11-17-east-security-walk-v58';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
