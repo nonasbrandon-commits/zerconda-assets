@@ -20,7 +20,8 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-park-avatar-street-clearance';
+const ZERCONDA_BUILD='2026-11-17-park-courts-clothed-avatar-botanical-bushes';
+document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
 // Does not call any old tree/lamp/car spawn loops.
@@ -898,7 +899,7 @@ function animate(){
  cafeButton.textContent=sittingSeat?'C · STAND UP':'C · SIT DOWN';
  if((diagnosticFrames++%30)===0){
   const p=camera.position;
-  diag.textContent='RENDER '+(contextLost?'CONTEXT LOST':'ACTIVE')+
+  diag.textContent='BUILD '+ZERCONDA_BUILD+'\nRENDER '+(contextLost?'CONTEXT LOST':'ACTIVE')+
    ' | objects '+scene.children.length+
    ' | draw calls '+renderer.info.render.calls+
    ' | triangles '+renderer.info.render.triangles+
