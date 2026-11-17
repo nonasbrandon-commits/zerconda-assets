@@ -17,12 +17,12 @@ import {createCityMap} from './top-city-map.js?v=20261117-street-gate-v65';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-road-clearance-v53';
-import {createPedestrians} from './animated-pedestrians.js';
+import {createPedestrians} from './animated-pedestrians.js?v=20261117-sidewalk-feet-v66';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-golf-clearance-v64';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-street-gate-v65';
+const ZERCONDA_BUILD='2026-11-17-sidewalk-feet-v66';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -117,11 +117,18 @@ function architecturalWindow(group,cx,cy,cz,width,height,face='front'){
  glint.rotation.z=-.13;glint.castShadow=false;glint.receiveShadow=false;
 }
 const geo=new THREE.BoxGeometry(1,1,1);
+const walkSurfaces=[];
+function groundHeightAt(x,z){
+ let height=0;
+ for(const s of walkSurfaces)if(Math.abs(x-s.x)<=s.w/2&&Math.abs(z-s.z)<=s.d/2)height=Math.max(height,s.y);
+ return height;
+}
 function box(w,h,d,x,y,z,material,parent=scene){
  const o=new THREE.Mesh(geo,material);o.scale.set(w,h,d);o.position.set(x,y,z);
  o.castShadow=true;o.receiveShadow=true;
  // Horizontal road/sidewalk slabs must not cast shadows on themselves or each other.
  if(material===asphalt||material===paving||material===curb||material===lane||material===yellow){o.castShadow=false;o.receiveShadow=false;}
+ if(h<=.3&&parent===scene&&[asphalt,paving,curb,grass].includes(material))walkSurfaces.push({x,z,w,d,y:y+h/2});
  parent.add(o);return o;
 }
 function cylinder(rt,rb,h,x,y,z,material,parent=scene,n=48){
@@ -465,6 +472,7 @@ const towerLawnMaterial=grass;
 function towerSurface(w,d,x,z,material,y=.045){
  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,d),material);
  mesh.rotation.x=-Math.PI/2;mesh.position.set(x,y,z);
+ walkSurfaces.push({x,z,w,d,y});
  mesh.receiveShadow=true;scene.add(mesh);return mesh;
 }
 // Four sides of a continuous road loop, 7.5 meters wide.
@@ -711,7 +719,7 @@ const keys=new Set(),player={x:START_X,z:START_Z},clock=new THREE.Clock();
 const cityMap=createCityMap({player});
 // Third-person walking avatar: forward-facing, visible from the default camera.
 // Kept lightweight so mobile devices do not need an additional model download.
-const pedestrianSystem=createPedestrians(scene,{count:18});
+const pedestrianSystem=createPedestrians(scene,{count:18,groundHeightAt});
 const playerRig=pedestrianSystem.createHuman(0);
 const avatar=playerRig.root;avatar.name='Zerconda player avatar';scene.add(avatar);
 let realAvatar=null,realAvatarMixer=null,realAvatarWalk=null,realAvatarIdle=null;
@@ -720,6 +728,7 @@ const avatarRest={};
 // The old recolored GLB is intentionally retired. Use actual clothing meshes.
 const dressedPlayer={root:createZercondaAvatar(),update:()=>{}};
 avatar.add(dressedPlayer.root);
+const playerSoleOffset=Math.max(0,-new THREE.Box3().setFromObject(dressedPlayer.root).min.y);
 // Hide ALL primitive pedestrian parts, including the old head, ears, neck and hands.
 // Previously the old head remained visible over the detailed replacement.
 for(const child of [...avatar.children])if(child!==dressedPlayer.root)child.visible=false;
@@ -1012,7 +1021,7 @@ function animate(){
   const direction=new THREE.Vector3(Math.sin(heading),-Math.sin(driverLookPitch),Math.cos(heading));
   camera.lookAt(eyePos.clone().addScaledVector(direction,25));
  }else{
-  const dist=onObservationDeck?2.8:insideNeedleLobby?1.6:5,eye=onObservationDeck?observationNeedle.deckY+1.7:2.1;
+  const dist=onObservationDeck?2.8:insideNeedleLobby?1.6:5,eye=onObservationDeck?observationNeedle.deckY+1.7:2.1+groundHeightAt(player.x,player.z);
   const target=new THREE.Vector3(player.x,eye,player.z);
   // Camera elevation and target elevation must not cancel one another.
   // Positive pitch looks UP, negative pitch looks DOWN, with full vertical range.
@@ -1035,7 +1044,7 @@ function animate(){
     if(/(upperleg|upleg|thigh)/.test(name))bone.rotation.x=-1.12;
     if(/(lowerleg|calf|shin)/.test(name))bone.rotation.x=1.38;
    }}
-  }else avatar.position.y=0;
+  }else avatar.position.y=(apartmentSession||universalSession||cafeInside?0:groundHeightAt(player.x,player.z))+playerSoleOffset;
  }
  if(!Number.isFinite(camera.position.x)||!Number.isFinite(camera.position.y)||!Number.isFinite(camera.position.z))resetView();
  // Prevent the driven car body from obstructing the first-person windshield view.

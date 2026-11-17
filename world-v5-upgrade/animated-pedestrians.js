@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 // Articulated human-shaped characters and animated pedestrian NPCs.
 // No branded or copyrighted characters; geometry is original.
-export function createPedestrians(scene,{count=16}={}){
+export function createPedestrians(scene,{count=16,groundHeightAt=()=>0}={}){
  const root=new THREE.Group();root.name='Animated Zerconda pedestrians';scene.add(root);
  const skin=[0xe7b58d,0x9d6345,0xc78d68,0xf0c9a6,0x69432f].map(color=>new THREE.MeshStandardMaterial({color,roughness:.88}));
  const shirts=[0x7731a1,0x171d23,0x52705c,0xd0c7b8,0x444b64,0x9b8665,0x9b3652,0x336d96].map(color=>new THREE.MeshStandardMaterial({color,roughness:.91}));
@@ -52,6 +52,7 @@ export function createPedestrians(scene,{count=16}={}){
    torso.rotation.z=Math.sin(cycle)*.025*intensity;
   }};
  }
+ const footBounds=new THREE.Box3();
  const agents=[];
  for(let i=0;i<count;i++){
   const human=createHuman(i+1);
@@ -69,6 +70,12 @@ export function createPedestrians(scene,{count=16}={}){
    a.human.root.position.set(a.baseX+Math.sin(time*.37+a.phase)*.65,.055,a.z);
    a.human.root.rotation.y=a.direction>0?0:Math.PI;
    a.human.animate(time+a.phase,a.speed);
+   // Plant the lowest animated shoe on the actual pavement surface.
+   a.human.root.updateMatrixWorld(true);
+   let sole=Infinity;
+   for(const leg of a.human.legs)sole=Math.min(sole,footBounds.setFromObject(leg.foot).min.y);
+   a.human.root.position.y+=groundHeightAt(a.human.root.position.x,a.z)-sole;
+
   }
  }
  return {root,createHuman,update,count:agents.length};
