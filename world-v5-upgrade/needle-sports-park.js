@@ -6,10 +6,10 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
  const turf=mat(0x537b3c),path=mat(0xc9c2ad),asphalt=mat(0x4b555b),blue=mat(0x245b85),red=mat(0xb44f42),white=mat(0xf1eee4),metal=mat(0x424e50),wood=mat(0x795337),water=new THREE.MeshPhysicalMaterial({color:0x3c9f9d,roughness:.17,metalness:.06,transparent:true,opacity:.78,depthWrite:false});
  function box(w,h,d,px,py,pz,m,parent=root){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(px,py,pz);o.receiveShadow=true;o.castShadow=h>.5;parent.add(o);return o;}
  function cyl(rt,rb,h,px,py,pz,m,n=10){const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,n),m);o.position.set(px,py,pz);o.castShadow=true;root.add(o);return o;}
- box(136,.14,105,0,-.15,0,turf);
+ box(66,.14,108,0,-.15,0,turf);
  // Walkway links the park to the city's northern boulevard.
- box(5,.05,125,0,.015,66,path);
- for(const a of [-1,1]){box(3,.045,90,a*33,.015,0,path);box(3,.045,35,a*33,.015,32,path);}
+ box(4,.05,18,0,.015,60,path);
+ for(const a of [-1,1]){box(2,.045,75,a*31,.015,0,path);}
  function line(x1,z1,x2,z2,color=white,width=.11,y=.08){
   const dx=x2-x1,dz=z2-z1,o=box(Math.hypot(dx,dz),.025,width,(x1+x2)/2,y,(z1+z2)/2,color);o.rotation.y=-Math.atan2(dz,dx);
  }
@@ -43,18 +43,18 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
    for(let h of [.8,2.6])box(.035,.025,2*end,cx+side*(half+1.1),h,cz,metal);
   }
  }
- court(-37,-9,true);court(7,-12,false);
+ court(-18,15,true);court(18,15,false);
  // Pond with planted stone shoreline and fish swimming under translucent water.
- const pond=new THREE.Group();pond.position.set(41,0,17);root.add(pond);
- const shape=new THREE.Shape();shape.absellipse(0,0,20,13,0,Math.PI*2,false,0);
+ const pond=new THREE.Group();pond.position.set(0,0,-35);root.add(pond);
+ const shape=new THREE.Shape();shape.absellipse(0,0,14,10,0,Math.PI*2,false,0);
  const pondFloor=new THREE.Mesh(new THREE.ShapeGeometry(shape,48),mat(0x246d68));pondFloor.rotation.x=-Math.PI/2;pondFloor.position.y=-.025;pond.add(pondFloor);
  const surface=new THREE.Mesh(new THREE.ShapeGeometry(shape,48),water);surface.rotation.x=-Math.PI/2;surface.position.y=.12;surface.renderOrder=2;pond.add(surface);
- const shore=new THREE.Mesh(new THREE.TorusGeometry(16.5,1.05,9,48),mat(0x918c72));shore.scale.y=.78;shore.rotation.x=Math.PI/2;shore.position.y=.06;pond.add(shore);
+ const shore=new THREE.Mesh(new THREE.TorusGeometry(13,1.05,9,48),mat(0x918c72));shore.scale.y=.76;shore.rotation.x=Math.PI/2;shore.position.y=.06;pond.add(shore);
  const fish=[];const fishMat=[mat(0xe8a14b),mat(0xf2e2c2),mat(0x333f3c),mat(0xd16e55)];
  for(let i=0;i<11;i++){
   const f=new THREE.Group(),body=new THREE.Mesh(new THREE.SphereGeometry(.29,8,6),fishMat[i%4]);body.scale.set(1,.34,.42);f.add(body);
   const tail=new THREE.Mesh(new THREE.ConeGeometry(.18,.37,5),fishMat[i%4]);tail.rotation.z=Math.PI/2;tail.position.x=-.37;f.add(tail);
-  f.position.y=.035;pond.add(f);fish.push({f,r:3+(i%5)*2.2,speed:.17+(i%4)*.06,phase:i*2.399});
+  f.position.y=.035;pond.add(f);fish.push({f,r:2+(i%5)*1.5,speed:.17+(i%4)*.06,phase:i*2.399});
  }
  // Benches, shaded picnic area and trees.
  function bench(x,z,rotation=0){
@@ -62,7 +62,7 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
   box(2.4,.14,.58,0,.58,0,wood,g);box(2.4,.75,.13,0,1,.34,wood,g);
   for(const sx of [-1,1])box(.13,.56,.56,sx*1,.28,0,metal,g);
  }
- for(const [bx,bz,rot] of [[-56,-35,0],[-14,34,0],[19,30,Math.PI],[58,-28,Math.PI/2],[25,43,0],[-57,25,0]])bench(bx,bz,rot);
+ for(const [bx,bz,rot] of [[-29,-37,0],[29,-37,Math.PI],[-29,42,0],[29,42,Math.PI],[0,48,0],[-27,-12,0]])bench(bx,bz,rot);
  function tree(px,pz,h){
   cyl(.23,.34,h*.54,px,h*.27,pz,mat(0x73543b),9);
   const crown=new THREE.Group();crown.position.set(px,h*.65,pz);root.add(crown);
@@ -71,6 +71,6 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
    const m=new THREE.Mesh(new THREE.IcosahedronGeometry(h*.23,1),leaf);m.position.set(Math.cos(a)*r,k===0?h*.08:0,Math.sin(a)*r);m.scale.y=.8;crown.add(m);
   }
  }
- for(const [tx,tz,h] of [[-62,-45,9],[-62,39,10],[-17,-44,8],[22,-43,10],[62,-43,11],[62,45,9],[-15,44,9],[24,46,9]])tree(tx,tz,h);
+ for(const [tx,tz,h] of [[-30,-46,8],[30,-46,8],[-30,49,8],[30,49,8],[-29,-12,7],[29,-12,7]])tree(tx,tz,h);
  return {root,update(t){for(const q of fish){const a=t*q.speed+q.phase;q.f.position.x=Math.cos(a)*q.r;q.f.position.z=Math.sin(a)*q.r*.58;q.f.rotation.y=-a;}}};
 }
