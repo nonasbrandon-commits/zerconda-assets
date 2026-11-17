@@ -196,23 +196,23 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  }
  // Modern golf-course homes face inward onto fairways, outside playable boundaries.
  // Architectural reference: low, wide two-storey stone-and-glass clubhouse-style residences.
- const stone=mat(0xb7aa96,.92),stucco=mat(0xd7d2c7,.85),steel=mat(0x29343a,.44);
+ const stone=mat(0xb7aa96,.92),stucco=mat(0xd7d2c7,.85),homeSteel=mat(0x29343a,.44);
  const homeGlass=new THREE.MeshPhysicalMaterial({color:0x6592a8,roughness:.17,metalness:.18,transparent:true,opacity:.78});
  function modernHome(px,pz,rotation,variant){
   const home=new THREE.Group();home.position.set(px,0,pz);home.rotation.y=rotation;course.add(home);
   const width=18+variant%3*2;
   box(home,0,2.2,0,width,4.4,13,stone);
   box(home,-3,6.05,-.6,width-5,3.4,11,stucco);
-  box(home,0,7.88,0,width+1,.36,14,steel);
-  box(home,3,4.5,0,width*.47,.25,13.5,steel);
+  box(home,0,7.88,0,width+1,.36,14,homeSteel);
+  box(home,3,4.5,0,width*.47,.25,13.5,homeSteel);
   for(const level of [2.1,5.9])for(let col=0;col<5;col++){
    const xx=-width*.39+col*width*.195;
    box(home,xx,level,-6.57,width*.16,level===2.1?2.8:2.5,.08,homeGlass);
    box(home,xx,level,6.57,width*.16,level===2.1?2.8:2.5,.08,homeGlass);
-   box(home,xx,level,-6.67,.075,level===2.1?2.95:2.65,.11,steel);
+   box(home,xx,level,-6.67,.075,level===2.1?2.95:2.65,.11,homeSteel);
   }
-  box(home,0,4.15,-7.4,width*.82,.17,2.3,steel);
-  for(const xx of [-width*.4,width*.4])box(home,xx,2.1,-7.35,.16,4.2,.16,steel);
+  box(home,0,4.15,-7.4,width*.82,.17,2.3,homeSteel);
+  for(const xx of [-width*.4,width*.4])box(home,xx,2.1,-7.35,.16,4.2,.16,homeSteel);
   box(home,0,.13,-10,width*.7,.18,6,walk);
   // Native landscape strips instead of geometric lollipop trees.
   for(const xx of [-width*.5,width*.5])for(let j=0;j<4;j++){
