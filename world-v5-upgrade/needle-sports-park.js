@@ -82,6 +82,24 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
  const pondFloor=new THREE.Mesh(new THREE.ShapeGeometry(shape,80),mat(0x243e32));pondFloor.rotation.x=-Math.PI/2;pondFloor.position.y=-.065;pond.add(pondFloor);
  const naturalWater=new THREE.MeshPhysicalMaterial({color:0x304c3f,roughness:.31,metalness:.06,transparent:true,opacity:.64,depthWrite:false,side:THREE.DoubleSide});
  const surface=new THREE.Mesh(new THREE.ShapeGeometry(shape,80),naturalWater);surface.rotation.x=-Math.PI/2;surface.position.y=.115;surface.renderOrder=2;pond.add(surface);
+ // Walkable irregular stone promenade encircling the pond, with a small viewing spur.
+ const walkwayOuter=points.map(p=>new THREE.Vector2(p.x*1.28,p.y*1.35));
+ const walkwayInner=points.map(p=>new THREE.Vector2(p.x*1.12,p.y*1.16));
+ const walkwayShape=new THREE.Shape(walkwayOuter);
+ const innerHole=new THREE.Path([...walkwayInner].reverse());walkwayShape.holes.push(innerHole);
+ const walkwayMat=new THREE.MeshStandardMaterial({color:0xb9b1a2,roughness:1});
+ const walkway=new THREE.Mesh(new THREE.ShapeGeometry(walkwayShape),walkwayMat);
+ walkway.rotation.x=-Math.PI/2;walkway.position.y=.065;walkway.receiveShadow=true;pond.add(walkway);
+ // Separate irregular flagstone paving slabs, not a single flat painted strip.
+ const flagstones=[mat(0xaaa59a),mat(0xc6bdb0),mat(0x918e86)];
+ for(let i=0;i<72;i++){
+  const a=i*Math.PI*2/72,r=1+.12*Math.sin(a*3+.7)+.08*Math.sin(a*7+1.4)+.045*Math.cos(a*11);
+  const slab=new THREE.Mesh(new THREE.BoxGeometry(.9,.065,1.1),flagstones[i%3]);
+  slab.position.set(Math.cos(a)*13.3*r*1.21,.112,Math.sin(a)*8.7*r*1.26);
+  slab.rotation.y=-a;slab.receiveShadow=true;pond.add(slab);
+ }
+ // A short path to the southern observation bench and sports-park footpath.
+ box(3.2,.065,9,0,.09,-48,path);
  const stone=[mat(0x77746b),mat(0x9b9689),mat(0x6c7165),mat(0xaaa494)];
  const shrubs=[mat(0x315d36),mat(0x4a783c),mat(0x5a8244)];
  for(let i=0;i<115;i++){
@@ -105,10 +123,10 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
   ripple.rotation.x=-Math.PI/2;ripple.position.set(Math.cos(a)*rad,.124,Math.sin(a)*rad*.55);pond.add(ripple);
  }
  const fish=[];const fishMat=[mat(0xe8a14b),mat(0xf2e2c2),mat(0x333f3c),mat(0xd16e55)];
- for(let i=0;i<11;i++){
-  const f=new THREE.Group(),body=new THREE.Mesh(new THREE.SphereGeometry(.29,8,6),fishMat[i%4]);body.scale.set(1,.34,.42);f.add(body);
-  const tail=new THREE.Mesh(new THREE.ConeGeometry(.18,.37,5),fishMat[i%4]);tail.rotation.z=Math.PI/2;tail.position.x=-.37;f.add(tail);
-  f.position.y=.055;f.scale.setScalar(1.7);pond.add(f);fish.push({f,r:2+(i%5)*1.5,speed:.17+(i%4)*.06,phase:i*2.399});
+ for(let i=0;i<19;i++){
+  const f=new THREE.Group(),body=new THREE.Mesh(new THREE.SphereGeometry(.38,16,10),fishMat[i%4]);body.scale.set(1,.34,.42);f.add(body);
+  const tail=new THREE.Mesh(new THREE.ConeGeometry(.24,.42,8),fishMat[i%4]);tail.rotation.z=Math.PI/2;tail.position.x=-.37;f.add(tail);
+  f.position.y=.14;f.scale.setScalar(1.9);pond.add(f);fish.push({f,r:2+(i%5)*1.5,speed:.17+(i%4)*.06,phase:i*2.399});
  }
  // Benches, shaded picnic area and trees.
  function bench(x,z,rotation=0){
@@ -116,7 +134,7 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
   box(2.4,.14,.58,0,.58,0,wood,g);box(2.4,.75,.13,0,1,.34,wood,g);
   for(const sx of [-1,1])box(.13,.56,.56,sx*1,.28,0,metal,g);
  }
- for(const [bx,bz,rot] of [[-29,-37,0],[29,-37,Math.PI],[-29,42,0],[29,42,Math.PI],[0,48,0],[-27,-12,0]])bench(bx,bz,rot);
+ for(const [bx,bz,rot] of [[-19,-37,0],[19,-37,Math.PI],[-29,42,0],[29,42,Math.PI],[0,48,0],[-18,-21,0],[18,-21,Math.PI],[0,-49,0]])bench(bx,bz,rot);
  const parkTreeGroups=[];
  function tree(px,pz,h){
   cyl(.23,.34,h*.54,px,h*.27,pz,mat(0x73543b),9);
@@ -138,5 +156,5 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
   }
   // Original cylindrical trunks are intentionally retained as a fallback support.
  },undefined,e=>console.warn('Needle park tree model failed',e));
- return {root,update(t){for(const q of fish){const a=t*q.speed+q.phase;q.f.position.x=Math.cos(a)*q.r;q.f.position.z=Math.sin(a)*q.r*.58;q.f.rotation.y=-a;}}};
+ return {root,update(t){for(const q of fish){const a=t*q.speed+q.phase;q.f.position.x=Math.cos(a)*q.r;q.f.position.z=Math.sin(a)*q.r*.58;q.f.rotation.y=-a;q.f.position.y=.14+Math.sin(t*1.7+q.phase)*.045;}}};
 }
