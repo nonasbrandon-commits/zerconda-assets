@@ -22,7 +22,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-east-security-walk-v58';
+const ZERCONDA_BUILD='2026-11-17-remove-dead-end-road-v59';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -150,7 +150,13 @@ for(const c of roadLines){
  // Build non-overlapping asphalt slabs: a single surface owns each intersection.
  // Previously horizontal and vertical slabs overlapped at different heights,
  // leaving a diagonal seam and exposed grass triangles.
- box(19,.12,roadSouth-roadNorth,c,-.04,(roadNorth+roadSouth)/2,asphalt);
+ // Remove the erroneous north-south road spur at x=96 between z=-96 and z=0.
+  // Preserve the real intersections and all other roads.
+  if(c===96){
+   for(const [lo,hi] of [[roadNorth,-105.5],[-86.5,-9.5],[9.5,roadSouth]]){
+    if(hi>lo)box(19,.12,hi-lo,c,-.04,(lo+hi)/2,asphalt);
+   }
+  }else box(19,.12,roadSouth-roadNorth,c,-.04,(roadNorth+roadSouth)/2,asphalt);
  const cuts=[roadWest,...roadLines.flatMap(v=>[v-9.5,v+9.5]),roadEast];
  for(let j=0;j<cuts.length-1;j+=2){
   const left=cuts[j],right=cuts[j+1];if(right<=left)continue;
@@ -161,7 +167,7 @@ for(const c of roadLines){
   const zStops=[roadNorth,...roadLines.flatMap(v=>[v-14,v+14]),roadSouth];
   const xStops=[roadWest,...roadLines.flatMap(v=>[v-14,v+14]),roadEast];
   for(let i=0;i<zStops.length-1;i+=2){
-   const lo=zStops[i],hi=zStops[i+1];if(hi<=lo)continue;
+   const lo=zStops[i],hi=zStops[i+1];if(hi<=lo || (c===96 && lo<0 && hi> -96))continue;
    const mid=(lo+hi)/2,len=hi-lo;
    box(4,.24,len,c+side*11.5,.025,mid,paving);
    box(.22,.25,len,c+side*9.65,.02,mid,curb);
@@ -174,7 +180,7 @@ for(const c of roadLines){
   }
  }
  for(let p=roadNorth+10;p<roadSouth-10;p+=12){
-  if(!roadLines.some(k=>Math.abs(p-k)<15))box(.14,.014,5,c,.035,p,yellow);
+  if(!roadLines.some(k=>Math.abs(p-k)<15) && !(c===96 && p>-96 && p<0))box(.14,.014,5,c,.035,p,yellow);
  }
  for(let p=roadWest+10;p<roadEast-10;p+=12){
   if(!roadLines.some(k=>Math.abs(p-k)<15))box(5,.014,.14,p,.038,c,yellow);
