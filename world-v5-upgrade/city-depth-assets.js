@@ -152,6 +152,12 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    // Protect Needle Park's courts, pond and sightline from surrounding skyline towers.
    if(x> -40&&x<138&&z> -205&&z< -72)continue;
    const w=14+rnd()*12,d=12+rnd()*13,h=12+rnd()*23+(ring===2&&total%8===0?20:0);
+   // Reserve full road and sidewalk corridors, including the actual building footprint.
+   // The old radial placement allowed skyscrapers to intersect the extended roads.
+   const roads=[-96,0,96];
+   if(roads.some(c=>Math.abs(x-c)<w/2+15||Math.abs(z-c)<d/2+15))continue;
+   if(Math.abs(z+117)<d/2+12)continue;
+   if(x+w/2>13&&x-w/2<83&&z+d/2> -250&&z-d/2< -135)continue;
    skylineTower(x,z,w,d,h,total++);
   }
  }
