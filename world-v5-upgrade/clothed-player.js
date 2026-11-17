@@ -15,9 +15,9 @@ export function createClothedPlayer(){
  const cyl=(p,r1,r2,h,m,x,y,z)=>mesh(p,new THREE.CylinderGeometry(r1,r2,h,12),m,x,y,z);
  // Adult human proportions: ~1.85 m total height, shoulders narrower than leg length.
  // Contoured torso: taper at the waist, natural shoulders, no spherical chest.
- const torso=mesh(root,new THREE.CylinderGeometry(.235,.174,.52,20,5),blue,0,1.33,0);
- torso.scale.z=.69;
- ell(root,[.205,.065,.125],blue,0,1.565,0);
+ const torso=mesh(root,new THREE.CylinderGeometry(.205,.165,.52,32,5),blue,0,1.33,0);
+ torso.scale.z=.82;
+ ell(root,[.202,.048,.13],blue,0,1.545,0);
  // Shirt hem and side seams
  const hem=new THREE.MeshStandardMaterial({color:0x276b89,roughness:.96});
  const shirtHem=mesh(root,new THREE.CylinderGeometry(.178,.176,.025,20),hem,0,1.085,0);shirtHem.scale.z=.7;
@@ -30,26 +30,26 @@ export function createClothedPlayer(){
  cyl(root,.18,.18,.12,tan,0,1.045,0);
  cyl(root,.185,.185,.035,dark,0,1.09,0);
  // Taller cranium with narrower jaw and ears, replacing the featureless ball.
- const head=ell(root,[.101,.139,.100],skin,0,1.747,0);
- const jaw=ell(root,[.078,.062,.078],skin,0,1.674,.018);
+ const head=ell(root,[.092,.135,.095],skin,0,1.747,0);
+ const jaw=ell(root,[.073,.057,.076],skin,0,1.679,.016);
  for(const side of [-1,1])ell(root,[.016,.033,.020],skin,side*.101,1.732,0);
  // Anatomically shaped rear hairline instead of a flat brown cap.
- const hairBack=ell(root,[.104,.075,.096],hair,0,1.824,-.030);
+ const hairBack=ell(root,[.096,.064,.094],hair,0,1.825,-.025);
  hairBack.rotation.x=-.12;
  // Short tapered nape, blended sideburns and small irregular locks.
- ell(root,[.074,.027,.021],hair,0,1.771,-.091);
+ ell(root,[.067,.020,.014],hair,0,1.788,-.093);
  for(const side of [-1,1]){
    const temple=ell(root,[.028,.071,.051],hair,side*.082,1.818,-.015);
    temple.rotation.z=side*.18;
  }
  // Fine overlapping strands give the haircut shape from the default rear camera.
  const hairShades=[0x30231f,0x423027,0x513b2d,0x382923].map(c=>new THREE.MeshStandardMaterial({color:c,roughness:.96}));
- for(let i=0;i<75;i++){
+ for(let i=0;i<160;i++){
    const theta=i*2.3999632297;
-   const rr=Math.sqrt((i+.5)/75);
+   const rr=Math.sqrt((i+.5)/160);
    const xx=Math.cos(theta)*rr*.096,zz=Math.sin(theta)*rr*.078-.037;
-   const yy=1.869+.024*(1-rr*rr)+Math.sin(i*3.1)*.008;
-   const lock=ell(root,[.010,.025,.012],hairShades[i%4],xx,yy,zz);
+   const yy=1.869+.024*(1-rr*rr)+Math.sin(i*3.1)*.003;
+   const lock=ell(root,[.006,.011,.008],hairShades[i%4],xx,yy,zz);
    lock.rotation.z=Math.sin(theta)*.28;
  }
  // Rear shirt: yoke seam, placket stitching, cuffs and natural fabric creases.
@@ -68,7 +68,7 @@ export function createClothedPlayer(){
  const arms=[],legs=[];
  for(const side of [-1,1]){
   const shoulder=new THREE.Group();shoulder.position.set(side*.245,1.49,0);root.add(shoulder);
-  ell(shoulder,[.077,.082,.082],blue,0,-.035,0);
+  ell(shoulder,[.068,.068,.071],blue,0,-.035,0);
   cyl(shoulder,.068,.058,.23,blue,side*.025,-.13,0).rotation.z=side*.12;
   const elbow=new THREE.Group();elbow.position.set(side*.045,-.245,0);shoulder.add(elbow);
   cyl(elbow,.048,.034,.25,skin,0,-.125,0);
@@ -80,7 +80,7 @@ export function createClothedPlayer(){
   cyl(hip,.091,.076,.43,tan,0,-.21,0);
   const knee=new THREE.Group();knee.position.y=-.425;hip.add(knee);
   cyl(knee,.077,.060,.43,tan,0,-.21,0);
-  ell(knee,[.092,.065,.16],dark,0,-.435,.055);
+  ell(knee,[.079,.055,.145],dark,0,-.435,.055);
   legs.push({hip,knee,side});
  }
  return {root,update(time,speed){
