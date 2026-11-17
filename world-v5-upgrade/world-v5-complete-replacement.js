@@ -17,11 +17,11 @@ import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=202
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-clear-all-lots-v27';
 import {createPedestrians} from './animated-pedestrians.js';
-import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-golf-overpass-v29';
+import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-golf-reserve-v30';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-golf-overpass-v29';
+const ZERCONDA_BUILD='2026-11-17-golf-reserve-v30';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
