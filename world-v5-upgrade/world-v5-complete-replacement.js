@@ -13,7 +13,7 @@ import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 import {addAirDancers} from './air-dancers.js';
 import {createZercondaBeach} from './zerconda-beach.js';
 import {createCityMap} from './top-city-map.js';
-import {addSignatureArchitecture} from './signature-apartment-buildings.js';
+import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 import {createOwnableHomes} from './ownable-suburban-homes.js';
 import {createPedestrians} from './animated-pedestrians.js';
@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-original-clothed-player-v2';
+const ZERCONDA_BUILD='2026-11-17-window-rebuild-v3';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -295,7 +295,7 @@ function makeBuilding(x,z,w,d,h,type){
  // Most residential streets use warm brick apartments, with contrasting modern
  // and historic styles interspersed to avoid repetitive skyline silhouettes.
  if(hasSignature){
-  const architectureStyle=(type%7===0||type%7===1||type%7===4||type%7===6)?3:(type%7===2?0:type%7===5?1:2);
+  const architectureStyle=3; // force clean four-sided facade on all signature apartments
   addSignatureArchitecture(g,{w,d,h,style:architectureStyle});
  }
  buildings.push({x,z,w,d,h});
