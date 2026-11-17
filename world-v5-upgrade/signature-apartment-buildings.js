@@ -36,7 +36,7 @@ export function addSignatureArchitecture(group,{w,d,h,style=0}={}){
   applyRealBrick(brick);
   const cream=new THREE.MeshStandardMaterial({color:0xd9c7aa,roughness:.9});
   const dark=new THREE.MeshStandardMaterial({color:0x242d33,metalness:.58,roughness:.42});
-  const glass=new THREE.MeshPhysicalMaterial({color:0x456779,metalness:.08,roughness:.26,transparent:false,opacity:1,side:THREE.FrontSide});
+  const glass=new THREE.MeshStandardMaterial({color:0x263f4b,metalness:.18,roughness:.34,side:THREE.FrontSide});
   const warm=new THREE.MeshBasicMaterial({color:0xbda079});
   const foliage=new THREE.MeshStandardMaterial({color:0x3c6544,roughness:.97});
   const B=(ww,hh,dd,x,y,z,m)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(ww,hh,dd),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;group.add(o);return o;};
@@ -59,13 +59,13 @@ export function addSignatureArchitecture(group,{w,d,h,style=0}={}){
    const yy=4.9+f*3.3;
    if(yy+1.2>h)break;
    B(w+.45,.16,.48,0,yy-1.55,d/2+.4,cream);
-   const bays=Math.max(4,Math.floor(w/3.9));
+   const bays=Math.max(3,Math.floor(w/4.8));
    for(let k=0;k<bays;k++){
     const xx=-w/2+(k+.5)*w/bays;
-    const winW=Math.min(2.05,w/bays*.64);
+    const winW=Math.min(1.55,w/bays*.49);
     B(winW+.27,2.5,.16,xx,yy,d/2+.37,cream);
     B(winW,2.25,.11,xx,yy,d/2+.47,glass);
-    B(.075,2.3,.14,xx,yy,d/2+.55,dark);
+    B(.055,2.25,.14,xx,yy,d/2+.55,dark);
     B(winW+.2,.15,.25,xx,yy+1.22,d/2+.56,cream);
     B(winW+.2,.16,.27,xx,yy-1.2,d/2+.57,cream);
     // Alternate balcony placements to avoid identical facades.
@@ -116,7 +116,7 @@ export function addSignatureArchitecture(group,{w,d,h,style=0}={}){
  const iron=new THREE.MeshStandardMaterial({color:0x493f3e,metalness:.63,roughness:.54});
  const white=new THREE.MeshStandardMaterial({color:0xd8dce0,roughness:.65});
  const dark=new THREE.MeshStandardMaterial({color:0x303a44,metalness:.42,roughness:.32});
- const glass=new THREE.MeshPhysicalMaterial({color:0x537c91,metalness:.12,roughness:.22,transparent:false,opacity:1,clearcoat:.25,side:THREE.FrontSide});
+ const glass=new THREE.MeshStandardMaterial({color:0x2b4757,metalness:.18,roughness:.34,side:THREE.FrontSide});
  const lit=new THREE.MeshBasicMaterial({color:0xe6ba7e,transparent:true,opacity:.64});
  const plant=new THREE.MeshStandardMaterial({color:0x346b41,roughness:.96});
  const mat=(style===0?brick:style===1?dark:white);
