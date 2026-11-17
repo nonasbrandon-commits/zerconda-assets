@@ -30,7 +30,7 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:
 })();
 </script>
 <script type="module">
-import('./world-v5-complete-replacement.js?v=20261117-nine-holes-v67')
+import('./world-v5-complete-replacement.js?v=20261117-realistic-world-v68')
  .then(()=>window.dispatchEvent(new Event('zerconda-ready')))
  .catch(async e=>{
  const status=document.getElementById('status');
@@ -39,7 +39,7 @@ import('./world-v5-complete-replacement.js?v=20261117-nine-holes-v67')
  const modules=['clothed-player','realistic-fountain','observation-needle','cloud-sky','city-depth-assets','nine-building-styles','brewstone-coffee','apartment-interiors','premium-plaza-furniture','air-dancers','zerconda-beach','top-city-map','signature-apartment-buildings','waterfront-ocean-view-homes','ownable-suburban-homes','animated-pedestrians','eastside-golf-district','needle-sports-park'];
  const failed=[];
  for(const name of modules){
-   try{await import('./'+name+'.js?v=diagnostic-v36');}
+   try{await import('./'+name+'.js?v=diagnostic-v39');}
    catch(err){failed.push(name+': '+err.message);console.error('ZERCONDA BROKEN MODULE:',name,err,err.stack);}
  }
  status.textContent=failed.length?'Broken module: '+failed.join(' | '):'Main module error: '+e.message+' (see Console)';

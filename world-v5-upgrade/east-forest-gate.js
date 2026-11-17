@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {createRealisticHuman} from './realistic-human.js?v=20261117-realistic-human-v68';
 
 export function createEastForestGate(scene,{createAvatar,getPlayer}){
  const root=new THREE.Group();root.name='Closed east forest checkpoint';root.userData.roadInfrastructure=true;scene.add(root);
@@ -15,10 +16,14 @@ export function createEastForestGate(scene,{createAvatar,getPlayer}){
   }
   const handle=new THREE.Mesh(new THREE.TorusGeometry(.13,.035,8,16),gold);handle.rotation.y=Math.PI/2;handle.position.set(569.84,1.7,side*.35);root.add(handle);
  }
+ const police=[];
  const uniforms=new Map([[0x2879a4,0x17232d],[0x21668e,0x101a23],[0x417d9c,0x465663],[0x9a7854,0x202a31],[0x806347,0x151e26]]);
  for(const side of [-1,1]){
   const guard=createAvatar();guard.name='Police officer · east gate';guard.position.set(564,.145,side*13);guard.rotation.y=-Math.PI/2;
   guard.traverse(mesh=>{if(!mesh.isMesh)return;const color=mesh.material.color?.getHex();if(uniforms.has(color)){mesh.material=mesh.material.clone();mesh.material.color.setHex(uniforms.get(color));}});
+  const oldParts=[...guard.children];
+  const human=createRealisticHuman({shirt:0x1d2a36,pants:0x27313b,onReady:()=>{for(const part of oldParts)part.visible=false;}});
+  guard.add(human.root);police.push(human);
   const cap=new THREE.Mesh(new THREE.CylinderGeometry(.125,.13,.095,24),iron);cap.position.set(0,1.92,0);guard.add(cap);
   const brim=new THREE.Mesh(new THREE.BoxGeometry(.22,.025,.15),iron);brim.position.set(0,1.885,.11);guard.add(brim);
   const band=new THREE.Mesh(new THREE.CylinderGeometry(.131,.131,.035,24),new THREE.MeshStandardMaterial({color:0xbac3c8,roughness:.7}));band.position.set(0,1.9,0);guard.add(band);
@@ -45,5 +50,5 @@ export function createEastForestGate(scene,{createAvatar,getPlayer}){
  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.setIndex(indices);geo.computeVertexNormals();const track=new THREE.Mesh(geo,dirt);track.receiveShadow=true;root.add(track);
  const floor=new THREE.Mesh(new THREE.PlaneGeometry(600,500),new THREE.MeshStandardMaterial({color:0x435b32,roughness:1}));floor.rotation.x=-Math.PI/2;floor.position.set(860,-.21,-60);root.add(floor);
  const notice=document.createElement('div');notice.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);max-width:85vw;padding:14px 20px;border:1px solid #c4ad70;border-radius:8px;background:#13212bea;color:#fff1cf;font:15px sans-serif;z-index:9999;display:none;text-align:center';notice.textContent='POLICE: The gate is closed. The forest outside is dangerous. No one may leave for now.';document.body.appendChild(notice);
- return {root,update(){const p=getPlayer();notice.style.display=p.x>545&&Math.abs(p.z)<24?'block':'none';}};
+ return {root,update(dt=.016){for(const human of police)human.update(dt,0);const p=getPlayer();notice.style.display=p.x>545&&Math.abs(p.z)<24?'block':'none';}};
 }

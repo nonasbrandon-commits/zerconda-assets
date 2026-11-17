@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {createRealisticHuman} from './realistic-human.js?v=20261117-realistic-human-v68';
 // Articulated human-shaped characters and animated pedestrian NPCs.
 // No branded or copyrighted characters; geometry is original.
 export function createPedestrians(scene,{count=16,groundHeightAt=()=>0}={}){
@@ -60,7 +61,12 @@ export function createPedestrians(scene,{count=16,groundHeightAt=()=>0}={}){
   const x=side*(106+lane),z=-145+((i*31)%255);
   human.root.position.set(x,0,z);
   root.add(human.root);
-  agents.push({human,x,z,baseX:x,direction:i%3===0?-1:1,speed:.75+(i%5)*.19,phase:i*1.17});
+  const outfits=[0x5f7892,0x66816e,0x9c6d68,0x4c596b];
+  const realistic=createRealisticHuman({shirt:outfits[i%outfits.length],pants:i%2?0x827563:0xa18c6d,onReady:()=>{
+   for(const child of human.root.children)if(child!==realistic.root)child.visible=false;
+  }});
+  human.root.add(realistic.root);
+  agents.push({human,realistic,x,z,baseX:x,direction:i%3===0?-1:1,speed:.75+(i%5)*.19,phase:i*1.17});
  }
  function update(dt,time){
   for(const a of agents){
@@ -71,6 +77,10 @@ export function createPedestrians(scene,{count=16,groundHeightAt=()=>0}={}){
    a.human.root.rotation.y=a.direction>0?0:Math.PI;
    a.human.animate(time+a.phase,a.speed);
    // Plant the lowest animated shoe on the actual pavement surface.
+   if(a.realistic.ready){
+    a.human.root.position.y=groundHeightAt(a.human.root.position.x,a.z);
+    a.realistic.update(dt,a.speed);continue;
+   }
    a.human.root.updateMatrixWorld(true);
    let sole=Infinity;
    for(const leg of a.human.legs)sole=Math.min(sole,footBounds.setFromObject(leg.foot).min.y);

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
-import {createEastForestGate} from './east-forest-gate.js?v=20261117-nine-holes-v67';
-import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-grounded-walk-v58';
+import {createRealisticHuman} from './realistic-human.js?v=20261117-realistic-human-v68';
+import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
+import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
@@ -18,12 +19,12 @@ import {createCityMap} from './top-city-map.js?v=20261117-nine-holes-v67';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-road-clearance-v53';
-import {createPedestrians} from './animated-pedestrians.js?v=20261117-sidewalk-feet-v66';
+import {createPedestrians} from './animated-pedestrians.js?v=20261117-realistic-human-v68';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-nine-holes-v67';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-nine-hole-golf-v67';
+const ZERCONDA_BUILD='2026-11-17-realistic-world-v68';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -49,14 +50,14 @@ const camera=new THREE.PerspectiveCamera(66,innerWidth/innerHeight,.1,600);
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);
 renderer.outputColorSpace=THREE.SRGBColorSpace;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.35;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
 // Temporarily disable costly shadow maps while diagnosing blank WebGL output.
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 document.body.prepend(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xe6f4ff,0x737569,2.1));
-const sun=new THREE.DirectionalLight(0xffefdc,3.1);sun.position.set(-70,135,85);sun.castShadow=true;
-sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-160;sun.shadow.camera.right=160;
-sun.shadow.camera.top=160;sun.shadow.camera.bottom=-160;sun.shadow.normalBias=.045;scene.add(sun);
+scene.add(new THREE.HemisphereLight(0xe6f4ff,0x737569,1.3));
+const sun=new THREE.DirectionalLight(0xffefdc,2.8);sun.position.set(-70,135,85);sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-70;sun.shadow.camera.right=70;
+sun.shadow.camera.top=70;sun.shadow.camera.bottom=-70;sun.shadow.normalBias=.025;scene.add(sun);scene.add(sun.target);
 const M=(color,roughness=.86,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
 // Existing photographic CC0 PBR textures already in GitHub (no cartoon flat ground).
 const groundLoader=new THREE.TextureLoader();
@@ -82,6 +83,12 @@ function groundPBR(folder,name,repeat,tint=0xffffff){
 // Solid asphalt prevents repeated high-frequency canvas grain from creating
 // horizontal moire/striping across road surfaces at grazing camera angles.
 const asphalt=new THREE.MeshStandardMaterial({color:0x333638,roughness:0.98,metalness:0,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1});
+ // Fine, low-contrast aggregate gives asphalt material detail without repeated painted lines.
+ const asphaltCanvas=document.createElement('canvas');asphaltCanvas.width=asphaltCanvas.height=256;
+ const ac=asphaltCanvas.getContext('2d');let aggregateSeed=835;
+ ac.fillStyle='#a0a0a0';ac.fillRect(0,0,256,256);
+ for(let i=0;i<17000;i++){aggregateSeed=(Math.imul(aggregateSeed,1664525)+1013904223)>>>0;const x=(aggregateSeed>>>16)&255;aggregateSeed=(Math.imul(aggregateSeed,1664525)+1013904223)>>>0;const z=(aggregateSeed>>>16)&255,v=140+((aggregateSeed>>>8)%31);ac.fillStyle='rgb('+v+','+v+','+v+')';ac.fillRect(x,z,1,1);}
+ const aggregate=new THREE.CanvasTexture(asphaltCanvas);aggregate.wrapS=aggregate.wrapT=THREE.RepeatWrapping;aggregate.repeat.set(12,12);aggregate.anisotropy=4;asphalt.map=aggregate;asphalt.bumpMap=aggregate;asphalt.bumpScale=.012;
 const paving=groundPBR('PavingStones070','PavingStones070',18,0xe4ddd0);
 const curb=M(0xd7d2c8);
 const grass=groundPBR('Ground037','Ground037',65,0x94a68a);
@@ -128,7 +135,8 @@ function box(w,h,d,x,y,z,material,parent=scene){
  const o=new THREE.Mesh(geo,material);o.scale.set(w,h,d);o.position.set(x,y,z);
  o.castShadow=true;o.receiveShadow=true;
  // Horizontal road/sidewalk slabs must not cast shadows on themselves or each other.
- if(material===asphalt||material===paving||material===curb||material===lane||material===yellow){o.castShadow=false;o.receiveShadow=false;}
+ if(material===asphalt||material===paving||material===curb){o.castShadow=false;o.receiveShadow=true;}
+ if(material===lane||material===yellow){o.castShadow=false;o.receiveShadow=false;}
  if(h<=.3&&parent===scene&&[asphalt,paving,curb,grass].includes(material))walkSurfaces.push({x,z,w,d,y:y+h/2});
  parent.add(o);return o;
 }
@@ -733,13 +741,15 @@ let realAvatar=null,realAvatarMixer=null,realAvatarWalk=null,realAvatarIdle=null
 const avatarBones={};
 const avatarRest={};
 // The old recolored GLB is intentionally retired. Use actual clothing meshes.
-const dressedPlayer={root:createZercondaAvatar(),update:()=>{}};
+const dressedPlayer={root:new THREE.Group(),update:()=>{}};
+const realisticPlayer=createRealisticHuman();dressedPlayer.root.add(realisticPlayer.root);
+dressedPlayer.root.userData.animate=(dt,speed,options)=>realisticPlayer.update(dt,speed,options);
 avatar.add(dressedPlayer.root);
-const playerSoleOffset=Math.max(0,-new THREE.Box3().setFromObject(dressedPlayer.root).min.y);
+const playerSoleOffset=0;
 // Hide ALL primitive pedestrian parts, including the old head, ears, neck and hands.
 // Previously the old head remained visible over the detailed replacement.
 for(const child of [...avatar.children])if(child!==dressedPlayer.root)child.visible=false;
-function updateRealAvatar(dt,time,speed){dressedPlayer.root.userData.animate?.(dt,speed);}
+function updateRealAvatar(dt,time,speed){dressedPlayer.root.userData.animate?.(dt,speed,{seated:!!sittingSeat,backwards:movement.vx*Math.sin(yaw)+movement.vz*Math.cos(yaw)<-.03});}
 let lastAvatarX=START_X,lastAvatarZ=START_Z;
 
 
@@ -971,11 +981,13 @@ function animate(){
  airDancers.update(elapsed);
  southBeach.update(dt);
  eastsideGolf.update(dt);
- forestCheckpoint.update();
+ forestCheckpoint.update(dt);
  pedestrianSystem.update(dt,elapsed);
  cityMap.draw();
  if(realisticPlaza)realisticPlaza.update(dt);
  cloudSky.update(dt);
+ // Keep detailed sunlight shadows around the player throughout the expanded city.
+ sun.position.set(player.x-70,135,player.z+85);sun.target.position.set(player.x,0,player.z);sun.target.updateMatrixWorld();
  const f=Number(keys.has('KeyW')||keys.has('ArrowUp'))-Number(keys.has('KeyS')||keys.has('ArrowDown'));
  const side=Number(keys.has('KeyD')||keys.has('ArrowRight'))-Number(keys.has('KeyA')||keys.has('ArrowLeft'));
  if(activeCar){
@@ -1042,9 +1054,12 @@ function animate(){
   avatar.visible=!onObservationDeck&&!insideNeedleLobby&&!apartmentSession;
   avatar.position.set(player.x,0,player.z);
   avatar.rotation.y=yaw;
-  const walkingSpeed=Math.hypot(movement.vx,movement.vz);
-  if(!realAvatar)playerRig.animate(elapsed,sittingSeat?0:walkingSpeed);
-  else updateRealAvatar(dt,elapsed,sittingSeat?0:walkingSpeed);
+  const travelled=Math.hypot(player.x-lastAvatarX,player.z-lastAvatarZ);
+  const walkingSpeed=travelled<=RUN_SPEED*dt*1.5+.02?Math.min(6,travelled/Math.max(dt,.001)):0;
+  lastAvatarX=player.x;lastAvatarZ=player.z;
+  // Animate the visible clothed model, using actual displacement so blocked
+  // movement and teleports cannot produce skating or an in-place run.
+  updateRealAvatar(dt,elapsed,sittingSeat?0:walkingSpeed);
   if(sittingSeat){
    // Seated pose: thighs forward, knees bent and torso lowered onto chair height.
    avatar.position.y=-.48;
