@@ -20,7 +20,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-16-visible-needle-park-and-cafe-furniture';
+const ZERCONDA_BUILD='2026-11-17-proximity-seating';
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
 // Does not call any old tree/lamp/car spawn loops.
@@ -654,8 +654,36 @@ const cafeEntry={x:-34+10.8,z:-48};
 function nearCafeEntrance(){return Math.hypot(player.x-cafeEntry.x,player.z-cafeEntry.z)<4.5;}
 function enterCafe(){if(sittingSeat){sittingSeat=null;}if(cafeInside){cafeInside=false;player.x=cafeEntry.x+3.3;player.z=cafeEntry.z;}else{cafeInside=true;player.x=cafeEntry.x-3.6;player.z=cafeEntry.z;}movement.vx=0;movement.vz=0;if(status)status.textContent=cafeInside?'Inside Brewstone Coffee · Find a table and press C':'Exited Brewstone Coffee';}
 const cafeEntryButton=actionButton('zerconda-cafe-enter','E · ENTER COFFEE SHOP',445,enterCafe);
-function toggleCafeSeat(){if(!cafeInside)return;if(sittingSeat){sittingSeat=null;return;}const seat=coffeeShop.nearestSeat(player.x,player.z,2.5);if(!seat)return;sittingSeat=seat;player.x=seat.x;player.z=seat.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Seated at Brewstone Coffee · Press C or use button to stand';}
-addEventListener('keydown',e=>{if(e.code==='KeyC'&&!e.repeat&&cafeInside&&(sittingSeat||coffeeShop.nearestSeat(player.x,player.z,2.5)))toggleCafeSeat();});
+// Public benches in the Needle plaza, fountain square and sports park.
+// Positions match the authored benches in city-depth-assets.js and needle-sports-park.js.
+const publicSeats=[
+ ...[[28,-28,0],[68,-28,0],[28,-68,Math.PI],[68,-68,Math.PI],[29,26,0],[67,26,0],[29,70,Math.PI],[67,70,Math.PI]].map(([x,z,facing])=>({x,z,facing,kind:'bench'})),
+ ...[[-56,-35,0],[-14,34,0],[19,30,Math.PI],[58,-28,Math.PI/2],[25,43,0],[-57,25,0]].map(([x,z,facing])=>({x:x+48,z:z-139,facing,kind:'park bench'}))
+];
+function nearestPublicSeat(px,pz,max=2.6){
+ let best=null,bestD=max;
+ for(const seat of publicSeats){const d=Math.hypot(px-seat.x,pz-seat.z);if(d<bestD){best=seat;bestD=d;}}
+ return best;
+}
+function nearestAvailableSeat(){const cafe=coffeeShop.nearestSeat(player.x,player.z,2.5);const bench=nearestPublicSeat(player.x,player.z,2.6);if(!cafe)return bench;if(!bench)return cafe;return Math.hypot(player.x-cafe.x,player.z-cafe.z)<Math.hypot(player.x-bench.x,player.z-bench.z)?cafe:bench;}
+let seatReturn=null;
+function toggleCafeSeat(){
+ if(activeCar||apartmentSession||onObservationDeck)return;
+ if(sittingSeat){
+  const old=sittingSeat;sittingSeat=null;
+  if(seatReturn){player.x=seatReturn.x;player.z=seatReturn.z;seatReturn=null;}
+  movement.vx=0;movement.vz=0;
+  if(status)status.textContent='Standing up';
+  return;
+ }
+ const seat=nearestAvailableSeat();if(!seat)return;
+ seatReturn={x:player.x,z:player.z};
+ sittingSeat=seat;player.x=seat.x;player.z=seat.z;
+ yaw=seat.facing??yaw;
+ movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
+ if(status)status.textContent='Seated · Press C or tap STAND UP to stand';
+}
+addEventListener('keydown',e=>{if(e.code==='KeyC'&&!e.repeat&&(sittingSeat||nearestAvailableSeat()))toggleCafeSeat();});
 function nearestDoor(){
  if(activeCar||onObservationDeck||apartmentSession)return null;
  let nearest=null,best=3.7;
@@ -745,6 +773,8 @@ function animate(){
    c.group.position.x+=nx-c.x;c.group.position.z+=nz-c.z;c.x=nx;c.z=nz;
   }else c.speed=0;
   c.group.rotation.y=c.angle;player.x=c.x;player.z=c.z;yaw=c.angle;
+ }else if(sittingSeat){
+  movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
  }else{
   const len=Math.hypot(f,side)||1;
   const speed=keys.has('ShiftLeft')||keys.has('ShiftRight')?RUN_SPEED:WALK_SPEED;
@@ -799,8 +829,17 @@ function animate(){
   avatar.position.set(player.x,0,player.z);
   avatar.rotation.y=yaw;
   const walkingSpeed=Math.hypot(movement.vx,movement.vz);
-  if(!realAvatar)playerRig.animate(elapsed,walkingSpeed);
-  else updateRealAvatar(dt,elapsed,walkingSpeed);
+  if(!realAvatar)playerRig.animate(elapsed,sittingSeat?0:walkingSpeed);
+  else updateRealAvatar(dt,elapsed,sittingSeat?0:walkingSpeed);
+  if(sittingSeat){
+   // Seated pose: thighs forward, knees bent and torso lowered onto chair height.
+   avatar.position.y=-.48;
+   if(!realAvatar){playerRig.legs.forEach(leg=>{leg.hip.rotation.x=-1.18;leg.knee.rotation.x=1.48;});playerRig.torso.rotation.x=.05;}
+   else{for(const [name,bone] of Object.entries(avatarBones)){
+    if(/(upperleg|upleg|thigh)/.test(name))bone.rotation.x=-1.12;
+    if(/(lowerleg|calf|shin)/.test(name))bone.rotation.x=1.38;
+   }}
+  }else avatar.position.y=0;
  }
  if(!Number.isFinite(camera.position.x)||!Number.isFinite(camera.position.y)||!Number.isFinite(camera.position.z))resetView();
  // Prevent the driven car body from obstructing the first-person windshield view.
@@ -816,9 +855,9 @@ function animate(){
  towerButton.textContent=onObservationDeck?'T · ELEVATOR DOWN':insideNeedleLobby?'T · ELEVATOR UP':'T · ENTER TOWER';
  const door=nearestDoor();doorButton.style.display=door?'block':'none';
  if(door)doorButton.textContent='F · ENTER BUILDING';
- const nearSeat=coffeeShop.nearestSeat(player.x,player.z,2.5);
+ const nearSeat=nearestAvailableSeat();
  cafeButton.style.display=(sittingSeat||nearSeat)&&!activeCar?'block':'none';
- cafeButton.textContent=sittingSeat?'STAND UP':'C · SIT AT TABLE';
+ cafeButton.textContent=sittingSeat?'C · STAND UP':'C · SIT DOWN';
  if((diagnosticFrames++%30)===0){
   const p=camera.position;
   diag.textContent='RENDER '+(contextLost?'CONTEXT LOST':'ACTIVE')+
