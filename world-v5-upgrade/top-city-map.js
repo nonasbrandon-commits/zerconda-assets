@@ -28,7 +28,8 @@ export function createCityMap({player,beach={x:0,z:212}}){
   // Perimeter wall matches world bounds; mark the proposed eastern expansion
   // checkpoint as CLOSED until an actual gate and access logic are installed.
   ctx.strokeStyle='#b9bdb6';ctx.lineWidth=5;ctx.setLineDash([]);
-  ctx.strokeRect(tx(-276)+2,tz(-285)+2,420-4,270-4);
+  ctx.beginPath();ctx.moveTo(tx(-276),tz(174));ctx.lineTo(tx(-276),tz(-285));ctx.lineTo(tx(570),tz(-285));ctx.lineTo(tx(570),tz(174));ctx.stroke();
+  ctx.fillStyle='#9de0e8';ctx.font='bold 11px Arial';ctx.textAlign='center';ctx.fillText('OPEN BEACH / OCEAN',tx(147),tz(225));ctx.textAlign='start';
   const gateX=tx(570)-3,gateY=tz(0);
   ctx.strokeStyle='#f5a23b';ctx.lineWidth=7;
   ctx.beginPath();ctx.moveTo(gateX,gateY-12);ctx.lineTo(gateX,gateY+12);ctx.stroke();
