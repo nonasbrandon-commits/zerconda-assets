@@ -50,4 +50,21 @@ jobs:
           src=Path('world-v5-upgrade/world-v5-complete-replacement.js').read_text()
           assert 'jetMaterial.opacity' not in [line.strip() for line in src.splitlines() if not line.strip().startswith('//')], 'Stale jetMaterial'
           assert 'diagnosticMarker=new THREE.Mesh' not in src,'Debug marker still in scene'
+          # Regression checks for reported problems in November 17 screenshots.
+          park=Path('world-v5-upgrade/needle-sports-park.js').read_text()
+          cafe=Path('world-v5-upgrade/brewstone-coffee.js').read_text()
+          assert 'createNeedleSportsPark(scene,{x:48,z:-190})' in src, 'Park center drifted back into the road'
+          assert 'box(66,.14,108' in park and 'court(-18,15,true);court(18,15,false)' in park
+          # Park footprint x=15..81, z=-244..-136; major roads center x=-96,0,96 and z=-96,0,96.
+          park_bounds=(15,81,-244,-136)
+          for c in [-96,0,96]:
+              assert not (park_bounds[0]<c+9.5 and park_bounds[1]>c-9.5),f'Park crosses x-road {c}'
+              assert not (park_bounds[2]<c+9.5 and park_bounds[3]>c-9.5),f'Park crosses z-road {c}'
+          assert 'z:z-190,facing' in src, 'Bench interactions no longer match park'
+          assert 'nettle_plant_1k.gltf' in cafe, 'Textured shrub GLTF not installed in cafe code'
+          assert Path('realistic-assets/expanded-models/foliage/nettle_plant_1k.gltf').is_file()
+          assert Path('realistic-assets/characters/zerconda-humanoid.glb').stat().st_size>100000
+          assert 'outfitVertexColors(model)' in src and 'upperarml' in src, 'Player outfit or verified rig fix missing'
+          print('PASS: park clear of roads, shrub GLTF exists, avatar rig and outfit integration present')
+
           PY
