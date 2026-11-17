@@ -20,7 +20,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-window-layer-and-casual-outfit-fix';
+const ZERCONDA_BUILD='2026-11-17-clean-brick-windows-casual-shirt-trousers';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -527,7 +527,7 @@ function outfitVertexColors(model){
  model.updateMatrixWorld(true);
  const bounds=new THREE.Box3().setFromObject(model),height=bounds.max.y-bounds.min.y;
  const tmp=new THREE.Vector3(),color=new THREE.Color();
- const colors={shirt:new THREE.Color(0x337b9f),jeans:new THREE.Color(0x967450),
+ const colors={shirt:new THREE.Color(0x28658c),jeans:new THREE.Color(0x947252),
   shoe:new THREE.Color(0xe8e7e1),skin:new THREE.Color(0xc8906d),hair:new THREE.Color(0x392d28)};
  model.traverse(mesh=>{
   if(!mesh.isMesh||!mesh.geometry?.attributes?.position)return;
