@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {createClothedPlayer} from './clothed-player.js';
+import {createClothedPlayer} from './clothed-player.js?v=20261117-real-hair-v31';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-golf-reserve-v30';
+const ZERCONDA_BUILD='2026-11-17-avatar-architecture-v31';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -370,6 +370,26 @@ function makeBuilding(x,z,w,d,h,type){
  }
  box(2.6,3.0,.13,0,1.5,d/2+.18,entrance,g);
  box(3.6,.22,1.2,0,3.15,d/2+.65,roofMat,g);
+ // Architectural depth: grounded stone base, horizontal cornices, entrance steps,
+ // and window lintels. All details remain attached to the building footprint.
+ const stone=new THREE.MeshStandardMaterial({color:0xa9a49a,roughness:.96});
+ const cornice=new THREE.MeshStandardMaterial({color:0xece6d9,roughness:.83});
+ box(w+.22,.55,d+.22,0,.28,0,stone,g);
+ for(const elevation of [3.52,7.07,10.62]){
+   box(w+.45,.12,d+.45,0,elevation,0,cornice,g);
+ }
+ for(let step=0;step<3;step++)box(3.25,.13,.43,0,.07+step*.13,d/2+.48+step*.41,stone,g);
+ for(const side of [-1,1]){
+   for(let floor=0;floor<levels;floor++){
+     const yy=2.0+floor*3.55;
+     const frontCount=Math.max(3,Math.floor(w/5));
+     for(let k=0;k<frontCount;k++){
+       const xx=-w/2+(k+.5)*w/frontCount;
+       if(floor===0&&side===1&&Math.abs(xx)<2)continue;
+       box(2.12,.12,.34,xx,yy+1.1,side*(d/2+.19),cornice,g);
+     }
+   }
+ }
  buildings.push({x,z,w,d,h:H});
 }
 
