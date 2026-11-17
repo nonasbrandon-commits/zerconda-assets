@@ -140,7 +140,7 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
  // City extends beyond the playable district in concentric, staggered rows.
  // Avoid the main view corridor and keep structures outside +/-170m play bounds.
  let total=0;
- for(let ring=0;ring<3;ring++){
+ for(let ring=0;ring<0;ring++){ // Distant skyline disabled: wilderness outside perimeter
   const radius=202+ring*65;
   const n=ring===0?36:46;
   for(let i=0;i<n;i++){
