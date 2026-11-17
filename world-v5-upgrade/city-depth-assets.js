@@ -157,7 +157,7 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    // Keep the full footprint of every ownable home clear of skyline towers.
    // Includes a 5m separation gap so detached homes never merge into apartments.
    const protectedHomes=[];
-   for(const sx of [-146,146])for(const hz of [-174,-139,-72,-22,32])
+   for(const sx of [-146,146])for(const hz of [-174,-139,-72,-38,43])
      protectedHomes.push({x:sx,z:hz,w:16,d:23});
    for(let hr=0;hr<5;hr++)for(let hc=0;hc<2;hc++)
      protectedHomes.push({x:-210+hc*27,z:[-204,-166,-130,-62,-30][hr],w:21,d:25});
