@@ -140,15 +140,15 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
  // City extends beyond the playable district in concentric, staggered rows.
  // Avoid the main view corridor and keep structures outside +/-170m play bounds.
  let total=0;
- for(let ring=0;ring<0;ring++){ // Distant skyline disabled: wilderness outside perimeter
-  const radius=202+ring*65;
+ for(let ring=0;ring<3;ring++){ // Restore interior skyline; reject all exterior placements
+  const radius=145+ring*54;
   const n=ring===0?36:46;
   for(let i=0;i<n;i++){
    const angle=2*Math.PI*(i+.24*(rnd()-.5))/n;
    const x=Math.cos(angle)*(radius+(rnd()-.5)*22);
    const z=Math.sin(angle)*(radius+(rnd()-.5)*22);
    // South Beach and the ocean must remain completely free of city towers.
-   if(z>55)continue; // Preserve a broad clear coastal setback: no floating towers over the beach
+   if(z>105)continue; // Preserve the beach and ocean approach
    // Protect Needle Park's courts, pond and sightline from surrounding skyline towers.
    if(x>13&&x<83&&z> -250&&z< -135)continue;
    // Golf course protected land: do not place background towers on fairways or clubhouse.
@@ -162,7 +162,7 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    if(x+w/2>13&&x-w/2<83&&z+d/2> -250&&z-d/2< -135)continue;
    // Never generate a tower beyond the solid perimeter wall.
    // The outside view must be wilderness, not a second skyline.
-   if(x-w/2<=-276||x+w/2>=570||z-d/2<=-285||z+d/2>=242)continue;
+   if(x-w/2<=-266||x+w/2>=560||z-d/2<=-275||z+d/2>=115)continue;
    skylineTower(x,z,w,d,h,total++);
   }
  }
