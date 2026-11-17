@@ -20,7 +20,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-natural-arms-pond-golf-city-density';
+const ZERCONDA_BUILD='2026-11-17-window-layer-and-casual-outfit-fix';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -224,8 +224,10 @@ const castStone=new THREE.MeshStandardMaterial({color:0xc9c1b2,roughness:.94});
 
 function makeBuilding(x,z,w,d,h,type){
  const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
- const facade=facadeMats[type%facadeMats.length];
  const hasSignature=type%7!==3;
+ // Signature kits already construct their own windows. A photographed window
+ // texture underneath them creates the duplicated, scrambled glazing seen in-game.
+ const facade=hasSignature?new THREE.MeshStandardMaterial({color:type%2?0x9b6754:0xae806d,roughness:.94}):facadeMats[type%facadeMats.length];
  // Textured front/back and side walls with complete solid mass.
  box(w,h,d,0,h/2,0,facade,g);
  // Contrasting ground-floor stone base, pilasters and cornice.
@@ -524,7 +526,7 @@ function outfitVertexColors(model){
  model.updateMatrixWorld(true);
  const bounds=new THREE.Box3().setFromObject(model),height=bounds.max.y-bounds.min.y;
  const tmp=new THREE.Vector3(),color=new THREE.Color();
- const colors={shirt:new THREE.Color(0x254e78),jeans:new THREE.Color(0x253f63),
+ const colors={shirt:new THREE.Color(0x337b9f),jeans:new THREE.Color(0x967450),
   shoe:new THREE.Color(0xe8e7e1),skin:new THREE.Color(0xc8906d),hair:new THREE.Color(0x392d28)};
  model.traverse(mesh=>{
   if(!mesh.isMesh||!mesh.geometry?.attributes?.position)return;
@@ -536,7 +538,8 @@ function outfitVertexColors(model){
    const x=Math.abs(tmp.x-(bounds.min.x+bounds.max.x)/2)/height;
    let material=y<.095?colors.shoe:y<.52?colors.jeans:y<.79?colors.shirt:colors.skin;
    if(y>.91)material=colors.hair;
-   if(y>.52&&y<.85&&x>.23)material=colors.skin;
+   // Keep shoulders and upper arms covered by the blue shirt; expose only hands.
+   if(y>.40&&y<.59&&x>.31)material=colors.skin;
    color.copy(material);
    arr[i*3]=color.r;arr[i*3+1]=color.g;arr[i*3+2]=color.b;
   }
