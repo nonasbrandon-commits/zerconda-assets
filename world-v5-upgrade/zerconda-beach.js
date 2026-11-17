@@ -14,28 +14,27 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  const sandMap=new THREE.CanvasTexture(canvas);sandMap.colorSpace=THREE.SRGBColorSpace;sandMap.wrapS=sandMap.wrapT=THREE.RepeatWrapping;sandMap.repeat.set(18,8);sandMap.anisotropy=8;
  const sand=new THREE.MeshStandardMaterial({color:0xe5ceaa,roughness:1,map:sandMap});
  const wood=new THREE.MeshStandardMaterial({color:0x927055,roughness:.87});
- // Turquoise ocean surface with independently tiled wave highlights. No opaque blocks.
- const oceanCanvas=document.createElement('canvas');oceanCanvas.width=512;oceanCanvas.height=512;
+ // Layered ocean: fine, nonrepeating light glints over a deep-water gradient.
+ const oceanCanvas=document.createElement('canvas');oceanCanvas.width=1024;oceanCanvas.height=1024;
  const oc=oceanCanvas.getContext('2d');
- const grad=oc.createLinearGradient(0,0,512,512);
- grad.addColorStop(0,'#078c9c');grad.addColorStop(.5,'#20b4b5');grad.addColorStop(1,'#067a92');
- oc.fillStyle=grad;oc.fillRect(0,0,512,512);
- for(let i=0;i<360;i++){
-  const xx=random()*512,yy=random()*512;
-  oc.beginPath();oc.ellipse(xx,yy,4+random()*22,.4+random()*1.5,random()*.3,0,Math.PI*2);
-  oc.strokeStyle='rgba(207,255,248,'+(.035+random()*.18)+')';oc.lineWidth=.5+random()*1.5;oc.stroke();
+ const grad=oc.createLinearGradient(0,0,160,1024);
+ grad.addColorStop(0,'#007f95');grad.addColorStop(.45,'#0a9fb1');grad.addColorStop(1,'#35bfc5');
+ oc.fillStyle=grad;oc.fillRect(0,0,1024,1024);
+ for(let i=0;i<2900;i++){
+  const xx=random()*1024,yy=random()*1024;
+  const width=2+random()*32;
+  oc.beginPath();oc.ellipse(xx,yy,width,.35+random()*1.4,(random()-.5)*.13,0,Math.PI*2);
+  oc.strokeStyle='rgba(230,255,252,'+(.06+random()*.36)+')';
+  oc.lineWidth=.4+random()*1.1;oc.stroke();
  }
  const oceanMap=new THREE.CanvasTexture(oceanCanvas);
  oceanMap.colorSpace=THREE.SRGBColorSpace;
  oceanMap.wrapS=oceanMap.wrapT=THREE.RepeatWrapping;
- oceanMap.repeat.set(24,17);oceanMap.anisotropy=8;
- const water=new THREE.MeshPhysicalMaterial({color:0x9bdde2,map:oceanMap,metalness:.08,roughness:.13,transparent:false,clearcoat:1,clearcoatRoughness:.07,side:THREE.DoubleSide});
-// Optional repository image asset; canvas remains the safe fallback if unavailable.
- new THREE.TextureLoader().load(base+'realistic-assets/beach/turquoise-ocean-surface.svg',texture=>{
-  texture.colorSpace=THREE.SRGBColorSpace;
-  texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(24,17);texture.anisotropy=8;
-  water.map=texture;water.needsUpdate=true;
- },undefined,()=>console.warn('Beach ocean image unavailable; using procedural texture'));
+ oceanMap.repeat.set(12,12);oceanMap.anisotropy=16;
+ const water=new THREE.MeshPhysicalMaterial({
+  color:0x9ee6e6,map:oceanMap,metalness:0,roughness:.22,
+  clearcoat:.8,clearcoatRoughness:.16,side:THREE.DoubleSide
+ });
  const foam=new THREE.MeshBasicMaterial({color:0xe6f9f8,transparent:true,opacity:.42,depthWrite:false,side:THREE.DoubleSide});
  const fabric=[0xf5f2e8,0x237aaf,0xe79a60,0xe7d2a2].map(color=>new THREE.MeshStandardMaterial({color,roughness:.82,side:THREE.DoubleSide}));
  function mesh(geo,mat,x,y,z){const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.receiveShadow=true;root.add(o);return o;}
@@ -46,17 +45,27 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  const boardwalk=mesh(new THREE.PlaneGeometry(320,10),wood,0,.17,186);boardwalk.rotation.x=-Math.PI/2;
  for(let x=-158;x<159;x+=2.1){const plank=mesh(new THREE.BoxGeometry(1.98,.05,9.5),wood,x,.19,186);}
  // Ocean begins past the beach and extends toward the far horizon.
- const ocean=mesh(new THREE.PlaneGeometry(2200,2200,100,100),water,0,-.09,1340);ocean.rotation.x=-Math.PI/2;
+ const ocean=mesh(new THREE.PlaneGeometry(2200,2200,160,160),water,0,.015,1340);ocean.rotation.x=-Math.PI/2;
  const pos=ocean.geometry.attributes.position;const original=new Float32Array(pos.array);
- // Thin moving wavefronts at the shoreline, not white opaque slabs.
+ // Shorebreak: overlapping translucent surf ribbons instead of straight opaque lines.
  const shore=[];
- // Separate translucent surf materials for natural independent fading.
- for(let j=0;j<10;j++){
-  const line=mesh(new THREE.PlaneGeometry(330,.10+j*.09),foam.clone(),0,.18,241+j*1.35);
+ const foamMats=Array.from({length:12},(_,j)=>new THREE.MeshBasicMaterial({
+  color:j%3===0?0xffffff:0xe2ffff,transparent:true,opacity:.14,
+  depthWrite:false,side:THREE.DoubleSide
+ }));
+ for(let j=0;j<12;j++){
+  const geo=new THREE.PlaneGeometry(350,.48+j*.15,110,1);
+  const attr=geo.attributes.position;
+  for(let k=0;k<attr.count;k++){
+   const x=attr.getX(k);
+   attr.setY(k,attr.getY(k)+Math.sin(x*.043+j*.7)*.65+Math.sin(x*.091+j)*.23);
+  }
+  geo.computeVertexNormals();
+  const line=mesh(geo,foamMats[j],0,.16+j*.001,241+j*.42);
   line.rotation.x=-Math.PI/2;shore.push(line);
  }
- const washMat=new THREE.MeshBasicMaterial({color:0xcaf5ee,transparent:true,opacity:.12,depthWrite:false,side:THREE.DoubleSide});
- const wash=mesh(new THREE.PlaneGeometry(330,4.5),washMat,0,.115,242);
+ const washMat=new THREE.MeshBasicMaterial({color:0x8de3db,transparent:true,opacity:.13,depthWrite:false,side:THREE.DoubleSide});
+ const wash=mesh(new THREE.PlaneGeometry(350,7),washMat,0,.12,242);
  wash.rotation.x=-Math.PI/2;
  // Sand ripples and dune clusters.
  const duneMat=new THREE.MeshStandardMaterial({color:0xd7bb88,roughness:1});
@@ -101,5 +110,5 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
    addRealisticBeachPalms(root,{count:24});
  });
  let elapsed=0;
- return {root,update(dt){elapsed+=dt;const arr=pos.array;for(let i=0;i<pos.count;i++){const xx=original[i*3],yy=original[i*3+1];arr[i*3+2]=Math.sin(xx*.038+yy*.013+elapsed*1.3)*.21+Math.sin(yy*.095-xx*.022+elapsed*2.1)*.10+Math.sin(xx*.17+yy*.11-elapsed*2.7)*.035;}pos.needsUpdate=true;ocean.geometry.computeVertexNormals();if(water.map){water.map.offset.x=(elapsed*.003)%1;water.map.offset.y=(elapsed*.005)%1;}wash.position.z=242+Math.sin(elapsed*.7)*2;wash.material.opacity=.08+.06*(.5+.5*Math.sin(elapsed*.7));shore.forEach((s,i)=>{s.position.z=241+i*1.35+Math.sin(elapsed*.9+i*.7)*1.5;s.material.opacity=.14+.18*(.5+.5*Math.sin(elapsed*.9+i*.7));});},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
+ return {root,update(dt){elapsed+=dt;const arr=pos.array;for(let i=0;i<pos.count;i++){const xx=original[i*3],yy=original[i*3+1];arr[i*3+2]=Math.sin(xx*.038+yy*.013+elapsed*1.3)*.21+Math.sin(yy*.095-xx*.022+elapsed*2.1)*.10+Math.sin(xx*.17+yy*.11-elapsed*2.7)*.035;}pos.needsUpdate=true;ocean.geometry.computeVertexNormals();if(water.map){water.map.offset.x=(elapsed*.003)%1;water.map.offset.y=(elapsed*.005)%1;}wash.position.z=242+Math.sin(elapsed*.7)*2;wash.material.opacity=.08+.06*(.5+.5*Math.sin(elapsed*.7));shore.forEach((s,i)=>{s.position.z=241+i*.42+Math.sin(elapsed*.65+i*.28)*1.8;s.material.opacity=.07+.22*(.5+.5*Math.sin(elapsed*.8+i*.42));});},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
 }
