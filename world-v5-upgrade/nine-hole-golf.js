@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {trimGolfGround} from './golf-road-clearance.js?v=20261117-golf-clearance-v64';
 
 // A compact nine-hole city course, with all playing surfaces inside road-free parcels.
@@ -93,7 +94,8 @@ export function createNineHoleGolf(course,{origin,materials,tree,getPlayer}){
  // Simple playable practice golf: approach a tee, then use G for each stroke.
  const ball=new THREE.Mesh(new THREE.SphereGeometry(.12,16,10),flagMat);ball.visible=false;course.add(ball);
  const button=document.createElement('button');button.style.cssText='position:fixed;right:14px;bottom:245px;z-index:10001;padding:13px;background:#244d38;color:white;border:1px solid #c7b87e;border-radius:8px;display:none';document.body.appendChild(button);
- const score=document.createElement('div');score.style.cssText='position:fixed;left:14px;top:245px;z-index:9997;padding:9px 12px;background:#173529df;color:#fff;border-radius:7px;display:none;font:13px sans-serif';document.body.appendChild(score);
+ registerTownAction(button,{id:'golf-play',priority:90,target:()=>active?{x:ball.position.x+origin.x,y:.3,z:ball.position.z+origin.z}:nearest?{x:nearest.tee[0],y:.3,z:nearest.tee[1]}:null});
+ const score=document.createElement('div');score.id='golf-score';score.style.cssText='position:fixed;left:14px;top:245px;z-index:9997;padding:9px 12px;background:#173529df;color:#fff;border-radius:7px;display:none;font:13px sans-serif';document.body.appendChild(score);
  let active=null,strokes=0,flight=null,nearest=null;const results=new Map();
  function stroke(){
   if(flight)return;
@@ -113,8 +115,9 @@ export function createNineHoleGolf(course,{origin,materials,tree,getPlayer}){
   const show=!!(nearBall||(!active&&nearest));button.style.display=show?'block':'none';
   button.textContent=active?'G · HIT BALL · STROKE '+(strokes+1):'G · PLAY HOLE '+(nearest?.number||'');
   score.style.display=(player.x>232&&player.z<170)?'block':'none';
-  if(active)score.textContent='Hole '+active.number+' · Par 3 · '+strokes+' strokes · Follow the ball and press G';
-  else if(!results.size)score.textContent='ZERCONDA · NINE-HOLE GOLF · Approach a numbered tee to play';
+  if(active)score.textContent='Hole '+active.number+' · Par 3 · '+strokes+' strokes · Follow the ball, then tap Hit ball';
+  else if(!results.size)score.textContent='ZERCONDA · NINE-HOLE GOLF · Approach a numbered tee and tap Play';
  }
  return {holes:holeSpecs,cartCurve,update,routeLength:cartCurve.getLength(),groundMeshes:turf};
 }
+

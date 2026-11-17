@@ -15,9 +15,9 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:
 <script type="importmap">{"imports":{"three":"https://esm.sh/three@0.160.1","three/addons/":"https://esm.sh/three@0.160.1/examples/jsm/"}}</script>
 </head><body>
 <div id="hud"><strong>ZERCONDA</strong><div id="status">Loading realistic 3D world…</div></div>
-<div id="help">WASD: move · Drag: look · Shift: run · E: enter car · R: reset</div>
+
 <button id="enter">ENTER / EXIT CAR</button>
-<div id="mobile"><span></span><button data-key="KeyW" aria-label="Forward">▲</button><span></span><button data-key="KeyA" aria-label="Left">◀</button><button data-key="KeyS" aria-label="Back">▼</button><button data-key="KeyD" aria-label="Right">▶</button></div>
+
 <script>
 (function(){
  const status=document.getElementById('status');
@@ -30,7 +30,7 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:
 })();
 </script>
 <script type="module">
-import('./world-v5-complete-replacement.js?v=20261117-homes-v74')
+import('./world-v5-complete-replacement.js?v=20261117-touch-v75')
  .then(()=>window.dispatchEvent(new Event('zerconda-ready')))
  .catch(async e=>{
  const status=document.getElementById('status');

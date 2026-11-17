@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {trimGolfGround} from './golf-road-clearance.js?v=20261117-golf-clearance-v64';
-import {createNineHoleGolf} from './nine-hole-golf.js?v=20261117-nine-holes-v67';
+import {createNineHoleGolf} from './nine-hole-golf.js?v=20261117-touch-v75';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Zerconda Eastside: residential approach and compact nine-hole public golf course.
 // Located about three 96m blocks east of the Needle at (48,-48).
@@ -158,4 +158,5 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48,getPlayer}={}){
  }
  return {root,center:{x,z},holes:9,residentialBuildings:0,bounds:{minX:240,maxX:556,minZ:-265,maxZ:166},update};
 }
+
 

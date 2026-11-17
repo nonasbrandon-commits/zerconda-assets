@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {createNaturalShrub} from './realistic-landscape-assets.js?v=20261117-club-front-v71';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {createRealisticHuman} from './realistic-human.js?v=20261117-club-v70';
@@ -185,7 +186,8 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
  });
  const enterButton=document.createElement('button'),danceButton=document.createElement('button'),gameButton=document.createElement('button');
  for(const [button,bottom] of [[enterButton,500],[danceButton,555],[gameButton,610]]){button.style.cssText=`position:fixed;right:14px;bottom:${bottom}px;z-index:12001;background:#263b41;color:#fff0d7;padding:12px;border:1px solid #b69c64;border-radius:8px;display:none;font-weight:bold`;document.body.appendChild(button);}
- const banner=document.createElement('div');banner.style.cssText='position:fixed;top:110px;left:50%;transform:translateX(-50%);z-index:12000;padding:8px 15px;background:#14252bdd;color:#f9e9c8;border:1px solid #92764a;border-radius:8px;display:none;font:13px system-ui';document.body.appendChild(banner);
+ registerTownAction(enterButton,{id:'club-enter',priority:100,target:()=>({x,y:1.6,z:z+8.4})});registerTownAction(danceButton,{id:'club-dance',priority:110,target:()=>({x:x-12,y:.4,z})});registerTownAction(gameButton,{id:'club-game',priority:120,target:()=>{const p=getPlayer();return Math.hypot(p.x-(x+3),p.z-(z-.3))<5?{x:x+3,y:5.4,z:z-.3}:{x:x-18,y:6.4,z:z-7.7};}});
+ const banner=document.createElement('div');banner.id='club-banner';banner.style.cssText='position:fixed;top:110px;left:50%;transform:translateX(-50%);z-index:12000;padding:8px 15px;background:#14252bdd;color:#f9e9c8;border:1px solid #92764a;border-radius:8px;display:none;font:13px system-ui';document.body.appendChild(banner);
  function frontDistance(p){return Math.hypot(p.x-x,p.z-(z+9.5));}
  function westDistance(p){return Math.hypot(p.x-(x-31),p.z-z);}
  function near(){const p=getPlayer();return Math.min(frontDistance(p),westDistance(p))<6;}
@@ -222,8 +224,7 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
    indoor.visible=active||near();
    const frontNear=frontDistance(p)<5&&(!active||floor===0);
    for(const door of frontDoors)door.hinge.rotation.y=THREE.MathUtils.damp(door.hinge.rotation.y,frontNear?door.side*1.18:0,7,dt);
-   if(!active&&canEnter()&&((Math.abs(lx)<1.7&&lz>8.3&&lz<8.8)||(Math.abs(lz)<1.4&&lx< -30.3&&lx> -30.8)))toggle();
-   else if(active&&floor===0&&((Math.abs(lx)<1.7&&lz>6.95)||(Math.abs(lz)<1.4&&lx< -28.7)))toggle();
+   // Entry and exit use the same explicit nearby action as other buildings.
    if(active&&lx>22.7&&lx<27.3){if(lz<=-5.8)floor=0;if(lz>=5.8)floor=1;}
    if(stepPool(pool,dt)&&poolAuthority){poolStamp=Math.max(poolStamp+1,Date.now());social.sendGame({pool,poolStamp});poolAuthority=false;}
    for(const b of pool.balls){const mesh=ballMeshes.get(b.id);mesh.visible=!b.pocketed;mesh.position.set(tableOrigin.x+b.x,5.39,b.z+tableOrigin.z);mesh.rotation.z-=b.vx*dt/POOL.radius;mesh.rotation.x+=b.vz*dt/POOL.radius;}
@@ -239,3 +240,4 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
   }
  };
 }
+
