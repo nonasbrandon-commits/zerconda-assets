@@ -6,7 +6,7 @@ export function createCityMap({player,beach={x:0,z:212}}){
  const heading=document.createElement('div');heading.textContent='ZERCONDA  •  CITY MAP';heading.style.cssText='font-weight:700;text-align:center;letter-spacing:1px;margin-bottom:3px';shell.appendChild(heading);
  const canvas=document.createElement('canvas');canvas.width=420;canvas.height=270;canvas.style.cssText='width:min(350px,48vw);height:auto;display:block;border-radius:6px';shell.appendChild(canvas);document.body.appendChild(shell);
  const ctx=canvas.getContext('2d');
- const legend=document.createElement('div');legend.textContent='🔵 YOU   ▰ PERIMETER WALL   🟠 SECURITY GATE';legend.style.cssText='text-align:center;font-weight:bold;color:#9ce8ff;margin-top:4px;letter-spacing:.5px';shell.appendChild(legend);
+ const legend=document.createElement('div');legend.textContent='🔵 YOU   ▰ PERIMETER WALL   🟠 POLICE GATE · CLOSED';legend.style.cssText='text-align:center;font-weight:bold;color:#9ce8ff;margin-top:4px;letter-spacing:.5px';shell.appendChild(legend);
  shell.style.pointerEvents='none';
  // Legacy top-left HUD can overlap the map if Airo kept the old markup.
  // Keep the HUD but move only the conflicting old map overlays out of view.
@@ -24,7 +24,7 @@ export function createCityMap({player,beach={x:0,z:212}}){
   ctx.fillStyle='#c9b287';ctx.fillRect(0,tz(175),420,270-tz(175));
   ctx.fillStyle='#187c9e';ctx.fillRect(0,tz(240),420,270-tz(240));
   ctx.strokeStyle='#737e83';ctx.lineWidth=7;
-  for(const n of [-144,-48,48,144]){ctx.beginPath();ctx.moveTo(tx(n),tz(-175));ctx.lineTo(tx(n),tz(175));ctx.stroke();ctx.beginPath();ctx.moveTo(0,tz(n));ctx.lineTo(420,tz(n));ctx.stroke();}
+  for(const n of [-96,0,96]){ctx.beginPath();ctx.moveTo(tx(n),tz(-175));ctx.lineTo(tx(n),tz(175));ctx.stroke();ctx.beginPath();ctx.moveTo(0,tz(n));ctx.lineTo(420,tz(n));ctx.stroke();}
   // Security gate matches the relocated entrance on the z=0 city street.
   ctx.strokeStyle='#b9bdb6';ctx.lineWidth=5;ctx.setLineDash([]);
   ctx.beginPath();ctx.moveTo(tx(-276),tz(174));ctx.lineTo(tx(-276),tz(-285));ctx.lineTo(tx(570),tz(-285));ctx.lineTo(tx(570),tz(174));ctx.stroke();
@@ -33,16 +33,24 @@ export function createCityMap({player,beach={x:0,z:212}}){
   ctx.strokeStyle='#f5a23b';ctx.lineWidth=7;
   ctx.beginPath();ctx.moveTo(gateX,gateY-12);ctx.lineTo(gateX,gateY+12);ctx.stroke();
   ctx.fillStyle='#ffd08a';ctx.font='bold 11px Arial';ctx.textAlign='right';
-  ctx.fillText('SECURITY GATE',gateX-9,gateY-5);
+  ctx.fillText('POLICE GATE',gateX-9,gateY-5);
+  ctx.fillText('CLOSED',gateX-9,gateY+9);
   ctx.textAlign='start';
   ctx.fillStyle='#b4c6d1';for(const [x,z,w,h] of [[-72,-48,24,28],[-34,-48,24,25]])ctx.fillRect(tx(x-w/2),tz(z-h/2),w*scale,h*270/527);
   ctx.fillStyle='#3fbbe8';ctx.beginPath();ctx.arc(tx(48),tz(-48),6,0,Math.PI*2);ctx.fill();label(48,-48,'NEEDLE');
   ctx.fillStyle='#f5f6e9';ctx.beginPath();ctx.arc(tx(48),tz(48),6,0,Math.PI*2);ctx.fill();label(48,48,'PLAZA');
-  ctx.fillStyle='#81ac59';ctx.beginPath();ctx.ellipse(tx(425),tz(-48),57,32,0,0,Math.PI*2);ctx.fill();
-  label(425,-48,'GOLF CLUB','#ffffff');
+  ctx.fillStyle='#659647';
+  for(const [lo,hi] of [[-265,-113],[-79,-17],[17,79],[113,166]])ctx.fillRect(tx(240),tz(lo),316*scale,(hi-lo)*270/527);
+  ctx.fillStyle='#b5d37b';
+  for(let row=0;row<3;row++)for(let col=0;col<3;col++){
+   const gx=291+col*96+(col%2?-9:9),gz=[-135,-69,69][row];
+   ctx.beginPath();ctx.ellipse(tx(gx),tz(gz),6,3,0,0,Math.PI*2);ctx.fill();
+   label(gx,gz,String(row*3+col+1),'#ffffff');
+  }
+  label(310,-240,'9-HOLE GOLF CLUB','#ffffff');
   ctx.fillStyle='#5cae5a';ctx.fillRect(tx(-20),tz(-190),136*scale,105*270/527);
   label(48,-139,'SPORTS PARK','#ffffff');
-  label(245,-20,'HOMES','#ffffff');
+  label(294,140,'CLUBHOUSE','#ffffff');
   label(-72,-48,'AUTO');label(-34,-48,'COFFEE');label(-20,212,'BEACH','#ffffff');
   // Highly visible live player marker, drawn last so roads and labels never cover it.
   const px=tx(player.x),py=tz(player.z);frame++;

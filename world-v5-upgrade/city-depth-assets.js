@@ -152,7 +152,7 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    // Protect Needle Park's courts, pond and sightline from surrounding skyline towers.
    if(x>13&&x<83&&z> -250&&z< -135)continue;
    // Golf course protected land: do not place background towers on fairways or clubhouse.
-   if(x>258&&x<590&&z>-220&&z<112)continue;
+   if(x>218&&x<590&&z>-285&&z<184)continue;
    const w=14+rnd()*12,d=12+rnd()*13,h=28+rnd()*40+(ring===2&&total%8===0?20:0);
    // Keep the full footprint of every ownable home clear of skyline towers.
    // Includes a 5m separation gap so detached homes never merge into apartments.

@@ -1,10 +1,11 @@
 import * as THREE from 'three';
+import {createEastForestGate} from './east-forest-gate.js?v=20261117-nine-holes-v67';
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-grounded-walk-v58';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
 import {createCloudSky} from './cloud-sky.js';
-import {addCityDepth} from './city-depth-assets.js?v=20261117-building-setback-v54';
+import {addCityDepth} from './city-depth-assets.js?v=20261117-nine-holes-v67';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js';
 import {createApartmentExperience} from './apartment-interiors.js';
@@ -13,16 +14,16 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 import {addAirDancers} from './air-dancers.js';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261117-water-to-wall-v50';
-import {createCityMap} from './top-city-map.js?v=20261117-street-gate-v65';
+import {createCityMap} from './top-city-map.js?v=20261117-nine-holes-v67';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-road-clearance-v53';
 import {createPedestrians} from './animated-pedestrians.js?v=20261117-sidewalk-feet-v66';
-import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-golf-clearance-v64';
+import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-nine-holes-v67';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-sidewalk-feet-v66';
+const ZERCONDA_BUILD='2026-11-17-nine-hole-golf-v67';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -254,7 +255,7 @@ wallSegment(570,-285,570,-18);wallSegment(570,18,570,350); // East perimeter als
 
  // East security entrance, spanning the 36m opening at z=-18..18.
  // The arch is high enough for vehicles; posts sit OUTSIDE the driving lane.
- const security=new THREE.Group();security.name='East perimeter security gate';scene.add(security);
+ const security=new THREE.Group();security.name='East perimeter security gate';security.userData.roadInfrastructure=true;scene.add(security);
  const gateSteel=new THREE.MeshStandardMaterial({color:0x263e4b,metalness:.72,roughness:.35});
  const gateWhite=new THREE.MeshStandardMaterial({color:0xe2e8e9,metalness:.18,roughness:.55});
  const gateGlass=new THREE.MeshStandardMaterial({color:0x76b5ce,metalness:.18,roughness:.23});
@@ -269,11 +270,10 @@ wallSegment(570,-285,570,-18);wallSegment(570,18,570,350); // East perimeter als
   box(4,2.6,4,562,1.3,z,gateWhite,security);
   box(4.1,1.1,4.1,562,2.65,z,gateSteel,security);
   box(.12,.95,2.5,559.92,1.8,z,gateGlass,security);
-  const guard=createZercondaAvatar();guard.position.set(557,0,z);
-  guard.rotation.y=Math.PI/2;guard.name='East gate security guard';
-  security.add(guard);
+
  }
- console.info('ZERCONDA east gate and two guards installed');
+ const forestCheckpoint=createEastForestGate(scene,{createAvatar:createZercondaAvatar,getPlayer:()=>player});
+ console.info('ZERCONDA closed police gate and forest checkpoint installed');
 
 // Gate geometry is loaded after core scene setup to avoid blocking world startup.
 // Actual three-dimensional mountain terrain beyond the perimeter, with
@@ -319,6 +319,13 @@ function populateOuterForest(){
   const x=side===0?-320-rand()*90:side===1?610+rand()*95:-350+rand()*1020;
   const z=side===2?-325-rand()*65:-310+rand()*430;
   cloneNormalized(loaded[i%2?'tree2':'tree']||source,x,z,8+rand()*10,rand()*Math.PI*2);
+ }
+ // Dense forest flanks the winding dirt track beyond the east checkpoint.
+ for(let i=0;i<100;i++){
+  const x=583+rand()*330,z=-140+rand()*270;
+  const trackZ=-Math.max(0,x-610)*.075+Math.sin((x-570)/40)*5;
+  if(Math.abs(z-trackZ)<14)continue;
+  cloneNormalized(loaded[i%2?'tree2':'tree']||source,x,z,13+rand()*13,rand()*Math.PI*2);
  }
 }
 // Facade texture generator: architectural materials, varied stonework,
@@ -457,7 +464,7 @@ for(let k=0;k<blocks.length;k++){
 
 // Ocean-view residential neighborhood: homes face the southern beach.
 const waterfrontHomes=addWaterfrontHomes(scene,{count:12});
-const eastsideGolf=createEastsideGolfDistrict(scene,{x:425,z:-48});
+const eastsideGolf=createEastsideGolfDistrict(scene,{x:425,z:-48,getPlayer:()=>player});
 const ownableHomes=createOwnableHomes(scene);
 const universalInteriors=createUniversalInteriors(scene);
 let universalSession=null;
@@ -554,7 +561,7 @@ function clearRoadIntrusions(){
  }
  function inspect(parent){
   for(const obj of [...parent.children]){
-   if(!obj.isGroup){continue;}
+   if(!obj.isGroup||obj.userData.roadInfrastructure){continue;}
    // Inspect individual authored building / tree groups, never whole districts.
    bounds.setFromObject(obj);if(bounds.isEmpty())continue;
    bounds.getSize(size);bounds.getCenter(center);
@@ -963,6 +970,8 @@ function animate(){
  requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);elapsed+=dt;
  airDancers.update(elapsed);
  southBeach.update(dt);
+ eastsideGolf.update(dt);
+ forestCheckpoint.update();
  pedestrianSystem.update(dt,elapsed);
  cityMap.draw();
  if(realisticPlaza)realisticPlaza.update(dt);
