@@ -30,51 +30,47 @@ export function addSignatureArchitecture(group,{w,d,h,style=0}={}){
  // Warm brick mid-rise apartment architecture based on the supplied reference:
  // staggered brick masses, stone cornices, dark balcony rails and deep window reveals.
  if(style===3){
-  const clayColors=[0x9c513b,0xb76549,0x8d4938,0xb46d50,0x9a5b43];
-  const idx=Math.abs(Math.round(w*3+d*7+h*11))%clayColors.length;
-  const brick=new THREE.MeshStandardMaterial({color:clayColors[idx],roughness:.94});
-  applyRealBrick(brick);
-  const cream=new THREE.MeshStandardMaterial({color:0xd9c7aa,roughness:.9});
-  const dark=new THREE.MeshStandardMaterial({color:0x242d33,metalness:.58,roughness:.42});
-  const glass=new THREE.MeshStandardMaterial({color:0x263f4b,metalness:.18,roughness:.34,side:THREE.FrontSide});
-  const warm=new THREE.MeshBasicMaterial({color:0xbda079});
-  const foliage=new THREE.MeshStandardMaterial({color:0x3c6544,roughness:.97});
-  const B=(ww,hh,dd,x,y,z,m)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(ww,hh,dd),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;group.add(o);return o;};
-  const floors=Math.max(3,Math.floor((h-3)/3.35));
-  // Distinct corner towers with projecting pilasters and parapet caps.
-  B(w-.2,h-3.4,.26,0,(h+3.4)/2,d/2+.22,brick);
-  for(const xx of [-w/2+.48,w/2-.48]){
-   B(.72,h-3.2,.6,xx,(h+3.2)/2,d/2+.48,brick);
-   B(1.22,.33,1.1,xx,h+.12,d/2+.52,cream);
-  }
-  // Ground floor stone podium and retail-scale glazing.
-  B(w+.5,.55,.48,0,3.38,d/2+.42,cream);
-  for(let k=0;k<Math.max(3,Math.floor(w/4.6));k++){
-   const count=Math.max(3,Math.floor(w/4.6));
-   const xx=-w/2+(k+.5)*w/count;
-   B(w/count*.72,2.25,.09,xx,1.65,d/2+.35,glass);
-   B(.1,2.6,.25,xx-w/count*.4,1.65,d/2+.43,dark);
-  }
-  // Clean residential facade: one dark pane per bay, with restrained stone surrounds.
-  // Do not stack decorative glass squares or glass balcony panes over these windows.
-  const bays=Math.max(3,Math.floor(w/4.7));
-  for(let f=0;f<floors;f++){
-   const yy=4.95+f*3.3;
-   if(yy+1.25>h)break;
-   B(w+.18,.13,.30,0,yy-1.5,d/2+.31,cream);
-   for(let k=0;k<bays;k++){
-    const xx=-w/2+(k+.5)*w/bays;
-    const ww=Math.min(1.65,w/bays*.52);
-    B(ww+0.22,2.33,.075,xx,yy,d/2+.375,cream);
-    B(ww,2.12,.08,xx,yy,d/2+.46,glass);
-    B(.045,2.12,.095,xx,yy,d/2+.52,dark);
-    B(ww+.18,.11,.18,xx,yy-1.16,d/2+.52,cream);
+  // Single clean facade kit: opaque brick, one dark glass pane per bay,
+  // and matching front, rear and side elevations. No floating blue ornaments.
+  const brick=new THREE.MeshStandardMaterial({color:0x965843,roughness:.94});
+  const stone=new THREE.MeshStandardMaterial({color:0xc9bba7,roughness:.92});
+  const frame=new THREE.MeshStandardMaterial({color:0x343b3d,metalness:.35,roughness:.6});
+  const glass=new THREE.MeshStandardMaterial({color:0x243c48,metalness:.2,roughness:.28});
+  const B=(ww,hh,dd,x,y,z,mat)=>{
+   const m=new THREE.Mesh(new THREE.BoxGeometry(ww,hh,dd),mat);
+   m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;group.add(m);return m;
+  };
+  // Cover any legacy window texture underneath the architecture.
+  B(w+.06,h-3.45,d+.06,0,(h+3.45)/2,0,brick);
+  const floorCount=Math.max(2,Math.floor((h-4)/3.25));
+  function elevation(width,depth,side,sideWall){
+   const bays=Math.max(2,Math.floor(width/4.1));
+   const cell=width/bays;
+   for(let f=0;f<floorCount;f++){
+    const y=4.75+f*3.25;
+    if(y+1.05>h)break;
+    for(let k=0;k<bays;k++){
+     const lateral=-width/2+(k+.5)*cell;
+     const paneW=Math.min(1.75,cell*.57),paneH=2.05;
+     const px=sideWall?side*(w/2+.13):lateral;
+     const pz=sideWall?lateral:side*(d/2+.13);
+     if(sideWall){
+      B(.10,paneH+.22,paneW+.22,px,y,pz,stone);
+      B(.12,paneH,paneW,px+side*.075,y,pz,glass);
+      B(.14,paneH,.055,px+side*.15,y,pz,frame);
+      B(.2,.11,paneW+.3,px+side*.09,y-paneH/2-.06,pz,stone);
+     }else{
+      B(paneW+.22,paneH+.22,.10,px,y,pz,stone);
+      B(paneW,paneH,.12,px,y,pz+side*.075,glass);
+      B(.055,paneH,.14,px,y,pz+side*.15,frame);
+      B(paneW+.3,.11,.2,px,y-paneH/2-.06,pz+side*.09,stone);
+     }
+    }
    }
   }
-  // Crown with layered cream stone cornice and distinctive rooftop masses.
-  B(w+.75,.38,d+.65,0,h+.14,0,cream);
-  B(w+.4,.34,d+.4,0,h+.48,0,brick);
-  B(w*.3,1.2,d*.24,w*.18,h+1.2,-d*.2,brick);
+  for(const side of [-1,1]){elevation(w,d,side,false);elevation(d,w,side,true);}
+  B(w+.5,.3,d+.5,0,h+.12,0,stone);
+  B(w+.25,.24,d+.25,0,h+.39,0,brick);
   return group;
  }
  // Seeded, seamless masonry texture with mortar joints and granular variation.
