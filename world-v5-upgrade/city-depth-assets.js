@@ -172,8 +172,14 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    // The outside view must be wilderness, not a second skyline.
    if(x-w/2<=-266||x+w/2>=560||z-d/2<=-275||z+d/2>=115)continue;
    if(Math.abs(x-140)<w/2+24&&Math.abs(z-35)<d/2+18)continue; // Luxe Lanes footprint and access
+   if(Math.abs(x-188)<w/2+17&&Math.abs(z-61)<d/2+15)continue; // Boutique footprint
    skylineTower(x,z,w,d,h,total++);
   }
+ }
+ // Relocate corner towers to vacant northern lots before adding the news headquarters.
+ const towers=root.children.filter(g=>g.isGroup&&g.children.length>100);
+ for(const g of towers){const size=new T.Box3().setFromObject(g).getSize(new T.Vector3());if(Math.abs(g.position.x-136)>size.x/2+19||Math.abs(g.position.z+49)>size.z/2+20)continue;
+  for(const [nx,nz]of [[-220,-230],[-180,-230],[-140,-230],[-220,-180],[-180,-180],[-140,-180],[190,-240],[150,-240],[190,-200],[150,-200],[190,-160],[130,-160]]){const clear=towers.every(o=>o===g||Math.abs(nx-o.position.x)>(size.x+o.children[0].scale.x)/2+5||Math.abs(nz-o.position.z)>(size.z+o.children[0].scale.z)/2+5);if(clear){g.position.set(nx,0,nz);g.name='Relocated corner apartment tower';g.userData.relocatedForNews=true;break;}}
  }
  // Replace the brick tower at the southeast plaza-side corner with scooter rentals.
  for(const g of [...root.children])if(g.isGroup&&g.position.x>120&&g.position.x<150&&g.position.z>40&&g.position.z<65&&g.children.length>100){root.remove(g);total--;}
