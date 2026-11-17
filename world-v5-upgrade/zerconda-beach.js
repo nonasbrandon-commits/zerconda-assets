@@ -46,6 +46,13 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  for(let x=-158;x<159;x+=2.1){const plank=mesh(new THREE.BoxGeometry(1.98,.05,9.5),wood,x,.19,186);}
  // Ocean begins past the beach and extends toward the far horizon.
  const ocean=mesh(new THREE.PlaneGeometry(2200,2200,160,160),water,0,.015,1340);ocean.rotation.x=-Math.PI/2;
+ // Fill the exposed water channels where the perimeter walls meet the sea.
+ // These are water surfaces, not walkable terrain; the world collision boundary
+ // prevents avatars from bypassing either wall.
+ for(const [cx,width] of [[-268,18],[415,310]]){
+  const channel=mesh(new THREE.PlaneGeometry(width,95,20,12),water,cx,.018,215);
+  channel.rotation.x=-Math.PI/2;
+ }
  const pos=ocean.geometry.attributes.position;const original=new Float32Array(pos.array);
  // Shorebreak: overlapping translucent surf ribbons instead of straight opaque lines.
  const shore=[];
