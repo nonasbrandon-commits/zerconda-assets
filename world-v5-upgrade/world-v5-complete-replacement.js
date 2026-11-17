@@ -485,18 +485,18 @@ for(const dx of [-21,21])for(const dz of [-21,21]){
 const observationNeedle=createObservationNeedle(scene,{x:48,z:-48});
 // Place Brewstone on the north side of the east-west street, opposite the dealership.
 // Its south-facing entrance and patio face the road; the showroom stays unobstructed.
-const coffeeShop=createCoffeeShop(scene,{x:-72,z:-132});
+const coffeeShop=createCoffeeShop(scene,{x:-48,z:-132});
 // Walk-in showroom just west of Brewstone Coffee, with three fictional display vehicles.
 const dealership={
- x:-72,z:-48,isNear:(x,z,r=5.5)=>Math.hypot(x+72,z+48)<r,
+ x:-48,z:-48,isNear:(x,z,r=5.5)=>Math.hypot(x+48,z+48)<r,
  nearestCar:()=>null
 };
 import('./zerconda-dealership.js?v=20261117-isolated-v25')
- .then(({createDealership})=>Object.assign(dealership,createDealership(scene,{x:-72,z:-48})))
+ .then(({createDealership})=>Object.assign(dealership,createDealership(scene,{x:-48,z:-48})))
  .catch(err=>{console.error('Dealership asset failed (city continues):',err);
    if(status)status.textContent='City loaded; dealership asset unavailable: '+err.message;
  });
-const airDancers=addAirDancers(scene,{x:-72,z:-48});
+const airDancers=addAirDancers(scene,{x:-48,z:-48});
 const southBeach=createZercondaBeach(scene);
 
 // Ocean safety: remove legacy oversized pyramid/mountain meshes if a previous
