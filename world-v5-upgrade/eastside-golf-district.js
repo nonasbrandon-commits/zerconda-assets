@@ -199,16 +199,21 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
    }
   }
  }
- // North and south street edges, plus east perimeter. No structures on fairways.
- const northHomes=[[-125,-174],[-92,-174],[-59,-174],[-26,-174],[7,-174],[40,-174],[73,-174],[106,-174]];
- const southHomes=[[-125,179],[-92,179],[-59,179],[-26,179],[7,179],[40,179],[73,179],[106,179]];
- for(let i=0;i<northHomes.length;i++){
-  const [hx,hz]=northHomes[i];courseEdgeBuilding(hx,hz,0,i%3===0?'apartment':'house',i+2);
- }
- for(let i=0;i<southHomes.length;i++){
-  const [hx,hz]=southHomes[i];courseEdgeBuilding(hx,hz,Math.PI,i%4===0?'apartment':'house',i+11);
- }
- for(let i=0;i<5;i++)courseEdgeBuilding(182,-105+i*48,-Math.PI/2,i%2===0?'apartment':'house',i+22);
+ // Residential neighborhood outside the course, with deliberate empty parcels and buffers.
+ // Keep low houses closest to the greens; apartment blocks belong farther back.
+ // Avoid the original ten modernHome plots at z +/-151 and the golf-club at (-125,-122).
+ const courseEdgePlots=[
+  [-122,-220,0,'house'],[-78,-220,0,'house'],[-34,-220,0,'house'],
+  [10,-220,0,'house'],[54,-220,0,'house'],[98,-220,0,'house'],
+  [-122,225,Math.PI,'house'],[-78,225,Math.PI,'house'],[-34,225,Math.PI,'house'],
+  [10,225,Math.PI,'house'],[54,225,Math.PI,'house'],[98,225,Math.PI,'house'],
+  [235,-125,-Math.PI/2,'house'],[235,-65,-Math.PI/2,'house'],
+  [235,-5,-Math.PI/2,'house'],[235,55,-Math.PI/2,'house'],
+  [-123,-264,0,'apartment'],[-65,-264,0,'apartment'],
+  [5,-264,0,'apartment'],[75,-264,0,'apartment'],
+  [-85,276,Math.PI,'apartment'],[5,276,Math.PI,'apartment'],[95,276,Math.PI,'apartment']
+ ];
+ courseEdgePlots.forEach(([px,pz,rot,kind],i)=>courseEdgeBuilding(px,pz,rot,kind,i+30));
  // Clubhouse: covered entrance, glazing, porch, terrace and sign.
  const club=new THREE.Group();club.position.set(-125,0,-122);course.add(club);
  box(club,0,3.3,0,25,6.6,14,brick);
@@ -227,5 +232,5 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  sign.position.set(0,5.1,7.28);club.add(sign);
  // Entry connection, no blocking the coastal beach.
  box(root,306,-.10,-48,140,.16,11,road);
- return {root,center:{x,z},holes:holes.length,residentialBuildings:47,bounds:{minX:100,maxX:575,minZ:-200,maxZ:110}};
+ return {root,center:{x,z},holes:holes.length,residentialBuildings:49,bounds:{minX:100,maxX:575,minZ:-200,maxZ:110}};
 }
