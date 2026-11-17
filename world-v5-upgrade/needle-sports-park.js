@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Public park north of the Observation Needle. All features are traversable scenery.
 export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
  const root=new THREE.Group();root.name='Needle Park - tennis basketball fish pond';root.position.set(x,0,z);scene.add(root);
@@ -116,14 +117,26 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
   for(const sx of [-1,1])box(.13,.56,.56,sx*1,.28,0,metal,g);
  }
  for(const [bx,bz,rot] of [[-29,-37,0],[29,-37,Math.PI],[-29,42,0],[29,42,Math.PI],[0,48,0],[-27,-12,0]])bench(bx,bz,rot);
+ const parkTreeGroups=[];
  function tree(px,pz,h){
   cyl(.23,.34,h*.54,px,h*.27,pz,mat(0x73543b),9);
-  const crown=new THREE.Group();crown.position.set(px,h*.65,pz);root.add(crown);
+  const crown=new THREE.Group();crown.position.set(px,h*.65,pz);root.add(crown);parkTreeGroups.push({crown,px,pz,h});
   const leaf=mat(0x3b7041);for(let k=0;k<7;k++){
    const a=k*Math.PI*2/7,r=k===0?0:1.3;
    const m=new THREE.Mesh(new THREE.IcosahedronGeometry(h*.23,1),leaf);m.position.set(Math.cos(a)*r,k===0?h*.08:0,Math.sin(a)*r);m.scale.y=.8;crown.add(m);
   }
  }
  for(const [tx,tz,h] of [[-30,-46,8],[30,-46,8],[-30,49,8],[30,49,8],[-29,-12,7],[29,-12,7]])tree(tx,tz,h);
+ // Replace geometric lollipop foliage and its trunk with a complete textured GLB tree.
+ new GLTFLoader().load('https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/trees-and-vehicles/trees/leafy-small-tree.glb',gltf=>{
+  const base=gltf.scene,bb=new THREE.Box3().setFromObject(base),sz=bb.getSize(new THREE.Vector3());
+  if(sz.y<.01)return;
+  for(const {crown,h} of parkTreeGroups){
+   crown.clear();const model=base.clone(true),scale=h/sz.y;model.scale.setScalar(scale);
+   model.position.set(-bb.getCenter(new THREE.Vector3()).x*scale,-h*.65-bb.min.y*scale,-bb.getCenter(new THREE.Vector3()).z*scale);
+   model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});crown.add(model);
+  }
+  // Original cylindrical trunks are intentionally retained as a fallback support.
+ },undefined,e=>console.warn('Needle park tree model failed',e));
  return {root,update(t){for(const q of fish){const a=t*q.speed+q.phase;q.f.position.x=Math.cos(a)*q.r;q.f.position.z=Math.sin(a)*q.r*.58;q.f.rotation.y=-a;}}};
 }
