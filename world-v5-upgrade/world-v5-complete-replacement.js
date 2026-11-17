@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
 import {createCloudSky} from './cloud-sky.js';
-import {addCityDepth} from './city-depth-assets.js';
+import {addCityDepth} from './city-depth-assets.js?v=20261117-wilderness-v17';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js';
 import {createApartmentExperience} from './apartment-interiors.js';
@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-koi-water-v16';
+const ZERCONDA_BUILD='2026-11-17-wilderness-v17';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -238,26 +238,43 @@ function wallSegment(x1,z1,x2,z2){
 }
 wallSegment(-276,-285,570,-285);wallSegment(-276,242,570,242);
 wallSegment(-276,-285,-276,242);wallSegment(570,-285,570,242);
-// Distant mountain silhouettes beyond the playable wall, with layered terrain.
-const mountainMaterials=[
- new THREE.MeshStandardMaterial({color:0x66766d,roughness:1,flatShading:true}),
- new THREE.MeshStandardMaterial({color:0x849087,roughness:1,flatShading:true}),
- new THREE.MeshStandardMaterial({color:0x586d64,roughness:1,flatShading:true})
-];
-function mountainRidge(x,z,width,height,mat){
- const shape=new THREE.Shape();shape.moveTo(-width/2,0);
- const n=13;for(let i=0;i<=n;i++){
-  const xx=-width/2+i*width/n;
-  const peak=(.28+.72*Math.pow(Math.max(0,1-Math.abs(i-n/2)/(n/2)),1.3));
-  shape.lineTo(xx,height*peak*(.84+.16*Math.sin(i*2.3+width)));
+// Actual three-dimensional mountain terrain beyond the perimeter, with
+// rugged triangulated slopes and snow-capped upper elevations.
+const mountainRock=new THREE.MeshStandardMaterial({color:0x69746e,roughness:1,flatShading:true,side:THREE.DoubleSide});
+const mountainSnow=new THREE.MeshStandardMaterial({color:0xdde4e5,roughness:.94,flatShading:true,side:THREE.DoubleSide});
+function mountain3D(cx,cz,radius,height,seed){
+ const rings=9,segments=20,vertices=[],indices=[],materials=[];
+ for(let j=0;j<=rings;j++){
+  const t=j/rings;
+  for(let k=0;k<segments;k++){
+   const angle=k*Math.PI*2/segments;
+   const jag=1+.13*Math.sin(k*2.7+seed)+.09*Math.cos(k*5.1+seed*3+j);
+   const rad=radius*(1-t)*jag;
+   vertices.push(cx+Math.cos(angle)*rad,height*t+Math.sin(k*3.3+j*2+seed)*height*.035*(1-t),cz+Math.sin(angle)*rad);
+  }
  }
- shape.lineTo(width/2,0);shape.closePath();
- const mesh=new THREE.Mesh(new THREE.ShapeGeometry(shape),mat);
- mesh.position.set(x,0,z);mesh.material.side=THREE.DoubleSide;mesh.castShadow=false;scene.add(mesh);
+ for(let j=0;j<rings;j++)for(let k=0;k<segments;k++){
+  const n=j*segments+k,next=j*segments+(k+1)%segments;
+  const up=n+segments,upNext=next+segments;
+  const start=indices.length;indices.push(n,next,upNext,n,upNext,up);
+  materials.push({start,count:6,materialIndex:j>=6?1:0});
+ }
+ const geometry=new THREE.BufferGeometry();
+ geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
+ geometry.setIndex(indices);geometry.computeVertexNormals();
+ for(const g of materials)geometry.addGroup(g.start,g.count,g.materialIndex);
+ const mesh=new THREE.Mesh(geometry,[mountainRock,mountainSnow]);
+ mesh.name='3D wilderness mountain';mesh.castShadow=false;mesh.receiveShadow=true;scene.add(mesh);
 }
 for(let i=0;i<13;i++){
- mountainRidge(-440+i*105,-460-(i%3)*35,165,55+(i%5)*12,mountainMaterials[i%3]);
- mountainRidge(-440+i*105,410+(i%3)*35,165,55+(i%5)*12,mountainMaterials[i%3]);
+ const x=-430+i*100;
+ mountain3D(x,-590-(i%3)*85,105+(i%4)*22,85+(i%5)*19,i+2);
+ mountain3D(x,550+(i%3)*85,105+(i%4)*22,85+(i%5)*19,i+17);
+}
+for(let i=0;i<9;i++){
+ const z=-480+i*120;
+ mountain3D(-530-(i%3)*65,z,125,100+(i%4)*22,i+30);
+ mountain3D(810+(i%3)*65,z,125,100+(i%4)*22,i+44);
 }
 // Forest is populated with existing real GLB tree assets after asynchronous loading.
 function populateOuterForest(){
