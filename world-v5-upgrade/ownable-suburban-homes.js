@@ -98,7 +98,9 @@ export function createOwnableHomes(scene){
  }
  for(let row=0;row<5;row++)for(let column=0;column<2;column++){
   const id=11+row*2+column;
-  const x=-210+column*27,z=-67+row*28;
+  // Dedicated lots between cross-streets; keep full 25m plot off z=-96, 0, 96.
+  const detachedLotZ=[-204,-166,-130,-62,-30];
+  const x=-210+column*27,z=detachedLotZ[row];
   const g=new THREE.Group();g.name='Detached family home '+id;g.position.set(x,0,z);root.add(g);
   const w=14.2,d=15.4,h=6.65,base=wall[(id+1)%wall.length];
   box(g,21,.1,25,0,.025,0,lawn);
