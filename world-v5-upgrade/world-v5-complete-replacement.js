@@ -582,7 +582,9 @@ function cloneNormalized(source,x,z,targetHeight,angle=0){
  const s=targetHeight/size.y;
  g.scale.setScalar(s);
  g.position.set(x-center.x*s,-bounds.min.y*s,z-center.z*s);
- g.rotation.y=angle;
+ // Align the vehicle's actual long axis with the road, regardless of GLB export orientation.
+ const longAxisX=size.x>size.z*1.12;
+ g.rotation.y=angle+(longAxisX?Math.PI/2:0);
  g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
  scene.add(g);return g;
 }
