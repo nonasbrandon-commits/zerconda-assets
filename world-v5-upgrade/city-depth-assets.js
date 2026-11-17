@@ -173,6 +173,7 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    if(x-w/2<=-266||x+w/2>=560||z-d/2<=-275||z+d/2>=115)continue;
    if(Math.abs(x-140)<w/2+24&&Math.abs(z-35)<d/2+18)continue; // Luxe Lanes footprint and access
    if(Math.abs(x-188)<w/2+17&&Math.abs(z-61)<d/2+15)continue; // Boutique footprint
+   if(x+w/2> -270&&x-w/2< -125&&z+d/2>49&&z-d/2<82)continue; // Premier homes replace the tower behind the western houses
    skylineTower(x,z,w,d,h,total++);
   }
  }

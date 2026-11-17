@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import {createZercondaNews} from './zerconda-news.js?v=20261117-news-v80';
+import {createPremierHomes} from './premier-homes.js?v=20261117-spacious-v81';
+import {createZercondaNews} from './zerconda-news.js?v=20261117-spacious-v81';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261117-clothing-v80';
 import {createBowlingAlley} from './bowling-alley.js?v=20261117-bowling-v79';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261117-apartments-v78';
@@ -14,16 +15,16 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
 import {createCloudSky} from './cloud-sky.js';
-import {addCityDepth} from './city-depth-assets.js?v=20261117-news-v80';
+import {addCityDepth} from './city-depth-assets.js?v=20261117-spacious-v81';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js?v=20261117-commerce-restore-v69';
-import {createApartmentExperience,apartmentCapacity} from './apartment-interiors.js?v=20261117-apartments-v78';
+import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261117-spacious-v81';
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261117-interiors-v1';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 import {addAirDancers} from './air-dancers.js';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261117-pier-v76';
-import {createCityMap} from './top-city-map.js?v=20261117-news-v80';
+import {createCityMap} from './top-city-map.js?v=20261117-spacious-v81';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261117-coastal-v77';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-touch-v75';
@@ -32,7 +33,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-zen-pond-v73';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-news-v80';
+const ZERCONDA_BUILD='2026-11-17-spacious-v81';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -135,8 +136,11 @@ function architecturalWindow(group,cx,cy,cz,width,height,face='front'){
 }
 const geo=new THREE.BoxGeometry(1,1,1);
 const walkSurfaces=[];
-let club=null,needleSportsPark=null,ownableHomes=null,marine=null,coastal=null,scooters=null,bowling=null,boutique=null,news=null;
+let club=null,needleSportsPark=null,ownableHomes=null,marine=null,coastal=null,scooters=null,bowling=null,boutique=null,news=null,apartmentExperience=null,premier=null;const apartmentExteriors=[];
 function groundHeightAt(x,z){
+ const premiumY=premier?.heightAt(x,z);if(premiumY!==null&&premiumY!==undefined)return premiumY;
+ if(apartmentExperience?.active){const y=apartmentExperience.heightAt(x,z);if(y!==null)return y;}
+ for(const b of apartmentExteriors){const y=b.approachHeight(x,z);if(y!==null)return y;}
  if(marine?.riding)return marine.riderY;
  if(bowling?.active)return 0;
  if(boutique?.active)return boutique.heightAt(x,z)??0;
@@ -373,65 +377,7 @@ function makeBuilding(x,z,w,d,h,type){
  const clearance=17;
  if(roadLines.some(c=>Math.abs(x-c)<w/2+clearance||Math.abs(z-c)<d/2+clearance))return;
 
- // Entirely new low-rise stucco residences, replacing the defective brick towers.
- // No signature kit, blue ornaments, glass layering, or legacy facade textures.
- const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
- const plaster=new THREE.MeshStandardMaterial({color:type%2?0xe5dfd2:0xd9d7cf,roughness:.92});
- const accent=new THREE.MeshStandardMaterial({color:0xb8b4aa,roughness:.9});
- const roofMat=new THREE.MeshStandardMaterial({color:0x535960,roughness:.82});
- const windowGlass=new THREE.MeshStandardMaterial({color:0x304650,metalness:.16,roughness:.3});
- const windowFrame=new THREE.MeshStandardMaterial({color:0xf5f3e9,roughness:.78});
- const entrance=new THREE.MeshStandardMaterial({color:0x524f4a,roughness:.72});
- const H=Math.min(h,13.5),levels=3;
- box(w,H,d,0,H/2,0,plaster,g);
- box(w+.7,.32,d+.7,0,H+.16,0,roofMat,g);
- box(w+.4,.22,d+.4,0,3.45,0,accent,g);
- for(let floor=0;floor<levels;floor++){
-  const yy=2.0+floor*3.55;
-  for(const sign of [-1,1]){
-   const frontCount=Math.max(3,Math.floor(w/5));
-   for(let k=0;k<frontCount;k++){
-    const xx=-w/2+(k+.5)*w/frontCount;
-    if(floor===0&&sign===1&&Math.abs(xx)<2)continue;
-    // Each opening has a single glass pane, a single frame and a sill.
-    box(1.85,2.0,.12,xx,yy,sign*(d/2+.12),windowFrame,g);
-    box(1.63,1.78,.14,xx,yy,sign*(d/2+.22),windowGlass,g);
-    box(2.05,.13,.27,xx,yy-1.08,sign*(d/2+.18),accent,g);
-   }
-   const sideCount=Math.max(3,Math.floor(d/5));
-   for(let k=0;k<sideCount;k++){
-    const zz=-d/2+(k+.5)*d/sideCount;
-    box(.12,2.0,1.85,sign*(w/2+.12),yy,zz,windowFrame,g);
-    box(.14,1.78,1.63,sign*(w/2+.22),yy,zz,windowGlass,g);
-    box(.27,.13,2.05,sign*(w/2+.18),yy-1.08,zz,accent,g);
-   }
-  }
- }
- box(2.6,3.0,.13,0,1.5,d/2+.18,entrance,g);
- box(3.6,.22,1.2,0,3.15,d/2+.65,roofMat,g);
- // Architectural depth: grounded stone base, horizontal cornices, entrance steps,
- // and window lintels. All details remain attached to the building footprint.
- const stone=new THREE.MeshStandardMaterial({color:0xa9a49a,roughness:.96});
- const cornice=new THREE.MeshStandardMaterial({color:0xece6d9,roughness:.83});
- box(w+.22,.55,d+.22,0,.28,0,stone,g);
- for(const elevation of [3.52,7.07,10.62]){
-   box(w+.45,.12,d+.45,0,elevation,0,cornice,g);
- }
- for(let step=0;step<3;step++)box(3.25,.13,.43,0,.07+step*.13,d/2+.48+step*.41,stone,g);
- for(const side of [-1,1]){
-   for(let floor=0;floor<levels;floor++){
-     const yy=2.0+floor*3.55;
-     const frontCount=Math.max(3,Math.floor(w/5));
-     for(let k=0;k<frontCount;k++){
-       const xx=-w/2+(k+.5)*w/frontCount;
-       if(floor===0&&side===1&&Math.abs(xx)<2)continue;
-       box(2.12,.12,.34,xx,yy+1.1,side*(d/2+.19),cornice,g);
-     }
-   }
- }
- const residence={x,z,w,d,h:H,id:'A-'+x+'-'+z,name:'Zerconda Apartments '+(buildings.length+1)};
- const capacity=apartmentCapacity(residence),signCanvas=document.createElement('canvas');signCanvas.width=1024;signCanvas.height=256;const signCtx=signCanvas.getContext('2d');signCtx.fillStyle='#28443e';signCtx.fillRect(0,0,1024,256);signCtx.textAlign='center';signCtx.fillStyle='#f4edda';signCtx.font='bold 53px system-ui';signCtx.fillText(residence.name.toUpperCase(),512,92,980);signCtx.font='38px system-ui';signCtx.fillText(capacity.total+' ONE-BEDROOM APARTMENTS · FOR SALE',512,175,980);const signTexture=new THREE.CanvasTexture(signCanvas);signTexture.colorSpace=THREE.SRGBColorSpace;const plaque=new THREE.Mesh(new THREE.PlaneGeometry(8,2),new THREE.MeshBasicMaterial({map:signTexture}));plaque.position.set(0,4.4,d/2+.29);g.add(plaque);
- buildings.push(residence);
+ const residence={x,z,w,d,h:10.9,id:'A-'+x+'-'+z,name:'Zerconda Apartments '+(buildings.length+1)};const street=apartmentStreet(residence);residence.angle=street.angle;residence.street=street.road;createApartmentExterior(scene,residence);apartmentExteriors.push(residence);buildings.push(residence);
 }
 
 const blocks=[
@@ -587,7 +533,7 @@ needleSportsPark=createNeedleSportsPark(scene,{x:48,z:-190});
 // Extend pedestrian access north from the existing street grid to the park entrance.
 box(4,.065,37,48,.005,-123,paving);
 for(const zz of [-112,-123,-134]){box(.18,.025,2,48,.06,zz,yellow);}
-const apartments=createApartmentExperience({scene,x:1050,z:1050,getPlayer:()=>player,onMessage:message=>townControls.notify(message),onTeleport:(x,y,z,heading)=>{yaw=heading;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;camera.position.set(x-Math.sin(yaw)*1.5,2,z-Math.cos(yaw)*1.5);}});
+const apartments=apartmentExperience=createApartmentExperience({scene,x:1050,z:1050,getPlayer:()=>player,onMessage:message=>townControls.notify(message),onTeleport:(x,y,z,heading)=>{yaw=heading;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;camera.position.set(x,y+1.68,z);}});
 apartments.root.visible=false;
 let apartmentSession=null,apartmentFloor=0;
 // The old cartoon fountain, tiled boxes, sphere bushes, and procedural benches
@@ -615,7 +561,7 @@ for(const c of roadLines){
     // Reserve the complete residential frontage plus tree-canopy clearance.
     if(z>72&&z<172&&Math.abs(x)<185)continue; // Protect entire beachside residential blocks, including full tree canopies
     if(x>12&&x<84&&z> -250&&z< -135||Math.abs(x+51.5)<12&&Math.abs(z+48)<44||Math.abs(x+72)<17&&Math.abs(z+48)<19||nearRoad(x,z,8.5)||insideBuilding(x,z,1.5)||inPlaza(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39||doors.some(d=>Math.hypot(x-d.x,z-d.z)<entranceClearance)||Math.abs(x+34)<22&&Math.abs(z+48)<23)continue;
-    if(club?.blocks(x,z)||ownableHomes.inLot(x,z)||Math.abs(x-126)<17&&Math.abs(z-69)<18||Math.abs(x-140)<28&&Math.abs(z-35)<23||Math.abs(x-188)<23&&Math.abs(z-61)<21||Math.abs(x-136)<25&&Math.abs(z+49)<25)continue;
+    if(club?.blocks(x,z)||ownableHomes.inLot(x,z)||apartmentExteriors.some(b=>Math.hypot(x-b.entry.x,z-b.entry.z)<5)||Math.abs(x-126)<17&&Math.abs(z-69)<18||Math.abs(x-140)<28&&Math.abs(z-35)<23||Math.abs(x-188)<23&&Math.abs(z-61)<21||Math.abs(x-136)<25&&Math.abs(z+49)<25||x< -125&&x> -270&&z>48&&z<84)continue;
     if(treeSpots.some(([a,b])=>Math.hypot(x-a,z-b)<10))continue;
     treeSpots.push([x,z]);
    }
@@ -842,9 +788,9 @@ const floorPanel=document.createElement('div');floorPanel.id='zerconda-apartment
 floorPanel.style.cssText='position:fixed;left:14px;top:85px;z-index:10001;background:rgba(15,30,42,.92);color:white;border-radius:10px;padding:12px;display:none;font:13px system-ui;max-width:290px';
 floorPanel.classList.add('town-source-panel');floorPanel.innerHTML='<b>ZERCONDA APARTMENTS</b><p>Choose a floor to visit:</p>';
 document.body.appendChild(floorPanel);
-function setApartmentFloor(f){if(!apartmentSession)return;apartmentFloor=f;apartments.showFloor(f);player.x=apartments.x;player.z=apartments.z+apartmentSession.building.d/2-1.5;yaw=Math.PI;camera.position.set(player.x,2.1,player.z+1.8);movement.vx=0;movement.vz=0;}
-function apartmentAction(){if(!apartmentSession)return;if(apartments.currentUnit){apartments.leaveUnit();return;}if(apartments.currentFloor!==0){setApartmentFloor(0);return;}const back=apartmentSession;apartments.hide();apartmentSession=null;floorPanel.style.display='none';player.x=back.x;player.z=back.z+3.4;movement.vx=0;movement.vz=0;camera.position.set(player.x,3.2,player.z+5);if(status)status.textContent='Exited apartment building';}
-function enterApartment(d){if(apartmentSession)return;const building=d.building||buildings.find(b=>Math.abs(d.x-b.x)<1&&Math.abs(d.z-b.z-b.d/2-1.4)<1);if(!building)return;apartmentSession={x:d.x,z:d.z,building};apartments.configure(building);apartments.root.visible=true;activeCar=null;setApartmentFloor(0);}
+function setApartmentFloor(f){if(!apartmentSession)return;apartmentFloor=f;apartments.showFloor(f);apartments.arrive();movement.vx=0;movement.vz=0;}
+function apartmentAction(){if(!apartmentSession)return;if(apartments.currentUnit){apartments.leaveUnit();return;}if(apartments.currentFloor!==0){setApartmentFloor(0);return;}const back=apartmentSession;apartments.hide();apartmentSession=null;floorPanel.style.display='none';player.x=back.x;player.z=back.z;movement.vx=0;movement.vz=0;camera.position.set(player.x,groundHeightAt(player.x,player.z)+2,player.z-2);}
+function enterApartment(d){if(apartmentSession)return;const building=d.building||buildings.find(b=>Math.hypot(d.x-b.entry.x,d.z-b.entry.z)<2);if(!building)return;apartmentSession={x:player.x,z:player.z,building};apartments.configure(building);apartments.root.visible=true;activeCar=null;setApartmentFloor(0);}
 // Legacy overlay cleanup: older Airo button can survive alongside the new UI.
 const fixLegacyDoorLabels=()=>{for(const b of document.querySelectorAll('button')){if(b!==doorButton&&/^(?:F\\s*[·:.\\-]\\s*)?(?:OPEN|CLOSE)\\s+DOORS?$/i.test((b.textContent||'').trim())){b.textContent='F · ENTER BUILDING';b.onclick=()=>toggleNearbyDoor();}}};
 fixLegacyDoorLabels();
@@ -902,7 +848,7 @@ addEventListener('keydown',e=>{if((ownableHomes.panelOpen||coastal?.panelOpen||a
 function nearestUniversalEntrance(){
  if(boutique?.active||bowling?.active||scooters?.riding||club?.active||activeCar||onObservationDeck||insideNeedleLobby||apartmentSession||universalSession||cafeInside||dealerInside)return null;
  let best=null,dist=4.7;
- for(const b of buildings){const x=b.x,z=b.z+b.d/2+1.4;const d=Math.hypot(player.x-x,player.z-z);if(d<dist){best={x,z,label:b.name,apartment:true,building:b};dist=d;}}
+ for(const b of buildings){const x=b.entry.x,z=b.entry.z;const d=Math.hypot(player.x-x,player.z-z);if(d<dist){best={x,z,label:b.name,apartment:true,building:b};dist=d;}}
  const home=ownableHomes.nearEntrance(player.x,player.z,4.7);if(home){const d=Math.hypot(player.x-home.entry.x,player.z-home.entry.z);if(d<dist){best={...home.entry,label:'Home '+home.id,home};dist=d;}}
  for(const h of ownableHomes.homes){if(!h.garageOpen)continue;const d=Math.hypot(player.x-h.garageEntry.x,player.z-h.garageEntry.z);if(d<dist){best={...h.garageEntry,label:'Home '+h.id+' garage',home:h,garage:true};dist=d;}}
 
@@ -982,8 +928,10 @@ scooters=createScooterRentals(scene,{getPlayer:()=>player,getYaw:()=>yaw,getHeig
 bowling=createBowlingAlley(scene,{getPlayer:()=>player,canEnter:()=>!boutique?.active&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=-.04;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x-Math.sin(yaw)*1.8,2.2,z-Math.cos(yaw)*1.8);}});
 boutique=createClothingBoutique(scene,{getPlayer:()=>player,canEnter:()=>!activeCar&&!scooters.riding&&!marine.riding&&!bowling.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,applyOutfit:o=>realisticPlayer.setOutfit(o),onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=-.04;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x-Math.sin(yaw)*1.8,y+2.2,z-Math.cos(yaw)*1.8);}});
 news=createZercondaNews(scene,{getPlayer:()=>player,canInteract:()=>!activeCar&&!scooters.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});
+premier=createPremierHomes(scene,{getPlayer:()=>player,canInteract:()=>!activeCar&&!scooters.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});
 addEventListener('keydown',e=>{if(e.code!=='KeyF'||e.repeat||club.gameOpen||(ownableHomes.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||news?.panelOpen)))||marine?.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;const action=townControls.activeActions[0];if(action){e.preventDefault();e.stopImmediatePropagation();townControls.activate(action.id);}},true);
 function walkable(x,z){
+ if(premier?.blocks(x,z,!!activeCar||!!scooters?.riding))return false;
  if(boutique?.active)return boutique.contains(x,z);
  if(boutique?.blocks(x,z)||news?.blocks(x,z))return false;
  if(bowling?.active)return bowling.contains(x,z);
@@ -1021,6 +969,7 @@ function animate(){
  bowling.update(dt);
  boutique.update(dt);
  news.update(dt);
+ premier.update(dt);
  eastsideGolf.update(dt);
  forestCheckpoint.update(dt);
  needleSportsPark.update(elapsed);
@@ -1095,19 +1044,20 @@ function animate(){
   const direction=new THREE.Vector3(Math.sin(heading),-Math.sin(driverLookPitch),Math.cos(heading));
   camera.lookAt(eyePos.clone().addScaledVector(direction,25));
  }else{
-  const indoors=boutique.active||bowling.active||!!coastal.homeAt(player.x,player.z)||club.active||ownableHomes.active||!!apartmentSession||!!universalSession||cafeInside||dealerInside;
+  const indoors=!!premier.at(player.x,player.z)||boutique.active||bowling.active||!!coastal.homeAt(player.x,player.z)||club.active||ownableHomes.active||!!apartmentSession||!!universalSession||cafeInside||dealerInside;
   const dist=marine.riding?7:indoors?2.4:onObservationDeck?2.8:insideNeedleLobby?1.6:5,eye=marine.riding?southBeach.ocean.heightAt(player.x,player.z)+1.5:onObservationDeck?observationNeedle.deckY+1.7:(indoors?1.65:2.1)+groundHeightAt(player.x,player.z);
   const target=new THREE.Vector3(player.x,eye,player.z);
   // Camera elevation and target elevation must not cancel one another.
   // Positive pitch looks UP, negative pitch looks DOWN, with full vertical range.
   const desired=new THREE.Vector3(player.x-Math.sin(yaw)*dist,eye+(indoors ? .45 : 1.15),player.z-Math.cos(yaw)*dist);
   camera.position.lerp(desired,Math.min(1,dt*8));
+  premier.clampCamera(camera.position,player.x,player.z);
   if(boutique.active)boutique.clampCamera(camera.position);
   if(bowling.active)bowling.clampCamera(camera.position);
   if(club.active)club.clampCamera(camera.position);
   if(ownableHomes.active)ownableHomes.clampCamera(camera.position);
   coastal.clampCamera(camera.position,player);
-  if(apartmentSession)apartments.clampCamera(camera.position);
+  if(apartmentSession){camera.position.set(player.x,groundHeightAt(player.x,player.z)+1.68,player.z);apartments.clampCamera(camera.position);}
   if(universalSession&&!universalSession.home){camera.position.x=THREE.MathUtils.clamp(camera.position.x,universalInteriors.x-7.0,universalInteriors.x+7.0);camera.position.z=THREE.MathUtils.clamp(camera.position.z,universalInteriors.z-8.5,universalInteriors.z+8.5);}
   camera.position.y=Math.max(onObservationDeck?observationNeedle.deckY+1.25:1.75,camera.position.y);
   const forward=new THREE.Vector3(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch));
@@ -1152,7 +1102,7 @@ function animate(){
  const nearSeat=nearestAvailableSeat();
  cafeButton.style.display=(sittingSeat||nearSeat)&&!activeCar?'block':'none';
  cafeButton.textContent=sittingSeat?'C · STAND UP':'C · SIT DOWN';
- const otherInterior=boutique.active||bowling.active||scooters.riding||marine.riding||club.active||ownableHomes.active||!!universalSession||!!apartmentSession||onObservationDeck||insideNeedleLobby;
+ const otherInterior=!!premier.at(player.x,player.z)||boutique.active||bowling.active||scooters.riding||marine.riding||club.active||ownableHomes.active||!!universalSession||!!apartmentSession||onObservationDeck||insideNeedleLobby;
  cafeEntryButton.style.display=(cafeInside||!activeCar&&!otherInterior&&!dealerInside&&nearCafeEntrance())?'block':'none';
  cafeEntryButton.textContent=cafeInside?'E · EXIT COFFEE SHOP':'E · ENTER COFFEE SHOP';
  dealerButton.style.display=(dealerInside||!activeCar&&!otherInterior&&!cafeInside&&dealership.isNear(player.x,player.z,5.5))?'block':'none';
