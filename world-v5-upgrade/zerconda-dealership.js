@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {createDetailedCar} from './detailed-fictional-cars.js?v=20261117-real-vehicles-v22';
+import {createDetailedCar} from './detailed-fictional-cars.js?v=20261117-syntax-fix-v24';
 import {createNaturalShrub} from './realistic-landscape-assets.js';
 // Zerconda Motors: original interactive 3D showroom with three fictional unbranded cars.
 export function createDealership(scene,{x=-62,z=-48}={}){
