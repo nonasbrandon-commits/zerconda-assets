@@ -26,6 +26,39 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
   box(root,236,.02,-48+side*8,300,.12,2.4,walk);
   for(let i=0;i<22;i++)tree(root,105+i*12,-48+side*19, .65+(i%3)*.07,i);
  }
+ // Raised pedestrian and golf-cart crossing at the eastside boulevard.
+ // Clear road deck below (5.2m); ramps connect north and south course paths.
+ const bridge=new THREE.Group();bridge.name='Golf course elevated pedestrian overpass';root.add(bridge);
+ const concrete=mat(0xa5a8a4,.88),rail=mat(0x46565c,.5),deck=mat(0xb8b5a8,.8);
+ const bx=290,roadZ=-48,deckY=6.3,bridgeWidth=5.2;
+ // Cross the boulevard north-to-south, perpendicular to traffic.
+ box(bridge,bx,deckY,roadZ,bridgeWidth,.38,27,deck);
+ for(const side of [-1,1]){
+  box(bridge,bx+side*2.45,deckY+1.05,roadZ,.12,2.1,27,rail);
+  for(let j=0;j<10;j++){
+   const zz=roadZ-12+j*2.65;
+   box(bridge,bx+side*2.45,deckY+.7,zz,.12,1.4,.12,rail);
+  }
+ }
+ // Accessible, gently sloping approaches start beyond both sidewalk edges.
+ for(const side of [-1,1]){
+  const rampLength=53,rampCenterZ=roadZ+side*(13.5+rampLength/2);
+  const ramp=new THREE.Mesh(new THREE.BoxGeometry(bridgeWidth,.35,rampLength),deck);
+  ramp.position.set(bx,deckY/2,rampCenterZ);
+  ramp.rotation.x=side*Math.atan2(deckY,rampLength);
+  bridge.add(ramp);
+  // Guardrails run the entire inclined ramp.
+  for(const edge of [-1,1]){
+   const bar=new THREE.Mesh(new THREE.BoxGeometry(.13,1.2,rampLength),rail);
+   bar.position.set(bx+edge*2.45,deckY/2+.75,rampCenterZ);
+   bar.rotation.x=ramp.rotation.x;bridge.add(bar);
+  }
+ }
+ for(const zz of [roadZ-13,roadZ+13]){
+  for(const xx of [bx-2.4,bx+2.4])box(bridge,xx,3.05,zz,.42,6.1,.42,concrete);
+ }
+ // Do not allow any fairway turf to cover the existing paved boulevard.
+ // Golf turf is drawn on either side of the street, never as one giant overlapping rectangle.
  // Apartments and houses precede the golf club. Their fronts face the boulevard.
  for(let i=0;i<16;i++){
   const side=i%2===0?-1:1,col=Math.floor(i/2),px=165+col*19,pz=-48+side*35;
@@ -53,7 +86,11 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  }
  // Course perimeter: grass, fairways, sand traps, water hazard, paths.
  const course=new THREE.Group();course.position.set(x,0,z);root.add(course);
+ // Course surface begins east of the access boulevard and leaves its road unobstructed.
  box(course,0,-.15,0,300,.25,260,rough);
+ // Restore the road corridor above turf with an asphalt strip and matching sidewalk.
+ box(root,236,.13,-48,300,.12,14,road);
+ for(const side of [-1,1])box(root,236,.17,-48+side*8,300,.12,2.4,walk);
  for(const [fx,fz,rx,rz,rotation] of [[-68,-63,65,25,-.28],[53,-5,85,26,.33],[-28,73,73,26,-.23]]){
   const f=oval(course,fx,fz,rx,rz,fairway,.04);f.rotation.z=rotation;
  }
