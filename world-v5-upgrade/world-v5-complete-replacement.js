@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-stone-wall-forest-v9';
+const ZERCONDA_BUILD='2026-11-17-sidewalk-corners-v10';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -170,6 +170,20 @@ for(const c of roadLines){
  }
  for(let p=roadWest+10;p<roadEast-10;p+=12){
   if(!roadLines.some(k=>Math.abs(p-k)<15))box(5,.014,.14,p,.038,c,yellow);
+ }
+}
+// Complete the four sidewalk corner returns at every road junction.
+// Previous straight runs stopped 14m from each crossing, leaving grass wedges.
+// These pads connect both sidewalk directions without covering the traffic lanes.
+for(const ix of roadLines)for(const iz of roadLines){
+ for(const sx of [-1,1])for(const sz of [-1,1]){
+  const cornerX=ix+sx*11.75,cornerZ=iz+sz*11.75;
+  const pad=box(4.5,.24,4.5,cornerX,.025,cornerZ,paving);
+  pad.castShadow=false;pad.receiveShadow=false;
+  // Two exposed edges facing the road; outer edges join the sidewalks.
+  const edgeX=box(.22,.25,4.5,ix+sx*9.61,.02,cornerZ,curb);
+  const edgeZ=box(4.5,.25,.22,cornerX,.02,iz+sz*9.61,curb);
+  edgeX.castShadow=false;edgeZ.castShadow=false;
  }
 }
 // Pedestrian crossing stripes at intersections, inside road only.
