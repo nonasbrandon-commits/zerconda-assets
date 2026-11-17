@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Zerconda original cafe set across the north street from Observation Needle.
 // Seats are local interactions; multiplayer presence needs a shared realtime server.
 export function createCoffeeShop(scene,{x=48,z=48}={}){
