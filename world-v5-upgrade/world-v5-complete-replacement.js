@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {createClothedPlayer} from './clothed-player.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
@@ -20,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-clean-brick-windows-casual-shirt-trousers';
+const ZERCONDA_BUILD='2026-11-17-original-clothed-player-v2';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -521,89 +522,13 @@ const avatar=playerRig.root;avatar.name='Zerconda player avatar';scene.add(avata
 let realAvatar=null,realAvatarMixer=null,realAvatarWalk=null,realAvatarIdle=null;
 const avatarBones={};
 const avatarRest={};
-function outfitVertexColors(model){
- // Dress the actual rigged human mesh without breaking its skeleton or skin weights.
- // Assign shirt, jeans, shoes, skin and hair to the original geometry vertices.
- model.updateMatrixWorld(true);
- const bounds=new THREE.Box3().setFromObject(model),height=bounds.max.y-bounds.min.y;
- const tmp=new THREE.Vector3(),color=new THREE.Color();
- const colors={shirt:new THREE.Color(0x28658c),jeans:new THREE.Color(0x947252),
-  shoe:new THREE.Color(0xe8e7e1),skin:new THREE.Color(0xc8906d),hair:new THREE.Color(0x392d28)};
- model.traverse(mesh=>{
-  if(!mesh.isMesh||!mesh.geometry?.attributes?.position)return;
-  const geo=mesh.geometry.clone(),pos=geo.attributes.position,arr=new Float32Array(pos.count*3);
-  for(let i=0;i<pos.count;i++){
-   tmp.fromBufferAttribute(pos,i);mesh.localToWorld(tmp);
-   const y=(tmp.y-bounds.min.y)/height;
-   // Dark hair at the crown, exposed skin on the head and hands.
-   const x=Math.abs(tmp.x-(bounds.min.x+bounds.max.x)/2)/height;
-   let material=y<.095?colors.shoe:y<.52?colors.jeans:y<.79?colors.shirt:colors.skin;
-   if(y>.91)material=colors.hair;
-   // Keep shoulders and upper arms covered by the blue shirt; expose only hands.
-   if(y>.40&&y<.59&&x>.31)material=colors.skin;
-   color.copy(material);
-   arr[i*3]=color.r;arr[i*3+1]=color.g;arr[i*3+2]=color.b;
-  }
-  geo.setAttribute('color',new THREE.BufferAttribute(arr,3));
-  mesh.geometry=geo;
-  const old=Array.isArray(mesh.material)?mesh.material[0]:mesh.material;
-  mesh.material=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.86,metalness:0,side:THREE.FrontSide,
-   skinning:!!mesh.isSkinnedMesh});
-  mesh.castShadow=true;mesh.receiveShadow=true;
- });
-}
-new GLTFLoader().load(BASE+'realistic-assets/characters/zerconda-humanoid.glb',gltf=>{
- const model=gltf.scene;
- model.updateMatrixWorld(true);
- const bounds=new THREE.Box3().setFromObject(model),size=bounds.getSize(new THREE.Vector3());
- if(!Number.isFinite(size.y)||size.y<.01)throw Error('Invalid humanoid GLB dimensions');
- // Previously this was PI, which made the character face the camera.
- model.rotation.y=0;
- outfitVertexColors(model);
- const scale=1.94/size.y;model.scale.setScalar(scale);model.position.y=-bounds.min.y*scale;
- model.traverse(o=>{if(o.isBone){const name=o.name.toLowerCase().replace(/[^a-z0-9]/g,'');avatarBones[name]=o;avatarRest[name]=o.rotation.clone();}});
- avatar.add(model);realAvatar=model;playerRig.torso.visible=false;
- playerRig.arms.forEach(a=>a.visible=false);playerRig.legs.forEach(l=>l.hip.visible=false);
- if(gltf.animations?.length){
-  realAvatarMixer=new THREE.AnimationMixer(model);
-  const find=(words)=>gltf.animations.find(c=>words.some(w=>c.name.toLowerCase().includes(w)));
-  const walk=find(['walk','run','jog']),idle=find(['idle','stand']);
-  if(walk)realAvatarWalk=realAvatarMixer.clipAction(walk);
-  if(idle)realAvatarIdle=realAvatarMixer.clipAction(idle);
-  if(realAvatarIdle)realAvatarIdle.play();
- }
- console.info('ZERCONDA: loaded dressed humanoid',Object.keys(avatarBones),gltf.animations.map(a=>a.name));
-},undefined,error=>console.error('Humanoid GLB unavailable',error));
-function updateRealAvatar(dt,time,speed){
- if(!realAvatar)return;
- if(realAvatarMixer){
-  realAvatarMixer.update(dt);
-  if(realAvatarWalk&&realAvatarIdle){
-   const moving=speed>.16;
-   if(moving&&!realAvatarWalk.isRunning())realAvatarWalk.reset().play();
-   realAvatarWalk.setEffectiveWeight(moving?1:0);
-   if(realAvatarIdle)realAvatarIdle.setEffectiveWeight(moving?0:1);
-   realAvatarWalk.timeScale=Math.max(.65,Math.min(1.8,speed/2.4));return;
-  }
- }
- // Rig has no animation clips: lower the T-pose arms into a natural rest pose,
- // then alternate hip/knee and arm swings while walking.
- const intensity=Math.min(1,speed/2.5),phase=Math.sin(time*8.2);
- for(const [name,bone] of Object.entries(avatarBones)){
-  const rest=avatarRest[name];bone.rotation.copy(rest);
-  // Verified actual GLB bone names: upperarm_l, upperarm_r, thigh_l,
-  // thigh_r, calf_l, calf_r (normalized to upperarml, thighr, etc).
-  const left=name.includes('left')||name.endsWith('l'),right=name.includes('right')||name.endsWith('r');
-  const side=left?1:right?-1:0;
-  if(/^upperarm[lr]$/.test(name)||/upperarm/.test(name)){
-   bone.rotation.z-=side*1.20;
-   bone.rotation.x+=side*phase*.24*intensity;
-  }
-  if(/(upperleg|upleg|thigh)/.test(name))bone.rotation.x+=side*phase*.48*intensity;
-  if(/(lowerleg|calf|shin)/.test(name))bone.rotation.x+=Math.max(0,-side*phase)*.53*intensity;
-  if(/(forearm|lowerarm)/.test(name))bone.rotation.x+=-.13;
- }
-}
+// The old recolored GLB is intentionally retired. Use actual clothing meshes.
+const dressedPlayer=createClothedPlayer();
+avatar.add(dressedPlayer.root);
+playerRig.torso.visible=false;
+playerRig.arms.forEach(a=>a.visible=false);
+playerRig.legs.forEach(l=>l.hip.visible=false);
+function updateRealAvatar(dt,time,speed){dressedPlayer.update(time,speed);}
 
 
 let activeCar=null,yaw=0,pitch=0,drag=false,lastX=0,lastY=0;
