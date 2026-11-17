@@ -72,6 +72,80 @@ export function createOwnableHomes(scene){
   const home={id,x,z,group:g,body,furniture,sign,baseColor:(id-1)%wall.length};
   homes.push(home);doorLabel(home,owned?.id===id?safeName(owned.username)||'OWNER':'FOR SALE');
  }
+ // Ten additional detached family houses in the open western residential expansion.
+ // Two rows of five, with individual garages, pitched shingle roofs, porches and driveways.
+ const shingles=new THREE.MeshStandardMaterial({color:0x504b47,roughness:.98});
+ const brick=new THREE.MeshStandardMaterial({color:0xb59b85,roughness:.95});
+ const garageDoor=new THREE.MeshStandardMaterial({color:0xdedbd2,roughness:.78});
+ const pane=new THREE.MeshStandardMaterial({color:0x456a7a,roughness:.22,metalness:.15});
+ function gable(g,ww,dd,y,centerX=0,centerZ=0){
+  const rise=2.5;
+  const roofShape=new THREE.Shape();
+  roofShape.moveTo(-ww/2-.35,0);roofShape.lineTo(0,rise);roofShape.lineTo(ww/2+.35,0);roofShape.closePath();
+  const roofGeo=new THREE.ExtrudeGeometry(roofShape,{depth:dd+.7,bevelEnabled:false});
+  roofGeo.computeVertexNormals();
+  const roofMesh=new THREE.Mesh(roofGeo,shingles);
+  roofMesh.position.set(centerX,y,centerZ-(dd+.7)/2);roofMesh.castShadow=true;roofMesh.receiveShadow=true;g.add(roofMesh);
+  for(const side of [-1,1]){
+   const slant=new THREE.Mesh(new THREE.BoxGeometry(Math.hypot(ww/2+.35,rise),.13,dd+.8),roof);
+   slant.rotation.z=side*Math.atan2(rise,ww/2+.35);
+   slant.position.set(centerX+side*(ww/4+.175),y+rise/2,centerZ);
+   slant.castShadow=true;g.add(slant);
+  }
+ }
+ for(let row=0;row<5;row++)for(let column=0;column<2;column++){
+  const id=11+row*2+column;
+  const x=-210+column*27,z=-67+row*28;
+  const g=new THREE.Group();g.name='Detached family home '+id;g.position.set(x,0,z);root.add(g);
+  const w=14.2,d=15.4,h=6.65,base=wall[(id+1)%wall.length];
+  box(g,21,.1,25,0,.025,0,lawn);
+  const body=box(g,w,h,d,0,h/2,0,base);
+  // Stone/brick main floor, upper siding, trim and pitched architectural roof.
+  box(g,w+.08,3.12,d+.08,0,1.56,0,id%2?brick:base);
+  box(g,w+.25,.2,d+.25,0,3.16,0,trim);
+  gable(g,w,d,h);
+  // Garage to the left of the main entry with raised panels and upper windows.
+  const garageX=-3.65,front=-d/2-.18;
+  box(g,5.5,3.1,.18,garageX,1.65,front,garageDoor);
+  for(let k=0;k<4;k++)box(g,5.2,.055,.06,garageX,.42+k*.68,front-.12,trim);
+  for(let k=0;k<4;k++)box(g,1.06,.38,.08,garageX-1.92+k*1.28,2.62,front-.15,pane);
+  // Covered entry porch, stone steps, front door and decorative columns.
+  box(g,4.6,.19,3.15,3.5,3.32,front-.9,shingles);
+  for(const xx of [1.45,5.55])box(g,.23,3.15,.23,xx,1.68,front-2.22,trim);
+  box(g,2.0,2.8,.17,3.5,1.42,front,wood);
+  box(g,.18,.18,.12,4.15,1.42,front-.13,garageDoor);
+  for(let step=0;step<3;step++)box(g,3.5,.14,.5,3.5,.1+step*.16,front-3.1+step*.46,concrete);
+  // Window openings represented by inset dark glass and dimensional white casing.
+  for(const yy of [1.82,5.02])for(const xx of [-4.6,-.65,3.8]){
+   if(yy<3&&xx<0)continue;
+   box(g,2.1,1.8,.12,xx,yy,front-.05,pane);
+   for(const sx of [-1,1])box(g,.12,2.05,.16,xx+sx*1.1,yy,front-.17,trim);
+   for(const sy of [-1,1])box(g,2.35,.12,.18,xx,yy+sy*.95,front-.17,trim);
+   box(g,.08,1.8,.17,xx,yy,front-.18,trim);
+   box(g,2.1,.07,.17,xx,yy,front-.18,trim);
+  }
+  for(const side of [-1,1])for(const zz of [-3.1,2.7]){
+   box(g,.12,1.75,2.1,side*(w/2+.09),4.65,zz,pane);
+  }
+  // Front walkway and individual driveway on each plot.
+  box(g,5.7,.09,11,garageX,.07,front-5.2,concrete);
+  box(g,2.15,.09,5.5,3.5,.08,front-4.7,concrete);
+  // Plantings and small front garden.
+  for(const xx of [-6.4,6.3]){
+   for(let k=0;k<3;k++){
+    const shrub=new THREE.Mesh(new THREE.IcosahedronGeometry(.37+(k%2)*.12,2),new THREE.MeshStandardMaterial({color:0x365b37,roughness:1}));
+    shrub.position.set(xx,.42,front-1.1+k*.9);shrub.castShadow=true;g.add(shrub);
+   }
+  }
+  const furniture=new THREE.Group();g.add(furniture);
+  box(furniture,2.7,.5,1.3,0,.5,2.3,wood);
+  box(furniture,2.8,.7,1.5,2,.55,3.2,new THREE.MeshStandardMaterial({color:palette[id%4],roughness:.9}));
+  furniture.visible=!!owned&&owned.id===id;
+  const sign=box(g,1.7,.85,.08,5.9,1.1,front-4,new THREE.MeshStandardMaterial({color:owned?.id===id?0x4e8d6e:0x204b69}));
+  box(g,.09,1.4,.09,5.9,.7,front-4,wood);
+  const home={id,x,z,group:g,body,furniture,sign,baseColor:(id+1)%wall.length};
+  homes.push(home);doorLabel(home,owned?.id===id?safeName(owned.username)||'OWNER':'FOR SALE');
+ }
  function closest(x,z,max=8){let best=null,dist=max;for(const home of homes){const d=Math.hypot(home.x-x,home.z-10-z);if(d<dist){best=home;dist=d;}}return best;}
  function buy(home,username){
   if(owned&&owned.id!==home.id)return {ok:false,message:'You can own only one home.'};
