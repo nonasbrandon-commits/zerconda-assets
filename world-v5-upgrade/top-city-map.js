@@ -51,6 +51,8 @@ export function createCityMap({player,beach={x:0,z:212}}){
   ctx.fillStyle='#5cae5a';ctx.fillRect(tx(-20),tz(-190),136*scale,105*270/527);
   label(48,-139,'SPORTS PARK','#ffffff');
   label(294,140,'CLUBHOUSE','#ffffff');
+  ctx.fillStyle='#a789b4';ctx.fillRect(tx(-78),tz(-32),60*scale,16*270/527);
+  label(-82,-8,'CLUB','#ead4ff');
   label(-48,-48,'AUTO');label(-48,-132,'COFFEE');label(-20,212,'BEACH','#ffffff');
   // Highly visible live player marker, drawn last so roads and labels never cover it.
   const px=tx(player.x),py=tz(player.z);frame++;

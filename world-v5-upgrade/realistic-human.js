@@ -9,7 +9,7 @@ const outfitCache=new Map();
 function source(){
  if(!sourcePromise){
   const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
-  sourcePromise=Promise.all(['human.glb','idle.glb','walk.glb','run.glb'].map(file=>loader.loadAsync(new URL(file,BASE).href)));
+  sourcePromise=Promise.all(['human.glb','idle.glb','walk.glb','run.glb','dance.glb'].map(file=>loader.loadAsync(new URL(file,BASE).href)));
  }
  return sourcePromise;
 }
@@ -52,9 +52,10 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
  const root=new THREE.Group();root.name='Textured realistic human';
  let mixer,actions,bones=[],active=null,ready=false;
  const soles=[],vertex=new THREE.Vector3(),parentPoint=new THREE.Vector3();
- const controller={root,get ready(){return ready;},update(dt,speed,{seated=false,backwards=false}={}){
+ const controller={root,get ready(){return ready;},update(dt,speed,options={}){
   if(!ready)return;
-  const mode=speed>.08?(speed>3.4?'run':'walk'):'idle';
+  const {seated=false,backwards=false}=options;
+  const mode=options.dancing?'dance':speed>.08?(speed>3.4?'run':'walk'):'idle';
   if(active!==mode){actions[mode].reset().fadeIn(.22).play();if(active)actions[active].fadeOut(.22);active=mode;}
   actions.walk.timeScale=(backwards?-1:1)*THREE.MathUtils.clamp(speed/1.35,.3,2.0);
   actions.run.timeScale=THREE.MathUtils.clamp(speed/4.1,.6,1.5);mixer.update(Math.min(dt,.08));
@@ -66,7 +67,7 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
   if(Number.isFinite(lowest)){const parentY=root.parent?.getWorldPosition(parentPoint).y||0;root.position.y+=parentY-lowest;}
   if(seated){for(const bone of bones){if(/thigh$/i.test(bone.name))bone.rotation.z+=1.1;if(/calf$/i.test(bone.name))bone.rotation.z-=1.3;}}
  }};
- controller.readyPromise=source().then(([character,idle,walk,run])=>{
+ controller.readyPromise=source().then(([character,idle,walk,run,dance])=>{
   character.scene.updateMatrixWorld(true);
   const model=cloneSkeleton(character.scene);model.updateMatrixWorld(true);
   const bounds=new THREE.Box3().setFromObject(model,true),size=bounds.getSize(new THREE.Vector3());
@@ -77,8 +78,9 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
    mesh.castShadow=true;mesh.receiveShadow=true;colorClothes(mesh,shirt,pants);
    if(mesh.isSkinnedMesh){const ids=[];for(let id=0;id<mesh.geometry.attributes.position.count;id++)if(mesh.getVertexPosition(id,vertex).applyMatrix4(mesh.matrixWorld).y<floor+.16)ids.push(id);if(ids.length)soles.push({mesh,ids});}
   }});
-  mixer=new THREE.AnimationMixer(model);actions={idle:mixer.clipAction(idle.animations[0]),walk:mixer.clipAction(walk.animations[0]),run:mixer.clipAction(run.animations[0])};
+  mixer=new THREE.AnimationMixer(model);actions={idle:mixer.clipAction(idle.animations[0]),walk:mixer.clipAction(walk.animations[0]),run:mixer.clipAction(run.animations[0]),dance:mixer.clipAction(dance.animations[0])};
   ready=true;controller.update(0,0);onReady();return controller;
  }).catch(error=>{console.error('Realistic character load failed',error);return controller;});
  return controller;
 }
+
