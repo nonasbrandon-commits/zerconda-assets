@@ -191,11 +191,7 @@ function fenceRun(x1,z1,x2,z2){
 }
 fenceRun(-276,-285,570,-285);fenceRun(-276,242,570,242);
 fenceRun(-276,-285,-276,242);fenceRun(570,-285,570,242);
-// Guard checkpoint at the east expansion gate. No exit until the world expands.
-for(const z of [-9,9]){
- box(.85,1.2,.55,565,1.1,z,guardMat);
- cylinder(.23,.23,.38,565,1.9,z,stone,scene,16);
-}
+// Guard characters require licensed realistic rigged assets; do not use primitive placeholders.
 // Facade texture generator: architectural materials, varied stonework,
 // window frames, lintels, sills, masonry joints and shopfronts.
 function facadeTexture(base,trimColor,glassColor,cols=5,floors=5){
