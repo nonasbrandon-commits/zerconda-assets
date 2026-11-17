@@ -177,12 +177,10 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    skylineTower(x,z,w,d,h,total++);
   }
  }
- // Road extensions outside the playable area prevent the asphalt ending abruptly.
- for(const c of [-96,0,96]){
-  // Terminate the north/south road at the beach promenade, never under the sea.
-  b(root,c,-.15,-117,19,.1,554,asphalt);
-  b(root,0,-.145,c,790,.1,19,asphalt);
- }
+ // Roads are owned exclusively by world-v5-complete-replacement.js.
+ // Do not draw duplicate continuous road slabs here: they previously
+ // resurfaced closed segments and overlaid landscaping and house plots.
+ // Background city depth only supplies buildings and street furniture.
  // Rich tower island details. All objects are outside the elevator approach.
  function planter(x,z){
   const g=new T.Group();g.position.set(x,0,z);root.add(g);
