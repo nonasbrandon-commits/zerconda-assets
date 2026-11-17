@@ -18,11 +18,11 @@ import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=202
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-road-clearance-v53';
 import {createPedestrians} from './animated-pedestrians.js';
-import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-remove-block-road-v62';
+import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-grass-trees-v63';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-remove-block-road-v62';
+const ZERCONDA_BUILD='2026-11-17-grass-trees-v63';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -591,13 +591,13 @@ for(const c of roadLines){
  for(let p=-145;p<=145;p+=23){
   if(roadLines.some(v=>Math.abs(p-v)<22))continue;
   for(const side of [-1,1]){
-   // 16.5m from centerline: beyond 9.5m asphalt and 4m sidewalk.
-   for(const [x,z] of [[c+side*16.5,p],[p,c+side*16.5]]){
+   // Leave room for the full tree base beyond the road, sidewalk and corner returns.
+   for(const [x,z] of [[c+side*19,p],[p,c+side*19]]){
     if(Math.abs(x)>162||Math.abs(z)>162)continue;
     // Coastal houses occupy z=135, with walls and balconies extending beyond the lot.
     // Reserve the complete residential frontage plus tree-canopy clearance.
     if(z>72&&z<172&&Math.abs(x)<185)continue; // Protect entire beachside residential blocks, including full tree canopies
-    if(x>12&&x<84&&z> -250&&z< -135||Math.abs(x+51.5)<12&&Math.abs(z+48)<44||Math.abs(x+72)<17&&Math.abs(z+48)<19||nearRoad(x,z,5.1)||insideBuilding(x,z,1.5)||inPlaza(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39||doors.some(d=>Math.hypot(x-d.x,z-d.z)<entranceClearance)||Math.abs(x+34)<22&&Math.abs(z+48)<23)continue;
+    if(x>12&&x<84&&z> -250&&z< -135||Math.abs(x+51.5)<12&&Math.abs(z+48)<44||Math.abs(x+72)<17&&Math.abs(z+48)<19||nearRoad(x,z,8.5)||insideBuilding(x,z,1.5)||inPlaza(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39||doors.some(d=>Math.hypot(x-d.x,z-d.z)<entranceClearance)||Math.abs(x+34)<22&&Math.abs(z+48)<23)continue;
     if(treeSpots.some(([a,b])=>Math.hypot(x-a,z-b)<10))continue;
     treeSpots.push([x,z]);
    }
@@ -656,12 +656,18 @@ function cloneNormalized(source,x,z,targetHeight,angle=0){
  if(size.y<.0001)return null;
  const s=targetHeight/size.y;
  g.scale.setScalar(s);
- g.position.set(x-center.x*s,-bounds.min.y*s,z-center.z*s);
+ g.position.set(0,0,0);
  // Align the vehicle's actual long axis with the road, regardless of GLB export orientation.
  const longAxisX=size.x>size.z;
  // Imported vehicles can have either local X or local Z as their forward axis.
  // Preserve curb-parallel alignment by mapping the measured long axis to the road.
  g.rotation.y=angle+(longAxisX?Math.PI/2:0);
+ // Imported origins can be far from the mesh. Center AFTER rotation so
+ // rotating an off-center tree cannot move its base into the street.
+ g.updateMatrixWorld(true);
+ const placedBounds=new THREE.Box3().setFromObject(g);
+ const placedCenter=placedBounds.getCenter(new THREE.Vector3());
+ g.position.set(x-placedCenter.x,-placedBounds.min.y,z-placedCenter.z);
  g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
  scene.add(g);return g;
 }

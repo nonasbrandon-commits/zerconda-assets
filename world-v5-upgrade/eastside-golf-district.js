@@ -24,6 +24,11 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  function box(parent,x,y,z,w,h,d,m){const mesh=new THREE.Mesh(boxGeo,m);mesh.position.set(x,y,z);mesh.scale.set(w,h,d);mesh.castShadow=h>1;mesh.receiveShadow=true;parent.add(mesh);return mesh;}
  function oval(parent,x,z,rx,rz,m,y=.07){const mesh=new THREE.Mesh(new THREE.CircleGeometry(1,48),m);mesh.rotation.x=-Math.PI/2;mesh.scale.set(rx,rz,1);mesh.position.set(x,y,z);mesh.receiveShadow=true;parent.add(mesh);return mesh;}
  function tree(parent,x,z,scale=1,seed=0){
+  // Check world coordinates, including trees parented to house/course groups.
+  parent.updateWorldMatrix(true,false);
+  const location=parent.localToWorld(new THREE.Vector3(x,0,z));
+  if([-96,0,96].some(c=>Math.abs(location.x-c)<18||Math.abs(location.z-c)<18))return;
+  if(location.x>257&&location.x<404&&Math.abs(location.z+48)<17)return;
   const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);parent.add(g);treeInstances.push({g,seed});
   // No cartoon placeholder crown. Model is loaded below; failed loads leave an empty planting location instead of lollipop trees.
  }
@@ -147,7 +152,11 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
   for(const {g,seed} of treeInstances){
    g.clear();const model=original.clone(true),scale=(8.5+(seed%4)*1.6)/sz.y;
    model.scale.setScalar(scale);model.position.set(-bb.getCenter(new THREE.Vector3()).x*scale,-bb.min.y*scale,-bb.getCenter(new THREE.Vector3()).z*scale);
-   model.rotation.y=seed*1.67;model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});g.add(model);
+   model.rotation.y=seed*1.67;
+   model.position.set(0,0,0);model.updateMatrixWorld(true);
+   const rotatedBounds=new THREE.Box3().setFromObject(model),center=rotatedBounds.getCenter(new THREE.Vector3());
+   model.position.set(-center.x,-rotatedBounds.min.y,-center.z);
+   model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});g.add(model);
   }
   console.info('ZERCONDA: golf district loaded actual GLB trees',treeInstances.length);
  },undefined,e=>console.warn('Golf GLB tree unavailable; fallback retained',e));
