@@ -22,7 +22,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-remove-dead-end-road-v59';
+const ZERCONDA_BUILD='2026-11-17-remove-tower-loop-road-v60';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -471,14 +471,11 @@ function towerSurface(w,d,x,z,material,y=.045){
  mesh.rotation.x=-Math.PI/2;mesh.position.set(x,y,z);
  mesh.receiveShadow=true;scene.add(mesh);return mesh;
 }
-// Four sides of a continuous road loop, 7.5 meters wide.
-for(const dz of [-33.25,33.25])towerSurface(74,7.5,48,-48+dz,loopRoadMaterial,.065);
-for(const dx of [-33.25,33.25])towerSurface(7.5,59,48+dx,-48,loopRoadMaterial,.065);
-// Connect loop to the existing grid road at z=0 and z=-96.
-towerSurface(9,11,48,-5.5,loopRoadMaterial,.067);
-towerSurface(9,11,48,-90.5,loopRoadMaterial,.067);
-// Raised inner pedestrian island, with generous room around the tower.
-towerSurface(57.5,57.5,48,-48,towerPavingMaterial,.09);
+// v60: remove the entire obsolete 74m tower-block asphalt loop and its
+// 57.5m solid grey center. This is the grey dead-end visible toward the white
+// building from player x=76,z=-44, NOT the x=96 city-grid street.
+// Leave the existing ground grass in place and retain the observation tower.
+// No duplicate paved overlay or connecting spur is created here.
 // Landscape pockets at the four corners of the tower island.
 for(const dx of [-21,21])for(const dz of [-21,21]){
  const bed=new THREE.Mesh(new THREE.CircleGeometry(6,32),towerLawnMaterial);
