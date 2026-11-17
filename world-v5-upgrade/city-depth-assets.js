@@ -151,6 +151,8 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    if(z>55)continue; // Preserve a broad clear coastal setback: no floating towers over the beach
    // Protect Needle Park's courts, pond and sightline from surrounding skyline towers.
    if(x>13&&x<83&&z> -250&&z< -135)continue;
+   // Golf course protected land: do not place background towers on fairways or clubhouse.
+   if(x>258&&x<590&&z>-220&&z<112)continue;
    const w=14+rnd()*12,d=12+rnd()*13,h=28+rnd()*40+(ring===2&&total%8===0?20:0);
    // Reserve full road and sidewalk corridors, including the actual building footprint.
    // The old radial placement allowed skyscrapers to intersect the extended roads.
