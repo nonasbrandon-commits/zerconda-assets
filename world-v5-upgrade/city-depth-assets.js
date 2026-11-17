@@ -184,6 +184,9 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
  }
  // Replace the brick tower at the southeast plaza-side corner with scooter rentals.
  for(const g of [...root.children])if(g.isGroup&&g.position.x>120&&g.position.x<150&&g.position.z>40&&g.position.z<65&&g.children.length>100){root.remove(g);total--;}
+ // The community skate park replaces the tower east of Luxe Lanes.
+ const skateBounds=new T.Box3(new T.Vector3(166,-1,14),new T.Vector3(212,200,44));
+ for(const g of [...root.children])if(g.isGroup&&g.children.length>100&&new T.Box3().setFromObject(g).intersectsBox(skateBounds)){root.remove(g);total--;}
  // Remove all skyline structures in the public forest lot, including relocated towers.
  const campBounds=new T.Box3(new T.Vector3(-266,-1,-274),new T.Vector3(-116,200,-151));
  for(const g of [...root.children])if(g.isGroup&&g.children.length>100&&new T.Box3().setFromObject(g).intersectsBox(campBounds)){root.remove(g);total--;}

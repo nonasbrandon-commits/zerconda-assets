@@ -76,6 +76,7 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
   actions.run.timeScale=THREE.MathUtils.clamp(speed/4.1,.6,1.5);mixer.update(Math.min(dt,.08));
   // Authored clips animate the skeleton in place; world movement is game-controlled.
   const hip=bones.find(b=>b.name==='Bip01');if(hip){hip.position.x=hip.userData.restX;hip.position.z=hip.userData.restZ;}
+  if(options.skating){for(const bone of bones){if(/thigh$/i.test(bone.name))bone.rotation.z+=.26;if(/calf$/i.test(bone.name))bone.rotation.z-=.5;if(/foot$/i.test(bone.name))bone.rotation.z+=.24;if(/UpperArm$/i.test(bone.name))bone.rotation.x+=.18;}}
   root.updateWorldMatrix(true,false);root.updateMatrixWorld(true);
   let lowest=Infinity;
   for(const {mesh,ids} of soles)for(const id of ids)lowest=Math.min(lowest,mesh.getVertexPosition(id,vertex).applyMatrix4(mesh.matrixWorld).y);
@@ -108,4 +109,5 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
  }).catch(error=>{console.error('Realistic character load failed',error);return controller;});
  return controller;
 }
+
 
