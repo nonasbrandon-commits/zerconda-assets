@@ -585,15 +585,17 @@ function updateRealAvatar(dt,time,speed){
  const intensity=Math.min(1,speed/2.5),phase=Math.sin(time*8.2);
  for(const [name,bone] of Object.entries(avatarBones)){
   const rest=avatarRest[name];bone.rotation.copy(rest);
-  const left=name.includes('left')||name.startsWith('l_'),right=name.includes('right')||name.startsWith('r_');
+  // Verified actual GLB bone names: upperarm_l, upperarm_r, thigh_l,
+  // thigh_r, calf_l, calf_r (normalized to upperarml, thighr, etc).
+  const left=name.includes('left')||name.endsWith('l'),right=name.includes('right')||name.endsWith('r');
   const side=left?1:right?-1:0;
-  if(/(upperarm|arm)$/.test(name)&&!/(forearm|lowerarm)/.test(name)){
-   bone.rotation.z+=side*1.18;
-   bone.rotation.x+=side*phase*.33*intensity;
+  if(/^upperarm[lr]$/.test(name)||/upperarm/.test(name)){
+   bone.rotation.z+=side*1.12;
+   bone.rotation.x+=side*phase*.32*intensity;
   }
-  if(/(upperleg|upleg|thigh)/.test(name))bone.rotation.x+=side*phase*.42*intensity;
-  if(/(lowerleg|calf|shin|leg)$/.test(name)&&!/(upperleg|upleg)/.test(name))bone.rotation.x+=Math.max(0,-side*phase)*.48*intensity;
-  if(/(forearm|lowerarm)/.test(name))bone.rotation.x+=-.10;
+  if(/(upperleg|upleg|thigh)/.test(name))bone.rotation.x+=side*phase*.48*intensity;
+  if(/(lowerleg|calf|shin)/.test(name))bone.rotation.x+=Math.max(0,-side*phase)*.53*intensity;
+  if(/(forearm|lowerarm)/.test(name))bone.rotation.x+=-.13;
  }
 }
 
