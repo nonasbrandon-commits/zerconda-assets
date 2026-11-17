@@ -23,14 +23,14 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:
  const status=document.getElementById('status');
  let loaded=false;
  function report(msg){status.textContent=msg;status.style.color='#ffdfb2';console.error('ZERCONDA LOAD:',msg);}
- window.addEventListener('error',e=>{if(!loaded)report('3D loading error: '+(e.message||e.filename||'unknown script error'));});
- window.addEventListener('unhandledrejection',e=>{if(!loaded)report('3D module error: '+(e.reason?.message||String(e.reason)));});
+ window.addEventListener('error',e=>{report('3D loading error: '+(e.message||e.filename||'unknown script error'));});
+ window.addEventListener('unhandledrejection',e=>{report('3D module error: '+(e.reason?.message||String(e.reason)));});
  window.addEventListener('zerconda-ready',()=>{loaded=true;});
  setTimeout(()=>{if(!loaded&&status.textContent.includes('Loading'))report('3D module did not start. Open browser console for network or import errors.');},12000);
 })();
 </script>
 <script type="module">
-import('./world-v5-complete-replacement.js?v=20261117-avatar-architecture-v31')
+import('./world-v5-complete-replacement.js?v=20261117-world-recovery-v33')
  .then(()=>window.dispatchEvent(new Event('zerconda-ready')))
  .catch(e=>{document.getElementById('status').textContent='3D module failed: '+e.message;console.error(e);});
 </script>
