@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-sidewalk-corners-v10';
+const ZERCONDA_BUILD='2026-11-17-remove-stray-curbs-v11';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -389,13 +389,9 @@ for(const dx of [-21,21])for(const dz of [-21,21]){
  bed.rotation.x=-Math.PI/2;bed.position.set(48+dx,.108,-48+dz);
  bed.receiveShadow=true;scene.add(bed);
 }
-// Lane-edge curbs: do not block the 9m entrance/exit road openings.
-const curbMaterial=stone;
-for(const dz of [-28.8,28.8]){
- box(27,.18,.3,16.2,.17,-48+dz,curbMaterial);
- box(27,.18,.3,79.8,.17,-48+dz,curbMaterial);
-}
-for(const dx of [-28.8,28.8])box(.3,.18,57,48+dx,.17,-48,curbMaterial);
+// Removed elevated decorative curb strips around the tower loop.
+// They projected as stray white lines across nearby roadway and sidewalk.
+// Existing sidewalk edges remain defined by the road grid.
 const observationNeedle=createObservationNeedle(scene,{x:48,z:-48});
 const coffeeShop=createCoffeeShop(scene,{x:-34,z:-48});
 // Walk-in showroom just west of Brewstone Coffee, with three fictional display vehicles.
