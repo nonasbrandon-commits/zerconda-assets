@@ -156,6 +156,59 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
   }
  }
  for(const [hx,hz,rot,v] of [[-116,151,Math.PI,0],[-76,151,Math.PI,1],[-36,151,Math.PI,2],[10,151,Math.PI,3],[55,151,Math.PI,4],[100,151,Math.PI,5],[-116,-153,0,6],[-68,-153,0,7],[14,-153,0,8],[84,-153,0,9]])modernHome(hx,hz,rot,v);
+ // Additional course-edge neighborhood: keep every building outside the 300 x 260m fairway.
+ // Buildings are intentionally varied in width, roofline, setback and exterior finish.
+ const districtStone=[mat(0xb6a999),mat(0xc7b9a7),mat(0x9d806f),mat(0xd1c9ba)];
+ const districtBrick=[mat(0x986c5e),mat(0xae8572),mat(0x87665d)];
+ function courseEdgeBuilding(px,pz,rot,kind,seed){
+  const g=new THREE.Group();g.position.set(px,0,pz);g.rotation.y=rot;course.add(g);
+  const isApartment=kind==='apartment';
+  const w=isApartment?17+seed%3*3:17+seed%2*4;
+  const d=isApartment?13:16;
+  const floors=isApartment?3+seed%3:2;
+  const h=floors*3.25;
+  const wall=isApartment?districtBrick[seed%districtBrick.length]:districtStone[seed%districtStone.length];
+  const dark=mat(0x293239,.45),light=mat(0xe4ddd0),metal=mat(0x4c5559,.32);
+  box(g,0,h/2,0,w,h,d,wall);
+  // Varied roof profile and pronounced cornices give the silhouette depth.
+  box(g,0,h+.24,0,w+.8,.48,d+.8,dark);
+  if(!isApartment){
+   box(g,-w*.2,h+1.1,0,w*.54,1.7,d*.67,light);
+   box(g,-w*.2,h+2.05,0,w*.58,.22,d*.72,dark);
+   box(g,w*.25,2.05,-d*.51,w*.37,3.35,.25,dark); // garage frontage
+   box(g,-w*.25,1.65,-d*.52,2.4,3.1,.2,metal);
+  }
+  for(let floor=0;floor<floors;floor++)for(let bay=0;bay<4;bay++){
+   const xx=(bay-1.5)*w*.225, yy=1.75+floor*3.25;
+   for(const face of [-1,1]){
+    box(g,xx,yy,face*(d/2+.09),w*.155,2.12,.14,homeGlass);
+    box(g,xx,yy+1.13,face*(d/2+.16),w*.17,.12,.24,light);
+    if(isApartment&&floor>0&&bay===1){
+     box(g,xx,yy-1.05,face*(d/2+.92),w*.18,.14,1.65,light);
+     box(g,xx,yy-.36,face*(d/2+1.73),w*.18,.85,.08,metal);
+    }
+   }
+  }
+  box(g,0,.1,-d/2-4,w*.65,.15,7,walk);
+  for(const dx of [-w*.43,w*.43]){
+   const plant=new THREE.Group();plant.position.set(dx,0,-d/2-1.7);g.add(plant);
+   // Layered ornamental plant clusters, away from the golf greens.
+   for(let i=0;i<5;i++){
+    const foliage=new THREE.Mesh(new THREE.IcosahedronGeometry(.45+(i%2)*.15,2),leaf[(seed+i)%leaf.length]);
+    foliage.position.set(Math.sin(i*2.5)*.6,.45+(i%3)*.15,Math.cos(i*2.5)*.6);plant.add(foliage);
+   }
+  }
+ }
+ // North and south street edges, plus east perimeter. No structures on fairways.
+ const northHomes=[[-125,-174],[-92,-174],[-59,-174],[-26,-174],[7,-174],[40,-174],[73,-174],[106,-174]];
+ const southHomes=[[-125,179],[-92,179],[-59,179],[-26,179],[7,179],[40,179],[73,179],[106,179]];
+ for(let i=0;i<northHomes.length;i++){
+  const [hx,hz]=northHomes[i];courseEdgeBuilding(hx,hz,0,i%3===0?'apartment':'house',i+2);
+ }
+ for(let i=0;i<southHomes.length;i++){
+  const [hx,hz]=southHomes[i];courseEdgeBuilding(hx,hz,Math.PI,i%4===0?'apartment':'house',i+11);
+ }
+ for(let i=0;i<5;i++)courseEdgeBuilding(182,-105+i*48,-Math.PI/2,i%2===0?'apartment':'house',i+22);
  // Clubhouse: covered entrance, glazing, porch, terrace and sign.
  const club=new THREE.Group();club.position.set(-125,0,-122);course.add(club);
  box(club,0,3.3,0,25,6.6,14,brick);
@@ -174,5 +227,5 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  sign.position.set(0,5.1,7.28);club.add(sign);
  // Entry connection, no blocking the coastal beach.
  box(root,306,-.10,-48,140,.16,11,road);
- return {root,center:{x,z},holes:holes.length,residentialBuildings:16,bounds:{minX:100,maxX:575,minZ:-200,maxZ:110}};
+ return {root,center:{x,z},holes:holes.length,residentialBuildings:47,bounds:{minX:100,maxX:575,minZ:-200,maxZ:110}};
 }
