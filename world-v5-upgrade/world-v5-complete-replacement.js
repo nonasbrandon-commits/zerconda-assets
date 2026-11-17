@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-roads-access-perimeter-v5';
+const ZERCONDA_BUILD='2026-11-17-asphalt-no-stripes-v6';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -77,20 +77,9 @@ function groundPBR(folder,name,repeat,tint=0xffffff){
 }
 // Neutral procedural asphalt: previous RoadLines001 photograph contained painted
 // markings that repeated across the ENTIRE road, causing a giant zebra pattern.
-const roadCanvas=document.createElement('canvas');roadCanvas.width=512;roadCanvas.height=512;
-const roadCtx=roadCanvas.getContext('2d');
-const roadPixels=roadCtx.createImageData(512,512);
-let roadSeed=83971;
-for(let i=0;i<roadPixels.data.length;i+=4){
- roadSeed=(Math.imul(roadSeed,1664525)+1013904223)>>>0;
- const grain=39+(roadSeed>>>24)%24;
- roadPixels.data[i]=grain;roadPixels.data[i+1]=grain;roadPixels.data[i+2]=grain;roadPixels.data[i+3]=255;
-}
-roadCtx.putImageData(roadPixels,0,0);
-const roadTexture=new THREE.CanvasTexture(roadCanvas);
-roadTexture.colorSpace=THREE.SRGBColorSpace;roadTexture.wrapS=roadTexture.wrapT=THREE.RepeatWrapping;
-roadTexture.repeat.set(45,45);roadTexture.anisotropy=8;
-const asphalt=new THREE.MeshStandardMaterial({map:roadTexture,roughness:.96,metalness:0});
+// Solid asphalt prevents repeated high-frequency canvas grain from creating
+// horizontal moire/striping across road surfaces at grazing camera angles.
+const asphalt=new THREE.MeshStandardMaterial({color:0x333638,roughness:0.98,metalness:0});
 const paving=groundPBR('PavingStones070','PavingStones070',18,0xe4ddd0);
 const curb=M(0xd7d2c8);
 const grass=groundPBR('Ground037','Ground037',65,0x94a68a);
