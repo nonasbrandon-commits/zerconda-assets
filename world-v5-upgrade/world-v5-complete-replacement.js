@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
 import {createCloudSky} from './cloud-sky.js';
-import {addCityDepth} from './city-depth-assets.js?v=20261117-house-clearance-v48';
+import {addCityDepth} from './city-depth-assets.js?v=20261117-road-clearance-v53';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js';
 import {createApartmentExperience} from './apartment-interiors.js';
@@ -16,13 +16,13 @@ import {createZercondaBeach} from './zerconda-beach.js?v=20261117-water-to-wall-
 import {createCityMap} from './top-city-map.js?v=20261117-open-beach-v18';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
-import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-clear-all-lots-v27';
+import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-road-clearance-v53';
 import {createPedestrians} from './animated-pedestrians.js';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-syntax-repair-v35';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-player-walk-v52';
+const ZERCONDA_BUILD='2026-11-17-road-clearance-v53';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
