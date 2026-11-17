@@ -24,11 +24,14 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  box(root,236,-.12,-48,300,.16,14,road);
  for(const side of [-1,1]){
   box(root,236,.02,-48+side*8,300,.12,2.4,walk);
-  for(let i=0;i<22;i++)tree(root,105+i*12,-48+side*12, .65+(i%3)*.07,i);
+  for(let i=0;i<22;i++)tree(root,105+i*12,-48+side*19, .65+(i%3)*.07,i);
  }
  // Apartments and houses precede the golf club. Their fronts face the boulevard.
  for(let i=0;i<16;i++){
   const side=i%2===0?-1:1,col=Math.floor(i/2),px=165+col*19,pz=-48+side*35;
+  // Keep houses away from all road surfaces, including the access boulevard.
+  // Skip any lot intersecting the eastside connecting road or central grid.
+  if(Math.abs(pz+48)<17 || (px<120 && [-96,0,96].some(v=>Math.abs(px-v)<19)))continue;
   const apartment=i%4===0||i%4===1;
   const g=new THREE.Group();g.position.set(px,0,pz);root.add(g);
   const w=apartment?14:12,d=apartment?16:13,h=apartment?14+(i%3)*3:6.8+(i%3)*.6;
@@ -45,7 +48,8 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
   }
   box(g,0,1.4,-d/2-.15,2.2,2.7,.2,wood);
   if(!apartment){box(g,4,1.4,-d/2-.15,3.4,2.7,.2,roof);box(g,4,.1,-d/2-5,4,.12,9,walk);}
-  tree(g,-w/2-2,3,.52,i);
+  // Tree stays on the rear landscaped lot, away from the boulevard.
+  tree(g,-w/2-2,side*4,.52,i);
  }
  // Course perimeter: grass, fairways, sand traps, water hazard, paths.
  const course=new THREE.Group();course.position.set(x,0,z);root.add(course);
