@@ -8,7 +8,7 @@ import {addCityDepth} from './city-depth-assets.js?v=20261117-restore-city-v21';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js';
 import {createApartmentExperience} from './apartment-interiors.js';
-import {createDealership} from './zerconda-dealership.js?v=20261117-syntax-fix-v24';
+// Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 import {addAirDancers} from './air-dancers.js';
 import {createZercondaBeach} from './zerconda-beach.js';
@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-load-fix-v24';
+const ZERCONDA_BUILD='2026-11-17-resilient-load-v25';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -427,7 +427,15 @@ for(const dx of [-21,21])for(const dz of [-21,21]){
 const observationNeedle=createObservationNeedle(scene,{x:48,z:-48});
 const coffeeShop=createCoffeeShop(scene,{x:-34,z:-48});
 // Walk-in showroom just west of Brewstone Coffee, with three fictional display vehicles.
-const dealership=createDealership(scene,{x:-72,z:-48});
+const dealership={
+ x:-72,z:-48,isNear:(x,z,r=5.5)=>Math.hypot(x+72,z+48)<r,
+ nearestCar:()=>null
+};
+import('./zerconda-dealership.js?v=20261117-isolated-v25')
+ .then(({createDealership})=>Object.assign(dealership,createDealership(scene,{x:-72,z:-48})))
+ .catch(err=>{console.error('Dealership asset failed (city continues):',err);
+   if(status)status.textContent='City loaded; dealership asset unavailable: '+err.message;
+ });
 const airDancers=addAirDancers(scene,{x:-72,z:-48});
 const southBeach=createZercondaBeach(scene);
 
