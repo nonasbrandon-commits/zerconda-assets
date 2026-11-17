@@ -51,6 +51,7 @@ export function createCityMap({player,beach={x:0,z:212}}){
   ctx.fillStyle='#b4c6d1';for(const [x,z,w,h] of [[-48,-48,28,24],[-48,-132,24,18]])ctx.fillRect(tx(x-w/2),tz(z-h/2),w*scale,h*270/527);
   ctx.fillStyle='#3fbbe8';ctx.beginPath();ctx.arc(tx(48),tz(-48),6,0,Math.PI*2);ctx.fill();label(48,-48,'NEEDLE');
   ctx.fillStyle='#f5f6e9';ctx.beginPath();ctx.arc(tx(48),tz(48),6,0,Math.PI*2);ctx.fill();label(48,48,'PLAZA');
+  ctx.fillStyle='#b9dcb6';ctx.fillRect(tx(117),tz(62),18*scale,14*270/527);label(126,70,'SCOOTERS','#d4f6cb');label(-63,48,'APTS','#efe4c2');
   ctx.fillStyle='#659647';
   for(const [lo,hi] of [[-265,-113],[-79,-17],[17,79],[113,166]])ctx.fillRect(tx(240),tz(lo),316*scale,(hi-lo)*270/527);
   ctx.fillStyle='#b5d37b';

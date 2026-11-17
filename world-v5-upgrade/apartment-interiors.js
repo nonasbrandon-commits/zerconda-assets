@@ -1,151 +1,59 @@
-// Zerconda apartment interior asset kit — original 3D models, Three.js r160.
-// Units are meters. Entrance at local z=+depth/2; elevator and stairs at rear.
 import * as THREE from 'three';
-const BASE='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/';
-const texLoader=new THREE.TextureLoader();
-const mat=(c,r=.8,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
-const plaster=mat(0xe6dfd3),trim=mat(0xd2c5b4),bronze=mat(0x98784e,.32,.65);
-const metal=mat(0x747c80,.27,.7),black=mat(0x22292d,.3,.5),wood=mat(0x77513b,.64);
-const fabric=mat(0x677b83,.95),fabricLight=mat(0x9b958c,.98),marble=mat(0xded6c9,.23);
-const glass=new THREE.MeshPhysicalMaterial({color:0xb9d6dc,roughness:.08,metalness:.06,transparent:true,opacity:.55,side:THREE.DoubleSide,clearcoat:1});
-const cube=new THREE.BoxGeometry(1,1,1);
-function b(g,w,h,d,x,y,z,m){const o=new THREE.Mesh(cube,m);o.scale.set(w,h,d);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;g.add(o);return o;}
-function group(parent,x=0,y=0,z=0){const g=new THREE.Group();g.position.set(x,y,z);parent.add(g);return g;}
-function photo(path,repeatX=1,repeatY=1){const t=texLoader.load(BASE+path);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(repeatX,repeatY);t.anisotropy=8;return new THREE.MeshStandardMaterial({map:t,roughness:.85});}
-const stoneFloor=photo('realistic-assets/photographic-environment-v2/warm-paving.jpg',5,4);
-const brickWall=photo('realistic-assets/photographic-environment-v2/urban-plaster.jpg',4,2);
-const stairStone=photo('realistic-assets/photographic-environment-v2/aged-paving.jpg',2,1);
-function sofa(parent,x,z,wide=false,rotation=0){
- const g=group(parent,x,0,z);g.rotation.y=rotation;
- const w=wide?2.7:1.65;
- b(g,w,.26,.85,0,.45,0,fabric);b(g,w,.78,.24,0,.78,-.42,fabric);
- for(const s of [-1,1]){b(g,.2,.56,.91,s*(w/2-.09),.62,0,fabric);}
- for(let i=0;i<(wide?3:2);i++){
-  const px=-w/2+(i+.5)*w/(wide?3:2);
-  b(g,w/(wide?3:2)-.07,.14,.72,px,.63,.04,fabricLight);
-  b(g,w/(wide?3:2)-.08,.51,.15,px,.89,-.27,fabric);
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
+// A double-loaded corridor with one full bay reserved for the lift/stair core.
+export function apartmentCapacity(building){const floors=Math.max(1,Math.floor(building.h/3.55)),bays=Math.max(2,Math.floor((building.d-.6)/5.5));return {floors,bays,perFloor:bays*2-1,total:floors*(bays*2-1),unitWidth:(building.w-2.8)/2,unitDepth:(building.d-.6)/bays};}
+export function createApartmentExperience({scene,x=1050,z=1050,getPlayer=()=>({x:0,z:0}),onTeleport=()=>{},onMessage=()=>{}}={}){
+ const root=new THREE.Group();root.name='Numbered one-bedroom apartment interiors';root.userData.customInterior=true;root.position.set(x,0,z);root.visible=false;scene.add(root);
+ const M=(c,r=.85)=>new THREE.MeshStandardMaterial({color:c,roughness:r});const wall=M(0xe7e2d8),trim=M(0xf2ecdf),wood=M(0x907252),metal=M(0x455553,.5),floorMat=M(0xb8a58a),fabric=M(0x7c968c),linen=M(0xe8e5d8),tile=M(0xc4c8bd),glass=new THREE.MeshPhysicalMaterial({color:0x8eb0bd,roughness:.15,transparent:true,opacity:.4,side:THREE.DoubleSide});
+ const grain=document.createElement('canvas');grain.width=256;grain.height=512;const gc=grain.getContext('2d');gc.fillStyle='#b6a58a';gc.fillRect(0,0,256,512);for(let i=0;i<400;i++){gc.strokeStyle=`rgba(65,45,25,${.02+i%5*.015})`;gc.beginPath();for(let y=0;y<=512;y+=12){const xx=i*37%256+Math.sin(y*.02+i)*1.6;y?gc.lineTo(xx,y):gc.moveTo(xx,y);}gc.stroke();}for(let i=0;i<4;i++){gc.fillStyle='#74644e';gc.fillRect(i*64,0,1,512);gc.fillRect(i*64,((i*137)%512),64,1);}const floorTex=new THREE.CanvasTexture(grain);floorTex.colorSpace=THREE.SRGBColorSpace;floorTex.wrapS=floorTex.wrapT=THREE.RepeatWrapping;floorTex.repeat.set(4,2);floorMat.map=floorTex;
+ const hall=new THREE.Group(),unit=new THREE.Group();root.add(hall,unit);let building=null,capacity=null,currentFloor=0,currentUnit=null,doorParts=[],obstacles=[],actions=[],owned=null,originals=new Map();const key='zerconda-apartment-ownership-v1';
+ try{const s=JSON.parse(localStorage.getItem(key)||'null');if(s&&typeof s.building==='string'&&Number.isInteger(s.number))owned={...s,name:String(s.name||'Resident').slice(0,24)};}catch{}
+ function box(g,w,h,d,px,py,pz,m=wall){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(px,py,pz);o.castShadow=h>.16;o.receiveShadow=true;g.add(o);return o;}
+ function text(g,label,px,py,pz,w=2,h=.5,angle=0){const c=document.createElement('canvas');c.width=768;c.height=160;const a=c.getContext('2d');a.fillStyle='#26413e';a.fillRect(0,0,768,160);a.fillStyle='#f2ead6';a.textAlign='center';a.textBaseline='middle';a.font='bold 48px system-ui';a.fillText(label,384,80,740);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const o=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));o.position.set(px,py,pz);o.rotation.y=angle;g.add(o);return o;}
+ function clear(g){while(g.children.length){const o=g.children[0];g.remove(o);o.traverse(m=>{m.geometry?.dispose();if(m.material?.isMeshBasicMaterial&&m.material.map){m.material.map.dispose();m.material.dispose();}});}}
+ function batch(g){const map=new Map();for(const o of [...g.children])if(o.isMesh&&!o.material.isMeshBasicMaterial){o.updateMatrix();const geo=o.geometry.clone().applyMatrix4(o.matrix),arr=map.get(o.material)||[];arr.push(geo.index?geo.toNonIndexed():geo);map.set(o.material,arr);g.remove(o);o.geometry.dispose();}for(const [m,geos]of map){g.add(new THREE.Mesh(mergeGeometries(geos),m));geos.forEach(a=>a.dispose());}}
+ function source(id,label,point,visible,fn,priority=110){const b=document.createElement('button');b.style.display='none';document.body.appendChild(b);b.onclick=fn;const remove=registerTownAction(b,{id:'apt-'+id,label,priority,target:()=>({x:x+point.x,y:1.4,z:z+point.z})});actions.push({b,visible,point,remove});}
+ function clearActions(){for(const a of actions){a.remove();a.b.remove();}actions=[];}
+ const buildingKey=b=>b.id||`A-${b.x}-${b.z}`;const mine=n=>owned?.building===buildingKey(building)&&owned.number===n;
+ function unitsOnFloor(f=currentFloor){const list=[];for(let bay=0;bay<capacity.bays;bay++)for(const side of [-1,1]){if(bay===0&&side===-1)continue;list.push({number:(f+1)*100+list.length+1,side,bay,z:building.d/2-.3-(bay+.5)*capacity.unitDepth});}return list;}
+ function near(px,pz,max=3){const p=getPlayer();return Math.hypot(p.x-x-px,p.z-z-pz)<max;}
+ function focus(){for(const o of scene.children)if(o!==root&&!o.isLight&&!/avatar|player/i.test(o.name)){if(!originals.has(o))originals.set(o,o.visible);o.visible=false;}}
+ function restore(){for(const [o,v]of originals)o.visible=v;originals.clear();}
+ function teleport(px,pz,yaw=Math.PI){const p=getPlayer();p.x=x+px;p.z=z+pz;onTeleport(p.x,0,p.z,yaw);}
+ function buildHall(){clearActions();clear(hall);hall.visible=true;unit.visible=false;currentUnit=null;doorParts=[];const w=building.w,d=building.d;box(hall,w,.18,d,0,-.09,0,floorMat);box(hall,w,.16,d,0,3.36,0,trim);box(hall,w,3.3,.18,0,1.65,-d/2,wall);box(hall,w,3.3,.18,0,1.65,d/2,wall);for(const side of [-1,1])box(hall,.18,3.3,d,side*w/2,1.65,0,wall);
+  for(const u of unitsOnFloor()){const xx=u.side*1.2;box(hall,.18,3.3,capacity.unitDepth,xx,1.65,u.z,wall);const dg=new THREE.Group();dg.position.set(xx+u.side*.12,0,u.z);dg.rotation.y=u.side*Math.PI/2;hall.add(dg);box(dg,1.25,2.55,.12,0,1.275,0,wood);for(const side of [-1,1])box(dg,.1,2.7,.16,side*.69,1.35,0,trim);box(dg,1.5,.1,.18,0,2.72,0,trim);box(dg,.08,.12,.12,.4,1.15,.1,metal);text(dg,String(u.number),0,2.15,.075,.55,.22);text(dg,mine(u.number)?'RESIDENT':'FOR SALE',0,1.8,.08,1,.23);source('unit-'+u.number,()=>`Visit apartment ${u.number}${mine(u.number)?' · Yours':' · For sale'}`,{x:xx,z:u.z},()=>root.visible&&!currentUnit&&near(xx,u.z,2.6),()=>enterUnit(u));}
+  // The reserved bay fits a switchback stair, landings and a separate lift.
+  const coreZ=d/2-.3-capacity.unitDepth/2;for(const side of [-1,1])box(hall,.18,3.3,(capacity.unitDepth-2.2)/2,-1.2,1.65,coreZ+side*(capacity.unitDepth+2.2)/4,wall);box(hall,.18,.5,2.2,-1.2,3.05,coreZ,wall);box(hall,3.0,2.9,.14,-2.9,1.45,coreZ-1.5,metal);box(hall,.035,2.7,.16,-2.9,1.35,coreZ-1.39,wood);text(hall,'LIFT · FLOOR '+(currentFloor+1),-2.9,3.02,coreZ-1.35,2.7,.32);for(let i=0;i<10;i++)for(const side of [-1,1]){const py=side===-1?i*.17:1.7+i*.17;box(hall,1.1,.17,.26,-7.1+side*.65,py+.085,coreZ-1.3+(side===-1?i:9-i)*.26,tile);}box(hall,2.6,.18,1.0,-7.1,1.74,coreZ+1.5,tile);for(const xx of [-8.5,-5.7]){box(hall,.08,1.1,4.8,xx,2.5,coreZ,metal);}text(hall,'STAIRS',-7.1,2.9,coreZ+2.3,2,.35);text(hall,building.name+' · FLOOR '+(currentFloor+1),0,2.95,d/2-.15,2.1,.43,Math.PI);
+  // Call controls work by lift or stair entrance, for mouse, touch and keyboard F.
+  for(let f=0;f<capacity.floors;f++)if(f!==currentFloor)source('floor-'+f,'Go to floor '+(f+1),{x:-1.0,z:coreZ},()=>root.visible&&!currentUnit&&near(-1.0,coreZ,4.3),()=>{showFloor(f);teleport(0,coreZ,Math.PI);},95);
+  source('core', 'Use lift / stairs',{x:-1.1,z:coreZ},()=>root.visible&&!currentUnit&&near(-1.1,coreZ,3),()=>showDirectory(),100);
+  source('directory','Apartment directory',{x:0,z:d/2-1.2},()=>root.visible&&!currentUnit&&near(0,d/2-1.2,3),()=>showDirectory(),105);batch(hall);
  }
- for(const sx of [-1,1])for(const sz of [-1,1])b(g,.09,.2,.09,sx*(w/2-.18),.17,sz*.3,wood);
- g.name=wide?'Apartment lobby sofa':'Apartment lobby loveseat';return g;
-}
-function coffeeTable(parent,x,z){
- const g=group(parent,x,0,z);b(g,1.6,.1,.83,0,.49,0,marble);
- for(const sx of [-1,1])for(const sz of [-1,1])b(g,.08,.46,.08,sx*.64,.23,sz*.28,bronze);
- g.name='Marble coffee table';return g;
-}
-function reception(parent,x,z){
- const g=group(parent,x,0,z);
- b(g,3.4,1.06,.8,0,.53,0,wood);
- b(g,3.55,.1,.98,0,1.09,0,marble);
- for(let i=-1;i<=1;i++)b(g,.035,.77,.03,i*1.08,.5,.416,bronze);
- b(g,.72,.42,.055,-.85,1.46,-.18,black);
- b(g,.65,.035,.22,-.85,1.23,-.1,metal);
- b(g,.72,.1,.4,.85,1.18,-.1,marble);
- g.name='Apartment reception front desk';return g;
-}
-function elevator(parent,x,z){
- const g=group(parent,x,0,z);
- b(g,3.1,3.2,.17,0,1.6,0,metal);
- for(const s of [-1,1])b(g,1.31,2.72,.1,s*.68,1.52,.12,mat(0xb1b9bc,.22,.7));
- b(g,.06,2.8,.15,0,1.5,.2,black);
- b(g,3.45,.2,.38,0,3.13,.1,bronze);
- b(g,.26,.47,.09,1.83,1.23,.18,black);
- b(g,.12,.12,.12,1.83,1.36,.27,bronze);
- g.name='Elevator with double doors and call button';
- return {group:g,doors:g.children.slice(1,3)};
-}
-function stairwell(parent,x,z,floors=4){
- const g=group(parent,x,0,z);
- const rise=.165,run=.3,steps=20;
- for(let floor=0;floor<floors;floor++){
-  const level=floor*3.3;
-  for(let i=0;i<steps;i++){
-   const y=level+(i+.5)*rise;
-   const zz=(i-steps/2)*run;
-   b(g,2.25,rise+.015,run+.02,0,y,zz,stairStone);
-   b(g,2.27,.045,run+.06,0,y+rise/2,zz,marble);
-  }
-  b(g,2.55,.16,1.45,0,level+3.32,steps*run/2+.5,stairStone);
-  for(const sx of [-1,1]){
-   for(let j=0;j<6;j++){
-    const i=j*3.8;const yy=level+i*rise+1;
-    b(g,.045,1.05,.045,sx*1.15,yy,(i-steps/2)*run,metal);
-   }
-   const rail=b(g,.07,.07,steps*run+1,sx*1.15,level+2.45,0,wood);
-   rail.rotation.x=-Math.atan2(steps*rise,steps*run);
-  }
+ function door(id,px,pz,width,axis='z'){const pivot=new THREE.Group();pivot.position.set(axis==='z'?px-width/2:px,0,axis==='x'?pz+width/2:pz);unit.add(pivot);box(pivot,width,2.5,.10,width/2,1.25,0,wood);box(pivot,.06,.16,.15,width-.16,1.1,-.10,metal);const base=axis==='x'?Math.PI/2:0;pivot.rotation.y=base;const d={id,x:px,z:pz,width,axis,pivot,base,open:false};doorParts.push(d);source(id,()=>`${d.open?'Close':'Open'} ${id} door`,{x:px,z:pz},()=>!!currentUnit&&root.visible&&near(px,pz,2.5),()=>{d.open=!d.open});}
+ function enterUnit(u){currentUnit=u;clearActions();clear(unit);unit.visible=true;hall.visible=false;doorParts=[];obstacles=[];box(unit,10.2,.16,5.4,0,-.08,0,floorMat);box(unit,10.4,.15,5.6,0,3.18,0,trim);for(const zz of [-2.7,2.7])box(unit,10.3,3.1,.15,0,1.55,zz,wall);box(unit,.15,3.1,5.4,-5.1,1.55,0,wall);box(unit,.15,.85,5.4,5.1,.425,0,wall);box(unit,.15,.5,5.4,5.1,2.85,0,wall);box(unit,.04,1.75,5.1,5.11,1.725,0,glass);for(const zz of [-2.6,0,2.6])box(unit,.18,1.9,.09,5.1,1.75,zz,trim);
+  // Bedroom 3.6 x 3.2m and bath 2.2 x 2.2m have actual door gaps.
+  box(unit,.15,3.1,1.0,1.3,1.55,-2.2,wall);box(unit,.15,3.1,2.8,1.3,1.55,1.3,wall);box(unit,.15,.5,1.4,1.3,2.85,-1.0,wall);door('bedroom',1.3,-1.0,1.25,'x');
+  box(unit,2.4,3.1,.15,-3.9,1.55,-.6,wall);box(unit,.15,3.1,.35,-2.7,1.55,-2.525,wall);box(unit,.15,3.1,.45,-2.7,1.55,-.525,wall);box(unit,.15,.5,1.6,-2.7,2.85,-1.5,wall);door('bathroom',-2.7,-1.5,1.35,'x');
+  function furniture(w,h,d,px,py,pz,m){box(unit,w,h,d,px,py,pz,m);obstacles.push({x:px,z:pz,w,d});}
+  furniture(2.8,.4,1.65,3.35,.24,.85,wood);box(unit,2.75,.25,1.6,3.35,.56,.85,linen);box(unit,2.05,.07,1.60,3.05,.72,.85,fabric);box(unit,.14,1.1,1.85,4.83,.56,.85,wood);for(const zz of [.45,1.25])box(unit,.55,.14,.58,4.3,.76,zz,linen);furniture(.5,.65,.6,4.55,.325,2.1,wood);furniture(1.6,2.2,.55,2.3,1.1,2.32,wood);
+  box(unit,2.2,.02,2.1,-3.9,.012,-1.55,tile);furniture(.7,.6,.9,-4.45,.3,-1.2,linen);box(unit,.7,.6,.14,-4.45,.8,-.8,linen);furniture(.8,.8,.55,-3.25,.4,-2.3,wood);box(unit,.85,.08,.6,-3.25,.84,-2.3,linen);box(unit,.7,.8,.03,-3.25,1.65,-2.59,glass);furniture(.9,.06,1,-4.45,.045,-2.1,tile);
+  furniture(2.9,.85,.65,-.65,.425,-2.3,wood);box(unit,2.95,.08,.7,-.65,.89,-2.3,tile);box(unit,.7,.03,.5,-1.4,.95,-2.3,metal);for(const px of [.0,.35])for(const pz of [-2.48,-2.15]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.11,.11,.02,12),metal);c.position.set(px,.96,pz);unit.add(c);}furniture(.8,1.85,.75,-2.1,.925,-2.2,linen);
+  furniture(2.2,.35,.8,-1.3,.3,1.65,wood);box(unit,2.2,.6,.17,-1.3,.78,2.04,fabric);box(unit,1.95,.18,.70,-1.3,.60,1.65,fabric);for(const px of [-2.35,-.25])box(unit,.2,.4,.8,px,.65,1.65,fabric);furniture(1.25,.1,.55,-1.3,.45,.55,wood);box(unit,1.1,.35,.45,-1.3,.2,.55,wood);furniture(.8,.08,.8,-3.9,.8,1.55,wood);box(unit,.1,.75,.1,-3.9,.375,1.55,wood);for(const pz of [.7,2.35]){furniture(.55,.1,.5,-3.9,.46,pz,fabric);box(unit,.55,.6,.07,-3.9,.75,pz+(pz<1?-.2:.2),wood);}
+  text(unit,'APARTMENT '+u.number+' · ONE BEDROOM',0,2.8,-2.6,3.8,.35);text(unit,'EXIT TO CORRIDOR',-4.95,2.4,1.1,2,.35,Math.PI/2);source('exit-unit','Return to apartment corridor',{x:-4.7,z:0},()=>root.visible&&!!currentUnit&&near(-4.7,0,3),()=>leaveUnit());source('ownership',()=>mine(u.number)?'My apartment · Options':'Apartment '+u.number+' · Buy / claim',{x:-3.9,z:0},()=>root.visible&&!!currentUnit&&near(-3.9,0,3),()=>showOwnership(u),100);batch(unit);teleport(-4.3,0,Math.PI/2);
  }
- g.name='Multi-floor apartment stairwell';return g;
-}
-function apartmentDoor(parent,x,y,z){
- const g=group(parent,x,y,z);
- b(g,1.12,2.35,.12,0,1.175,0,wood);
- b(g,1.28,.12,.21,0,2.35,0,trim);
- for(const sx of [-1,1])b(g,.09,2.45,.2,sx*.62,1.22,0,trim);
- b(g,.08,.08,.14,.37,1.05,.15,bronze);
- b(g,.38,.16,.045,0,1.9,.08,metal);
- g.name='Apartment corridor door';return g;
-}
-export function createApartmentLobby({scene,x=0,z=0,width=16,depth=19,floors=4,visible=true}={}){
- if(!scene)throw new Error('scene required');
- const root=group(scene,x,0,z);root.name='Zerconda furnished apartment lobby';root.visible=visible;
- b(root,width,.22,depth,0,-.06,0,stoneFloor);
- b(root,width,.16,depth,0,4.1,0,plaster);
- b(root,width,4,.22,0,2,-depth/2,brickWall);
- for(const sx of [-1,1])b(root,.22,4,depth,sx*width/2,2,0,brickWall);
- // Reception and sitting area face the main entrance.
- reception(root,-3,depth*.15);
- sofa(root,2.7,depth*.13,true,Math.PI/2);
- sofa(root,4.9,-depth*.19,false,Math.PI);
- coffeeTable(root,3.4,-depth*.09);
- const lift=elevator(root,-4.8,-depth/2+.5);
- const stairs=stairwell(root,4.7,-depth*.33,Math.min(floors,8));
- for(let floor=0;floor<floors;floor++){
-  const y=floor*3.3;
-  for(const sx of [-1,1])apartmentDoor(root,sx*6.4,y,-depth*.08);
- }
- for(const sx of [-1,1])for(const zz of [-5,1,6]){
-  const l=new THREE.PointLight(0xffe8c9,2.1,8,2);l.position.set(sx*4,3.75,zz);root.add(l);
-  b(root,1.2,.07,.55,sx*4,4,zz,marble);
- }
- b(root,3.4,.09,.18,0,3.1,depth/2-.24,bronze);
- b(root,2.8,2.65,.08,0,1.34,depth/2-.1,glass);
- return {root,lift,stairs,dispose(){scene.remove(root);}};
-}
-
-export function createApartmentExperience({scene,x=1050,z=1050}={}){
- const lobby=createApartmentLobby({scene,x,z,width:18,depth:22,floors:4});
- const root=lobby.root;
- // Furnished accessible residential levels. Only one floor is displayed at a time.
- const floors=4,levelGroups=[];
- const bedMat=mat(0xd9d4ca),kitchen=mat(0xaaa49c),accent=mat(0x526d81),floorMat=stoneFloor;
- for(let f=0;f<floors;f++){
-  const g=group(root,0,0,0);g.name='Apartment floor '+(f+1);levelGroups.push(g);
-  const y=0; // Separate virtual floors share ground plane; floor selector changes visibility.
-  b(g,18,.2,22,0,-.17,0,floorMat);
-  // Central corridor and four individually furnished rooms.
-  for(const sx of [-1,1]){
-   const xx=sx*5.1;
-   b(g,.2,3.4,19,sx*2.1,1.7,0,plaster);
-   b(g,.2,3.4,19,sx*8.85,1.7,0,plaster);
-   for(const zz of [-5,5]){
-    b(g,6.5,3.4,.2,xx,1.7,zz+5,plaster);
-    // Bedroom: bed, pillows, side tables, wardrobe, lamp.
-    b(g,2.1,.45,2.7,xx,.36,zz-1,wood);
-    b(g,1.94,.28,2.52,xx,.74,zz-1,bedMat);
-    b(g,1.7,.15,.48,xx,.95,zz-2,plaster);
-    b(g,.65,.65,.65,xx+sx*1.55,.4,zz-2,wood);
-    b(g,1.65,.85,.72,xx, .5,zz+1.65,fabric);
-    b(g,1.6,.17,.8,xx,.47,zz+3.1,wood);
-    b(g,1.7,2.3,.65,xx-sx*1.8,1.15,zz+3.4,kitchen);
-    b(g,1.2,.8,.62,xx+sx*1.8,.5,zz+3.4,accent);
-    const light=new THREE.PointLight(0xffdfb6,1.4,8);light.position.set(xx,2.9,zz);g.add(light);
-   }
-  }
-  b(g,1.6,.1,16,0,-.05,0,marble);
- }
- // Keep reception on floor 0, residential floors swap to fully furnished floor.
- function showFloor(f){const floor=Math.max(0,Math.min(floors,f|0));lobby.root.children.forEach(c=>{if(!levelGroups.includes(c))c.visible=floor===0;});for(let i=0;i<floors;i++)levelGroups[i].visible=floor===i+1;}
- showFloor(0);
- return {root,showFloor,floorCount:5,x,z,contains(px,pz){return Math.abs(px-x)<8.6&&Math.abs(pz-z)<10.5},dispose:lobby.dispose};
+ function leaveUnit(){if(!currentUnit)return;const zz=currentUnit.z;buildHall();teleport(0,zz,Math.PI);}
+ const panel=document.createElement('section');panel.id='apartment-property-panel';panel.setAttribute('aria-label','Apartment directory and ownership');panel.style.cssText='display:none;position:fixed;z-index:16000;top:75px;right:12px;width:min(370px,calc(100vw - 48px));max-height:72dvh;overflow:auto;background:#1a3534f5;color:#fff;padding:18px;border:1px solid #d9d2bc;border-radius:12px;font:14px system-ui';document.body.appendChild(panel);
+ function el(tag,s){const o=document.createElement(tag);o.textContent=s||'';panel.appendChild(o);return o;}function btn(s,fn){const b=el('button',s);b.style.cssText='display:block;min-height:46px;width:100%;padding:10px;margin:8px 0;border:0;border-radius:7px;background:#d9e2d1;color:#203c35;font:600 14px system-ui;cursor:pointer';b.onclick=fn;return b;}
+ function openPanel(){panel.replaceChildren();panel.style.display='block';}function close(){panel.style.display='none';}function showDirectory(){openPanel();el('h3',building.name);el('p',`${capacity.floors} floors · ${capacity.perFloor} one-bedroom apartments per floor · ${capacity.total} total`);for(let f=0;f<capacity.floors;f++){el('h4','Floor '+(f+1));for(const u of unitsOnFloor(f))el('p',`${u.number} · ${mine(u.number)?'Yours':'For sale'}`);btn('Visit floor '+(f+1),()=>{close();showFloor(f);teleport(0,building.d/2-1.5,Math.PI);});}btn('Close',close);}
+ function claim(u,name){if(!building||!unitsOnFloor().some(v=>v.number===u.number))return {ok:false,message:'Choose an apartment in this building.'};if(owned&&!mine(u.number))return {ok:false,message:'You already have an apartment: '+owned.number+'.'};owned={building:buildingKey(building),number:u.number,name:String(name||'Resident').trim().slice(0,24)||'Resident'};let saved=true;try{localStorage.setItem(key,JSON.stringify(owned));}catch{saved=false;}return {ok:true,message:saved?'Apartment '+u.number+' claimed.':'Claimed for this visit; browser storage is unavailable.'};}
+ function showOwnership(u){openPanel();el('h3',building.name+' · '+u.number);el('p','Private bedroom, bathroom, kitchen and furnished living/dining area.');el('p','Claims are saved in this browser. No payment is charged.');if(mine(u.number))el('p','Owned by '+owned.name);else if(owned)el('p','You already have apartment '+owned.number+'.');else{el('label','Resident name');const name=el('input');name.maxLength=24;name.style.cssText='font-size:16px;padding:10px;width:90%;margin:8px 0';btn('Claim this apartment',()=>{const result=claim(u,name.value);onMessage(result.message);showOwnership(u);});}btn('Close',close);}
+ panel.addEventListener('pointerdown',e=>e.stopPropagation());panel.addEventListener('keydown',e=>{e.stopPropagation();if(e.code==='Escape')close();});
+ function configure(b){building=b;capacity=apartmentCapacity(b);currentFloor=0;currentUnit=null;buildHall();}
+ function showFloor(f){currentFloor=THREE.MathUtils.clamp(f|0,0,capacity.floors-1);buildHall();}
+ function update(dt){if(!root.visible){for(const a of actions)a.b.style.display='none';if(originals.size)restore();return;}focus();for(const a of actions)a.b.style.display=a.visible()?'block':'none';for(const d of doorParts)d.pivot.rotation.y=THREE.MathUtils.damp(d.pivot.rotation.y,d.base+(d.open?-1.45:0),8,dt);}
+ function contains(px,pz){const xx=px-x,zz=pz-z;if(!currentUnit)return Math.abs(xx)<.82&&Math.abs(zz)<building.d/2-.35;if(Math.abs(xx)>4.75||Math.abs(zz)>2.35)return false;if(Math.abs(xx-1.3)<.33&&!(zz> -1.4&&zz<-.6))return false;if(Math.abs(zz+.6)<.32&&xx< -2.4)return false;if(Math.abs(xx+2.7)<.33&&zz<-.6&&!(zz> -1.95&&zz< -1.05))return false;for(const d of doorParts)if(!d.open&&(d.axis==='x'?Math.abs(xx-d.x)<.34&&Math.abs(zz-d.z)<d.width/2+.2:Math.abs(zz-d.z)<.34&&Math.abs(xx-d.x)<d.width/2+.2))return false;return !obstacles.some(o=>Math.abs(xx-o.x)<o.w/2+.26&&Math.abs(zz-o.z)<o.d/2+.26);}
+ function clampCamera(p){p.x=THREE.MathUtils.clamp(p.x,x-(currentUnit?4.75:.8),x+(currentUnit?4.75:.8));p.z=THREE.MathUtils.clamp(p.z,z-(currentUnit?2.35:building.d/2-.4),z+(currentUnit?2.35:building.d/2-.4));p.y=THREE.MathUtils.clamp(p.y,1.6,2.95);if(currentUnit){const q=getPlayer();if(q.x>x+1.65)p.x=Math.max(p.x,x+1.65);else if(q.x<x-3&&q.z<z-.6){p.x=Math.min(p.x,x-3);p.z=Math.min(p.z,z-.65);}else p.x=Math.min(p.x,x+.95);}}
+ function hide(){root.visible=false;close();clearActions();restore();currentUnit=null;}
+ return {root,x,z,configure,showFloor,update,contains,clampCamera,hide,leaveUnit,enterUnit,unitsOnFloor,claim,get building(){return building},get capacity(){return capacity},get currentUnit(){return currentUnit},get currentFloor(){return currentFloor},get floorCount(){return capacity?.floors||0},get panelOpen(){return panel.style.display!=='none'},get owned(){return owned},get doors(){return doorParts}};
 }

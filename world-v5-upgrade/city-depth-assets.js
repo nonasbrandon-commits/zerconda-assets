@@ -174,6 +174,8 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    skylineTower(x,z,w,d,h,total++);
   }
  }
+ // Replace the brick tower at the southeast plaza-side corner with scooter rentals.
+ for(const g of [...root.children])if(g.isGroup&&g.position.x>120&&g.position.x<150&&g.position.z>40&&g.position.z<65&&g.children.length>100){root.remove(g);total--;}
  // Roads are owned exclusively by world-v5-complete-replacement.js.
  // Do not draw duplicate continuous road slabs here: they previously
  // resurfaced closed segments and overlaid landscaping and house plots.
