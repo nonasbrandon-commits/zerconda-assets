@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
 import {createCloudSky} from './cloud-sky.js';
-import {addCityDepth} from './city-depth-assets.js?v=20261117-wilderness-v17';
+import {addCityDepth} from './city-depth-assets.js?v=20261117-restore-city-v21';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js';
 import {createApartmentExperience} from './apartment-interiors.js';
@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-beach-view-v20';
+const ZERCONDA_BUILD='2026-11-17-city-beach-restored-v21';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -628,10 +628,10 @@ const movement={vx:0,vz:0,wheelImpulse:0};
  beachButton.addEventListener('click',()=>{
   if(apartmentSession){apartmentSession=null;apartments.root.visible=false;}
   activeCar=null;insideNeedleLobby=false;onObservationDeck=false;cafeInside=false;
-  player.x=0;player.z=205;yaw=0;pitch=-.04;
+  player.x=0;player.z=225;yaw=0;pitch=-.04;
   movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
-  camera.position.set(0,4.5,198);
-  camera.lookAt(0,1.6,260);
+  camera.position.set(0,4.5,218);
+  camera.lookAt(0,1.6,280);
   if(status)status.textContent='South Beach · Ocean straight ahead · W to walk toward the water';
  });
  document.body.appendChild(beachButton);
@@ -800,7 +800,7 @@ function walkable(x,z){
  if(apartmentSession)return apartments.contains(x,z);
   if(cafeInside)return coffeeShop.isInside(x,z);
   if(coffeeShop.isInside(x,z))return false;
- if(x< -276||x>570||z< -285||z>242)return false;
+ if(x< -276||x>570||z< -285||z>(Math.abs(x)<165?248:242))return false;
  // Eastern expansion is accessed from the city's eastbound road corridor.
  // Residential expansion is accessible on foot; building walls remain solid.
  if(onObservationDeck)return observationNeedle.isOnDeck(x,z);
