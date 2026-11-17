@@ -22,7 +22,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-road-footprint-guard-v55';
+const ZERCONDA_BUILD='2026-11-17-road-geometry-cleanup-v56';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -504,6 +504,41 @@ coffeeShop.root.rotation.y=Math.PI/2; // Entrance and patio face east toward the
 for(const seat of coffeeShop.seats){const lx=seat.x+34,lz=seat.z+48;seat.x=-34+lz;seat.z=-48-lx;}
 // Populate tower surroundings and distant horizon with detailed 3D architecture.
 const cityDepth=addCityDepth({scene,asphalt,paving,grass});
+
+/* Road safety pass: inspect actual world-space mesh bounds, not just building
+   origin coordinates. This catches balconies, rotated houses, and skyline kits. */
+function clearRoadIntrusions(){
+ scene.updateMatrixWorld(true);
+ const roadCenters=[-96,0,96],safeHalf=15.25;
+ const bounds=new THREE.Box3(),size=new THREE.Vector3(),center=new THREE.Vector3();
+ let removed=0;
+ function conflicts(b){
+  return roadCenters.some(c=>
+   (b.min.x<c+safeHalf&&b.max.x>c-safeHalf&&b.min.z<242&&b.max.z>-285)||
+   (b.min.z<c+safeHalf&&b.max.z>c-safeHalf&&b.min.x<570&&b.max.x>-276));
+ }
+ function inspect(parent){
+  for(const obj of [...parent.children]){
+   if(!obj.isGroup){continue;}
+   // Inspect individual authored building / tree groups, never whole districts.
+   bounds.setFromObject(obj);if(bounds.isEmpty())continue;
+   bounds.getSize(size);bounds.getCenter(center);
+   if(size.y>3.5&&size.y<110&&size.x>1&&size.x<65&&size.z>1&&size.z<65){
+    // Building body or a street tree: clear the full footprint, including
+    // steps, balcony projections and canopy, from the driving corridor.
+    if(conflicts(bounds)){
+     parent.remove(obj);removed++;continue;
+    }
+   }
+   inspect(obj);
+  }
+ }
+ inspect(scene);
+ console.info('ZERCONDA road intrusion cleanup:',removed,'objects removed');
+ return removed;
+}
+clearRoadIntrusions();
+
 // Dedicated green space behind the Needle, outside the downtown building grid.
 const needleSportsPark=createNeedleSportsPark(scene,{x:48,z:-190});
 // Extend pedestrian access north from the existing street grid to the park entrance.
