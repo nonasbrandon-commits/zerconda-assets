@@ -17,9 +17,10 @@ import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 import {createOwnableHomes} from './ownable-suburban-homes.js';
 import {createPedestrians} from './animated-pedestrians.js';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js';
+import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-16-mainland-terrain-repair';
+const ZERCONDA_BUILD='2026-11-16-needle-park-and-city-repair';
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
 // Does not call any old tree/lamp/car spawn loops.
@@ -101,11 +102,11 @@ const glassCanvas=document.createElement('canvas');glassCanvas.width=512;glassCa
  gc.globalAlpha=.22;gc.fillStyle='#f8fafc';for(let i=0;i<11;i++){gc.beginPath();gc.ellipse((i*97)%512,55+(i*41)%150,52,9,-.25,0,Math.PI*2);gc.fill();}
  gc.globalAlpha=.48;gc.strokeStyle='#d8e9ef';gc.lineWidth=4;gc.beginPath();gc.moveTo(32,0);gc.lineTo(260,512);gc.stroke();gc.globalAlpha=1;
  const glassTexture=new THREE.CanvasTexture(glassCanvas);glassTexture.colorSpace=THREE.SRGBColorSpace;glassTexture.anisotropy=8;
- const reflectionAsset=new THREE.TextureLoader().load(BASE+'realistic-assets/windows/urban-glass-reflection.svg',t=>{glass.map=t;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;glass.needsUpdate=true;},undefined,err=>console.warn('Using generated glass reflection fallback',err));
- const glass=new THREE.MeshPhysicalMaterial({map:glassTexture,color:0xffffff,metalness:.16,roughness:.12,transparent:true,opacity:.93,clearcoat:1,clearcoatRoughness:.055,side:THREE.DoubleSide,depthWrite:true});
+ // Do not overlay the reflection SVG on window glazing: it creates duplicate window patterns.
+ const glass=new THREE.MeshPhysicalMaterial({map:glassTexture,color:0xffffff,metalness:.12,roughness:.25,transparent:false,opacity:1,clearcoat:.2,clearcoatRoughness:.2,side:THREE.FrontSide,depthWrite:true});
 const windowMat=glass,doorMat=M(0x655343,.42,.18);
 const windowFrame=M(0x43494a,.42,.5),windowSill=M(0xd7cec0,.9);
-const windowReflection=new THREE.MeshBasicMaterial({color:0xd8f0ff,transparent:true,opacity:.18,depthWrite:false,side:THREE.DoubleSide});
+const windowReflection=new THREE.MeshBasicMaterial({color:0xd8f0ff,transparent:true,opacity:.055,depthWrite:false,side:THREE.FrontSide});
 function architecturalWindow(group,cx,cy,cz,width,height,face='front'){
  const outer=new THREE.Group();outer.position.set(cx,cy,cz);
  if(face==='side')outer.rotation.y=Math.PI/2;
@@ -145,7 +146,7 @@ const insideBuilding=(x,z,pad=0)=>buildings.some(b=>Math.abs(x-b.x)<b.w/2+pad&&M
 // Entire city road/sidewalk grid. Roads are continuous; sidewalks NEVER cross lanes.
 // Seamless mainland under the skyline: stops the blue sky void and floating towers.
 // Southern edge ends before the beach/ocean; city roads and landscaping sit above it.
-box(1250,.18,940,165,-.28,-305,grass);
+box(1250,.18,940,165,-.11,-305,grass);
 box(350,.12,350,0,-.16,0,grass);
 for(const c of roadLines){
  box(19,.12,350,c,-.04,0,asphalt);
@@ -387,6 +388,11 @@ coffeeShop.root.rotation.y=Math.PI/2; // Entrance and patio face east toward the
 for(const seat of coffeeShop.seats){const lx=seat.x+34,lz=seat.z+48;seat.x=-34+lz;seat.z=-48-lx;}
 // Populate tower surroundings and distant horizon with detailed 3D architecture.
 const cityDepth=addCityDepth({scene,asphalt,paving,grass});
+// Dedicated green space behind the Needle, outside the downtown building grid.
+const needleSportsPark=createNeedleSportsPark(scene,{x:48,z:-224});
+// Extend pedestrian access north from the existing street grid to the park entrance.
+box(5,.065,77,48,.005,-180,paving);
+for(const zz of [-156,-180,-205]){box(.18,.025,2,48,.06,zz,yellow);}
 const apartments=createApartmentExperience({scene,x:1050,z:1050});
 apartments.root.visible=false;
 let apartmentSession=null,apartmentFloor=0;
@@ -709,7 +715,7 @@ function walkable(x,z){
  if(apartmentSession)return apartments.contains(x,z);
   if(cafeInside)return coffeeShop.isInside(x,z);
   if(coffeeShop.isInside(x,z))return false;
- if(x< -168||x>575||z< -200||z>247)return false;
+ if(x< -168||x>575||z< -290||z>247)return false;
  // Eastern expansion is accessed from the city's eastbound road corridor.
  if(x>168&&z>110)return false;
  if(onObservationDeck)return observationNeedle.isOnDeck(x,z);
