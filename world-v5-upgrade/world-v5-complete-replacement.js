@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261117-wilderness-v72';
 import {createClubZerconda} from './club-zerconda.js?v=20261117-club-front-v71';
 import {createRealisticHuman} from './realistic-human.js?v=20261117-club-front-v71';
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
@@ -25,7 +26,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-club-front-v71';
+const ZERCONDA_BUILD='2026-11-17-wilderness-v72';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -46,8 +47,9 @@ const PATH={
 const status=document.getElementById('status');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x8eb7d3);
 const cloudSky=createCloudSky(scene,{count:38});
-scene.fog=new THREE.FogExp2(0xa9c8dc,.0009);
-const camera=new THREE.PerspectiveCamera(66,innerWidth/innerHeight,.1,600);
+cloudSky.dome.scale.setScalar(6); // Keep the atmosphere behind the distant terrain.
+scene.fog=new THREE.FogExp2(0xa9c8dc,.00055);
+const camera=new THREE.PerspectiveCamera(66,innerWidth/innerHeight,.1,4000);
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);
 renderer.outputColorSpace=THREE.SRGBColorSpace;
@@ -287,56 +289,17 @@ wallSegment(570,-285,570,-18);wallSegment(570,18,570,350); // East perimeter als
  console.info('ZERCONDA closed police gate and forest checkpoint installed');
 
 // Gate geometry is loaded after core scene setup to avoid blocking world startup.
-// Actual three-dimensional mountain terrain beyond the perimeter, with
-// rugged triangulated slopes and snow-capped upper elevations.
-const mountainRock=new THREE.MeshStandardMaterial({color:0x69746e,roughness:1,flatShading:true,side:THREE.DoubleSide});
-const mountainSnow=new THREE.MeshStandardMaterial({color:0xdde4e5,roughness:.94,flatShading:true,side:THREE.DoubleSide});
-function mountain3D(cx,cz,radius,height,seed){
- const rings=9,segments=20,vertices=[],indices=[],materials=[];
- for(let j=0;j<=rings;j++){
-  const t=j/rings;
-  for(let k=0;k<segments;k++){
-   const angle=k*Math.PI*2/segments;
-   const jag=1+.13*Math.sin(k*2.7+seed)+.09*Math.cos(k*5.1+seed*3+j);
-   const rad=radius*(1-t)*jag;
-   vertices.push(cx+Math.cos(angle)*rad,height*t+Math.sin(k*3.3+j*2+seed)*height*.035*(1-t),cz+Math.sin(angle)*rad);
-  }
- }
- for(let j=0;j<rings;j++)for(let k=0;k<segments;k++){
-  const n=j*segments+k,next=j*segments+(k+1)%segments;
-  const up=n+segments,upNext=next+segments;
-  const start=indices.length;indices.push(n,next,upNext,n,upNext,up);
-  materials.push({start,count:6,materialIndex:j>=6?1:0});
- }
- const geometry=new THREE.BufferGeometry();
- geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
- geometry.setIndex(indices);geometry.computeVertexNormals();
- for(const g of materials)geometry.addGroup(g.start,g.count,g.materialIndex);
- const mesh=new THREE.Mesh(geometry,[mountainRock,mountainSnow]);
- mesh.name='3D wilderness mountain';mesh.castShadow=false;mesh.receiveShadow=true;scene.add(mesh);
-}
-for(let i=0;i<13;i++){
- const x=-430+i*100;
- mountain3D(x,-590-(i%3)*85,105+(i%4)*22,85+(i%5)*19,i+2);
- // No southern mountain ridge: preserve the open ocean horizon.
-}
-// No mountains along either side of the southern beach approach.
-// Northern mountains remain visible inland beyond the northern perimeter.
-// Forest is populated with existing real GLB tree assets after asynchronous loading.
+// Connected eroded ridges and instanced forest around all landward boundaries.
+const wilderness=createWildernessLandscape(scene);
 function populateOuterForest(){
  const source=loaded.tree||loaded.tree2;if(!source)return;
- for(let i=0;i<180;i++){
-  const side=i%3;
-  const x=side===0?-320-rand()*90:side===1?610+rand()*95:-350+rand()*1020;
-  const z=side===2?-325-rand()*65:-310+rand()*430;
-  cloneNormalized(loaded[i%2?'tree2':'tree']||source,x,z,8+rand()*10,rand()*Math.PI*2);
- }
- // Dense forest flanks the winding dirt track beyond the east checkpoint.
- for(let i=0;i<100;i++){
-  const x=583+rand()*330,z=-140+rand()*270;
-  const trackZ=-Math.max(0,x-610)*.075+Math.sin((x-570)/40)*5;
-  if(Math.abs(z-trackZ)<14)continue;
-  cloneNormalized(loaded[i%2?'tree2':'tree']||source,x,z,13+rand()*13,rand()*Math.PI*2);
+ // Photographic broadleaf assets break up the near evergreen forest edge.
+ for(let i=0;i<72;i++){
+  const side=i%3,x=side===0?-305-rand()*75:side===1?605+rand()*85:-280+rand()*960;
+  const z=side===2?-322-rand()*65:-260+rand()*345;
+  if(side===1&&Math.abs(z)<24)continue;
+  const tree=cloneNormalized(loaded[i%2?'tree2':'tree']||source,x,z,24+rand()*15,rand()*Math.PI*2);
+  if(tree){tree.position.y+=wildernessHeight(x,z);tree.traverse(o=>{if(o.isMesh)o.castShadow=false;});}
  }
 }
 // Facade texture generator: architectural materials, varied stonework,
@@ -582,7 +545,7 @@ function clearRoadIntrusions(){
  }
  function inspect(parent){
   for(const obj of [...parent.children]){
-   if(!obj.isGroup||obj.userData.roadInfrastructure||obj.userData.customInterior){continue;}
+   if(!obj.isGroup||obj.userData.roadInfrastructure||obj.userData.wilderness||obj.userData.customInterior){continue;}
    // Inspect individual authored building / tree groups, never whole districts.
    bounds.setFromObject(obj);if(bounds.isEmpty())continue;
    bounds.getSize(size);bounds.getCenter(center);
