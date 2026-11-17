@@ -409,8 +409,8 @@ for(let k=0;k<blocks.length;k++){
  if(Math.abs(bx)>100||Math.abs(bz)>100)continue; // avoid outside-city half blocks
  for(const [i,j] of [[-1,-1],[1,-1],[-1,1],[1,1]]){
   // Keep the complete building footprint and trim well behind the curb.
-  // Road centers are 96m apart; this leaves at least 14m from each wall to asphalt.
-  const x=bx+i*12,z=bz+j*12;
+  // Road centers are 96m apart; this leaves at least 11m from each wall to asphalt.
+  const x=bx+i*15,z=bz+j*15;
   if(bx===-48&&bz===-48)continue; // Reserved commercial district: cafe, dealership, and access road. // Reserve east side for Brewstone cafe opposite the Needle.
   makeBuilding(x,z,24,23,18+Math.floor(rand()*5)*3.2,k+Math.round(rand()*4));
  }
