@@ -36,7 +36,10 @@ export function createOwnableHomes(scene){
  // inland from the beach and ocean. Each lot has a driveway and garage.
  for(const side of [-1,1])for(let row=0;row<5;row++){
   const id=(side===-1?0:5)+row+1;
-  const x=side*146,z=-145+row*27;
+  // Keep lots off the east-west roads at z=-96, -48 and 0.
+  // Previous row 2 at z=-91 placed a full house across the roadway.
+  const residentialZ=[-174,-139,-72,-22,32];
+  const x=side*146,z=residentialZ[row];
   const g=new THREE.Group();g.position.set(x,0,z);root.add(g);
   const h=6.7+(id%3)*.65,w=13,d=15;
   const body=box(g,w,h,d,0,h/2,0,wall[(id-1)%wall.length]);
