@@ -27,21 +27,60 @@ export function createCoffeeShop(scene,{x=48,z=48}={}){
  for(const xx of [-3,-2.4,2.5,3.2])cyl(xx,2.55,-6.4,.22,.55,black);
  // Outdoor patio to the south of shop, away from tower access road.
  const seats=[];
+ // Higher-detail patio furniture: metal frames, wood slat seats, curved chair backs,
+ // tapered table pedestals, and individual leaf clusters instead of green spheres.
+ const furnitureFrame=mat(0x292f31,.35,.68),oak=mat(0xa17b55,.72),cushion=mat(0x3e6b64,.95);
+ function chair(px,pz,a){
+  const g=new THREE.Group();g.position.set(px,0,pz);g.rotation.y=a;root.add(g);
+  const add=(geo,m,x,y,z)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.castShadow=true;g.add(o);return o;};
+  const rail=new THREE.CylinderGeometry(.027,.027,1,8);
+  for(const sx of [-.32,.32])for(const sz of [-.29,.29]){
+   const leg=add(rail,furnitureFrame,sx,.25,sz);leg.scale.y=.5;
+  }
+  for(let k=0;k<5;k++)add(new THREE.BoxGeometry(.62,.035,.105),oak,0,.51,-.25+k*.125);
+  for(const sx of [-.33,.33]){
+   const back=add(new THREE.CylinderGeometry(.03,.03,.78,8),furnitureFrame,sx,.88,-.33);back.rotation.x=-.16;
+   add(new THREE.BoxGeometry(.035,.035,.58),furnitureFrame,sx,.69,-.02);
+  }
+  for(let k=0;k<4;k++)add(new THREE.BoxGeometry(.62,.105,.035),k%2?oak:cushion,0,.77+k*.15,-.37-k*.025);
+  seats.push({x:x+px,z:z+pz,facing:a,occupied:false});
+ }
  function table(tx,tz,rot=0){
-  cyl(tx,.75,tz,.78,.12,wood);cyl(tx,.38,tz,.08,.75,black);
+  // Thin beveled-looking round top, inset edge, flared base, and center support.
+  const top=cyl(tx,.78,tz,.76,.085,oak);top.castShadow=true;
+  cyl(tx,.71,tz,.70,.04,furnitureFrame);
+  cyl(tx,.40,tz,.058,.66,furnitureFrame);
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(.12,.44,.08,16),furnitureFrame);
+  base.position.set(tx,.085,tz);root.add(base);
   for(let j=0;j<4;j++){
-   const a=j*Math.PI/2+rot,px=tx+Math.cos(a)*1.5,pz=tz+Math.sin(a)*1.5;
-   box(px,.48,pz,.65,.16,.65,wood);
-   box(px,.27,pz,.1,.46,.1,black);
-   box(px,.88,pz+Math.sin(a)*.32,.68,.7,.12,fabric);
-   seats.push({x:x+px,z:z+pz,facing:a,occupied:false});
+   const a=j*Math.PI/2+rot,px=tx+Math.cos(a)*1.57,pz=tz+Math.sin(a)*1.57;
+   chair(px,pz,a+Math.PI);
   }
  }
  for(const [tx,tz] of [[-7,1],[0,1],[7,1],[-7,5],[0,5],[7,5],[-7,14],[0,14],[7,14]])table(tx,tz);
- for(const px of [-10,10])for(const pz of [11,17]){
-  box(px,.45,pz,1.2,.9,1.2,plaster);
-  const leaves=new THREE.Mesh(new THREE.IcosahedronGeometry(.85,1),fabric);leaves.position.set(px,1.65,pz);root.add(leaves);
+ const foliage=[mat(0x315d38,.96),mat(0x427b44,.96),mat(0x538b4b,.96),mat(0x668b43,.96)];
+ function shrub(px,pz,seed=0){
+  // Raised stone planter with dark soil, branching stems and layered leaf geometry.
+  box(px,.33,pz,1.45,.66,1.45,plaster);
+  box(px,.69,pz,1.28,.08,1.28,mat(0x493d31,.99));
+  const shrubRoot=new THREE.Group();shrubRoot.position.set(px,.72,pz);root.add(shrubRoot);
+  const stem=mat(0x4d4932,.98);
+  const rand=(n)=>{const t=Math.sin(n*78.233+seed*43.19)*43758.5453;return t-Math.floor(t);};
+  for(let i=0;i<23;i++){
+   const angle=i*2.399963,dist=.08+rand(i+2)*.46;
+   const height=.55+rand(i+10)*.9;
+   const stalk=new THREE.Mesh(new THREE.CylinderGeometry(.014,.025,height,5),stem);
+   stalk.position.set(Math.cos(angle)*dist*.55,height*.5,Math.sin(angle)*dist*.55);
+   stalk.rotation.z=Math.sin(angle)*.22;shrubRoot.add(stalk);
+   for(let j=0;j<3;j++){
+    const leaf=new THREE.Mesh(new THREE.IcosahedronGeometry(.19+rand(i*4+j)*.15,1),foliage[(i+j+seed)%foliage.length]);
+    leaf.scale.set(.8,.4,1.35);
+    leaf.position.set(Math.cos(angle)*dist+(j-1)*.09,height*(.55+j*.2),Math.sin(angle)*dist);
+    leaf.rotation.y=angle+j*.6;leaf.castShadow=true;shrubRoot.add(leaf);
+   }
+  }
  }
+ for(const px of [-10,10])for(const pz of [11,17])shrub(px,pz,Math.round(px+pz+20));
  // Legible front fascia: fit full name within the available width and keep roof above it.
  const cv=document.createElement('canvas');cv.width=2048;cv.height=384;
  const ctx=cv.getContext('2d');ctx.fillStyle='#223432';ctx.fillRect(0,0,2048,384);
