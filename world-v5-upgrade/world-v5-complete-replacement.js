@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
 import {createCloudSky} from './cloud-sky.js';
-import {addCityDepth} from './city-depth-assets.js?v=20261117-restore-city-v21';
+import {addCityDepth} from './city-depth-assets.js?v=20261117-house-clearance-v48';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js';
 import {createApartmentExperience} from './apartment-interiors.js';
