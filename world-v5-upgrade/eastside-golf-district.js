@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Zerconda Eastside: residential approach and playable-scale three-hole public golf park.
 // Located about three 96m blocks east of the Needle at (48,-48).
 export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
@@ -8,6 +9,7 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  const road=mat(0x41484b),walk=mat(0xb8b5a7),brick=mat(0x9c6452),brick2=mat(0xb48a70);
  const glass=new THREE.MeshPhysicalMaterial({color:0x6b9db2,roughness:.19,metalness:.24,transparent:true,opacity:.83});
  const trim=mat(0xd9d0bf),roof=mat(0x39464b),wood=mat(0x80664d),bark=mat(0x70503a);
+ const treeInstances=[];
  const leaf=[0x3e6f39,0x4e8640,0x648d49,0x2f6339].map(c=>mat(c));
  const water=new THREE.MeshPhysicalMaterial({color:0x248c98,metalness:.1,roughness:.16,clearcoat:1});
  const flag=[mat(0xe5e6e4),mat(0xd44432),mat(0x306ca2)];
@@ -15,7 +17,7 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  function box(parent,x,y,z,w,h,d,m){const mesh=new THREE.Mesh(boxGeo,m);mesh.position.set(x,y,z);mesh.scale.set(w,h,d);mesh.castShadow=h>1;mesh.receiveShadow=true;parent.add(mesh);return mesh;}
  function oval(parent,x,z,rx,rz,m,y=.07){const mesh=new THREE.Mesh(new THREE.CircleGeometry(1,48),m);mesh.rotation.x=-Math.PI/2;mesh.scale.set(rx,rz,1);mesh.position.set(x,y,z);mesh.receiveShadow=true;parent.add(mesh);return mesh;}
  function tree(parent,x,z,scale=1,seed=0){
-  const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);parent.add(g);
+  const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);parent.add(g);treeInstances.push({g,seed});
   const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.32,.5,5,10),bark);trunk.position.y=2.5;trunk.castShadow=true;g.add(trunk);
   for(let k=0;k<5;k++){const o=new THREE.Mesh(new THREE.IcosahedronGeometry(2.25+(k%2)*.5,2),leaf[(seed+k)%leaf.length]);o.scale.set(1.1,.72,1.05);o.position.set(Math.sin(k*2.4)*1.05,5.5+(k%3)*1.05,Math.cos(k*2.4)*.9);o.castShadow=true;g.add(o);}
  }
@@ -72,6 +74,30 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
   if(Math.abs(tx)<24&&tz< -95)continue;
   tree(course,tx,tz,.75+(i%4)*.2,i);
  }
+ // Swap placeholder foliage for real modeled leafy trees stored in Zerconda assets.
+ const treeUrl='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/trees-and-vehicles/trees/leafy-island-tree.glb';
+ new GLTFLoader().load(treeUrl,gltf=>{
+  const original=gltf.scene,bb=new THREE.Box3().setFromObject(original),sz=bb.getSize(new THREE.Vector3());
+  if(sz.y<.01)return;
+  for(const {g,seed} of treeInstances){
+   g.clear();const model=original.clone(true),scale=(8.5+(seed%4)*1.6)/sz.y;
+   model.scale.setScalar(scale);model.position.set(-bb.getCenter(new THREE.Vector3()).x*scale,-bb.min.y*scale,-bb.getCenter(new THREE.Vector3()).z*scale);
+   model.rotation.y=seed*1.67;model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});g.add(model);
+  }
+  console.info('ZERCONDA: golf district loaded actual GLB trees',treeInstances.length);
+ },undefined,e=>console.warn('Golf GLB tree unavailable; fallback retained',e));
+ // Mowing bands, contoured rough, and continuous winding golf-cart paths.
+ const mowA=mat(0x5b9146),mowB=mat(0x659c4d);
+ for(const [cx,cz,rx,rz,rotation] of [[-68,-63,65,25,-.28],[53,-5,85,26,.33],[-28,73,73,26,-.23]]){
+  for(let i=-4;i<=4;i++){
+   const patch=oval(course,cx+i*rx*.16,cz,rx*.11,rz*.88,i%2?mowA:mowB,.049);
+   patch.rotation.z=rotation;
+  }
+ }
+ const cartWaypoints=[[-130,-115],[-103,-91],[-79,-54],[-50,-29],[-12,-16],[34,-30],[82,-9],[111,27],[89,70],[42,99],[-11,102],[-68,94],[-112,69]];
+ const cartCurve=new THREE.CatmullRomCurve3(cartWaypoints.map(([xx,zz])=>new THREE.Vector3(xx,.058,zz)),false,'catmullrom',.35);
+ const cartRibbon=new THREE.Mesh(new THREE.TubeGeometry(cartCurve,180,1.55,8,false),walk);
+ cartRibbon.scale.y=.035;cartRibbon.receiveShadow=true;course.add(cartRibbon);
  // Golf cart path and carts.
  for(let i=0;i<18;i++){
   const a=i/17*Math.PI*1.7+.3;
