@@ -22,7 +22,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-building-setback-v54';
+const ZERCONDA_BUILD='2026-11-17-road-footprint-guard-v55';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -338,6 +338,12 @@ const entranceAwning=new THREE.MeshStandardMaterial({color:0x3d4c50,metalness:.6
 const castStone=new THREE.MeshStandardMaterial({color:0xc9c1b2,roughness:.94});
 
 function makeBuilding(x,z,w,d,h,type){
+ // Reject the entire structure including facade trim, balconies and entrance steps.
+ // Road corridors are centered at -96, 0, 96; their paved surface ends 9.5m
+ // from center, and sidewalks extend to 14m. Keep a further 3m buffer.
+ const clearance=17;
+ if(roadLines.some(c=>Math.abs(x-c)<w/2+clearance||Math.abs(z-c)<d/2+clearance))return;
+
  // Entirely new low-rise stucco residences, replacing the defective brick towers.
  // No signature kit, blue ornaments, glass layering, or legacy facade textures.
  const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);
