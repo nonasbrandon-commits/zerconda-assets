@@ -6,7 +6,7 @@ export function createCityMap({player,beach={x:0,z:212}}){
  const heading=document.createElement('div');heading.textContent='ZERCONDA  •  CITY MAP';heading.style.cssText='font-weight:700;text-align:center;letter-spacing:1px;margin-bottom:3px';shell.appendChild(heading);
  const canvas=document.createElement('canvas');canvas.width=420;canvas.height=270;canvas.style.cssText='width:min(350px,48vw);height:auto;display:block;border-radius:6px';shell.appendChild(canvas);document.body.appendChild(shell);
  const ctx=canvas.getContext('2d');
- const legend=document.createElement('div');legend.textContent='🔵 YOU ARE HERE';legend.style.cssText='text-align:center;font-weight:bold;color:#9ce8ff;margin-top:4px;letter-spacing:.5px';shell.appendChild(legend);
+ const legend=document.createElement('div');legend.textContent='🔵 YOU   ▰ PERIMETER WALL   🟠 FUTURE GATE (CLOSED)';legend.style.cssText='text-align:center;font-weight:bold;color:#9ce8ff;margin-top:4px;letter-spacing:.5px';shell.appendChild(legend);
  shell.style.pointerEvents='none';
  // Legacy top-left HUD can overlap the map if Airo kept the old markup.
  // Keep the HUD but move only the conflicting old map overlays out of view.
@@ -25,7 +25,16 @@ export function createCityMap({player,beach={x:0,z:212}}){
   ctx.fillStyle='#187c9e';ctx.fillRect(0,tz(240),420,270-tz(240));
   ctx.strokeStyle='#737e83';ctx.lineWidth=7;
   for(const n of [-144,-48,48,144]){ctx.beginPath();ctx.moveTo(tx(n),tz(-175));ctx.lineTo(tx(n),tz(175));ctx.stroke();ctx.beginPath();ctx.moveTo(0,tz(n));ctx.lineTo(420,tz(n));ctx.stroke();}
-  ctx.strokeStyle='#e6d7b5';ctx.lineWidth=2;ctx.strokeRect(tx(-276),tz(-285),846*scale,527*270/527);
+  // Perimeter wall matches world bounds; mark the proposed eastern expansion
+  // checkpoint as CLOSED until an actual gate and access logic are installed.
+  ctx.strokeStyle='#b9bdb6';ctx.lineWidth=5;ctx.setLineDash([]);
+  ctx.strokeRect(tx(-276)+2,tz(-285)+2,420-4,270-4);
+  const gateX=tx(570)-3,gateY=tz(0);
+  ctx.strokeStyle='#f5a23b';ctx.lineWidth=7;
+  ctx.beginPath();ctx.moveTo(gateX,gateY-12);ctx.lineTo(gateX,gateY+12);ctx.stroke();
+  ctx.fillStyle='#ffd08a';ctx.font='bold 11px Arial';ctx.textAlign='right';
+  ctx.fillText('FUTURE GATE',gateX-9,gateY-5);
+  ctx.fillText('CLOSED',gateX-9,gateY+9);ctx.textAlign='start';
   ctx.fillStyle='#b4c6d1';for(const [x,z,w,h] of [[-72,-48,24,28],[-34,-48,24,25]])ctx.fillRect(tx(x-w/2),tz(z-h/2),w*scale,h*270/527);
   ctx.fillStyle='#3fbbe8';ctx.beginPath();ctx.arc(tx(48),tz(-48),6,0,Math.PI*2);ctx.fill();label(48,-48,'NEEDLE');
   ctx.fillStyle='#f5f6e9';ctx.beginPath();ctx.arc(tx(48),tz(48),6,0,Math.PI*2);ctx.fill();label(48,48,'PLAZA');
