@@ -66,6 +66,16 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
   for(const {mesh,ids} of soles)for(const id of ids)lowest=Math.min(lowest,mesh.getVertexPosition(id,vertex).applyMatrix4(mesh.matrixWorld).y);
   if(Number.isFinite(lowest)){const parentY=root.parent?.getWorldPosition(parentPoint).y||0;root.position.y+=parentY-lowest;}
   if(seated){for(const bone of bones){if(/thigh$/i.test(bone.name))bone.rotation.z+=1.1;if(/calf$/i.test(bone.name))bone.rotation.z-=1.3;}}
+  if(options.driving){
+   root.updateMatrixWorld(true);
+   // Two-joint arm aiming keeps both hands on the generic watercraft controls.
+   for(const [side,sign]of [['L',1],['R',-1]]){
+    const arm=part=>bones.find(b=>b.name.endsWith(side+'_'+part)||b.name.endsWith(side+' '+part)),upper=arm('UpperArm'),fore=arm('Forearm'),hand=arm('Hand');if(!upper||!fore||!hand)continue;
+    const target=root.parent.localToWorld(new THREE.Vector3(sign*.28,1.21,.37));
+    for(let pass=0;pass<3;pass++)for(const joint of [fore,upper]){const origin=joint.getWorldPosition(new THREE.Vector3()),from=hand.getWorldPosition(new THREE.Vector3()).sub(origin).normalize(),to=target.clone().sub(origin).normalize();if(!from.lengthSq()||!to.lengthSq())continue;const delta=new THREE.Quaternion().setFromUnitVectors(from,to),parentQ=joint.parent.getWorldQuaternion(new THREE.Quaternion()),local=parentQ.clone().invert().multiply(delta).multiply(parentQ);joint.quaternion.premultiply(local);joint.updateWorldMatrix(false,true);}
+   }
+  }
+
  }};
  controller.readyPromise=source().then(([character,idle,walk,run,dance])=>{
   character.scene.updateMatrixWorld(true);

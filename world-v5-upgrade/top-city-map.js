@@ -20,6 +20,18 @@ export function createCityMap({player,beach={x:0,z:212}}){
  const scale=420/846,tx=x=>(x+276)*scale,tz=z=>(z+285)*270/527;
  function label(x,z,name,color='#f7fafc'){ctx.fillStyle=color;ctx.font='bold 10px Arial';ctx.fillText(name,tx(x)+5,tz(z)-5);}
  function draw(){
+  const atSea=player.z>238&&player.z<950&&Math.abs(player.x)<230,title=atSea?'ZERCONDA • PIER & OCEAN':'ZERCONDA • CITY MAP';if(heading.textContent!==title)heading.textContent=title;const legendText=atSea?'YOU · PIER · BUOY BOUNDARY':'🔵 YOU   ▰ PERIMETER WALL   🟠 POLICE GATE · CLOSED';if(legend.textContent!==legendText)legend.textContent=legendText;
+  if(atSea){
+   ctx.clearRect(0,0,420,270);const gradient=ctx.createLinearGradient(0,0,0,270);gradient.addColorStop(0,'#409f9e');gradient.addColorStop(1,'#134e6b');ctx.fillStyle=gradient;ctx.fillRect(0,0,420,270);
+   const sx=x=>(x+230)*420/460,sz=z=>(z-220)*270/720;
+   ctx.fillStyle='#ccb58c';ctx.fillRect(0,0,420,sz(240));ctx.fillStyle='#ae9672';ctx.fillRect(sx(-7),sz(238),14*420/460,(382-238)*270/720);ctx.fillRect(sx(-22),sz(374),44*420/460,26*270/720);ctx.fillRect(sx(-24),sz(242),18*420/460,32*270/720);ctx.fillRect(sx(-30),sz(286),12*420/460,20*270/720);
+   ctx.strokeStyle='#d2c3a6';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(sx(-13),sz(272));ctx.lineTo(sx(-23),sz(288));ctx.stroke();
+   ctx.fillStyle='#fff2ce';ctx.font='bold 10px Arial';ctx.fillText('PIER · FREE BOATS & FISHING',sx(14),sz(310));ctx.fillText('BOATING AREA',sx(-75),sz(650));
+   ctx.strokeStyle='#e7c38b';ctx.setLineDash([3,7]);ctx.strokeRect(sx(-210),sz(270),420*420/460,645*270/720);ctx.setLineDash([]);
+   ctx.fillStyle='#00baff';ctx.beginPath();ctx.arc(sx(player.x),sz(player.z),6,0,Math.PI*2);ctx.fill();ctx.strokeStyle='white';ctx.lineWidth=2;ctx.stroke();
+   return;
+  }
+
   ctx.fillStyle='#284c3b';ctx.fillRect(0,0,420,270);
   ctx.fillStyle='#c9b287';ctx.fillRect(0,tz(175),420,270-tz(175));
   ctx.fillStyle='#187c9e';ctx.fillRect(0,tz(240),420,270-tz(240));
@@ -66,3 +78,4 @@ export function createCityMap({player,beach={x:0,z:212}}){
  }
  draw();return {draw,element:shell};
 }
+
