@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import {createClubZerconda} from './club-zerconda.js?v=20261117-club-v70';
-import {createRealisticHuman} from './realistic-human.js?v=20261117-club-v70';
+import {createClubZerconda} from './club-zerconda.js?v=20261117-club-front-v71';
+import {createRealisticHuman} from './realistic-human.js?v=20261117-club-front-v71';
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -16,7 +16,7 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 import {addAirDancers} from './air-dancers.js';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261117-water-to-wall-v50';
-import {createCityMap} from './top-city-map.js?v=20261117-club-v70';
+import {createCityMap} from './top-city-map.js?v=20261117-club-front-v71';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-road-clearance-v53';
@@ -25,7 +25,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-club-zerconda-v70';
+const ZERCONDA_BUILD='2026-11-17-club-front-v71';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -669,6 +669,7 @@ for(const center of roadLines){
  for(const along of parkingSamples){
   // No parking at intersections or across pedestrian crossings.
   if(roadLines.some(cross=>Math.abs(along-cross)<24))continue;
+  if(center===0&&along> -57&&along< -39)continue; // Keep the club entrance approach clear.
   if(center===-96&&along> -61&&along< -35)continue; // Commercial mid-block crossing.
   for(const side of [-1,1]){
    for(const vertical of [true,false]){
