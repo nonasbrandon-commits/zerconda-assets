@@ -95,7 +95,9 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  // Course perimeter: grass, fairways, sand traps, water hazard, paths.
  const course=new THREE.Group();course.position.set(x,0,z);root.add(course);
  // Course surface begins east of the access boulevard and leaves its road unobstructed.
- // Two separate playable parcels. Keep a permanent 26m-wide clear road corridor.\n box(course,0,-.15,-76.5,300,.25,107,rough);\n box(course,0,-.15,76.5,300,.25,107,rough);
+ // Two separate playable parcels. Keep a permanent 26m-wide clear road corridor.
+ box(course,0,-.15,-76.5,300,.25,107,rough);
+ box(course,0,-.15,76.5,300,.25,107,rough);
  // Restore the road corridor above turf with an asphalt strip and matching sidewalk.
  box(root,236,.28,-48,300,.16,20,road);
  for(const side of [-1,1])box(root,236,.39,-48+side*11.3,300,.13,2.4,walk);
@@ -145,7 +147,9 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  const cartWaypoints=[[-130,-115],[-103,-91],[-79,-54],[-50,-29],[-12,-16],[34,-30],[82,-9],[111,27],[89,70],[42,99],[-11,102],[-68,94],[-112,69]];
  const cartCurve=new THREE.CatmullRomCurve3(cartWaypoints.map(([xx,zz])=>new THREE.Vector3(xx,.058,zz)),false,'catmullrom',.35);
  const cartRibbon=new THREE.Mesh(new THREE.TubeGeometry(cartCurve,180,1.55,8,false),walk);
- cartRibbon.scale.y=.035;cartRibbon.receiveShadow=true;course.add(cartRibbon);\n // Keep the golf cart route out of the paved boulevard.\n cartRibbon.visible=false;
+ cartRibbon.scale.y=.035;cartRibbon.receiveShadow=true;course.add(cartRibbon);
+ // Keep the golf cart route out of the paved boulevard.
+ cartRibbon.visible=false;
  // Golf cart path and carts.
  for(let i=0;i<18;i++){
   const a=i/17*Math.PI*1.7+.3;
