@@ -510,7 +510,8 @@ async function populate(){
 }
 populate();
 addPremiumPlazaFurniture(scene,{cx:48,cz:48});
-const keys=new Set(),player={x:48,z:15},clock=new THREE.Clock();
+const START_X=34,START_Z=34; // Open southwest edge of fountain plaza, clear of the central lamp and fountain.
+const keys=new Set(),player={x:START_X,z:START_Z},clock=new THREE.Clock();
 const cityMap=createCityMap({player});
 // Third-person walking avatar: forward-facing, visible from the default camera.
 // Kept lightweight so mobile devices do not need an additional model download.
@@ -609,12 +610,12 @@ let activeCar=null,yaw=0,pitch=0,drag=false,lastX=0,lastY=0;
 let driverLookYaw=0,driverLookPitch=0,driverSteer=0;
 let onObservationDeck=false,insideNeedleLobby=false;
 // Initialize camera BEFORE the first frame. A blank sky must never be the default.
-camera.position.set(48,5,7);
-camera.lookAt(48,2,45);
+camera.position.set(START_X,5,START_Z-8);
+camera.lookAt(48,2,48);
 function resetView(){
  if(apartmentSession){apartmentSession=null;apartments.root.visible=false;}
- activeCar=null;driverLookYaw=0;driverLookPitch=0;driverSteer=0;onObservationDeck=false;insideNeedleLobby=false;player.x=48;player.z=15;yaw=0;pitch=0;
- camera.position.set(48,5,7);camera.lookAt(48,2,45);
+ activeCar=null;driverLookYaw=0;driverLookPitch=0;driverSteer=0;onObservationDeck=false;insideNeedleLobby=false;player.x=START_X;player.z=START_Z;yaw=0;pitch=0;
+ camera.position.set(START_X,5,START_Z-8);camera.lookAt(48,2,48);
  if(status)status.textContent='View reset · Walk forward with W';
 }
 addEventListener('keydown',e=>{if(e.code==='KeyR')resetView();});
