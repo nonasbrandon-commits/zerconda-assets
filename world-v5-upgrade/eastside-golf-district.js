@@ -5,7 +5,14 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  const root=new THREE.Group();root.name='Eastside Golf and Residential District';scene.add(root);
  const mat=(color,roughness=.94)=>new THREE.MeshStandardMaterial({color,roughness});
- const grass=mat(0x4b8045),fairway=mat(0x62994d),rough=mat(0x396c38),green=mat(0x80b85a),sand=mat(0xe9d2a0);
+ const assetBase='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/pbr/';
+ const textureLoader=new THREE.TextureLoader();
+ function pbrGround(folder,repeat,tint){
+  const prefix=assetBase+folder+'/'+folder+'_1K-JPG_';
+  function load(suffix,srgb=false){const t=textureLoader.load(prefix+suffix+'.jpg',undefined,undefined,()=>{});t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(repeat,repeat);t.anisotropy=8;if(srgb)t.colorSpace=THREE.SRGBColorSpace;return t;}
+  return new THREE.MeshStandardMaterial({color:tint,map:load('Color',true),normalMap:load('NormalGL'),roughnessMap:load('Roughness'),roughness:1});
+ }
+ const grass=pbrGround('Ground037',18,0x83a876),fairway=pbrGround('Ground037',16,0x91b77d),rough=pbrGround('Ground037',19,0x68865d),green=pbrGround('Ground037',12,0xa3c78b),sand=pbrGround('Ground037',12,0xe3d1a7);
  const road=mat(0x41484b),walk=mat(0xb8b5a7),brick=mat(0x9c6452),brick2=mat(0xb48a70);
  const glass=new THREE.MeshPhysicalMaterial({color:0x6b9db2,roughness:.19,metalness:.24,transparent:true,opacity:.83});
  const trim=mat(0xd9d0bf),roof=mat(0x39464b),wood=mat(0x80664d),bark=mat(0x70503a);
@@ -62,6 +69,7 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  // Apartments and houses precede the golf club. Their fronts face the boulevard.
  for(let i=0;i<16;i++){
   const side=i%2===0?-1:1,col=Math.floor(i/2),px=165+col*19,pz=-48+side*35;
+  if(px+9>=275)continue; // Entire building footprint must stay west of the golf reserve.
   // Keep houses away from all road surfaces, including the access boulevard.
   // Skip any lot intersecting the eastside connecting road or central grid.
   if(Math.abs(pz+48)<17 || (px<120 && [-96,0,96].some(v=>Math.abs(px-v)<19)))continue;
@@ -254,7 +262,14 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
   [5,-264,0,'apartment'],[75,-264,0,'apartment'],
   [-85,276,Math.PI,'apartment'],[5,276,Math.PI,'apartment'],[95,276,Math.PI,'apartment']
  ];
- courseEdgePlots.forEach(([px,pz,rot,kind],i)=>courseEdgeBuilding(px,pz,rot,kind,i+30));
+ courseEdgePlots.forEach(([px,pz,rot,kind],i)=>{
+  // Course center is world x=425,z=-48. The protected fairway rectangle
+  // extends local x +/-150 and local z +/-130. Include building footprint buffer.
+  const halfWidth=kind==='apartment'?12:11,halfDepth=kind==='apartment'?7:8;
+  const intersectsCourse=px+halfWidth+8>-150&&px-halfWidth-8<150&&pz+halfDepth+8>-130&&pz-halfDepth-8<130;
+  if(intersectsCourse)return;
+  courseEdgeBuilding(px,pz,rot,kind,i+30);
+ });
  // Clubhouse: covered entrance, glazing, porch, terrace and sign.
  const club=new THREE.Group();club.position.set(-125,0,-122);course.add(club);
  box(club,0,3.3,0,25,6.6,14,brick);
