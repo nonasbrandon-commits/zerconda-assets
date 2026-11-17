@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-open-beach-v18';
+const ZERCONDA_BUILD='2026-11-17-clear-ocean-horizon-v19';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -274,7 +274,7 @@ for(let i=0;i<13;i++){
 }
 for(let i=0;i<9;i++){
  const z=-480+i*120;
- if(z<175){
+ if(z < -300){
   mountain3D(-530-(i%3)*65,z,125,100+(i%4)*22,i+30);
   mountain3D(810+(i%3)*65,z,125,100+(i%4)*22,i+44);
  }
@@ -285,7 +285,7 @@ function populateOuterForest(){
  for(let i=0;i<180;i++){
   const side=i%3;
   const x=side===0?-320-rand()*90:side===1?610+rand()*95:-350+rand()*1020;
-  const z=side===2?-325-rand()*65:side===3?-330-rand()*65:-310+rand()*480;
+  const z=side===2?-325-rand()*65:-310+rand()*430;
   cloneNormalized(loaded[i%2?'tree2':'tree']||source,x,z,8+rand()*10,rand()*Math.PI*2);
  }
 }
