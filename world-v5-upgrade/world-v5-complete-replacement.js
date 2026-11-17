@@ -12,7 +12,7 @@ import {createDealership} from './zerconda-dealership.js';
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 import {addAirDancers} from './air-dancers.js';
 import {createZercondaBeach} from './zerconda-beach.js';
-import {createCityMap} from './top-city-map.js?v=20261117-perimeter-map-v15';
+import {createCityMap} from './top-city-map.js?v=20261117-open-beach-v18';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 import {createOwnableHomes} from './ownable-suburban-homes.js';
