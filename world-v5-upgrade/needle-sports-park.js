@@ -124,8 +124,22 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
  }
  const shape=new THREE.Shape(points);
  const pondFloor=new THREE.Mesh(new THREE.ShapeGeometry(shape,80),mat(0x243e32));pondFloor.rotation.x=-Math.PI/2;pondFloor.position.y=-.065;pond.add(pondFloor);
- const naturalWater=new THREE.MeshPhysicalMaterial({color:0x304c3f,roughness:.31,metalness:.06,transparent:true,opacity:.64,depthWrite:false,side:THREE.DoubleSide});
- const surface=new THREE.Mesh(new THREE.ShapeGeometry(shape,80),naturalWater);surface.rotation.x=-Math.PI/2;surface.position.y=.115;surface.renderOrder=2;pond.add(surface);
+ // Transparent water: blue-green reflective surface over a dark pond bed.
+ // Keep depthWrite disabled so swimming fish remain visible underneath.
+ const naturalWater=new THREE.MeshPhysicalMaterial({
+  color:0x5b9d9b,roughness:.12,metalness:.12,transparent:true,
+  opacity:.35,depthWrite:false,side:THREE.DoubleSide,clearcoat:1,clearcoatRoughness:.08
+ });
+ const surface=new THREE.Mesh(new THREE.ShapeGeometry(shape,80),naturalWater);
+ surface.rotation.x=-Math.PI/2;surface.position.y=.19;surface.renderOrder=8;pond.add(surface);
+ const waterHighlights=[];
+ const highlightMat=new THREE.MeshBasicMaterial({color:0xc5e8dc,transparent:true,opacity:.20,depthWrite:false,side:THREE.DoubleSide});
+ for(let i=0;i<28;i++){
+  const a=i*2.39996,r=1.2+(i%7)*1.25;
+  const ring=new THREE.Mesh(new THREE.RingGeometry(.27,.29,32),highlightMat.clone());
+  ring.rotation.x=-Math.PI/2;ring.position.set(Math.cos(a)*r,.202,Math.sin(a)*r*.6);
+  ring.renderOrder=9;pond.add(ring);waterHighlights.push({ring,phase:i*.7});
+ }
  // Walkable irregular stone promenade encircling the pond, with a small viewing spur.
  const walkwayOuter=points.map(p=>new THREE.Vector2(p.x*1.28,p.y*1.35));
  const walkwayInner=points.map(p=>new THREE.Vector2(p.x*1.12,p.y*1.16));
@@ -160,17 +174,38 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
    reed.position.set(xx+(k-2.5)*.09,.38,zz+(k%2)*.08);reed.rotation.z=(k-2.5)*.08;pond.add(reed);
   }
  }
- // Water ripples and the moving koi are visible through the dark green surface.
- for(let i=0;i<13;i++){
-  const a=i*2.399963,rad=2+(i%5)*1.5;
-  const ripple=new THREE.Mesh(new THREE.RingGeometry(.24,.27,24),new THREE.MeshBasicMaterial({color:0xb5c9b3,transparent:true,opacity:.22,side:THREE.DoubleSide,depthWrite:false}));
-  ripple.rotation.x=-Math.PI/2;ripple.position.set(Math.cos(a)*rad,.124,Math.sin(a)*rad*.55);pond.add(ripple);
- }
- const fish=[];const fishMat=[mat(0xe8a14b),mat(0xf2e2c2),mat(0x333f3c),mat(0xd16e55)];
- for(let i=0;i<19;i++){
-  const f=new THREE.Group(),body=new THREE.Mesh(new THREE.SphereGeometry(.38,16,10),fishMat[i%4]);body.scale.set(1,.34,.42);f.add(body);
-  const tail=new THREE.Mesh(new THREE.ConeGeometry(.24,.42,8),fishMat[i%4]);tail.rotation.z=Math.PI/2;tail.position.x=-.37;f.add(tail);
-  f.position.y=.14;f.scale.setScalar(1.9);pond.add(f);fish.push({f,r:2+(i%5)*1.5,speed:.17+(i%4)*.06,phase:i*2.399});
+ // Detailed swimming koi with tapered bodies, fins and animated tails.
+ // Fish swim just under the water surface, not above it.
+ const fish=[];
+ const koiColors=[
+  [0xf5eee0,0xe77726],[0xf4a12f,0xffd77d],
+  [0xf1eee5,0x252b2b],[0xe3e5dc,0xc8563b]
+ ];
+ for(let i=0;i<16;i++){
+  const f=new THREE.Group(),[baseColor,patchColor]=koiColors[i%4];
+  const bodyMat=new THREE.MeshStandardMaterial({color:baseColor,roughness:.38,metalness:.04});
+  const patchMat=new THREE.MeshStandardMaterial({color:patchColor,roughness:.42});
+  const finMat=new THREE.MeshStandardMaterial({color:baseColor,roughness:.6,side:THREE.DoubleSide});
+  const body=new THREE.Mesh(new THREE.SphereGeometry(1,24,16),bodyMat);
+  body.scale.set(.68,.18,.25);f.add(body);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(1,16,12),bodyMat);
+  head.scale.set(.25,.16,.205);head.position.x=.53;f.add(head);
+  for(const x of [-.29,.12]){
+   const marking=new THREE.Mesh(new THREE.SphereGeometry(1,16,10),patchMat);
+   marking.scale.set(.15,.045,.22);marking.position.set(x,.16,0);f.add(marking);
+  }
+  const tailPivot=new THREE.Group();tailPivot.position.x=-.63;f.add(tailPivot);
+  const tail=new THREE.Mesh(new THREE.ConeGeometry(.23,.43,3),finMat);
+  tail.rotation.z=Math.PI/2;tail.position.x=-.18;tail.scale.z=.36;tailPivot.add(tail);
+  for(const side of [-1,1]){
+   const fin=new THREE.Mesh(new THREE.ConeGeometry(.13,.29,3),finMat);
+   fin.rotation.z=-Math.PI/2;fin.rotation.y=side*.55;
+   fin.position.set(.06,-.03,side*.22);f.add(fin);
+   const eye=new THREE.Mesh(new THREE.SphereGeometry(.027,8,6),new THREE.MeshStandardMaterial({color:0x111919}));
+   eye.position.set(.64,.07,side*.14);f.add(eye);
+  }
+  f.position.y=.07;pond.add(f);
+  fish.push({f,tailPivot,r:2+(i%5)*1.55,speed:.12+(i%4)*.045,phase:i*2.399});
  }
  // Benches, shaded picnic area and trees.
  function bench(x,z,rotation=0){
@@ -200,5 +235,19 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
   }
   // Original cylindrical trunks are intentionally retained as a fallback support.
  },undefined,e=>console.warn('Needle park tree model failed',e));
- return {root,update(t){for(const q of fish){const a=t*q.speed+q.phase;q.f.position.x=Math.cos(a)*q.r;q.f.position.z=Math.sin(a)*q.r*.58;q.f.rotation.y=-a;q.f.position.y=.14+Math.sin(t*1.7+q.phase)*.045;}}};
+ return {root,update(t){
+  for(const q of fish){
+   const a=t*q.speed+q.phase;
+   q.f.position.x=Math.cos(a)*q.r;
+   q.f.position.z=Math.sin(a)*q.r*.58;
+   q.f.rotation.y=Math.atan2(-Math.cos(a)*q.r*.58*q.speed,-Math.sin(a)*q.r*q.speed);
+   q.f.position.y=.055+Math.sin(t*1.3+q.phase)*.025;
+   q.tailPivot.rotation.y=Math.sin(t*7+q.phase)*.35;
+  }
+  for(const h of waterHighlights){
+   const p=(t*.28+h.phase)%2.5;
+   h.ring.scale.setScalar(.65+p*.5);
+   h.ring.material.opacity=.19*(1-p/2.5);
+  }
+ }};
 }
