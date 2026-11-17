@@ -483,7 +483,9 @@ for(const dx of [-21,21])for(const dz of [-21,21]){
 // They projected as stray white lines across nearby roadway and sidewalk.
 // Existing sidewalk edges remain defined by the road grid.
 const observationNeedle=createObservationNeedle(scene,{x:48,z:-48});
-const coffeeShop=createCoffeeShop(scene,{x:-34,z:-48});
+// Place Brewstone on the north side of the east-west street, opposite the dealership.
+// Its south-facing entrance and patio face the road; the showroom stays unobstructed.
+const coffeeShop=createCoffeeShop(scene,{x:-34,z:-84});
 // Walk-in showroom just west of Brewstone Coffee, with three fictional display vehicles.
 const dealership={
  x:-72,z:-48,isNear:(x,z,r=5.5)=>Math.hypot(x+72,z+48)<r,
