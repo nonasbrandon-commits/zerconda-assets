@@ -4,6 +4,25 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
  const root=new THREE.Group();root.name='Needle Park - tennis basketball fish pond';root.position.set(x,0,z);scene.add(root);
  const mat=(c,r=.85)=>new THREE.MeshStandardMaterial({color:c,roughness:r});
  const turf=mat(0x537b3c),path=mat(0xc9c2ad),asphalt=mat(0x4b555b),blue=mat(0x245b85),red=mat(0xb44f42),white=mat(0xf1eee4),metal=mat(0x424e50),wood=mat(0x795337),water=new THREE.MeshPhysicalMaterial({color:0x3c9f9d,roughness:.17,metalness:.06,transparent:true,opacity:.78,depthWrite:false});
+ // Rough, painted sports surfaces instead of untextured blue/red rectangles.
+ function courtSurface(hex,seed){
+  const c=document.createElement('canvas');c.width=256;c.height=256;const ctx=c.getContext('2d');
+  const rgb=new THREE.Color(hex),im=ctx.createImageData(256,256);
+  for(let y=0;y<256;y++)for(let x=0;x<256;x++){
+   const i=(y*256+x)*4,noise=(Math.sin(x*127.1+y*311.7+seed*53.3)*43758.5453)%1;
+   const variation=(noise-Math.floor(noise)-.5)*28+(Math.sin(x*.06+y*.04+seed)*3);
+   im.data[i]=Math.max(0,Math.min(255,rgb.r*255+variation));
+   im.data[i+1]=Math.max(0,Math.min(255,rgb.g*255+variation));
+   im.data[i+2]=Math.max(0,Math.min(255,rgb.b*255+variation));
+   im.data[i+3]=255;
+  }
+  ctx.putImageData(im,0,0);
+  const texture=new THREE.CanvasTexture(c);texture.colorSpace=THREE.SRGBColorSpace;
+  texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(3,6);
+  texture.anisotropy=8;
+  return new THREE.MeshStandardMaterial({map:texture,roughness:.95,metalness:0});
+ }
+ const tennisSurface=courtSurface(0x245b85,3),basketSurface=courtSurface(0xb44f42,7);
  function box(w,h,d,px,py,pz,m,parent=root){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(px,py,pz);o.receiveShadow=true;o.castShadow=h>.5;parent.add(o);return o;}
  function cyl(rt,rb,h,px,py,pz,m,n=10){const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,n),m);o.position.set(px,py,pz);o.castShadow=true;root.add(o);return o;}
  box(66,.14,108,0,-.15,0,turf);
@@ -16,7 +35,7 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
  function court(cx,cz,tennis){
   const w=tennis?24:17,d=tennis?43:29;
   box(w+.8,.09,d+.8,cx,.03,cz,asphalt);
-  box(w,.03,d,cx,.092,cz,tennis?blue:red);
+  box(w,.03,d,cx,.092,cz,tennis?tennisSurface:basketSurface);
   const half=w/2-.85,end=d/2-.9;
   for(const sx of [-1,1])line(cx+sx*half,cz-end,cx+sx*half,cz+end);
   for(const sz of [-1,1])line(cx-half,cz+sz*end,cx+half,cz+sz*end);
@@ -35,6 +54,13 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
     cyl(.11,.12,3.7,cx,1.95,cz+sz*(end+1),metal);
     box(1.8,1.15,.09,cx,3.6,cz+sz*(end-.55),white);
     const rim=new THREE.Mesh(new THREE.TorusGeometry(.46,.035,7,24),mat(0xd56b31));rim.rotation.x=Math.PI/2;rim.position.set(cx,3.12,cz+sz*(end-1.1));root.add(rim);
+    // Hanging hoop net: tapered vertical cords and circumferential bands.
+    for(let j=0;j<12;j++){
+     const a=j*Math.PI/6,top=new THREE.Vector3(cx+Math.cos(a)*.45,3.1,cz+sz*(end-1.1)+Math.sin(a)*.45);
+     const bottom=new THREE.Vector3(cx+Math.cos(a+.16)*.23,2.54,cz+sz*(end-1.1)+Math.sin(a+.16)*.23);
+     const delta=bottom.clone().sub(top),cord=new THREE.Mesh(new THREE.CylinderGeometry(.009,.009,delta.length(),5),white);
+     cord.position.copy(top).add(bottom).multiplyScalar(.5);cord.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.normalize());root.add(cord);
+    }
    }
   }
   // Perimeter fence, with an open pedestrian gate at the south side.
