@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import {createDetailedCar} from './detailed-fictional-cars.js';
+import {createDetailedCar} from './detailed-fictional-cars.js?v=20261117-real-vehicles-v22';
+import {createNaturalShrub} from './realistic-landscape-assets.js';
 // Zerconda Motors: original interactive 3D showroom with three fictional unbranded cars.
 export function createDealership(scene,{x=-62,z=-48}={}){
  const root=new THREE.Group();root.position.set(x,0,z);root.name='Zerconda Motors - walk-in dealership';scene.add(root);
@@ -29,7 +30,7 @@ export function createDealership(scene,{x=-62,z=-48}={}){
  box(root,3.3,.14,5,13.1,.04,0,white);
  box(root,3.4,.25,8,12.5,7.7,0,steel);
  for(const zz of [-12.2,12.2]){box(root,1.1,1,1.1,13,.5,zz,wood);
-  const p=new THREE.Mesh(new THREE.IcosahedronGeometry(.85,2),mat(0x347747));p.position.set(13,1.5,zz);root.add(p);}
+  const p=createNaturalShrub({width:1.05,height:1.4,seed:83+Math.round(zz*3)});p.position.set(13,.8,zz);root.add(p);}
  // Realistic dealership sign as authored image asset loaded from GitHub.
  const sign=new THREE.Mesh(new THREE.PlaneGeometry(19,3.4),new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide}));
  sign.position.set(12.22,7.15,0);sign.rotation.y=Math.PI/2;root.add(sign);
@@ -82,8 +83,8 @@ export function createDealership(scene,{x=-62,z=-48}={}){
  }
  for(const zz of [-11,11]){
   box(root,1.8,.8,1.8,16.1,.4,zz,planterDark);
-  const plant=new THREE.Mesh(new THREE.IcosahedronGeometry(1.05,2),leaf);
-  plant.position.set(16.1,1.65,zz);root.add(plant);
+  const plant=createNaturalShrub({width:1.55,height:1.35,seed:300+Math.round(zz*5)});
+  plant.position.set(16.1,.8,zz);root.add(plant);
  }
  // Three cars, each a distinctly styled fictional model (no real logos).
  const cars=[];const worldZ=z;
@@ -107,7 +108,7 @@ export function createDealership(scene,{x=-62,z=-48}={}){
  box(root,.8,.26,28,24,.03,0,curb);
  for(const zz of [-12,12]){
   box(root,2.4,.4,2.4,23.5,.2,zz,curb);
-  const bush=new THREE.Mesh(new THREE.IcosahedronGeometry(1,2),mat(0x3c754a));bush.position.set(23.5,1.35,zz);root.add(bush);
+  const bush=createNaturalShrub({width:1.8,height:1.65,seed:500+Math.round(zz*4)});bush.position.set(23.5,.4,zz);root.add(bush);
   box(root,.2,7,.2,23,3.5,zz,steel);box(root,1.7,.2,.8,23,7.1,zz,new THREE.MeshBasicMaterial({color:0xfff2db}));
  }
  function displayCar(px,pz,color,type='sedan'){const g=createDetailedCar({color,type});g.position.set(px,.02,pz);root.add(g);}
