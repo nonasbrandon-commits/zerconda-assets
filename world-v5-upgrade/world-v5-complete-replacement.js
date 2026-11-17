@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
 import {createCloudSky} from './cloud-sky.js';
-import {addCityDepth} from './city-depth-assets.js?v=20261117-road-clearance-v53';
+import {addCityDepth} from './city-depth-assets.js?v=20261117-building-setback-v54';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js';
 import {createApartmentExperience} from './apartment-interiors.js';
@@ -22,7 +22,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-road-clearance-v53';
+const ZERCONDA_BUILD='2026-11-17-building-setback-v54';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -408,7 +408,9 @@ for(let k=0;k<blocks.length;k++){
  if(bx===48&&bz===-48)continue; // Dedicated observation needle district: no buildings.
  if(Math.abs(bx)>100||Math.abs(bz)>100)continue; // avoid outside-city half blocks
  for(const [i,j] of [[-1,-1],[1,-1],[-1,1],[1,1]]){
-  const x=bx+i*17,z=bz+j*17;
+  // Keep the complete building footprint and trim well behind the curb.
+  // Road centers are 96m apart; this leaves at least 14m from each wall to asphalt.
+  const x=bx+i*12,z=bz+j*12;
   if(bx===-48&&bz===-48)continue; // Reserved commercial district: cafe, dealership, and access road. // Reserve east side for Brewstone cafe opposite the Needle.
   makeBuilding(x,z,24,23,18+Math.floor(rand()*5)*3.2,k+Math.round(rand()*4));
  }
