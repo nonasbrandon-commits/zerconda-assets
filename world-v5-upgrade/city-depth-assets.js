@@ -31,11 +31,48 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
  }
  const brickWalls=Array.from({length:5},(_,i)=>new T.MeshStandardMaterial({map:brickTexture(i),roughness:.96,color:0xffffff}));
  const darkGlass=new T.MeshStandardMaterial({color:0x324d5c,roughness:.25,metalness:.38});
+ const curtainGlass=new T.MeshStandardMaterial({color:0x203d62,roughness:.22,metalness:.38,transparent:false,opacity:1,depthWrite:true,side:T.FrontSide});
+ const curtainAlt=new T.MeshStandardMaterial({color:0x2c5076,roughness:.26,metalness:.3,transparent:false,opacity:1,depthWrite:true,side:T.FrontSide});
+ const curtainDark=new T.MeshStandardMaterial({color:0x15283d,roughness:.2,metalness:.4,transparent:false,depthWrite:true});
+ const mullion=new T.MeshStandardMaterial({color:0x7b8794,roughness:.42,metalness:.55});
+ // Window grid is a single opaque facade layer over an opaque structural core.
+ // Avoid transparent planes or coplanar duplicate panes (the cause of ghosted buildings).
+ function glassTower(g,w,d,h,index){
+  const shell=new T.MeshStandardMaterial({color:0x172c43,roughness:.5,metalness:.2});
+  b(g,0,h/2,0,w,h,d,shell);
+  const floors=Math.max(5,Math.floor(h/2.95)),cols=Math.max(5,Math.floor(w/1.8)),depthCols=Math.max(4,Math.floor(d/1.8));
+  const paneW=w/cols,paneD=d/depthCols;
+  for(let f=0;f<floors;f++){
+   const y=1.6+f*(h-2.5)/floors,ph=(h-2.5)/floors-.1;
+   for(let i=0;i<cols;i++){
+    const x=-w/2+(i+.5)*paneW,material=(f*13+i*7+index)%11===0?curtainDark:((f+i)%4===0?curtainAlt:curtainGlass);
+    for(const side of [-1,1])b(g,x,y,side*(d/2+.065),paneW-.095,ph,.075,material);
+   }
+   for(let i=0;i<depthCols;i++){
+    const z=-d/2+(i+.5)*paneD,material=(f*9+i*5+index)%13===0?curtainDark:((f+i)%3===0?curtainAlt:curtainGlass);
+    for(const side of [-1,1])b(g,side*(w/2+.065),y,z,.075,ph,paneD-.095,material);
+   }
+   b(g,0,y+ph/2+.045,d/2+.16,w,.035,.055,mullion);
+   b(g,0,y+ph/2+.045,-d/2-.16,w,.035,.055,mullion);
+  }
+  for(let i=0;i<=cols;i++){
+   const x=-w/2+i*paneW;
+   for(const side of [-1,1])b(g,x,h/2,side*(d/2+.15),.045,h,.045,mullion);
+  }
+  for(let i=0;i<=depthCols;i++){
+   const z=-d/2+i*paneD;
+   for(const side of [-1,1])b(g,side*(w/2+.15),h/2,z,.045,h,.045,mullion);
+  }
+  b(g,0,h+.2,0,w+.4,.4,d+.4,mullion);
+  b(g,0,1.55,d/2+.22,3,3,.12,curtainDark);
+ }
+
  const iron=new T.MeshStandardMaterial({color:0x272b2b,roughness:.78,metalness:.38});
  function skylineTower(x,z,w,d,h,index){
   const g=new T.Group();g.position.set(x,0,z);root.add(g);
   // Street-scale brick apartments and occasional distinctive taller buildings.
   const style=index%9,brick=style!==7&&style!==8;
+  if(style===7||style===8){glassTower(g,w,d,h,index);return g;}
   const floors=Math.max(3,Math.floor(h/3.25));
   const body=brick?brickWalls[index%brickWalls.length]:wall[index%wall.length];
   b(g,0,h/2,0,w,h,d,body);
