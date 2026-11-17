@@ -33,36 +33,48 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
   box(root,236,.02,-48+side*8,300,.12,2.4,walk);
   for(let i=0;i<22;i++)tree(root,105+i*12,-48+side*19, .65+(i%3)*.07,i);
  }
- // Raised pedestrian and golf-cart crossing at the eastside boulevard.
- // Clear road deck below (5.2m); ramps connect north and south course paths.
- const bridge=new THREE.Group();bridge.name='Golf course elevated pedestrian overpass';root.add(bridge);
- const concrete=mat(0xa5a8a4,.88),rail=mat(0x46565c,.5),deck=mat(0xb8b5a8,.8);
- const bx=290,roadZ=-48,deckY=6.3,bridgeWidth=5.2;
- // Cross the boulevard north-to-south, perpendicular to traffic.
- box(bridge,bx,deckY,roadZ,bridgeWidth,.38,27,deck);
- for(const side of [-1,1]){
-  box(bridge,bx+side*2.45,deckY+1.05,roadZ,.12,2.1,27,rail);
-  for(let j=0;j<10;j++){
-   const zz=roadZ-12+j*2.65;
-   box(bridge,bx+side*2.45,deckY+.7,zz,.12,1.4,.12,rail);
+ // Steel truss pedestrian crossing with vehicle clearance and grounded access ramps.
+ const bridge=new THREE.Group();bridge.name='Eastside steel pedestrian bridge';root.add(bridge);
+ const steel=mat(0x334954,.48),concrete=mat(0x929d9f,.9),deck=mat(0xb7bbb8,.82),glassRail=mat(0x748e99,.48);
+ const bx=290,roadZ=-48,deckY=7.0,width=4.4,span=32;
+ // The deck underside is 6.7m above the road; no support stands in traffic.
+ box(bridge,bx,deckY,roadZ,width,.32,span,deck);
+ for(const edge of [-1,1]){
+  const xx=bx+edge*(width/2-.1);
+  box(bridge,xx,deckY+.13,roadZ,.23,.22,span,steel);
+  for(let j=0;j<=16;j++){
+   const zz=roadZ-span/2+j*span/16;
+   box(bridge,xx,deckY+1.1,zz,.09,2.0,.1,steel);
+  }
+  for(const h of [.5,1.2,2.1])box(bridge,xx,deckY+h,roadZ,.10,.10,span,steel);
+  // Diagonal steel braces form visible, realistic bridge trusses.
+  for(let j=0;j<16;j++){
+   const zz=roadZ-span/2+(j+.5)*span/16;
+   const brace=new THREE.Mesh(new THREE.BoxGeometry(.11,2.3,.12),steel);
+   brace.position.set(xx,deckY+1.15,zz);
+   brace.rotation.x=(j%2?1:-1)*.64;bridge.add(brace);
   }
  }
- // Accessible, gently sloping approaches start beyond both sidewalk edges.
+ // Four columns land beyond the traffic envelope and sidewalk.
+ for(const zz of [roadZ-span/2-1.4,roadZ+span/2+1.4])
+  for(const xx of [bx-width/2+.3,bx+width/2-.3]){
+   box(bridge,xx,3.4,zz,.65,6.8,.65,concrete);
+   box(bridge,xx,.28,zz,1.5,.56,1.5,concrete);
+  }
+ // Approach ramps rise from grade to bridge height. Every railing follows the slope.
+ const rampLength=84,angle=Math.atan2(deckY,rampLength);
  for(const side of [-1,1]){
-  const rampLength=53,rampCenterZ=roadZ+side*(13.5+rampLength/2);
-  const ramp=new THREE.Mesh(new THREE.BoxGeometry(bridgeWidth,.35,rampLength),deck);
-  ramp.position.set(bx,deckY/2,rampCenterZ);
-  ramp.rotation.x=side*Math.atan2(deckY,rampLength);
-  bridge.add(ramp);
-  // Guardrails run the entire inclined ramp.
+  const centerZ=roadZ+side*(span/2+rampLength/2);
+  const ramp=new THREE.Group();ramp.position.set(bx,deckY/2,centerZ);
+  ramp.rotation.x=-side*angle;bridge.add(ramp);
+  box(ramp,0,0,0,width,.3,rampLength,deck);
   for(const edge of [-1,1]){
-   const bar=new THREE.Mesh(new THREE.BoxGeometry(.13,1.2,rampLength),rail);
-   bar.position.set(bx+edge*2.45,deckY/2+.75,rampCenterZ);
-   bar.rotation.x=ramp.rotation.x;bridge.add(bar);
+   const xx=edge*(width/2-.1);
+   for(const h of [.55,1.15])box(ramp,xx,h,0,.12,.12,rampLength,steel);
+   for(let j=0;j<=28;j++)box(ramp,xx,.58,j*rampLength/28-rampLength/2,.12,1.2,.12,steel);
   }
- }
- for(const zz of [roadZ-13,roadZ+13]){
-  for(const xx of [bx-2.4,bx+2.4])box(bridge,xx,3.05,zz,.42,6.1,.42,concrete);
+  // Landing at ground end, away from the boulevard.
+  box(bridge,bx,.12,roadZ+side*(span/2+rampLength),width+.8,.24,5,concrete);
  }
  // Do not allow any fairway turf to cover the existing paved boulevard.
  // Golf turf is drawn on either side of the street, never as one giant overlapping rectangle.
