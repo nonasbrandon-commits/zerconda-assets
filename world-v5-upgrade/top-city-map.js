@@ -54,6 +54,9 @@ export function createCityMap({player,beach={x:0,z:212}}){
   ctx.fillStyle='#a789b4';ctx.fillRect(tx(-78),tz(-32),60*scale,16*270/527);
   label(-82,-8,'CLUB','#ead4ff');
   label(-48,-48,'AUTO');label(-48,-132,'COFFEE');label(-20,212,'BEACH','#ffffff');
+  // Street-facing, evenly spaced western residential lots.
+  ctx.fillStyle='#cbbd9e';for(const hx of [-246,-220,-194,-168,-142])for(const hz of [-128,-64,-32,32])ctx.fillRect(tx(hx-7),tz(hz-7.7),14*scale,15.4*270/527);
+  label(-253,-145,'HOMES','#f5eddb');
   // Highly visible live player marker, drawn last so roads and labels never cover it.
   const px=tx(player.x),py=tz(player.z);frame++;
   const pulse=8+3*Math.sin(frame*.08);
