@@ -95,16 +95,16 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  // Course perimeter: grass, fairways, sand traps, water hazard, paths.
  const course=new THREE.Group();course.position.set(x,0,z);root.add(course);
  // Course surface begins east of the access boulevard and leaves its road unobstructed.
- box(course,0,-.15,0,300,.25,260,rough);
+ // Two separate playable parcels. Keep a permanent 26m-wide clear road corridor.\n box(course,0,-.15,-76.5,300,.25,107,rough);\n box(course,0,-.15,76.5,300,.25,107,rough);
  // Restore the road corridor above turf with an asphalt strip and matching sidewalk.
- box(root,236,.13,-48,300,.12,14,road);
- for(const side of [-1,1])box(root,236,.17,-48+side*8,300,.12,2.4,walk);
+ box(root,236,.28,-48,300,.16,20,road);
+ for(const side of [-1,1])box(root,236,.39,-48+side*11.3,300,.13,2.4,walk);
  for(const [fx,fz,rx,rz,rotation] of [[-68,-63,65,25,-.28],[53,-5,85,26,.33],[-28,73,73,26,-.23]]){
-  const f=oval(course,fx,fz,rx,rz,fairway,.04);f.rotation.z=rotation;
+  const safeZ=fz<0?Math.min(fz,-37-rz):Math.max(fz,37+rz);const f=oval(course,fx,safeZ,rx,rz,fairway,.04);f.rotation.z=rotation;
  }
  const holes=[{tee:[-120,-91],pin:[-19,-35],n:1},{tee:[-115,0],pin:[108,15],n:2},{tee:[98,85],pin:[-95,92],n:3}];
  for(const hole of holes){
-  const [px,pz]=hole.pin;
+  const [px,pz0]=hole.pin;const pz=pz0<0?Math.min(pz0,-44):Math.max(pz0,44);
   oval(course,px,pz,14,12,green,.095);
   oval(course,px+14,pz+10,10,5,sand,.065);
   oval(course,px-18,pz-12,8,6,sand,.065);
@@ -112,13 +112,13 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
   pole.position.set(px,1.65,pz);course.add(pole);
   const banner=new THREE.Mesh(new THREE.PlaneGeometry(1.4,.85),flag[hole.n%3]);
   banner.position.set(px+.72,2.75,pz);course.add(banner);
-  const tee=oval(course,hole.tee[0],hole.tee[1],7,5,green,.09);
-  for(let j=0;j<2;j++){const ball=new THREE.Mesh(new THREE.SphereGeometry(.11,10,8),trim);ball.position.set(hole.tee[0]+j*.7,.22,hole.tee[1]);course.add(ball);}
+  const teeZ=hole.tee[1]<0?Math.min(hole.tee[1],-34):Math.max(hole.tee[1],34);const tee=oval(course,hole.tee[0],teeZ,7,5,green,.09);
+  for(let j=0;j<2;j++){const ball=new THREE.Mesh(new THREE.SphereGeometry(.11,10,8),trim);ball.position.set(hole.tee[0]+j*.7,.22,teeZ);course.add(ball);}
  }
  const pond=oval(course,35,74,31,17,water,.1);
  for(let i=0;i<38;i++){
   const theta=i*2.399963,rad=115+(i%4)*4;
-  const tx=Math.cos(theta)*rad,tz=Math.sin(theta)*rad;
+  const tx=Math.cos(theta)*rad,tz=Math.sin(theta)*rad;if(Math.abs(tz)<24)continue;
   if(Math.abs(tx)<24&&tz< -95)continue;
   tree(course,tx,tz,.75+(i%4)*.2,i);
  }
@@ -138,14 +138,14 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48}={}){
  const mowA=mat(0x5b9146),mowB=mat(0x659c4d);
  for(const [cx,cz,rx,rz,rotation] of [[-68,-63,65,25,-.28],[53,-5,85,26,.33],[-28,73,73,26,-.23]]){
   for(let i=-4;i<=4;i++){
-   const patch=oval(course,cx+i*rx*.16,cz,rx*.11,rz*.88,i%2?mowA:mowB,.049);
+   const safeZ=cz<0?Math.min(cz,-36-rz):Math.max(cz,36+rz);const patch=oval(course,cx+i*rx*.16,safeZ,rx*.11,rz*.88,i%2?mowA:mowB,.049);
    patch.rotation.z=rotation;
   }
  }
  const cartWaypoints=[[-130,-115],[-103,-91],[-79,-54],[-50,-29],[-12,-16],[34,-30],[82,-9],[111,27],[89,70],[42,99],[-11,102],[-68,94],[-112,69]];
  const cartCurve=new THREE.CatmullRomCurve3(cartWaypoints.map(([xx,zz])=>new THREE.Vector3(xx,.058,zz)),false,'catmullrom',.35);
  const cartRibbon=new THREE.Mesh(new THREE.TubeGeometry(cartCurve,180,1.55,8,false),walk);
- cartRibbon.scale.y=.035;cartRibbon.receiveShadow=true;course.add(cartRibbon);
+ cartRibbon.scale.y=.035;cartRibbon.receiveShadow=true;course.add(cartRibbon);\n // Keep the golf cart route out of the paved boulevard.\n cartRibbon.visible=false;
  // Golf cart path and carts.
  for(let i=0;i<18;i++){
   const a=i/17*Math.PI*1.7+.3;
