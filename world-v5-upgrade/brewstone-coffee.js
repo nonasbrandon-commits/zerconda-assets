@@ -8,13 +8,17 @@ export function createCoffeeShop(scene,{x=48,z=48}={}){
  const brick=mat(0xa5755e,.92),plaster=mat(0xe6ded0,.92),floor=mat(0xb8aa93,.8),wood=mat(0x76503b,.65),
   black=mat(0x28343a,.35,.4),glass=new THREE.MeshPhysicalMaterial({color:0xb1d5dc,roughness:.12,metalness:.1,transparent:true,opacity:.38,side:THREE.DoubleSide,depthWrite:false}),
   fabric=mat(0x466e69,.95),metal=mat(0x9aa6a6,.32,.7);
+ // Existing photographic brickwork makes the recovered exterior consistent with the upgraded patio.
+ const brickLoader=new THREE.TextureLoader();
+ const brickTexture=brickLoader.load('https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/expanded-models/brick-building/textures/modular_factory_facade_brick_diff_1k.jpg');
+ brickTexture.colorSpace=THREE.SRGBColorSpace;brickTexture.wrapS=brickTexture.wrapT=THREE.RepeatWrapping;brickTexture.repeat.set(3,1);brick.map=brickTexture;
  const cube=new THREE.BoxGeometry(1,1,1);
- function box(x,y,z,w,h,d,m){const o=new THREE.Mesh(cube,m);o.position.set(x,y,z);o.scale.set(w,h,d);o.receiveShadow=true;root.add(o);return o;}
+ function box(x,y,z,w,h,d,m){const o=new THREE.Mesh(cube,m);o.position.set(x,y,z);o.scale.set(w,h,d);o.castShadow=h>.3&&m!==glass;o.receiveShadow=true;root.add(o);return o;}
  function cyl(x,y,z,r,h,m){const o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,16),m);o.position.set(x,y,z);root.add(o);return o;}
  // Open cafe, 24x18 meters. South-facing glazed entrance faces tower.
  box(0,.12,0,24,.24,18,floor);
  box(0,3.2,-9,24,6.4,.35,brick);
- for(const sx of [-1,1])box(sx*12,3.2,0,.35,6.4,18,plaster);
+ for(const sx of [-1,1])box(sx*12,3.2,0,.35,6.4,18,brick);
  box(0,6.45,0,24.7,.38,18.7,black);
  for(const xx of [-10.8,-6.8,-2.4,2.4,6.8,10.8])box(xx,3.1,9,.2,6.2,.25,black);
  box(-7.8,3.1,9,7.6,5.8,.12,glass);box(7.8,3.1,9,7.6,5.8,.12,glass);
@@ -91,8 +95,8 @@ export function createCoffeeShop(scene,{x=48,z=48}={}){
   if(size.y<.001)return;
   shrubContainers.forEach((holder,i)=>{
    holder.clear();const plant=base.clone(true);const scale=(1.12+(i%3)*.14)/size.y;
-   plant.scale.setScalar(scale);plant.position.set(-bb.getCenter(new THREE.Vector3()).x*scale,-bb.min.y*scale,-bb.getCenter(new THREE.Vector3()).z*scale);
-   plant.rotation.y=i*1.3;plant.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});holder.add(plant);
+   plant.scale.setScalar(scale);plant.rotation.y=i*1.3;plant.position.set(0,0,0);plant.updateMatrixWorld(true);
+   const placed=new THREE.Box3().setFromObject(plant),center=placed.getCenter(new THREE.Vector3());plant.position.set(-center.x,-placed.min.y,-center.z);plant.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});holder.add(plant);
   });
   console.info('ZERCONDA: textured botanical GLTF loaded at Brewstone Coffee');
  },undefined,e=>console.warn('Botanical GLTF failed; detailed leaf fallback retained',e));

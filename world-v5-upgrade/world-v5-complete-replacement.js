@@ -8,14 +8,14 @@ import {createObservationNeedle} from './observation-needle.js';
 import {createCloudSky} from './cloud-sky.js';
 import {addCityDepth} from './city-depth-assets.js?v=20261117-nine-holes-v67';
 import {addBuildingIdentity} from './nine-building-styles.js';
-import {createCoffeeShop} from './brewstone-coffee.js';
+import {createCoffeeShop} from './brewstone-coffee.js?v=20261117-commerce-restore-v69';
 import {createApartmentExperience} from './apartment-interiors.js';
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261117-interiors-v1';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 import {addAirDancers} from './air-dancers.js';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261117-water-to-wall-v50';
-import {createCityMap} from './top-city-map.js?v=20261117-nine-holes-v67';
+import {createCityMap} from './top-city-map.js?v=20261117-commerce-restore-v69';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-road-clearance-v53';
@@ -24,7 +24,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-realistic-world-v68';
+const ZERCONDA_BUILD='2026-11-17-commerce-restore-v69';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -511,13 +511,17 @@ const observationNeedle=createObservationNeedle(scene,{x:48,z:-48});
 // Place Brewstone on the north side of the east-west street, opposite the dealership.
 // Its south-facing entrance and patio face the road; the showroom stays unobstructed.
 const coffeeShop=createCoffeeShop(scene,{x:-48,z:-132});
+ // Connect the commercial forecourt and cafe patio to their respective sidewalks.
+ box(8,.14,10,-48,.035,-77,paving);
+ box(8,.14,6,-48,.035,-112,paving);
+ for(let i=-4;i<=4;i++)box(1.25,.016,17.5,-48+i*2,.045,-96,lane);
 // Walk-in showroom just west of Brewstone Coffee, with three fictional display vehicles.
 const dealership={
  x:-48,z:-48,isNear:(x,z,r=5.5)=>Math.hypot(x+48,z+48)<r,
  nearestCar:()=>null
 };
-import('./zerconda-dealership.js?v=20261117-isolated-v25')
- .then(({createDealership})=>Object.assign(dealership,createDealership(scene,{x:-48,z:-48})))
+import('./zerconda-dealership.js?v=20261117-commerce-restore-v69')
+ .then(({createDealership})=>Object.assign(dealership,createDealership(scene,{x:-48,z:-48,rotation:Math.PI/2})))
  .catch(err=>{console.error('Dealership asset failed (city continues):',err);
    if(status)status.textContent='City loaded; dealership asset unavailable: '+err.message;
  });
@@ -655,6 +659,7 @@ for(const center of roadLines){
  for(const along of parkingSamples){
   // No parking at intersections or across pedestrian crossings.
   if(roadLines.some(cross=>Math.abs(along-cross)<24))continue;
+  if(center===-96&&along> -61&&along< -35)continue; // Commercial mid-block crossing.
   for(const side of [-1,1]){
    for(const vertical of [true,false]){
     const x=vertical?center+side*curbOffset:along;
@@ -851,12 +856,12 @@ const cafeButton=actionButton('zerconda-cafe-button','C · SIT DOWN',365,toggleC
 const dealerButton=actionButton('zerconda-dealership-button','E · ENTER DEALERSHIP',390,visitDealership);
 function visitDealership(){
  if(!dealerInside&&dealership.isNear(player.x,player.z,5.5)){dealerInside=true;
-  player.x=dealership.x+9;player.z=dealership.z;movement.vx=0;movement.vz=0;
+  player.x=dealership.insidePoint.x;player.z=dealership.insidePoint.z;movement.vx=0;movement.vz=0;
   if(status)status.textContent='Welcome to Zerconda Motors · Explore three vehicles on the showroom floor';return;
  }
  const vehicle=dealership.nearestCar(player.x,player.z,5);
  if(vehicle){if(status)status.textContent=vehicle.name+' · Display vehicle · Visit the vehicle shop for purchases';return;}
- if(dealerInside){dealerInside=false;player.x=dealership.x+15;player.z=dealership.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Exited Zerconda Motors';}
+ if(dealerInside){dealerInside=false;player.x=dealership.exitPoint.x;player.z=dealership.exitPoint.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Exited Zerconda Motors';}
 }
 let sittingSeat=null,cafeInside=false;
 const cafeEntry={x:coffeeShop.entrance.x,z:coffeeShop.entrance.z};
