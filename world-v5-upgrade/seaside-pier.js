@@ -17,7 +17,7 @@ export function createSeasidePier(scene,{getPlayer,getYaw,onTeleport=()=>{},onMe
  function deck(s){box(s.x1-s.x0,.30,s.z1-s.z0,(s.x0+s.x1)/2,s.y-.15,(s.z0+s.z1)/2);for(let zz=s.z0+.21;zz<s.z1;zz+=.43)box(s.x1-s.x0-.08,.045,.40,(s.x0+s.x1)/2,s.y+.022,zz,timber);}
  surfaces.forEach(deck);
  const ramps=[{a:new THREE.Vector2(0,220),b:new THREE.Vector2(0,238),width:14,y0:.14,y1:1.55},{a:new THREE.Vector2(-13,272),b:new THREE.Vector2(-23,288),width:4,y0:1.55,y1:.65}];
- function ramp(r){const dir=r.b.clone().sub(r.a),len=dir.length(),angle=Math.atan2(dir.x,dir.y),slope=Math.atan2(r.y1-r.y0,len);const g=new THREE.Group();g.position.set((r.a.x+r.b.x)/2,(r.y0+r.y1)/2,(r.a.y+r.b.y)/2);g.rotation.set(-slope,angle,0,'YXZ');root.add(g);box(r.width,.22,len,0,-.11,0,timber,0,g);for(let i=0;i<len/.43;i++)box(r.width,.035,.40,0,.018,-len/2+.2+i*.43,timber,0,g);for(const side of [-1,1]){const x=side*(r.width/2-.2);box(.11,.11,len,x,1.06,0,piles,0,g);for(let j=0;j<=Math.floor(len/2.4);j++)box(.10,1.08,.10,x,.54,-len/2+j*len/Math.floor(len/2.4),piles,0,g);}return g;}
+ function ramp(r){const dir=r.b.clone().sub(r.a),len=dir.length(),angle=Math.atan2(dir.x,dir.y),slope=Math.atan2(r.y1-r.y0,len);const g=new THREE.Group();g.position.set((r.a.x+r.b.x)/2,(r.y0+r.y1)/2,(r.a.y+r.b.y)/2);g.rotation.set(-slope,angle,0,'YXZ');root.add(g);box(r.width,.22,len,0,-.11,0,timber,0,g);for(let i=0;i<len/.43;i++)box(r.width,.035,.40,0,.018,-len/2+.2+i*.43,timber,0,g);for(const side of (r===ramps[1]?[]:[-1,1])){const x=side*(r.width/2-.2);box(.11,.11,len,x,1.06,0,piles,0,g);for(let j=0;j<=Math.floor(len/2.4);j++)box(.10,1.08,.10,x,.54,-len/2+j*len/Math.floor(len/2.4),piles,0,g);}return g;}
  ramps.forEach(ramp);
  // Timber piles, collars and crossed braces carry the deck above the ocean.
  for(let zz=241;zz<=395;zz+=8)for(const xx of [-5.6,5.6]){mesh(new THREE.CylinderGeometry(.22,.30,6.5,12),piles,[xx,-1.95,zz]);box(.75,.18,.75,xx,1.18,zz,piles);}
@@ -25,8 +25,17 @@ export function createSeasidePier(scene,{getPlayer,getYaw,onTeleport=()=>{},onMe
  for(let zz=244;zz<374;zz+=16){beam([-5.6,-.8,zz],[5.6,1.2,zz],.08);beam([5.6,-.8,zz],[-5.6,1.2,zz],.08);}
  function rail(x0,z0,x1,z1,y=1.55){const dx=x1-x0,dz=z1-z0,len=Math.hypot(dx,dz);beam([x0,y+1.03,z0],[x1,y+1.03,z1],.07);beam([x0,y+.48,z0],[x1,y+.48,z1],.045);const n=Math.ceil(len/2.7);for(let i=0;i<=n;i++){const t=i/n;box(.12,1.14,.12,x0+dx*t,y+.55,z0+dz*t,piles);}}
  rail(6.8,238,6.8,374);rail(-6.8,238,-6.8,242);rail(-6.8,274,-6.8,374);rail(-21.8,374,-7.1,374);rail(7.1,374,21.8,374);rail(-21.8,374,-21.8,399.8);rail(21.8,374,21.8,399.8);rail(-21.8,399.8,21.8,399.8);
- rail(-23.8,242,-6.9,242);rail(-23.8,242,-23.8,274);rail(-23.8,274,-15.2,274);rail(-10.8,274,-6.8,274);rail(-29.8,286,-25,286,.65);rail(-20.5,286,-18.2,286,.65);rail(-18.2,286,-18.2,306,.65);rail(-29.8,306,-18.2,306,.65);rail(-29.8,286,-29.8,291,.65);rail(-29.8,300,-29.8,306,.65);
- for(const xx of [-6,6])box(.26,3.0,.26,xx,2.8,237,piles);placard('ZERCONDA PIER',0,4.30,237,9.5,1.0,Math.PI);
+ rail(-23.8,242,-6.9,242);rail(-23.8,242,-23.8,274);rail(-23.8,274,-16.75,274);rail(-11.75,274,-6.8,274);rail(-29.8,286,-24.25,286,.65);rail(-19.25,286,-18.2,286,.65);rail(-18.2,286,-18.2,306,.65);rail(-29.8,306,-18.2,306,.65);rail(-29.8,286,-29.8,291,.65);rail(-29.8,300,-29.8,306,.65);
+ // Clip gangway handrails to the two deck boundaries; no rails cross either opening.
+ const gangway=ramps[1],gx=-10,gz=16,glen=Math.hypot(gx,gz);
+ for(const side of [-1,1]){
+  const ox=side*gz/glen*1.8,oz=-side*gx/glen*1.8;
+  const endpoint=z=>{const t=(z-272-oz)/gz;return [-13+gx*t+ox,1.55-.9*t,z];};
+  const a=endpoint(274),b=endpoint(286);
+  for(const lift of [.48,1.06])beam([a[0],a[1]+lift,a[2]],[b[0],b[1]+lift,b[2]],lift>.5?.06:.045);
+  for(let i=0;i<=5;i++){const t=i/5;box(.12,1.14,.12,THREE.MathUtils.lerp(a[0],b[0],t),THREE.MathUtils.lerp(a[1],b[1],t)+.55,THREE.MathUtils.lerp(a[2],b[2],t),piles);}
+ }
+
  function shack(z,title,color){const x=-16;box(7,.17,7,x,1.67,z,timber);box(.16,2.8,6.3,x-3.35,3.05,z,color);box(6.7,2.8,.16,x,3.05,z-3.15,color);box(6.7,2.8,.16,x,3.05,z+3.15,color);box(.16,.75,6.2,x+3.35,2.02,z,color);box(.16,.55,6.2,x+3.35,4.15,z,color);for(const zz of [-2.95,2.95])box(.18,3,.18,x+3.35,3.15,z+zz,white);box(1.2,.14,5.5,x+3.45,2.52,z,timber);for(const side of [-1,1]){const r=box(3.8,.15,7.2,x+side*1.75,4.86,z,roof);r.rotation.z=-side*Math.atan2(.8,3.5);}for(const side of [-1,1]){const sh=new THREE.Shape();sh.moveTo(-3.35,0);sh.lineTo(0,.76);sh.lineTo(3.35,0);sh.closePath();mesh(new THREE.ShapeGeometry(sh),color,[x,4.45,z+side*3.15],[0,side>0?0:Math.PI,0]);}placard(title,x+3.49,4.08,z,6.2,.65,Math.PI/2);placard('FREE TO USE',x+3.52,2.02,z,3.7,.55,Math.PI/2);return {x:x+5.1,z};}
  const boatDesk=shack(248,'FREE WATERCRAFT',teal),rodDesk=shack(266,'FISHING GEAR',white);
  for(let i=0;i<6;i++){const x=-15.6+i*.4;beam([x,1.75,263.8],[x+.2,4.05,263.9],.019,iron);}box(3.1,.18,.8,-14.8,1.8,263.8,piles);for(let i=0;i<4;i++)box(.55,.36,.55,-17.8,1.94,264.6+i*.65,orange);
