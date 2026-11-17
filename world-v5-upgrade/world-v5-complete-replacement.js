@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-new-stucco-buildings-v4';
+const ZERCONDA_BUILD='2026-11-17-roads-access-perimeter-v5';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -154,10 +154,13 @@ for(const c of roadLines){
  box(19,.12,350,c,-.04,0,asphalt);
  box(350,.12,19,0,-.035,c,asphalt);
  for(const s of [-1,1]){
-  box(4,.24,350,c+s*11.5,.025,0,paving);
-  box(350,.24,4,0,.025,c+s*11.5,paving);
-  box(.22,.25,350,c+s*9.65,.02,0,curb);
-  box(350,.25,.22,0,.02,c+s*9.65,curb);
+  for(const [lo,hi] of [[-175,-107],[-85,-11],[11,85],[107,175]]){
+   const mid=(lo+hi)/2,len=hi-lo;
+   box(4,.24,len,c+s*11.5,.025,mid,paving);
+   box(len,.24,4,mid,.025,c+s*11.5,paving);
+   box(.22,.25,len,c+s*9.65,.02,mid,curb);
+   box(len,.25,.22,mid,.02,c+s*9.65,curb);
+  }
  }
  for(let p=-166;p<=166;p+=12){
   if(!roadLines.some(k=>Math.abs(p-k)<15)){
@@ -174,6 +177,25 @@ for(const x of roadLines)for(const z of roadLines){
  }
 }
 
+// Perimeter boundary around the current playable district. Expansion gates remain locked.
+const perimeterMetal=new THREE.MeshStandardMaterial({color:0x505b5b,metalness:.65,roughness:.52});
+const guardMat=new THREE.MeshStandardMaterial({color:0x263b48,roughness:.82});
+function fenceRun(x1,z1,x2,z2){
+ const length=Math.hypot(x2-x1,z2-z1),angle=Math.atan2(z2-z1,x2-x1);
+ const root=new THREE.Group();root.position.set(x1,0,z1);root.rotation.y=-angle;scene.add(root);
+ for(let p=0;p<=length;p+=3.5){
+  box(.10,2.8,.10,p,1.4,0,perimeterMetal,root);
+ }
+ for(const y of [.35,1.4,2.65])box(length,.055,.055,length/2,y,0,perimeterMetal,root);
+ for(let p=0;p<length;p+=.28)box(.025,2.25,.025,p,1.4,0,perimeterMetal,root);
+}
+fenceRun(-276,-285,570,-285);fenceRun(-276,242,570,242);
+fenceRun(-276,-285,-276,242);fenceRun(570,-285,570,242);
+// Guard checkpoint at the east expansion gate. No exit until the world expands.
+for(const z of [-9,9]){
+ box(.85,1.2,.55,565,1.1,z,guardMat);
+ cylinder(.23,.23,.38,565,1.9,z,stone,scene,16);
+}
 // Facade texture generator: architectural materials, varied stonework,
 // window frames, lintels, sills, masonry joints and shopfronts.
 function facadeTexture(base,trimColor,glassColor,cols=5,floors=5){
@@ -675,13 +697,13 @@ function walkable(x,z){
  if(apartmentSession)return apartments.contains(x,z);
   if(cafeInside)return coffeeShop.isInside(x,z);
   if(coffeeShop.isInside(x,z))return false;
- if(x< -168||x>575||z< -290||z>247)return false;
+ if(x< -276||x>570||z< -285||z>242)return false;
  // Eastern expansion is accessed from the city's eastbound road corridor.
- if(x>168&&z>110)return false;
+ // Residential expansion is accessible on foot; building walls remain solid.
  if(onObservationDeck)return observationNeedle.isOnDeck(x,z);
  if(insideNeedleLobby)return Math.abs(x-observationNeedle.x)<2.2&&z>observationNeedle.z+5.5&&z<observationNeedle.z+9.5;
  if(Math.hypot(x-observationNeedle.x,z-observationNeedle.z)<5.3)return false;
- if(insideBuilding(x,z,1.2))return false;
+ if(insideBuilding(x,z,.35))return false;
  if(Math.hypot(x-48,z-48)<11.55)return false; // actual 3D basin collision
  return true;
 }
