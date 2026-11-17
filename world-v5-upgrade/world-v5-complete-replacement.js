@@ -22,7 +22,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-road-geometry-cleanup-v56';
+const ZERCONDA_BUILD='2026-11-17-east-security-gate-v57';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -242,6 +242,30 @@ wallSegment(-276,-285,570,-285);
 wallSegment(-276,-285,-276,350); // Extend the west wall deep into the ocean; no beach bypass.
 // Main east gate: a clear 26-metre entrance aligned with the golf access road.
 wallSegment(570,-285,570,-61);wallSegment(570,-35,570,350); // East perimeter also continues offshore.
+
+ // East security entrance, spanning the existing 26m opening at z=-61..-35.
+ // The arch is high enough for vehicles; posts sit OUTSIDE the driving lane.
+ const security=new THREE.Group();security.name='East perimeter security gate';scene.add(security);
+ const gateSteel=new THREE.MeshStandardMaterial({color:0x263e4b,metalness:.72,roughness:.35});
+ const gateWhite=new THREE.MeshStandardMaterial({color:0xe2e8e9,metalness:.18,roughness:.55});
+ const gateGlass=new THREE.MeshStandardMaterial({color:0x76b5ce,metalness:.18,roughness:.23});
+ for(const z of [-61,-35]){
+  box(1.4,5,1.4,570,2.5,z,gateSteel,security);
+  box(1.75,.35,1.75,570,5.15,z,gateWhite,security);
+ }
+ box(1.5,1.2,27,570,6.1,-48,gateSteel,security);
+ box(1.55,.52,19,570,6.15,-48,gateWhite,security);
+ // Guard kiosks face the approach, with no obstruction in the opening.
+ for(const z of [-68,-28]){
+  box(4,2.6,4,562,1.3,z,gateWhite,security);
+  box(4.1,1.1,4.1,562,2.65,z,gateSteel,security);
+  box(.12,.95,2.5,559.92,1.8,z,gateGlass,security);
+  const guard=createZercondaAvatar();guard.position.set(557,0,z);
+  guard.rotation.y=Math.PI/2;guard.name='East gate security guard';
+  security.add(guard);
+ }
+ console.info('ZERCONDA east gate and two guards installed');
+
 // Gate geometry is loaded after core scene setup to avoid blocking world startup.
 // Actual three-dimensional mountain terrain beyond the perimeter, with
 // rugged triangulated slopes and snow-capped upper elevations.
