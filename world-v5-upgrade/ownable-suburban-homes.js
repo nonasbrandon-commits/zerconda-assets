@@ -119,7 +119,13 @@ export function createOwnableHomes(scene){
   for(const xx of [1.45,5.55])box(g,.23,3.15,.23,xx,1.68,front-2.22,trim);
   box(g,2.0,2.8,.17,3.5,1.42,front,wood);
   box(g,.18,.18,.12,4.15,1.42,front-.13,garageDoor);
-  for(let step=0;step<3;step++)box(g,3.5,.14,.5,3.5,.1+step*.16,front-3.1+step*.46,concrete);
+  // Steps run perpendicular to the front wall, directly outward from the door.
+   // The lowest tread is furthest into the yard; each successive tread rises toward the threshold.
+   for(let step=0;step<3;step++){
+    const treadDepth=.58, treadHeight=.14;
+    const centerZ=front-2.15+step*.65;
+    box(g,2.35,treadHeight, treadDepth,3.5,treadHeight/2+step*treadHeight,centerZ,concrete);
+   }
   // Window openings represented by inset dark glass and dimensional white casing.
   for(const yy of [1.82,5.02])for(const xx of [-4.6,-.65,3.8]){
    if(yy<3&&xx<0)continue;
