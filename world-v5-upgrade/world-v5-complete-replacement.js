@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-road-shadow-fix-v7';
+const ZERCONDA_BUILD='2026-11-17-roads-to-fence-v8';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -142,23 +142,34 @@ const insideBuilding=(x,z,pad=0)=>buildings.some(b=>Math.abs(x-b.x)<b.w/2+pad&&M
 // Southern edge ends before the beach/ocean; city roads and landscaping sit above it.
 box(1250,.18,940,165,-.28,-305,grass);
 box(350,.12,350,0,-.16,0,grass);
+// All three original road corridors now run continuously to the perimeter fence.
+// East-west roads: x=-276..570. North-south roads: z=-285..242.
+const roadWest=-276,roadEast=570,roadNorth=-285,roadSouth=242;
 for(const c of roadLines){
- box(19,.12,350,c,-.04,0,asphalt);
- box(350,.12,19,0,-.035,c,asphalt);
- for(const s of [-1,1]){
-  for(const [lo,hi] of [[-175,-107],[-85,-11],[11,85],[107,175]]){
+ box(19,.12,roadSouth-roadNorth,c,-.04,(roadNorth+roadSouth)/2,asphalt);
+ box(roadEast-roadWest,.12,19,(roadWest+roadEast)/2,-.035,c,asphalt);
+ for(const side of [-1,1]){
+  // Sidewalks and curbs end at each junction; no raised slabs across traffic.
+  const zStops=[roadNorth,...roadLines.flatMap(v=>[v-14,v+14]),roadSouth];
+  const xStops=[roadWest,...roadLines.flatMap(v=>[v-14,v+14]),roadEast];
+  for(let i=0;i<zStops.length-1;i+=2){
+   const lo=zStops[i],hi=zStops[i+1];if(hi<=lo)continue;
    const mid=(lo+hi)/2,len=hi-lo;
-   box(4,.24,len,c+s*11.5,.025,mid,paving);
-   box(len,.24,4,mid,.025,c+s*11.5,paving);
-   box(.22,.25,len,c+s*9.65,.02,mid,curb);
-   box(len,.25,.22,mid,.02,c+s*9.65,curb);
+   box(4,.24,len,c+side*11.5,.025,mid,paving);
+   box(.22,.25,len,c+side*9.65,.02,mid,curb);
+  }
+  for(let i=0;i<xStops.length-1;i+=2){
+   const lo=xStops[i],hi=xStops[i+1];if(hi<=lo)continue;
+   const mid=(lo+hi)/2,len=hi-lo;
+   box(len,.24,4,mid,.025,c+side*11.5,paving);
+   box(len,.25,.22,mid,.02,c+side*9.65,curb);
   }
  }
- for(let p=-166;p<=166;p+=12){
-  if(!roadLines.some(k=>Math.abs(p-k)<15)){
-   box(.14,.014,5,c,.035,p,yellow);
-   box(5,.014,.14,p,.038,c,yellow);
-  }
+ for(let p=roadNorth+10;p<roadSouth-10;p+=12){
+  if(!roadLines.some(k=>Math.abs(p-k)<15))box(.14,.014,5,c,.035,p,yellow);
+ }
+ for(let p=roadWest+10;p<roadEast-10;p+=12){
+  if(!roadLines.some(k=>Math.abs(p-k)<15))box(5,.014,.14,p,.038,c,yellow);
  }
 }
 // Pedestrian crossing stripes at intersections, inside road only.
