@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {createClothedPlayer} from './clothed-player.js?v=20261117-anatomy-v44';
+import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-avatar-v45';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
@@ -635,7 +635,7 @@ let realAvatar=null,realAvatarMixer=null,realAvatarWalk=null,realAvatarIdle=null
 const avatarBones={};
 const avatarRest={};
 // The old recolored GLB is intentionally retired. Use actual clothing meshes.
-const dressedPlayer=createClothedPlayer();
+const dressedPlayer={root:createZercondaAvatar(),update:()=>{}};
 avatar.add(dressedPlayer.root);
 // Hide ALL primitive pedestrian parts, including the old head, ears, neck and hands.
 // Previously the old head remained visible over the detailed replacement.
