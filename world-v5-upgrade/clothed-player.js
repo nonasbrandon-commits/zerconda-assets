@@ -4,7 +4,7 @@ import * as THREE from 'three';
 export function createClothedPlayer(){
  const root=new THREE.Group();
  const skin=new THREE.MeshStandardMaterial({color:0xc48c6b,roughness:.9});
- const blue=new THREE.MeshStandardMaterial({color:0x397c9e,roughness:.82});
+ const blue=new THREE.MeshStandardMaterial({color:0x397c9e,roughness:.96});
  const seam=new THREE.MeshStandardMaterial({color:0x22546f,roughness:.86});
  const tan=new THREE.MeshStandardMaterial({color:0xa78b67,roughness:.91});
  const dark=new THREE.MeshStandardMaterial({color:0x343c42,roughness:.85});
@@ -14,23 +14,32 @@ export function createClothedPlayer(){
  const ell=(p,r,m,x,y,z)=>{const obj=mesh(p,new THREE.SphereGeometry(1,16,12),m,x,y,z);obj.scale.set(...r);return obj;};
  const cyl=(p,r1,r2,h,m,x,y,z)=>mesh(p,new THREE.CylinderGeometry(r1,r2,h,12),m,x,y,z);
  // Adult human proportions: ~1.85 m total height, shoulders narrower than leg length.
- ell(root,[.215,.295,.125],blue,0,1.32,0);
- cyl(root,.225,.185,.42,blue,0,1.31,0);
+ // Contoured torso: taper at the waist, natural shoulders, no spherical chest.
+ const torso=mesh(root,new THREE.CylinderGeometry(.235,.174,.52,20,5),blue,0,1.33,0);
+ torso.scale.z=.69;
+ ell(root,[.205,.065,.125],blue,0,1.565,0);
+ // Shirt hem and side seams
+ const hem=new THREE.MeshStandardMaterial({color:0x276b89,roughness:.96});
+ const shirtHem=mesh(root,new THREE.CylinderGeometry(.178,.176,.025,20),hem,0,1.085,0);shirtHem.scale.z=.7;
  // Visible shirt collar, button placket, and separate short sleeves.
- cyl(root,.095,.11,.07,white,0,1.565,0);
+ const neck=mesh(root,new THREE.CylinderGeometry(.073,.078,.105,16),skin,0,1.616,0);
+ const collar=mesh(root,new THREE.CylinderGeometry(.096,.098,.038,16),white,0,1.574,0);collar.scale.z=.78;
  mesh(root,new THREE.BoxGeometry(.015,.31,.012),seam,0,1.38,.129);
  for(let i=0;i<4;i++)ell(root,[.009,.009,.007],dark,0,1.49-i*.075,.14);
  // Waist, belt, and tailored trousers.
  cyl(root,.18,.18,.12,tan,0,1.045,0);
  cyl(root,.185,.185,.035,dark,0,1.09,0);
- const head=ell(root,[.105,.145,.105],skin,0,1.72,0);
+ // Taller cranium with narrower jaw and ears, replacing the featureless ball.
+ const head=ell(root,[.101,.139,.100],skin,0,1.747,0);
+ const jaw=ell(root,[.078,.062,.078],skin,0,1.674,.018);
+ for(const side of [-1,1])ell(root,[.016,.033,.020],skin,side*.101,1.732,0);
  // Anatomically shaped rear hairline instead of a flat brown cap.
- const hairBack=ell(root,[.109,.102,.093],hair,0,1.794,-.042);
+ const hairBack=ell(root,[.104,.075,.096],hair,0,1.824,-.030);
  hairBack.rotation.x=-.12;
  // Short tapered nape, blended sideburns and small irregular locks.
- ell(root,[.080,.036,.027],hair,0,1.738,-.095);
+ ell(root,[.074,.027,.021],hair,0,1.771,-.091);
  for(const side of [-1,1]){
-   const temple=ell(root,[.028,.071,.051],hair,side*.085,1.790,-.018);
+   const temple=ell(root,[.028,.071,.051],hair,side*.082,1.818,-.015);
    temple.rotation.z=side*.18;
  }
  // Fine overlapping strands give the haircut shape from the default rear camera.
@@ -39,7 +48,7 @@ export function createClothedPlayer(){
    const theta=i*2.3999632297;
    const rr=Math.sqrt((i+.5)/75);
    const xx=Math.cos(theta)*rr*.096,zz=Math.sin(theta)*rr*.078-.037;
-   const yy=1.837+.039*(1-rr*rr)+Math.sin(i*3.1)*.008;
+   const yy=1.869+.024*(1-rr*rr)+Math.sin(i*3.1)*.008;
    const lock=ell(root,[.010,.025,.012],hairShades[i%4],xx,yy,zz);
    lock.rotation.z=Math.sin(theta)*.28;
  }
@@ -59,17 +68,18 @@ export function createClothedPlayer(){
  const arms=[],legs=[];
  for(const side of [-1,1]){
   const shoulder=new THREE.Group();shoulder.position.set(side*.245,1.49,0);root.add(shoulder);
-  ell(shoulder,[.085,.10,.10],blue,0,-.04,0);
-  cyl(shoulder,.077,.067,.23,blue,side*.025,-.13,0).rotation.z=side*.16;
+  ell(shoulder,[.077,.082,.082],blue,0,-.035,0);
+  cyl(shoulder,.068,.058,.23,blue,side*.025,-.13,0).rotation.z=side*.12;
   const elbow=new THREE.Group();elbow.position.set(side*.045,-.245,0);shoulder.add(elbow);
-  cyl(elbow,.055,.041,.25,skin,0,-.125,0);
-  ell(elbow,[.047,.071,.036],skin,0,-.285,0);
+  cyl(elbow,.048,.034,.25,skin,0,-.125,0);
+  const palm=ell(elbow,[.039,.066,.028],skin,0,-.279,0);
+  for(let finger=0;finger<4;finger++)ell(elbow,[.007,.035,.009],skin,(finger-1.5)*.017,-.326,.004);
   shoulder.rotation.z=side*.12;
   arms.push({shoulder,elbow,side});
   const hip=new THREE.Group();hip.position.set(side*.105,1.025,0);root.add(hip);
-  cyl(hip,.104,.085,.43,tan,0,-.21,0);
+  cyl(hip,.091,.076,.43,tan,0,-.21,0);
   const knee=new THREE.Group();knee.position.y=-.425;hip.add(knee);
-  cyl(knee,.085,.062,.43,tan,0,-.21,0);
+  cyl(knee,.077,.060,.43,tan,0,-.21,0);
   ell(knee,[.092,.065,.16],dark,0,-.435,.055);
   legs.push({hip,knee,side});
  }
