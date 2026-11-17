@@ -160,6 +160,9 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    if(roads.some(c=>Math.abs(x-c)<w/2+10||Math.abs(z-c)<d/2+10))continue;
    if(Math.abs(z+117)<d/2+12)continue;
    if(x+w/2>13&&x-w/2<83&&z+d/2> -250&&z-d/2< -135)continue;
+   // Never generate a tower beyond the solid perimeter wall.
+   // The outside view must be wilderness, not a second skyline.
+   if(x-w/2<=-276||x+w/2>=570||z-d/2<=-285||z+d/2>=242)continue;
    skylineTower(x,z,w,d,h,total++);
   }
  }
