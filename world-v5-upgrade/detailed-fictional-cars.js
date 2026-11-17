@@ -16,11 +16,11 @@ export function createDetailedCar({color=0x1d5d9a,type='sedan'}={}){
  box(1.88,.13,len*.92,0,1.13,0,paint);
  const roofLen=type==='coupe'?2.12:type==='suv'?3.22:2.65;
  // Tapered glass greenhouse rather than a rectangular box.
- const lower=1.23,upper=roof-.065,front=roofLen*.51,rear=-roofLen*.51;
+ const lower=1.23,upper=roof-.065,front=roofLen*.51,rearZ=-roofLen*.51;
  const topFront=type==='suv'?front-.32:front-.58;
- const topRear=type==='suv'?rear+.24:rear+.48;
+ const topRear=type==='suv'?rearZ+.24:rearZ+.48;
  const pts=[
- [-.84,lower,rear],[.84,lower,rear],[.84,lower,front],[-.84,lower,front],
+ [-.84,lower,rearZ],[.84,lower,rearZ],[.84,lower,front],[-.84,lower,front],
  [-.74,upper,topRear],[.74,upper,topRear],[.74,upper,topFront],[-.74,upper,topFront]
  ];
  const faces=[0,1,5,0,5,4, 1,2,6,1,6,5, 2,3,7,2,7,6, 3,0,4,3,4,7, 4,5,6,4,6,7];
