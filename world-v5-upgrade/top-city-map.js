@@ -68,7 +68,7 @@ export function createCityMap({player,beach={x:0,z:212}}){
   label(294,140,'CLUBHOUSE','#ffffff');
   ctx.fillStyle='#a789b4';ctx.fillRect(tx(-78),tz(-32),60*scale,16*270/772);
   label(-82,-8,'CLUB','#ead4ff');
-  label(-48,-48,'AUTO');label(-48,-132,'COFFEE');label(-20,212,'BEACH','#ffffff');
+  label(-31,-48,'AUTO');ctx.fillStyle='#b69d7c';ctx.fillRect(tx(-81),tz(-61),28*scale,26*270/772);label(-72,-48,'CUTS','#f3dfb8');label(-48,-132,'COFFEE');label(-20,212,'BEACH','#ffffff');
   // Street-facing, evenly spaced western residential lots.
   ctx.fillStyle='#cbbd9e';for(const hx of [-246,-220,-194,-168,-142])for(const hz of [-128,-64,-32,32])ctx.fillRect(tx(hx-7),tz(hz-7.7),14*scale,15.4*270/772);
   label(-253,-145,'HOMES','#f5eddb');

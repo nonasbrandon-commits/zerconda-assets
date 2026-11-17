@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 // Three animated inflatable air dancers in the dealership forecourt, no third-party logos.
-export function addAirDancers(scene,{x=-72,z=-48}={}){
- const group=new THREE.Group();group.position.set(x,0,z);scene.add(group);
+export function addAirDancers(scene,{x=-31,z=-48}={}){
+ const group=new THREE.Group();group.position.set(x,.14,z);group.name='Zerconda Motors front air dancers';group.userData.customInterior=true;scene.add(group);
  const dancers=[];
  for(let i=0;i<3;i++){
-  const root=new THREE.Group();root.position.set(8.5,0,-18-i*4.2);group.add(root);
+  const root=new THREE.Group();root.position.set([-11,-6,11][i],0,-27.3);group.add(root);
   const orange=new THREE.MeshStandardMaterial({color:i===1?0xff8126:i===2?0xf35b21:0xffa02c,roughness:.86,side:THREE.DoubleSide});
   const black=new THREE.MeshStandardMaterial({color:0x14191c,roughness:.8});
   const white=new THREE.MeshBasicMaterial({color:0xfafafa});
@@ -25,5 +25,5 @@ export function addAirDancers(scene,{x=-72,z=-48}={}){
   for(let k=0;k<5;k++){const hair=make(new THREE.ConeGeometry(.055,.55,6),black,(k-2)*.12,5.12,0,torso);hair.rotation.z=(k-2)*.25;}
   dancers.push({torso,arms,phase:i*1.8});
  }
- return {root:group,update(t){for(const d of dancers){const a=t*2.6+d.phase;d.torso.rotation.z=Math.sin(a)*.21;d.torso.rotation.x=Math.sin(a*.7)*.11;d.torso.scale.y=1+Math.sin(a*1.7)*.055;for(const arm of d.arms)arm.arm.rotation.z=Math.sin(a*1.8+arm.side)*.42;}}};
+ return {root:group,positions:[-11,-6,11].map(dx=>({x:x+dx,z:z-27.3})),blocks(px,pz){return [-11,-6,11].some(dx=>Math.hypot(px-x-dx,pz-z+27.3)<.85)},update(t){for(const d of dancers){const a=t*2.6+d.phase;d.torso.rotation.z=Math.sin(a)*.21;d.torso.rotation.x=Math.sin(a*.7)*.11;d.torso.scale.y=1+Math.sin(a*1.7)*.055;for(const arm of d.arms)arm.arm.rotation.z=Math.sin(a*1.8+arm.side)*.42;}}};
 }
