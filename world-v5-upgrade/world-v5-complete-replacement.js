@@ -485,7 +485,7 @@ for(const dx of [-21,21])for(const dz of [-21,21]){
 const observationNeedle=createObservationNeedle(scene,{x:48,z:-48});
 // Place Brewstone on the north side of the east-west street, opposite the dealership.
 // Its south-facing entrance and patio face the road; the showroom stays unobstructed.
-const coffeeShop=createCoffeeShop(scene,{x:-34,z:-84});
+const coffeeShop=createCoffeeShop(scene,{x:-72,z:-132});
 // Walk-in showroom just west of Brewstone Coffee, with three fictional display vehicles.
 const dealership={
  x:-72,z:-48,isNear:(x,z,r=5.5)=>Math.hypot(x+72,z+48)<r,
@@ -525,9 +525,8 @@ let dealerInside=false;
 // Separate commercial parcels with an actual paved access road, curb and pedestrian sidewalks.
 box(8,.13,83,-51.5,-.025,-48,asphalt);
 for(const side of [-1,1])box(2.6,.16,83,-51.5+side*5.5,.035,-48,paving);
-coffeeShop.root.rotation.y=Math.PI/2; // Entrance and patio face east toward the Needle.
-// Convert authored local chair locations to rotated world coordinates.
-for(const seat of coffeeShop.seats){const lx=seat.x+34,lz=seat.z+48;seat.x=-34+lz;seat.z=-48-lx;}
+// Keep the cafe south-facing across the east-west road from the dealership.
+// No rotation: furniture, collision bounds and seating coordinates remain aligned.
 // Populate tower surroundings and distant horizon with detailed 3D architecture.
 const cityDepth=addCityDepth({scene,asphalt,paving,grass});
 
@@ -826,9 +825,9 @@ function visitDealership(){
  if(dealerInside){dealerInside=false;player.x=dealership.x+15;player.z=dealership.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Exited Zerconda Motors';}
 }
 let sittingSeat=null,cafeInside=false;
-const cafeEntry={x:-34+10.8,z:-48};
+const cafeEntry={x:-72,z:-132+9};
 function nearCafeEntrance(){return Math.hypot(player.x-cafeEntry.x,player.z-cafeEntry.z)<4.5;}
-function enterCafe(){if(sittingSeat){sittingSeat=null;}if(cafeInside){cafeInside=false;player.x=cafeEntry.x+3.3;player.z=cafeEntry.z;}else{cafeInside=true;player.x=cafeEntry.x-3.6;player.z=cafeEntry.z;}movement.vx=0;movement.vz=0;if(status)status.textContent=cafeInside?'Inside Brewstone Coffee · Find a table and press C':'Exited Brewstone Coffee';}
+function enterCafe(){if(sittingSeat){sittingSeat=null;}if(cafeInside){cafeInside=false;player.x=cafeEntry.x;player.z=cafeEntry.z+3.3;}else{cafeInside=true;player.x=cafeEntry.x;player.z=cafeEntry.z-3.6;}movement.vx=0;movement.vz=0;if(status)status.textContent=cafeInside?'Inside Brewstone Coffee · Find a table and press C':'Exited Brewstone Coffee';}
 const cafeEntryButton=actionButton('zerconda-cafe-enter','E · ENTER COFFEE SHOP',445,enterCafe);
 // Public benches in the Needle plaza, fountain square and sports park.
 // Positions match the authored benches in city-depth-assets.js and needle-sports-park.js.
