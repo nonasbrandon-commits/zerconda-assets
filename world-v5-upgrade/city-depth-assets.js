@@ -193,6 +193,9 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
  // Skyline Business Centre replaces the set-back glass tower beside the news station.
  const officeBounds=new T.Box3(new T.Vector3(171,-1,-67),new T.Vector3(205,200,-29));
  for(const g of [...root.children])if(g.isGroup&&g.children.length>100&&new T.Box3().setFromObject(g).intersectsBox(officeBounds)){root.remove(g);total--;}
+ // Replace the marked northern tower cluster with private Garden Estate plots.
+ const estateBounds=new T.Box3(new T.Vector3(112,-1,-270),new T.Vector3(219,200,-121));
+ for(const g of [...root.children])if(g.isGroup&&g.children.length>100&&new T.Box3().setFromObject(g).intersectsBox(estateBounds)){root.remove(g);total--;}
  // Roads are owned exclusively by world-v5-complete-replacement.js.
  // Do not draw duplicate continuous road slabs here: they previously
  // resurfaced closed segments and overlaid landscaping and house plots.

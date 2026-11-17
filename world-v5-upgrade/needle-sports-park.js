@@ -24,12 +24,13 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
   return new THREE.MeshStandardMaterial({map:texture,roughness:.95,metalness:0});
  }
  const tennisSurface=courtSurface(0x245b85,3),basketSurface=courtSurface(0xb44f42,7);
- function box(w,h,d,px,py,pz,m,parent=root){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(px,py,pz);o.receiveShadow=true;o.castShadow=h>.5;parent.add(o);return o;}
+ const walkSurfaces=[];
+ function box(w,h,d,px,py,pz,m,parent=root){if(parent===root&&h<=.3&&w*d>2)walkSurfaces.push({x:px,z:pz,w,d,y:py+h/2});const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(px,py,pz);o.receiveShadow=true;o.castShadow=h>.5;parent.add(o);return o;}
  function cyl(rt,rb,h,px,py,pz,m,n=10){const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,n),m);o.position.set(px,py,pz);o.castShadow=true;root.add(o);return o;}
  box(66,.14,108,0,-.15,0,turf);
  // Walkway links the park to the city's northern boulevard.
- box(4,.05,18,0,.015,60,path);
- for(const a of [-1,1]){box(2,.045,75,a*31,.015,0,path);}
+ // A continuous promenade now reaches the boulevard sidewalk.
+ 
  function line(x1,z1,x2,z2,color=white,width=.11,y=.08){
   const dx=x2-x1,dz=z2-z1,o=box(Math.hypot(dx,dz),.025,width,(x1+x2)/2,y,(z1+z2)/2,color);o.rotation.y=-Math.atan2(dz,dx);
  }
@@ -73,17 +74,12 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
  court(-18,15,true);court(18,15,false);
  // Continuous stone-paver pedestrian spine between the two courts.
  const paver=mat(0xbab5aa),joint=mat(0x827f78),edge=mat(0x8e8b83);
- box(6,.065,55,0,.052,13,paver);
- for(let z=-14;z<41;z+=1.35)box(6.05,.014,.045,0,.095,z,joint);
- for(let z=-13.3;z<41;z+=2.7)box(.035,.014,1.35,0,.096,z,joint);
- for(const side of [-1,1])box(.13,.11,55,side*3.04,.065,13,edge);
- // Accessible branches from the promenade to both courts, with stone kerbs.
- for(const side of [-1,1]){
-  for(const z of [-2,29]){
-   box(6,.065,2.5,side*5.9,.055,z,paver);
-   for(let x=3.2;x<8.7;x+=1.15)box(.05,.014,2.5,side*x,.095,z,joint);
-  }
- }
+ const stoneMap=new THREE.TextureLoader().load(new URL('../realistic-assets/pbr/PavingStones070/PavingStones070_1K-JPG_Color.jpg',import.meta.url).href);stoneMap.colorSpace=THREE.SRGBColorSpace;stoneMap.wrapS=stoneMap.wrapT=THREE.RepeatWrapping;stoneMap.repeat.set(2,12);paver.map=stoneMap;
+ box(6,.10,96,0,.055,33.5,paver); // -14.5..81.5, ending on the city sidewalk
+ for(const side of [-1,1])box(3,.10,83,side*31,.055,2.5,paver);
+ for(const pz of [-11,44])box(65,.10,3,0,.055,pz,paver);
+ // Branches meet the open ends of both courts, keeping their side fences clear.
+ for(const [cx,lo,hi]of [[-18,-11,-6.5],[18,-11,.5],[-18,36.5,44],[18,29.5,44]])box(3,.10,hi-lo,cx,.055,(lo+hi)/2,paver);
  // Park benches on the pedestrian spine, facing the courts; never inside play areas.
  function courtBench(px,pz,face){
   const g=new THREE.Group();g.position.set(px,.06,pz);g.rotation.y=face;root.add(g);
@@ -117,6 +113,6 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
 
 
  const garden=createZenPond(root,{x:0,z:-35});
- return {root,seats:[...garden.worldSeats(),...[-8,12,34].map(pz=>({x,z:z+pz,facing:-Math.PI/2,sitHeight:.7075,kind:'park bench'}))],blocks:garden.blocks,heightAt(wx,wz){const gardenY=garden.heightAt(wx,wz);if(gardenY!==null)return gardenY;if(Math.abs(wx-x)<3.1&&wz-z>=-14&&wz-z<=40.5)return .095;return null;},counts:garden.counts,update(t){garden.update(t);}};
+ return {root,seats:[...garden.worldSeats(),...[-8,12,34].map(pz=>({x,z:z+pz,facing:-Math.PI/2,sitHeight:.7075,kind:'park bench'}))],blocks:garden.blocks,heightAt(wx,wz){let height=garden.heightAt(wx,wz);const px=wx-x,pz=wz-z;for(const r of walkSurfaces)if(Math.abs(px-r.x)<=r.w/2&&Math.abs(pz-r.z)<=r.d/2)height=Math.max(height??-1,r.y);return height;},walkSurfaces,counts:garden.counts,update(t){garden.update(t);}};
 }
 
