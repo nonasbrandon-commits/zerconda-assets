@@ -55,31 +55,20 @@ export function addSignatureArchitecture(group,{w,d,h,style=0}={}){
    B(w/count*.72,2.25,.09,xx,1.65,d/2+.35,glass);
    B(.1,2.6,.25,xx-w/count*.4,1.65,d/2+.43,dark);
   }
+  // Clean residential facade: one dark pane per bay, with restrained stone surrounds.
+  // Do not stack decorative glass squares or glass balcony panes over these windows.
+  const bays=Math.max(3,Math.floor(w/4.7));
   for(let f=0;f<floors;f++){
-   const yy=4.9+f*3.3;
-   if(yy+1.2>h)break;
-   B(w+.45,.16,.48,0,yy-1.55,d/2+.4,cream);
-   const bays=Math.max(3,Math.floor(w/4.8));
+   const yy=4.95+f*3.3;
+   if(yy+1.25>h)break;
+   B(w+.18,.13,.30,0,yy-1.5,d/2+.31,cream);
    for(let k=0;k<bays;k++){
     const xx=-w/2+(k+.5)*w/bays;
-    const winW=Math.min(1.55,w/bays*.49);
-    B(winW+.27,2.5,.16,xx,yy,d/2+.37,cream);
-    B(winW,2.25,.11,xx,yy,d/2+.47,glass);
-    B(.055,2.25,.14,xx,yy,d/2+.55,dark);
-    B(winW+.2,.15,.25,xx,yy+1.22,d/2+.56,cream);
-    B(winW+.2,.16,.27,xx,yy-1.2,d/2+.57,cream);
-    // Alternate balcony placements to avoid identical facades.
-    if((k+f+idx)%3===0){
-     B(winW+1.0,.18,1.55,xx,yy-1.42,d/2+1.12,cream);
-     B(winW+1.0,.09,.09,xx,yy-.36,d/2+1.91,dark);
-     for(const side of [-1,1])B(.08,1.1,.08,xx+side*(winW+.95)/2,yy-.85,d/2+1.91,dark);
-     for(let q=0;q<6;q++)B(.045,.95,.045,xx-(winW+.8)/2+q*(winW+.8)/5,yy-.88,d/2+1.91,dark);
-     if((k+idx)%2===0){
-      B(.72,.34,.38,xx,yy-1.18,d/2+1.55,cream);
-      const bush=new THREE.Mesh(new THREE.IcosahedronGeometry(.38,1),foliage);
-      bush.position.set(xx,yy-.65,d/2+1.55);group.add(bush);
-     }
-    }
+    const ww=Math.min(1.65,w/bays*.52);
+    B(ww+0.22,2.33,.075,xx,yy,d/2+.375,cream);
+    B(ww,2.12,.08,xx,yy,d/2+.46,glass);
+    B(.045,2.12,.095,xx,yy,d/2+.52,dark);
+    B(ww+.18,.11,.18,xx,yy-1.16,d/2+.52,cream);
    }
   }
   // Crown with layered cream stone cornice and distinctive rooftop masses.
