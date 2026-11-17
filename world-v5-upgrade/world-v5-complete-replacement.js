@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-roads-to-fence-v8';
+const ZERCONDA_BUILD='2026-11-17-stone-wall-forest-v9';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -180,21 +180,64 @@ for(const x of roadLines)for(const z of roadLines){
  }
 }
 
-// Perimeter boundary around the current playable district. Expansion gates remain locked.
-const perimeterMetal=new THREE.MeshStandardMaterial({color:0x505b5b,metalness:.65,roughness:.52});
-const guardMat=new THREE.MeshStandardMaterial({color:0x263b48,roughness:.82});
-function fenceRun(x1,z1,x2,z2){
- const length=Math.hypot(x2-x1,z2-z1),angle=Math.atan2(z2-z1,x2-x1);
- const root=new THREE.Group();root.position.set(x1,0,z1);root.rotation.y=-angle;scene.add(root);
- for(let p=0;p<=length;p+=3.5){
-  box(.10,2.8,.10,p,1.4,0,perimeterMetal,root);
- }
- for(const y of [.35,1.4,2.65])box(length,.055,.055,length/2,y,0,perimeterMetal,root);
- for(let p=0;p<length;p+=.28)box(.025,2.25,.025,p,1.4,0,perimeterMetal,root);
+// Tall solid concrete/stone perimeter barrier. Original 3D geometry and
+// textured PBR-style surface, not the copyrighted photographic reference.
+const wallCanvas=document.createElement('canvas');wallCanvas.width=512;wallCanvas.height=512;
+const wc=wallCanvas.getContext('2d');wc.fillStyle='#8e918b';wc.fillRect(0,0,512,512);
+let ws=75431;function wr(){ws=(Math.imul(ws,1664525)+1013904223)>>>0;return ws/4294967296;}
+for(let i=0;i<14000;i++){
+ const v=Math.floor(85+wr()*80);wc.fillStyle='rgba('+v+','+(v+3)+','+v+','+(.015+wr()*.08)+')';
+ wc.fillRect(wr()*512,wr()*512,1+wr()*8,2+wr()*16);
 }
-fenceRun(-276,-285,570,-285);fenceRun(-276,242,570,242);
-fenceRun(-276,-285,-276,242);fenceRun(570,-285,570,242);
-// Guard characters require licensed realistic rigged assets; do not use primitive placeholders.
+for(let x=0;x<512;x+=64){wc.fillStyle='rgba(35,40,38,.15)';wc.fillRect(x,0,2,512);}
+const wallTex=new THREE.CanvasTexture(wallCanvas);wallTex.colorSpace=THREE.SRGBColorSpace;
+wallTex.wrapS=wallTex.wrapT=THREE.RepeatWrapping;wallTex.repeat.set(1,1);
+const wallStone=new THREE.MeshStandardMaterial({map:wallTex,color:0xc9c9c3,roughness:.97,metalness:0});
+const wallCap=new THREE.MeshStandardMaterial({color:0x92948e,roughness:.95});
+const WALL_HEIGHT=12.5,WALL_THICKNESS=1.8;
+function wallSegment(x1,z1,x2,z2){
+ const dx=x2-x1,dz=z2-z1,len=Math.hypot(dx,dz),angle=Math.atan2(dz,dx);
+ const group=new THREE.Group();group.position.set(x1,0,z1);group.rotation.y=-angle;scene.add(group);
+ for(let pos=0;pos<len;pos+=12){
+  const w=Math.min(12,len-pos);
+  box(w,WALL_HEIGHT,WALL_THICKNESS,pos+w/2,WALL_HEIGHT/2,0,wallStone,group);
+  box(w+.03,.32,WALL_THICKNESS+.3,pos+w/2,WALL_HEIGHT+.16,0,wallCap,group);
+  box(.15,WALL_HEIGHT,.06,pos, WALL_HEIGHT/2,WALL_THICKNESS/2+.03,wallCap,group);
+ }
+}
+wallSegment(-276,-285,570,-285);wallSegment(-276,242,570,242);
+wallSegment(-276,-285,-276,242);wallSegment(570,-285,570,242);
+// Distant mountain silhouettes beyond the playable wall, with layered terrain.
+const mountainMaterials=[
+ new THREE.MeshStandardMaterial({color:0x66766d,roughness:1,flatShading:true}),
+ new THREE.MeshStandardMaterial({color:0x849087,roughness:1,flatShading:true}),
+ new THREE.MeshStandardMaterial({color:0x586d64,roughness:1,flatShading:true})
+];
+function mountainRidge(x,z,width,height,mat){
+ const shape=new THREE.Shape();shape.moveTo(-width/2,0);
+ const n=13;for(let i=0;i<=n;i++){
+  const xx=-width/2+i*width/n;
+  const peak=(.28+.72*Math.pow(Math.max(0,1-Math.abs(i-n/2)/(n/2)),1.3));
+  shape.lineTo(xx,height*peak*(.84+.16*Math.sin(i*2.3+width)));
+ }
+ shape.lineTo(width/2,0);shape.closePath();
+ const mesh=new THREE.Mesh(new THREE.ShapeGeometry(shape),mat);
+ mesh.position.set(x,0,z);mesh.material.side=THREE.DoubleSide;mesh.castShadow=false;scene.add(mesh);
+}
+for(let i=0;i<13;i++){
+ mountainRidge(-440+i*105,-460-(i%3)*35,165,55+(i%5)*12,mountainMaterials[i%3]);
+ mountainRidge(-440+i*105,410+(i%3)*35,165,55+(i%5)*12,mountainMaterials[i%3]);
+}
+// Forest is populated with existing real GLB tree assets after asynchronous loading.
+function populateOuterForest(){
+ const source=loaded.tree||loaded.tree2;if(!source)return;
+ for(let i=0;i<180;i++){
+  const side=i%4;
+  const x=side===0?-320-rand()*90:side===1?610+rand()*95:-350+rand()*1020;
+  const z=side===2?-325-rand()*65:side===3?280+rand()*65:-310+rand()*620;
+  cloneNormalized(loaded[i%2?'tree2':'tree']||source,x,z,8+rand()*10,rand()*Math.PI*2);
+ }
+}
 // Facade texture generator: architectural materials, varied stonework,
 // window frames, lintels, sills, masonry joints and shopfronts.
 function facadeTexture(base,trimColor,glassColor,cols=5,floors=5){
@@ -467,6 +510,7 @@ async function populate(){
  const keys=Object.keys(PATH);
  const result=await Promise.allSettled(keys.map(load));
  result.forEach((r,i)=>{if(r.status==='fulfilled')loaded[keys[i]]=r.value;});
+ populateOuterForest();
  for(let i=0;i<treeSpots.length;i++){
   const [x,z]=treeSpots[i],src=loaded[i%2?'tree2':'tree']||loaded.tree||loaded.tree2;
   if(src&&!doors.some(d=>Math.hypot(x-d.x,z-d.z)<13)&&!(Math.abs(x+34)<24&&Math.abs(z+48)<24))cloneNormalized(src,x,z,7+rand()*2.5,rand()*6.28);
