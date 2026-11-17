@@ -38,7 +38,7 @@ export function createOwnableHomes(scene){
   const id=(side===-1?0:5)+row+1;
   // Keep lots off the east-west roads at z=-96, -48 and 0.
   // Previous row 2 at z=-91 placed a full house across the roadway.
-  const residentialZ=[-174,-139,-72,-22,32];
+  const residentialZ=[-174,-139,-72,-38,43];
   const x=side*146,z=residentialZ[row];
   const g=new THREE.Group();g.position.set(x,0,z);root.add(g);
   const h=6.7+(id%3)*.65,w=13,d=15;
