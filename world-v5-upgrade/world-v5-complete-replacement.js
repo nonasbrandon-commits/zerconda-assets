@@ -20,7 +20,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-proximity-seating';
+const ZERCONDA_BUILD='2026-11-17-park-avatar-street-clearance';
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
 // Does not call any old tree/lamp/car spawn loops.
@@ -389,10 +389,10 @@ for(const seat of coffeeShop.seats){const lx=seat.x+34,lz=seat.z+48;seat.x=-34+l
 // Populate tower surroundings and distant horizon with detailed 3D architecture.
 const cityDepth=addCityDepth({scene,asphalt,paving,grass});
 // Dedicated green space behind the Needle, outside the downtown building grid.
-const needleSportsPark=createNeedleSportsPark(scene,{x:48,z:-139});
+const needleSportsPark=createNeedleSportsPark(scene,{x:48,z:-160});
 // Extend pedestrian access north from the existing street grid to the park entrance.
-box(5,.065,37,48,.005,-78,paving);
-for(const zz of [-65,-78,-90]){box(.18,.025,2,48,.06,zz,yellow);}
+box(4,.065,18,48,.005,-101,paving);
+for(const zz of [-97,-101,-105]){box(.18,.025,2,48,.06,zz,yellow);}
 const apartments=createApartmentExperience({scene,x:1050,z:1050});
 apartments.root.visible=false;
 let apartmentSession=null,apartmentFloor=0;
@@ -417,7 +417,7 @@ for(const c of roadLines){
    // 16.5m from centerline: beyond 9.5m asphalt and 4m sidewalk.
    for(const [x,z] of [[c+side*16.5,p],[p,c+side*16.5]]){
     if(Math.abs(x)>162||Math.abs(z)>162)continue;
-    if(Math.abs(x+51.5)<12&&Math.abs(z+48)<44||Math.abs(x+72)<17&&Math.abs(z+48)<19||nearRoad(x,z,5.1)||insideBuilding(x,z,1.5)||inPlaza(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39||doors.some(d=>Math.hypot(x-d.x,z-d.z)<entranceClearance)||Math.abs(x+34)<22&&Math.abs(z+48)<23)continue;
+    if(x>12&&x<84&&z> -220&&z< -105||Math.abs(x+51.5)<12&&Math.abs(z+48)<44||Math.abs(x+72)<17&&Math.abs(z+48)<19||nearRoad(x,z,5.1)||insideBuilding(x,z,1.5)||inPlaza(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39||doors.some(d=>Math.hypot(x-d.x,z-d.z)<entranceClearance)||Math.abs(x+34)<22&&Math.abs(z+48)<23)continue;
     if(treeSpots.some(([a,b])=>Math.hypot(x-a,z-b)<10))continue;
     treeSpots.push([x,z]);
    }
@@ -433,7 +433,7 @@ for(const c of roadLines){
   for(const side of [-1,1]){
    const a=[c+side*11.5,p],b=[p,c+side*11.5];
    for(const [x,z] of [a,b]){
-    if(nearRoad(x,z,.6)||inPlaza(x,z,3)||insideBuilding(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39)continue;
+    if(x>12&&x<84&&z> -220&&z< -105||nearRoad(x,z,.6)||inPlaza(x,z,3)||insideBuilding(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39)continue;
     if(treeSpots.some(([tx,tz])=>Math.hypot(x-tx,z-tz)<4))continue;
     if(lampSpots.some(([lx,lz])=>Math.hypot(x-lx,z-lz)<8))continue;
     lampSpots.push([x,z]);
@@ -658,7 +658,7 @@ const cafeEntryButton=actionButton('zerconda-cafe-enter','E · ENTER COFFEE SHOP
 // Positions match the authored benches in city-depth-assets.js and needle-sports-park.js.
 const publicSeats=[
  ...[[28,-28,0],[68,-28,0],[28,-68,Math.PI],[68,-68,Math.PI],[29,26,0],[67,26,0],[29,70,Math.PI],[67,70,Math.PI]].map(([x,z,facing])=>({x,z,facing,kind:'bench'})),
- ...[[-56,-35,0],[-14,34,0],[19,30,Math.PI],[58,-28,Math.PI/2],[25,43,0],[-57,25,0]].map(([x,z,facing])=>({x:x+48,z:z-139,facing,kind:'park bench'}))
+ ...[[-29,-37,0],[29,-37,Math.PI],[-29,42,0],[29,42,Math.PI],[0,48,0],[-27,-12,0]].map(([x,z,facing])=>({x:x+48,z:z-160,facing,kind:'park bench'}))
 ];
 function nearestPublicSeat(px,pz,max=2.6){
  let best=null,bestD=max;
