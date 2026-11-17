@@ -50,15 +50,15 @@ export function createZercondaAvatar(){
  for(let i=0;i<16;i++){const x=(i-7.5)*.011;ell(x,1.801+Math.abs(x)*.10,-.088+Math.abs(x)*.2,.007,.014,.008,hair);}
  let gaitPhase=0,gaitWeight=0;
  root.userData.animate=(dt,speed)=>{
-  const target=THREE.MathUtils.clamp(speed/2.8,0,1);
+  const target=THREE.MathUtils.clamp(speed/1.4,0,1);
   gaitWeight=THREE.MathUtils.damp(gaitWeight,target,9,Math.min(dt,.08));
-  gaitPhase+=Math.min(dt,.08)*(2.5+speed*2.4);
+  gaitPhase+=Math.min(dt,.08)*(3.4+Math.min(speed,5)*1.65);
   for(let i=0;i<2;i++){
    const wave=Math.sin(gaitPhase+i*Math.PI);
-   legs[i].rotation.x=wave*.54*gaitWeight;
-   arms[i].rotation.x=-wave*.38*gaitWeight;
+   legs[i].rotation.x=wave*.72*gaitWeight;
+   arms[i].rotation.x=-wave*.48*gaitWeight;
   }
-  root.position.y=Math.abs(Math.sin(gaitPhase*2))*.018*gaitWeight;
+  root.position.y=0; // Feet remain grounded; no hovering/bobbing
  };
  return root;
 }
