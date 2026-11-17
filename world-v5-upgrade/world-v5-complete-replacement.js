@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-remove-stray-curbs-v11';
+const ZERCONDA_BUILD='2026-11-17-no-road-overlap-v12';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -146,8 +146,15 @@ box(350,.12,350,0,-.16,0,grass);
 // East-west roads: x=-276..570. North-south roads: z=-285..242.
 const roadWest=-276,roadEast=570,roadNorth=-285,roadSouth=242;
 for(const c of roadLines){
+ // Build non-overlapping asphalt slabs: a single surface owns each intersection.
+ // Previously horizontal and vertical slabs overlapped at different heights,
+ // leaving a diagonal seam and exposed grass triangles.
  box(19,.12,roadSouth-roadNorth,c,-.04,(roadNorth+roadSouth)/2,asphalt);
- box(roadEast-roadWest,.12,19,(roadWest+roadEast)/2,-.035,c,asphalt);
+ const cuts=[roadWest,...roadLines.flatMap(v=>[v-9.5,v+9.5]),roadEast];
+ for(let j=0;j<cuts.length-1;j+=2){
+  const left=cuts[j],right=cuts[j+1];if(right<=left)continue;
+  box(right-left,.12,19,(left+right)/2,-.04,c,asphalt);
+ }
  for(const side of [-1,1]){
   // Sidewalks and curbs end at each junction; no raised slabs across traffic.
   const zStops=[roadNorth,...roadLines.flatMap(v=>[v-14,v+14]),roadSouth];
