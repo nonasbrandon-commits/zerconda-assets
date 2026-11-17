@@ -1,56 +1,46 @@
 import * as THREE from 'three';
-// Original Zerconda avatar v46. Rear view is the primary camera angle.
+// Zerconda v47: continuous anatomical lofts replace the capsule-and-cylinder avatar.
 export function createZercondaAvatar(){
  const root=new THREE.Group();
- const material=(color,roughness=0.88)=>new THREE.MeshStandardMaterial({color,roughness,metalness:0,side:THREE.DoubleSide});
- const skin=material(0xb98262), skinShade=material(0xa97050), shirt=material(0x246d9b),shirtLight=material(0x327eae),shirtDark=material(0x185477),stitch=material(0x4e8cb0),pants=material(0x93714e),pantsDark=material(0x745638),hair=material(0x39271e),hairLight=material(0x513629),shoe=material(0x292d31),sole=material(0x181c20);
- const add=(g,m,x,y,z)=>{const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;root.add(o);return o;};
- const sphere=(x,y,z,a,b,c,m,seg=18)=>{const o=add(new THREE.SphereGeometry(1,seg,12),m,x,y,z);o.scale.set(a,b,c);return o;};
- const tube=(a,b,top,bottom,m,segments=12)=>{const p=new THREE.Vector3(...a),q=new THREE.Vector3(...b),d=q.clone().sub(p);const o=add(new THREE.CylinderGeometry(top,bottom,d.length(),segments,1),m,...p.clone().add(q).multiplyScalar(.5).toArray());o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());return o;};
- // Shoes, anatomical trousers, fitted waistband, and independent legs.
+ const mat=(c,r=.92)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:0,side:THREE.DoubleSide});
+ const denim=mat(0x2879a4),denimShade=mat(0x21668e),seam=mat(0x417d9c),khaki=mat(0x9a7854),khakiShade=mat(0x806347),skin=mat(0xb98667),hair=mat(0x34251c),hairHi=mat(0x4b3529),boots=mat(0x303338),sole=mat(0x1f2226);
+ function mesh(g,m){const o=new THREE.Mesh(g,m);o.castShadow=true;o.receiveShadow=true;root.add(o);return o;}
+ function loft(rings,m,n=24){const p=[],idx=[];for(let i=0;i<rings.length;i++){const [x,y,z,rx,rz]=rings[i];for(let j=0;j<n;j++){const a=2*Math.PI*j/n;p.push(x+Math.cos(a)*rx,y,z+Math.sin(a)*rz);}}
+ for(let i=0;i<rings.length-1;i++)for(let j=0;j<n;j++){const a=i*n+j,b=i*n+(j+1)%n,c=(i+1)*n+j,d=(i+1)*n+(j+1)%n;idx.push(a,b,c,b,d,c);}
+ idx.push(...Array.from({length:n-2},(_,i)=>[0,i+2,i+1]).flat());const end=(rings.length-1)*n;idx.push(...Array.from({length:n-2},(_,i)=>[end,end+i+1,end+i+2]).flat());
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setIndex(idx);g.computeVertexNormals();return mesh(g,m);}
+ function line(points,m,r=.0025){const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p)));return mesh(new THREE.TubeGeometry(curve,Math.max(8,points.length*5),r,5,false),m);}
+ function ell(x,y,z,rx,ry,rz,m){const o=mesh(new THREE.SphereGeometry(1,20,14),m);o.position.set(x,y,z);o.scale.set(rx,ry,rz);return o;}
+ // Trousers have separate tapered thighs, shaped knees and ankles.
  for(const s of [-1,1]){
-   sphere(s*.105,.09,.065,.09,.075,.155,shoe);
-   sphere(s*.105,.043,.076,.094,.022,.155,sole);
-   tube([s*.103,.16,0],[s*.113,.64,0],.073,.087,pants,14);
-   sphere(s*.108,.58,0,.087,.125,.094,pants);
-   tube([s*.113,.63,0],[s*.102,.98,0],.099,.106,pants,14);
-   tube([s*.106,.23,-.074],[s*.108,.55,-.077],.004,.004,pantsDark,5);
+ loft([[s*.108,.145,0,.060,.071],[s*.11,.25,0,.069,.076],[s*.112,.45,0,.077,.086],[s*.108,.59,0,.081,.09],[s*.104,.78,0,.093,.098],[s*.104,.95,0,.108,.11]],khaki);
+ line([[s*.108,.17,-.071],[s*.11,.44,-.085],[s*.108,.70,-.09],[s*.108,.92,-.107]],khakiShade,.002);
+ ell(s*.108,.085,.042,.086,.066,.151,boots);
+ ell(s*.108,.038,.055,.089,.022,.157,sole);
  }
- sphere(0,.96,0,.202,.13,.116,pants);
- tube([0,.975,0],[0,1.045,0],.205,.202,pantsDark,20);
- // Shirt is a shaped garment, not a floating spherical torso.
- tube([0,1.035,0],[0,1.48,0],.177,.225,shirt,24);
- sphere(0,1.48,0,.222,.112,.119,shirt,24);
- sphere(0,1.09,0,.182,.063,.117,shirt,24);
- // Back yoke, collar, vertical seam and sleeve cuffs.
- tube([-.174,1.475,-.115],[.174,1.475,-.115],.006,.006,stitch,6);
- tube([0,1.075,-.18],[0,1.475,-.115],.0028,.0028,stitch,5);
- tube([0,1.56,0],[0,1.62,0],.093,.099,shirtDark,18);
- tube([0,1.605,0],[0,1.635,0],.106,.092,shirtLight,18);
+ loft([[0,.88,0,.17,.102],[0,.96,0,.203,.114],[0,1.018,0,.191,.106]],khaki);
+ loft([[0,.995,0,.189,.112],[0,1.035,0,.183,.112]],khakiShade);
+ // One continuous shirt body with a shoulder taper, natural waist and back depth.
+ loft([[0,1.014,0,.178,.106],[0,1.09,0,.18,.114],[0,1.24,0,.174,.115],[0,1.37,0,.198,.119],[0,1.455,0,.225,.119],[0,1.52,0,.178,.102],[0,1.56,0,.095,.078]],denim);
+ // Collar, shoulder yoke, back center stitching and bottom hem.
+ loft([[0,1.554,0,.094,.074],[0,1.585,0,.077,.068]],denimShade);
+ line([[-.188,1.445,-.067],[-.11,1.442,-.118],[0,1.44,-.12],[.11,1.442,-.118],[.188,1.445,-.067]],seam,.0025);
+ line([[0,1.44,-.122],[0,1.26,-.118],[0,1.08,-.116]],seam,.002);
+ line([[-.13,1.035,-.082],[0,1.034,-.11],[.13,1.035,-.082]],seam,.0025);
+ // Natural arm taper with no spherical shoulder caps or exposed elbow gaps.
  for(const s of [-1,1]){
-   sphere(s*.228,1.463,0,.084,.088,.104,shirt,16);
-   tube([s*.235,1.455,0],[s*.278,1.225,.005],.087,.066,shirt,16);
-   tube([s*.278,1.225,.005],[s*.282,1.203,.005],.068,.067,shirtDark,16);
-   tube([s*.282,1.19,.005],[s*.302,.963,.018],.051,.037,skin,14);
-   sphere(s*.304,.93,.022,.044,.074,.036,skin,14);
-   sphere(s*.309,.918,.025,.04,.058,.027,skinShade,12);
+ loft([[s*.298,1.235,0,.056,.055],[s*.292,1.275,0,.067,.065],[s*.268,1.385,0,.075,.077],[s*.236,1.465,0,.078,.085]],denim);
+ loft([[s*.3,1.218,0,.055,.055],[s*.298,1.242,0,.057,.057]],denimShade);
+ loft([[s*.315,.98,0,.033,.036],[s*.312,1.07,0,.044,.046],[s*.3,1.205,0,.052,.052]],skin);
+ ell(s*.316,.935,.009,.04,.078,.035,skin);
  }
- // Head, ears, natural nape, textured short brown hairstyle.
- tube([0,1.605,0],[0,1.693,0],.065,.069,skin,16);
- sphere(0,1.77,0,.109,.138,.104,skin,24);
- sphere(0,1.707,-.074,.087,.071,.052,skin,20);
- for(const s of [-1,1])sphere(s*.108,1.762,.008,.023,.042,.019,skin,12);
- sphere(0,1.855,-.006,.112,.079,.108,hair,24);
- sphere(0,1.818,-.078,.105,.06,.053,hair,20);
- for(let i=0;i<42;i++){
-   const t=i*2.39996,rad=Math.sqrt((i+.5)/42);
-   const x=Math.cos(t)*rad*.101,z=Math.sin(t)*rad*.09;
-   const y=1.91-.036*rad+.006*Math.sin(i*5.3);
-   const strand=sphere(x,y,z,.013,.017,.022,i%3===0?hairLight:hair,8);
-   strand.rotation.y=t;
- }
- // Back hairline is tapered instead of a hard bowl-shaped edge.
- for(let i=0;i<13;i++){const x=(i-6)*.014;sphere(x,1.765,-.092+Math.abs(x)*.18,.012,.021,.012,i%4===0?hairLight:hair,8);}
- root.userData.animationParts={};
+ // Head and neck use continuous organic profiles.
+ loft([[0,1.558,0,.064,.064],[0,1.67,0,.067,.065]],skin);
+ loft([[0,1.665,0,.069,.065],[0,1.71,0,.095,.087],[0,1.765,0,.106,.095],[0,1.825,0,.102,.092],[0,1.865,0,.079,.08],[0,1.885,0,.04,.05]],skin);
+ for(const s of [-1,1])ell(s*.108,1.755,.007,.019,.037,.019,skin);
+ // Layered, closely cropped hair follows skull; no helmet-shaped cap.
+ loft([[0,1.803,-.014,.088,.082],[0,1.831,-.006,.103,.095],[0,1.87,-.004,.102,.096],[0,1.899,0,.08,.076],[0,1.917,0,.043,.045],[0,1.923,0,.009,.01]],hair);
+ for(let i=0;i<85;i++){const t=i*2.399963,rad=Math.sqrt((i+.5)/85),x=Math.cos(t)*rad*.09,z=Math.sin(t)*rad*.085,y=1.919-.047*rad;const o=ell(x,y,z,.006,.011,.013,i%4===0?hairHi:hair);o.rotation.y=t;}
+ for(let i=0;i<16;i++){const x=(i-7.5)*.011;ell(x,1.801+Math.abs(x)*.10,-.088+Math.abs(x)*.2,.007,.014,.008,hair);}
  return root;
 }
