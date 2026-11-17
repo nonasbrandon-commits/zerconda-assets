@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-resilient-load-v25';
+const ZERCONDA_BUILD='2026-11-17-curbside-parking-v26';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -523,23 +523,30 @@ for(const c of roadLines){
   }
  }
 }
-// Parking bays in straight road segments, 20m away from intersections.
+// Parallel curbside parking: vehicles sit alongside sidewalks, never in travel lanes.
+// Road asphalt half-width is 9.5m; car centers are 8.55m from centerline,
+// leaving approximately 0.95m for the outer half of a 1.9m-wide vehicle.
 const parking=[];
-for(const c of roadLines){
- for(const p of [-149,-130,-111,-77,-59,-40,40,59,77,111,130,149]){
-  if(roadLines.some(v=>Math.abs(p-v)<21))continue;
+const curbOffset=8.48;
+const parkingSamples=[-160,-152,-144,-136,-128,-120,-112,-80,-72,-64,-56,-48,-40,-32,-24,24,32,40,48,56,64,72,80,112,120,128,136,144,152,160];
+for(const center of roadLines){
+ for(const along of parkingSamples){
+  // No parking at intersections or across pedestrian crossings.
+  if(roadLines.some(cross=>Math.abs(along-cross)<24))continue;
   for(const side of [-1,1]){
    for(const vertical of [true,false]){
-    const x=vertical?c+side*6.8:p,z=vertical?p:c+side*6.8;
-    if(Math.abs(x)>155||Math.abs(z)>155)continue;
-    if(inIntersection(x,z,12)||inPlaza(x,z,2))continue;
-    if(parking.some(q=>Math.hypot(x-q[0],z-q[1])<9.5))continue;
+    const x=vertical?center+side*curbOffset:along;
+    const z=vertical?along:center+side*curbOffset;
+    if(Math.abs(x)>160||Math.abs(z)>160)continue;
+    if(inIntersection(x,z,16)||inPlaza(x,z,7))continue;
+    if(doors.some(d=>Math.hypot(x-d.x,z-d.z)<9))continue;
+    if(parking.some(p=>Math.hypot(x-p[0],z-p[1])<7.2))continue;
+    // Cars follow the street direction, parallel to the curb.
     parking.push([x,z,vertical?0:Math.PI/2]);
    }
   }
  }
 }
-// Place most cars near central plaza first, along adjacent road edges.
 parking.sort((a,b)=>Math.hypot(a[0]-48,a[1]-48)-Math.hypot(b[0]-48,b[1]-48));
 const loader=new GLTFLoader();
 function load(key){
