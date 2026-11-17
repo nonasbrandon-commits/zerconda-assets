@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-clear-ocean-horizon-v19';
+const ZERCONDA_BUILD='2026-11-17-beach-view-v20';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -618,6 +618,24 @@ const resetButton=document.createElement('button');resetButton.textContent='RESE
 resetButton.type='button';resetButton.style.cssText='position:fixed;right:12px;top:12px;z-index:9999;padding:12px 16px;background:#203b49;color:white;border:1px solid #9ab5c4;border-radius:8px;cursor:pointer';
 resetButton.addEventListener('click',resetView);document.body.appendChild(resetButton);
 const movement={vx:0,vz:0,wheelImpulse:0};
+ // Explicit ocean-facing beach arrival. The ocean is at positive Z.
+ // The normal plaza camera can look inland and mistakenly appear to show
+ // the beach wall; this provides a reproducible shoreline viewpoint.
+ const beachButton=document.createElement('button');
+ beachButton.textContent='GO TO BEACH';
+ beachButton.type='button';
+ beachButton.style.cssText='position:fixed;right:12px;top:66px;z-index:9999;padding:12px 16px;background:#126879;color:white;border:1px solid #9ed6dd;border-radius:8px;cursor:pointer';
+ beachButton.addEventListener('click',()=>{
+  if(apartmentSession){apartmentSession=null;apartments.root.visible=false;}
+  activeCar=null;insideNeedleLobby=false;onObservationDeck=false;cafeInside=false;
+  player.x=0;player.z=205;yaw=0;pitch=-.04;
+  movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
+  camera.position.set(0,4.5,198);
+  camera.lookAt(0,1.6,260);
+  if(status)status.textContent='South Beach · Ocean straight ahead · W to walk toward the water';
+ });
+ document.body.appendChild(beachButton);
+
 const WALK_SPEED=2.5,RUN_SPEED=5.3,ACCELERATION=7,DECELERATION=12;
 const WHEEL_STEP=1.5,WHEEL_MAX=4;
 // Live diagnostics: distinguish a blank render from a covered/lost WebGL canvas.
