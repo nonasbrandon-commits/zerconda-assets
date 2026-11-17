@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-asphalt-no-stripes-v6';
+const ZERCONDA_BUILD='2026-11-17-road-shadow-fix-v7';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -79,7 +79,7 @@ function groundPBR(folder,name,repeat,tint=0xffffff){
 // markings that repeated across the ENTIRE road, causing a giant zebra pattern.
 // Solid asphalt prevents repeated high-frequency canvas grain from creating
 // horizontal moire/striping across road surfaces at grazing camera angles.
-const asphalt=new THREE.MeshStandardMaterial({color:0x333638,roughness:0.98,metalness:0});
+const asphalt=new THREE.MeshStandardMaterial({color:0x333638,roughness:0.98,metalness:0,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1});
 const paving=groundPBR('PavingStones070','PavingStones070',18,0xe4ddd0);
 const curb=M(0xd7d2c8);
 const grass=groundPBR('Ground037','Ground037',65,0x94a68a);
@@ -118,7 +118,10 @@ function architecturalWindow(group,cx,cy,cz,width,height,face='front'){
 const geo=new THREE.BoxGeometry(1,1,1);
 function box(w,h,d,x,y,z,material,parent=scene){
  const o=new THREE.Mesh(geo,material);o.scale.set(w,h,d);o.position.set(x,y,z);
- o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;
+ o.castShadow=true;o.receiveShadow=true;
+ // Horizontal road/sidewalk slabs must not cast shadows on themselves or each other.
+ if(material===asphalt||material===paving||material===curb||material===lane||material===yellow){o.castShadow=false;o.receiveShadow=false;}
+ parent.add(o);return o;
 }
 function cylinder(rt,rb,h,x,y,z,material,parent=scene,n=48){
  const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,n),material);
