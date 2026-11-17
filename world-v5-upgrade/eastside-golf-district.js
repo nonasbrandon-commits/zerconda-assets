@@ -1,6 +1,7 @@
+import {addGolfGroves} from './golf-landscaping.js?v=20261117-ground-golf-v86';
 import * as THREE from 'three';
-import {trimGolfGround} from './golf-road-clearance.js?v=20261117-golf-clearance-v64';
-import {createNineHoleGolf} from './nine-hole-golf.js?v=20261117-touch-v75';
+import {trimGolfGround} from './golf-road-clearance.js?v=20261117-ground-golf-v86';
+import {createNineHoleGolf} from './nine-hole-golf.js?v=20261117-ground-golf-v86';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Zerconda Eastside: residential approach and compact nine-hole public golf course.
 // Located about three 96m blocks east of the Needle at (48,-48).
@@ -81,6 +82,7 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48,getPlayer}={}){
  // All land in the eastern reserve belongs to one connected nine-hole course.
  const course=new THREE.Group();course.position.set(x,0,z);root.add(course);
  const layout=createNineHoleGolf(course,{origin:{x,z},materials:{rough,fairway,green,sand,walk},tree,getPlayer});
+ const groves=addGolfGroves(course,{origin:{x,z},holes:layout.holes,pathCurves:layout.pathCurves});
  // Swap placeholder foliage for real modeled leafy trees stored in Zerconda assets.
  const treeUrl='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/trees-and-vehicles/trees/leafy-island-tree.glb';
  new GLTFLoader().load(treeUrl,gltf=>{
@@ -156,7 +158,7 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48,getPlayer}={}){
    state.cart.position.set(p.x,.07,p.z);state.cart.rotation.y=Math.atan2(-direction.x,-direction.z);
   }
  }
- return {root,center:{x,z},holes:9,residentialBuildings:0,bounds:{minX:240,maxX:556,minZ:-265,maxZ:166},update};
+ return {root,center:{x,z},holes:9,residentialBuildings:0,layout,groves,heightAt:layout.heightAt,bounds:{minX:240,maxX:556,minZ:-265,maxZ:166},update};
 }
 
 

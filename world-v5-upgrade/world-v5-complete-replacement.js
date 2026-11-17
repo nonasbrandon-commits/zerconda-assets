@@ -1,42 +1,42 @@
-import {createSkatePark} from './skate-park.js?v=20261117-skatepark-v85';
-import {createAirfield} from './airfield.js?v=20261117-skatepark-v85';
+import {createSkatePark} from './skate-park.js?v=20261117-ground-golf-v86';
+import {createAirfield} from './airfield.js?v=20261117-ground-golf-v86';
 import * as THREE from 'three';
-import {createForestCampground} from './forest-campground.js?v=20261117-skatepark-v85';
-import {createPremierHomes} from './premier-homes.js?v=20261117-skatepark-v85';
-import {createZercondaNews} from './zerconda-news.js?v=20261117-skatepark-v85';
+import {createForestCampground} from './forest-campground.js?v=20261117-ground-golf-v86';
+import {createPremierHomes} from './premier-homes.js?v=20261117-ground-golf-v86';
+import {createZercondaNews} from './zerconda-news.js?v=20261117-ground-golf-v86';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261117-clothing-v80';
 import {createBowlingAlley} from './bowling-alley.js?v=20261117-bowling-v79';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261117-apartments-v78';
 import {createSeasidePier} from './seaside-pier.js?v=20261117-coastal-v77';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
-import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261117-skatepark-v85';
+import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261117-ground-golf-v86';
 import {createClubZerconda} from './club-zerconda.js?v=20261117-touch-v75';
-import {createRealisticHuman} from './realistic-human.js?v=20261117-skatepark-v85';
+import {createRealisticHuman} from './realistic-human.js?v=20261117-ground-golf-v86';
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
 import {createObservationNeedle} from './observation-needle.js';
 import {createCloudSky} from './cloud-sky.js';
-import {addCityDepth} from './city-depth-assets.js?v=20261117-skatepark-v85';
+import {addCityDepth} from './city-depth-assets.js?v=20261117-ground-golf-v86';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js?v=20261117-commerce-restore-v69';
-import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261117-skatepark-v85';
+import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261117-ground-golf-v86';
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261117-interiors-v1';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 import {addAirDancers} from './air-dancers.js';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261117-pier-v76';
-import {createCityMap} from './top-city-map.js?v=20261117-skatepark-v85';
+import {createCityMap} from './top-city-map.js?v=20261117-ground-golf-v86';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261117-coastal-v77';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-touch-v75';
 import {createPedestrians} from './animated-pedestrians.js?v=20261117-realistic-human-v68';
-import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-touch-v75';
+import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-ground-golf-v86';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-zen-pond-v73';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-skatepark-v85';
+const ZERCONDA_BUILD='2026-11-17-ground-golf-v86';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -139,8 +139,9 @@ function architecturalWindow(group,cx,cy,cz,width,height,face='front'){
 }
 const geo=new THREE.BoxGeometry(1,1,1);
 const walkSurfaces=[];
-let club=null,needleSportsPark=null,ownableHomes=null,marine=null,coastal=null,scooters=null,bowling=null,boutique=null,news=null,apartmentExperience=null,premier=null,camp=null,airfield=null,skate=null;const apartmentExteriors=[];
-function groundHeightAt(x,z){
+let club=null,needleSportsPark=null,ownableHomes=null,marine=null,coastal=null,scooters=null,bowling=null,boutique=null,news=null,apartmentExperience=null,premier=null,camp=null,airfield=null,skate=null,eastsideGolf=null;const apartmentExteriors=[];
+function authoredGroundHeightAt(x,z){
+ const golfY=eastsideGolf?.heightAt(x,z);if(golfY!==null&&golfY!==undefined)return golfY;
  const skateY=skate?.heightAt(x,z);if(skateY!==null&&skateY!==undefined)return skateY;
  const airY=airfield?.heightAt(x,z);if(airY!==null&&airY!==undefined)return airY;
  const campY=camp?.heightAt(x,z);if(campY!==null&&campY!==undefined)return campY;
@@ -160,6 +161,19 @@ function groundHeightAt(x,z){
  let height=ownableHomes?.heightAt(x,z)??needleSportsPark?.heightAt(x,z)??0;
  for(const s of walkSurfaces)if(Math.abs(x-s.x)<=s.w/2&&Math.abs(z-s.z)<=s.d/2)height=Math.max(height,s.y);
  return height;
+}
+// Exterior modules and sidewalk slabs may overlap at their physical edges.
+function groundHeightAt(x,z){
+ let height=authoredGroundHeightAt(x,z);
+ if(apartmentExperience?.active||bowling?.active||boutique?.active||club?.active||ownableHomes?.active||marine?.riding||airfield?.boarded)return height;
+ for(const surface of walkSurfaces)if(Math.abs(x-surface.x)<=surface.w/2&&Math.abs(z-surface.z)<=surface.d/2)height=Math.max(height,surface.y);
+ return height;
+}
+const soleSamples=[[0,0],[.16,0],[-.16,0],[0,.18],[0,-.14],[.11,.12],[-.11,.12],[.11,-.1],[-.11,-.1]];
+function standingHeightAt(x,z){
+ const center=groundHeightAt(x,z);let support=center;
+ for(const [dx,dz]of soleSamples){const y=groundHeightAt(x+dx,z+dz);if(y<=center+.34)support=Math.max(support,y);}
+ return support+.004;
 }
 function box(w,h,d,x,y,z,material,parent=scene){
  const o=new THREE.Mesh(geo,material);o.scale.set(w,h,d);o.position.set(x,y,z);
@@ -407,7 +421,7 @@ for(let k=0;k<blocks.length;k++){
 
 // Ocean-view residential neighborhood: homes face the southern beach.
 const waterfrontHomes=coastal=addWaterfrontHomes(scene,{count:12,getPlayer:()=>player,canInteract:()=>!boutique?.active&&!bowling?.active&&!scooters?.riding&&!skate?.riding&&!activeCar&&!club?.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes?.active,onMessage:message=>townControls.notify(message)});
-const eastsideGolf=createEastsideGolfDistrict(scene,{x:425,z:-48,getPlayer:()=>player});
+eastsideGolf=createEastsideGolfDistrict(scene,{x:425,z:-48,getPlayer:()=>player});
 ownableHomes=createOwnableHomes(scene);
 const universalInteriors=createUniversalInteriors(scene);
 let universalSession=null;
@@ -1107,7 +1121,7 @@ function animate(){
     if(/(upperleg|upleg|thigh)/.test(name))bone.rotation.x=-1.12;
     if(/(lowerleg|calf|shin)/.test(name))bone.rotation.x=1.38;
    }}
-  }else avatar.position.y=(apartmentSession||universalSession&&!universalSession.home||cafeInside?0:groundHeightAt(player.x,player.z))+playerSoleOffset;
+  }else avatar.position.y=(apartmentSession||universalSession&&!universalSession.home||cafeInside?0:standingHeightAt(player.x,player.z))+playerSoleOffset;
  }
  if(!Number.isFinite(camera.position.x)||!Number.isFinite(camera.position.y)||!Number.isFinite(camera.position.z))resetView();
  // Prevent the driven car body from obstructing the first-person windshield view.

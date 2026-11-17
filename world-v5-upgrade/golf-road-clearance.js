@@ -2,8 +2,8 @@ import * as THREE from 'three';
 
 // Cut ground geometry at road/sidewalk boundaries instead of painting over it.
 // Coordinates are relative to the golf course group.
-export function trimGolfGround(mesh, courseZ){
- const corridors=[[-96,16.5],[0,16.5],[96,16.5]];
+export function trimGolfGround(mesh, courseZ, clearance=16.5){
+ const corridors=[[-96,clearance],[0,clearance],[96,clearance]];
  const bands=[];let start=-Infinity;
  for(const [center,half] of corridors){
   bands.push([start,center-half-courseZ]);start=center+half-courseZ;
