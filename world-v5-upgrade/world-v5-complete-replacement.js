@@ -13,7 +13,7 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 import {addAirDancers} from './air-dancers.js';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261117-water-to-wall-v50';
-import {createCityMap} from './top-city-map.js?v=20261117-open-beach-v18';
+import {createCityMap} from './top-city-map.js?v=20261117-street-gate-v65';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-road-clearance-v53';
@@ -22,7 +22,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-golf-clearance-v64';
+const ZERCONDA_BUILD='2026-11-17-street-gate-v65';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -241,23 +241,24 @@ function wallSegment(x1,z1,x2,z2){
 // The southern coastline is intentionally OPEN: no wall across the beach or ocean.
 wallSegment(-276,-285,570,-285);
 wallSegment(-276,-285,-276,350); // Extend the west wall deep into the ocean; no beach bypass.
-// Main east gate: a clear 26-metre entrance aligned with the golf access road.
-wallSegment(570,-285,570,-61);wallSegment(570,-35,570,350); // East perimeter also continues offshore.
+// East gate aligns with the existing eastbound city street at z=0.
+// Close the old golf access opening; keep road and sidewalks clear.
+wallSegment(570,-285,570,-18);wallSegment(570,18,570,350); // East perimeter also continues offshore.
 
- // East security entrance, spanning the existing 26m opening at z=-61..-35.
+ // East security entrance, spanning the 36m opening at z=-18..18.
  // The arch is high enough for vehicles; posts sit OUTSIDE the driving lane.
  const security=new THREE.Group();security.name='East perimeter security gate';scene.add(security);
  const gateSteel=new THREE.MeshStandardMaterial({color:0x263e4b,metalness:.72,roughness:.35});
  const gateWhite=new THREE.MeshStandardMaterial({color:0xe2e8e9,metalness:.18,roughness:.55});
  const gateGlass=new THREE.MeshStandardMaterial({color:0x76b5ce,metalness:.18,roughness:.23});
- for(const z of [-61,-35]){
+ for(const z of [-18,18]){
   box(1.4,5,1.4,570,2.5,z,gateSteel,security);
   box(1.75,.35,1.75,570,5.15,z,gateWhite,security);
  }
- box(1.5,1.2,27,570,6.1,-48,gateSteel,security);
- box(1.55,.52,19,570,6.15,-48,gateWhite,security);
+ box(1.5,1.2,37,570,6.1,0,gateSteel,security);
+ box(1.55,.52,27,570,6.15,0,gateWhite,security);
  // Guard kiosks face the approach, with no obstruction in the opening.
- for(const z of [-68,-28]){
+ for(const z of [-25,25]){
   box(4,2.6,4,562,1.3,z,gateWhite,security);
   box(4.1,1.1,4.1,562,2.65,z,gateSteel,security);
   box(.12,.95,2.5,559.92,1.8,z,gateGlass,security);
