@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-world-recovery-v33';
+const ZERCONDA_BUILD='2026-11-17-ocean-wall-v49';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -238,9 +238,9 @@ function wallSegment(x1,z1,x2,z2){
 }
 // The southern coastline is intentionally OPEN: no wall across the beach or ocean.
 wallSegment(-276,-285,570,-285);
-wallSegment(-276,-285,-276,174);
+wallSegment(-276,-285,-276,350); // Extend the west wall deep into the ocean; no beach bypass.
 // Main east gate: a clear 26-metre entrance aligned with the golf access road.
-wallSegment(570,-285,570,-61);wallSegment(570,-35,570,174);
+wallSegment(570,-285,570,-61);wallSegment(570,-35,570,350); // East perimeter also continues offshore.
 // Gate geometry is loaded after core scene setup to avoid blocking world startup.
 // Actual three-dimensional mountain terrain beyond the perimeter, with
 // rugged triangulated slopes and snow-capped upper elevations.
@@ -842,7 +842,9 @@ function walkable(x,z){
  if(apartmentSession)return apartments.contains(x,z);
   if(cafeInside)return coffeeShop.isInside(x,z);
   if(coffeeShop.isInside(x,z))return false;
- if(x< -276||x>570||z< -285||z>(Math.abs(x)<165?248:242))return false;
+ if(x< -274.5||x>568.5||z< -283.5||z>(Math.abs(x)<165?248:242))return false;
+ // No movement around the submerged perimeter: shoreline outside the central beach is impassable.
+ if(z>174&&Math.abs(x)>260)return false;
  // Eastern expansion is accessed from the city's eastbound road corridor.
  // Residential expansion is accessible on foot; building walls remain solid.
  if(onObservationDeck)return observationNeedle.isOnDeck(x,z);
