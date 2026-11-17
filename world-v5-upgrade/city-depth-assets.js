@@ -168,7 +168,7 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    // Reserve full road and sidewalk corridors, including the actual building footprint.
    // The old radial placement allowed skyscrapers to intersect the extended roads.
    const roads=[-96,0,96];
-   if(roads.some(c=>Math.abs(x-c)<w/2+10||Math.abs(z-c)<d/2+10))continue;
+   if(roads.some(c=>Math.abs(x-c)<w/2+17||Math.abs(z-c)<d/2+17))continue;
    if(Math.abs(z+117)<d/2+12)continue;
    if(x+w/2>13&&x-w/2<83&&z+d/2> -250&&z-d/2< -135)continue;
    // Never generate a tower beyond the solid perimeter wall.
