@@ -112,6 +112,8 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
    const z=Math.sin(angle)*(radius+(rnd()-.5)*22);
    // South Beach and the ocean must remain completely free of city towers.
    if(z>55)continue; // Preserve a broad clear coastal setback: no floating towers over the beach
+   // Protect Needle Park's courts, pond and sightline from surrounding skyline towers.
+   if(x> -40&&x<138&&z> -205&&z< -72)continue;
    const w=14+rnd()*12,d=12+rnd()*13,h=12+rnd()*23+(ring===2&&total%8===0?20:0);
    skylineTower(x,z,w,d,h,total++);
   }
