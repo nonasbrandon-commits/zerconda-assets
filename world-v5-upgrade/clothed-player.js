@@ -24,7 +24,33 @@ export function createClothedPlayer(){
  cyl(root,.18,.18,.12,tan,0,1.045,0);
  cyl(root,.185,.185,.035,dark,0,1.09,0);
  const head=ell(root,[.105,.145,.105],skin,0,1.72,0);
- ell(root,[.108,.055,.106],hair,0,1.832,-.008);
+ // Anatomically shaped rear hairline instead of a flat brown cap.
+ const hairBack=ell(root,[.109,.102,.093],hair,0,1.794,-.042);
+ hairBack.rotation.x=-.12;
+ // Short tapered nape, blended sideburns and small irregular locks.
+ ell(root,[.080,.036,.027],hair,0,1.738,-.095);
+ for(const side of [-1,1]){
+   const temple=ell(root,[.028,.071,.051],hair,side*.085,1.790,-.018);
+   temple.rotation.z=side*.18;
+ }
+ // Fine overlapping strands give the haircut shape from the default rear camera.
+ const hairShades=[0x30231f,0x423027,0x513b2d,0x382923].map(c=>new THREE.MeshStandardMaterial({color:c,roughness:.96}));
+ for(let i=0;i<75;i++){
+   const theta=i*2.3999632297;
+   const rr=Math.sqrt((i+.5)/75);
+   const xx=Math.cos(theta)*rr*.096,zz=Math.sin(theta)*rr*.078-.037;
+   const yy=1.837+.039*(1-rr*rr)+Math.sin(i*3.1)*.008;
+   const lock=ell(root,[.010,.025,.012],hairShades[i%4],xx,yy,zz);
+   lock.rotation.z=Math.sin(theta)*.28;
+ }
+ // Rear shirt: yoke seam, placket stitching, cuffs and natural fabric creases.
+ const stitch=new THREE.MeshStandardMaterial({color:0x75a6bc,roughness:.95});
+ mesh(root,new THREE.BoxGeometry(.335,.008,.009),stitch,0,1.485,-.123);
+ mesh(root,new THREE.BoxGeometry(.008,.36,.009),seam,0,1.275,-.129);
+ for(const side of [-1,1]){
+   const crease=mesh(root,new THREE.BoxGeometry(.008,.23,.008),stitch,side*.14,1.285,-.117);
+   crease.rotation.z=side*.19;
+ }
  ell(root,[.018,.035,.016],skin,-.105,1.72,0);
  ell(root,[.018,.035,.016],skin,.105,1.72,0);
  // Small facial features on the forward (+Z) side.
