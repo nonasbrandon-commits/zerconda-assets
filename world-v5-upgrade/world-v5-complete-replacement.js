@@ -1,46 +1,46 @@
-import {createModernPickup} from './modern-pickup.js?v=20261117-needle-lounge-v90';
-import {createLuxuryVillas} from './luxury-villas.js?v=20261117-needle-lounge-v90';
-import {createStyleCuts} from './style-cuts.js?v=20261117-needle-lounge-v90';
-import {createBusinessCentre} from './business-centre.js?v=20261117-needle-lounge-v90';
-import {createSkatePark} from './skate-park.js?v=20261117-needle-lounge-v90';
-import {createAirfield} from './airfield.js?v=20261117-needle-lounge-v90';
+import {createModernPickup} from './modern-pickup.js?v=20261117-curb-fix-v91';
+import {createLuxuryVillas} from './luxury-villas.js?v=20261117-curb-fix-v91';
+import {createStyleCuts} from './style-cuts.js?v=20261117-curb-fix-v91';
+import {createBusinessCentre} from './business-centre.js?v=20261117-curb-fix-v91';
+import {createSkatePark} from './skate-park.js?v=20261117-curb-fix-v91';
+import {createAirfield} from './airfield.js?v=20261117-curb-fix-v91';
 import * as THREE from 'three';
-import {createForestCampground} from './forest-campground.js?v=20261117-needle-lounge-v90';
-import {createPremierHomes} from './premier-homes.js?v=20261117-needle-lounge-v90';
-import {createZercondaNews} from './zerconda-news.js?v=20261117-needle-lounge-v90';
+import {createForestCampground} from './forest-campground.js?v=20261117-curb-fix-v91';
+import {createPremierHomes} from './premier-homes.js?v=20261117-curb-fix-v91';
+import {createZercondaNews} from './zerconda-news.js?v=20261117-curb-fix-v91';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261117-clothing-v80';
 import {createBowlingAlley} from './bowling-alley.js?v=20261117-bowling-v79';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261117-apartments-v78';
 import {createSeasidePier} from './seaside-pier.js?v=20261117-coastal-v77';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
-import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261117-needle-lounge-v90';
+import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261117-curb-fix-v91';
 import {createClubZerconda} from './club-zerconda.js?v=20261117-touch-v75';
-import {createRealisticHuman} from './realistic-human.js?v=20261117-needle-lounge-v90';
+import {createRealisticHuman} from './realistic-human.js?v=20261117-curb-fix-v91';
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
-import {createObservationNeedle} from './observation-needle.js?v=20261117-needle-lounge-v90';
+import {createObservationNeedle} from './observation-needle.js?v=20261117-curb-fix-v91';
 import {createCloudSky} from './cloud-sky.js';
-import {addCityDepth} from './city-depth-assets.js?v=20261117-needle-lounge-v90';
+import {addCityDepth} from './city-depth-assets.js?v=20261117-curb-fix-v91';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js?v=20261117-commerce-restore-v69';
-import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261117-needle-lounge-v90';
+import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261117-curb-fix-v91';
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261117-interiors-v1';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
-import {addAirDancers} from './air-dancers.js?v=20261117-needle-lounge-v90';
+import {addAirDancers} from './air-dancers.js?v=20261117-curb-fix-v91';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261117-pier-v76';
-import {createCityMap} from './top-city-map.js?v=20261117-needle-lounge-v90';
+import {createCityMap} from './top-city-map.js?v=20261117-curb-fix-v91';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261117-coastal-v77';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-touch-v75';
 import {createPedestrians} from './animated-pedestrians.js?v=20261117-realistic-human-v68';
-import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-needle-lounge-v90';
-import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-needle-lounge-v90';
+import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-curb-fix-v91';
+import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-curb-fix-v91';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-needle-lounge-v90';
+const ZERCONDA_BUILD='2026-11-17-curb-fix-v91';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -235,14 +235,14 @@ for(const c of roadLines){
   for(let i=0;i<zStops.length-1;i+=2){
    const lo=zStops[i],hi=zStops[i+1];if(hi<=lo)continue;
    const mid=(lo+hi)/2,len=hi-lo;
-   box(4,.24,len,c+side*11.5,.025,mid,paving);
-   box(.22,.25,len,c+side*9.65,.02,mid,curb);
+   box(4.28,.24,len,c+side*11.86,.025,mid,paving);
+   box(.22,.27,len,c+side*9.61,.03,mid,curb);
   }
   for(let i=0;i<xStops.length-1;i+=2){
    const lo=xStops[i],hi=xStops[i+1];if(hi<=lo)continue;
    const mid=(lo+hi)/2,len=hi-lo;
-   box(len,.24,4,mid,.025,c+side*11.5,paving);
-   box(len,.25,.22,mid,.02,c+side*9.65,curb);
+   box(len,.24,4.28,mid,.025,c+side*11.86,paving);
+   box(len,.27,.22,mid,.03,c+side*9.61,curb);
   }
  }
  for(let p=roadNorth+10;p<roadSouth-10;p+=12){
@@ -252,19 +252,16 @@ for(const c of roadLines){
   if(!roadLines.some(k=>Math.abs(p-k)<15))box(5,.014,.14,p,.038,c,yellow);
  }
 }
-// Complete all intersection corners with overlapping concrete returns.
-// Each corner spans 9.5..16.5 metres from both road centrelines,
-// overlapping the adjacent straight sidewalks by 2.5 metres. This removes
-// the uncovered triangular/rectangular grass gaps left by the old 4.5m pads.
+// Non-overlapping sidewalk corners meet the straight runs exactly at 14m.
+// Curb occupies 9.50..9.72m; paving begins at 9.72m. Its top is 2cm lower.
+// Previously both materials occupied y=.145, causing distance-dependent flicker.
 for(const ix of roadLines)for(const iz of roadLines){
  for(const sx of [-1,1])for(const sz of [-1,1]){
-  const start=9.5,end=16.5,span=end-start,mid=(start+end)/2;
-  const cornerX=ix+sx*mid,cornerZ=iz+sz*mid;
-  const pad=box(span,.24,span,cornerX,.025,cornerZ,paving);
+  const pad=box(4.28,.24,4.28,ix+sx*11.86,.025,iz+sz*11.86,paving);
   pad.castShadow=false;pad.receiveShadow=false;
-  // Curb returns face the asphalt and do not cut through pedestrian paths.
-  const edgeX=box(.22,.25,span,ix+sx*9.61,.02,cornerZ,curb);
-  const edgeZ=box(span,.25,.22,cornerX,.02,iz+sz*9.61,curb);
+  // The first curb owns the corner square; the second ends against its side.
+  const edgeX=box(.22,.27,4.5,ix+sx*9.61,.03,iz+sz*11.75,curb);
+  const edgeZ=box(4.28,.27,.22,ix+sx*11.86,.03,iz+sz*9.61,curb);
   edgeX.castShadow=false;edgeZ.castShadow=false;
  }
 }
@@ -480,7 +477,7 @@ const dealership={
  x:-31,z:-48,insidePoint:{x:-31,z:-57},exitPoint:{x:-31,z:-64},inside:()=>false,blocks:()=>false,isNear:(x,z,r=5.5)=>Math.hypot(x+31,z+62)<r,
  nearestCar:()=>null
 };
-import('./zerconda-dealership.js?v=20261117-needle-lounge-v90')
+import('./zerconda-dealership.js?v=20261117-curb-fix-v91')
  .then(({createDealership})=>Object.assign(dealership,createDealership(scene,{x:-31,z:-48,rotation:Math.PI/2})))
  .catch(err=>{console.error('Dealership asset failed (city continues):',err);
    if(status)status.textContent='City loaded; dealership asset unavailable: '+err.message;
