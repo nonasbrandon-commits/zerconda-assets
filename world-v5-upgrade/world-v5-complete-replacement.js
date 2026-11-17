@@ -522,9 +522,9 @@ function removeLegacyOceanPyramids(){
 removeLegacyOceanPyramids();
 
 let dealerInside=false;
-// Separate commercial parcels with an actual paved access road, curb and pedestrian sidewalks.
-box(8,.13,83,-51.5,-.025,-48,asphalt);
-for(const side of [-1,1])box(2.6,.16,83,-51.5+side*5.5,.035,-48,paving);
+// Removed the obsolete dead-end commercial access road and its two sidewalks.
+// This corridor ended directly at a building and overlapped the landscaped block.
+// The main city street grid remains intact; no replacement road is drawn here.
 // Keep the cafe south-facing across the east-west road from the dealership.
 // No rotation: furniture, collision bounds and seating coordinates remain aligned.
 // Populate tower surroundings and distant horizon with detailed 3D architecture.
