@@ -272,13 +272,8 @@ for(let i=0;i<13;i++){
  mountain3D(x,-590-(i%3)*85,105+(i%4)*22,85+(i%5)*19,i+2);
  // No southern mountain ridge: preserve the open ocean horizon.
 }
-for(let i=0;i<9;i++){
- const z=-480+i*120;
- if(z < -300){
-  mountain3D(-530-(i%3)*65,z,125,100+(i%4)*22,i+30);
-  mountain3D(810+(i%3)*65,z,125,100+(i%4)*22,i+44);
- }
-}
+// No mountains along either side of the southern beach approach.
+// Northern mountains remain visible inland beyond the northern perimeter.
 // Forest is populated with existing real GLB tree assets after asynchronous loading.
 function populateOuterForest(){
  const source=loaded.tree||loaded.tree2;if(!source)return;
