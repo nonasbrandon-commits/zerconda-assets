@@ -25,7 +25,7 @@ export function createPremierHomes(scene,{getPlayer,canInteract=()=>true,onMessa
   for(let j=0;j<20;j++)box(g,2.1,(j+1)*.18,.31,6.5,.16+(j+1)*.09,4.35-j*.30,wood);box(g,3.0,.18,2.3,6.5,3.67,-2.65,white);for(const side of [-1,1]){for(let j=0;j<=10;j++)box(g,.055,1,.055,6.5+side*1.15,.16+j*.36+.5,4.5-j*.6,dark);const r=box(g,.07,.07,7,6.5+side*1.15,2.96,1.5,dark);r.rotation.x=Math.atan2(3.6,6);}
   // Stairwell landing rails with a generous open approach at each end.
   for(const xx of [5.12,7.9]){box(g,.06,1.05,6.2,xx,4.16,1.5,dark);for(let z=-1.5;z<4.6;z+=.55)box(g,.04,1,.04,xx,4.1,z,dark);}
-  function furnishing(w,hh,d,px,y,pz,m,f){box(g,w,hh,d,px,y,pz,m);h.parts.push({x:px,z:pz,w,d,f});}
+  function furnishing(w,hh,d,px,y,pz,m,f){box(g,w,hh,d,px,y,pz,m);const ground=.16+f*3.6,gap=y-hh/2-ground;if(gap>.025)for(const sx of [-1,1])for(const sz of [-1,1])box(g,.07,gap,.07,px+sx*Math.max(.10,w/2-.15),ground+gap/2,pz+sz*Math.max(.10,d/2-.15),wood);h.parts.push({x:px,z:pz,w,d,f});}
   // Open-plan ground floor: large lounge, kitchen island and dining space.
   furnishing(4.4,.4,1.4,-4.4,.42,3.4,wood,0);box(g,4.4,.75,.22,-4.4,.9,2.8,fabric);box(g,4.0,.2,1.25,-4.4,.76,3.4,fabric);furnishing(2.6,.1,1.0,-4.4,.55,5.6,wood,0);furnishing(4.8,.9,.8,-5.5,.61,-8.25,wood,0);box(g,4.9,.08,.85,-5.5,1.10,-8.25,stone);furnishing(3.0,.9,1.3,-5.5,.61,-5,wood,0);box(g,3.1,.08,1.4,-5.5,1.10,-5,stone);furnishing(1.1,2.1,1.0,-8.3,1.2,-8.1,white,0);furnishing(2.5,.12,1.5,.5,.95,-5.3,wood,0);for(const px of [-1.2,2.2])for(const pz of [-6,-4.6]){furnishing(.6,.12,.6,px,.65,pz,fabric,0);box(g,.6,.65,.1,px,1.0,pz+.22,wood);}
   // Spacious upstairs master suite, bath and lounge. Headboard on a solid interior wall.
