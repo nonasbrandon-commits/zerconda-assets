@@ -71,6 +71,50 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
   }
  }
  court(-18,15,true);court(18,15,false);
+ // Continuous stone-paver pedestrian spine between the two courts.
+ const paver=mat(0xbab5aa),joint=mat(0x827f78),edge=mat(0x8e8b83);
+ box(6,.065,55,0,.052,13,paver);
+ for(let z=-14;z<41;z+=1.35)box(6.05,.014,.045,0,.095,z,joint);
+ for(let z=-13.3;z<41;z+=2.7)box(.035,.014,1.35,0,.096,z,joint);
+ for(const side of [-1,1])box(.13,.11,55,side*3.04,.065,13,edge);
+ // Accessible branches from the promenade to both courts, with stone kerbs.
+ for(const side of [-1,1]){
+  for(const z of [-2,29]){
+   box(6,.065,2.5,side*5.9,.055,z,paver);
+   for(let x=3.2;x<8.7;x+=1.15)box(.05,.014,2.5,side*x,.095,z,joint);
+  }
+ }
+ // Park benches on the pedestrian spine, facing the courts; never inside play areas.
+ function courtBench(px,pz,face){
+  const g=new THREE.Group();g.position.set(px,.06,pz);g.rotation.y=face;root.add(g);
+  const frame=mat(0x343b3b,.45),slats=mat(0x8a6040,.72);
+  for(const side of [-1,1]){
+   box(.11,.58,.58,side*1.04,.32,0,frame,g);
+   box(.12,.87,.11,side*1.04,.82,.36,frame,g);
+   box(.13,.08,.6,side*1.04,.71,0,frame,g);
+  }
+  for(let j=0;j<5;j++){
+   box(2.38,.075,.095,0,.61,-.23+j*.12,slats,g);
+   box(2.38,.10,.085,0,.77+j*.14,.35,slats,g);
+  }
+  box(2.4,.09,.12,0,.1,-.19,frame,g);
+ }
+ for(const z of [-8,12,34])courtBench(0,z,Math.PI/2);
+ // Courts need recognisable equipment and contrasting painted regulation markings.
+ // Add a basketball center circle and key arcs with low-profile white painted lines.
+ const paint=mat(0xf3f0e6,.95);
+ function paintArc(cx,cz,r,start,end){
+  const pts=[];for(let k=0;k<=48;k++){const ang=start+(end-start)*k/48;pts.push(new THREE.Vector3(cx+Math.cos(ang)*r,.135,cz+Math.sin(ang)*r));}
+  const mesh=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),48,.052,5,false),paint);root.add(mesh);
+ }
+ paintArc(18,15,1.8,0,Math.PI*2);
+ for(const dz of [-1,1])paintArc(18,15+dz*9,3.1,dz===1?0:Math.PI,dz===1?Math.PI:Math.PI*2);
+ // Tennis service boxes and distinct singles sidelines.
+ for(const side of [-1,1]){
+  line(-18+side*8.15,15-12,-18+side*8.15,15+12,white,.09,.137);
+ }
+ line(-18,15-7,-18,15+7,white,.09,.137);
+
  // Pond with planted stone shoreline and fish swimming under translucent water.
  const pond=new THREE.Group();pond.position.set(0,0,-35);root.add(pond);
  // Irregular garden koi pond: dark bottom, natural stone shoreline, reeds and planted banks.
