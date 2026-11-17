@@ -23,10 +23,10 @@ import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-road-clearance-v53';
 import {createPedestrians} from './animated-pedestrians.js?v=20261117-realistic-human-v68';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117-nine-holes-v67';
-import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
+import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-zen-pond-v73';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-wilderness-v72';
+const ZERCONDA_BUILD='2026-11-17-zen-pond-v73';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -129,10 +129,10 @@ function architecturalWindow(group,cx,cy,cz,width,height,face='front'){
 }
 const geo=new THREE.BoxGeometry(1,1,1);
 const walkSurfaces=[];
-let club=null;
+let club=null,needleSportsPark=null;
 function groundHeightAt(x,z){
  if(club?.active)return club.heightAt(x,z);
- let height=0;
+ let height=needleSportsPark?.heightAt(x,z)??0;
  for(const s of walkSurfaces)if(Math.abs(x-s.x)<=s.w/2&&Math.abs(z-s.z)<=s.d/2)height=Math.max(height,s.y);
  return height;
 }
@@ -566,7 +566,7 @@ function clearRoadIntrusions(){
 clearRoadIntrusions();
 
 // Dedicated green space behind the Needle, outside the downtown building grid.
-const needleSportsPark=createNeedleSportsPark(scene,{x:48,z:-190});
+needleSportsPark=createNeedleSportsPark(scene,{x:48,z:-190});
 // Extend pedestrian access north from the existing street grid to the park entrance.
 box(4,.065,37,48,.005,-123,paving);
 for(const zz of [-112,-123,-134]){box(.18,.025,2,48,.06,zz,yellow);}
@@ -848,7 +848,7 @@ const cafeEntryButton=actionButton('zerconda-cafe-enter','E · ENTER COFFEE SHOP
 // Positions match the authored benches in city-depth-assets.js and needle-sports-park.js.
 const publicSeats=[
  ...[[28,-28,0],[68,-28,0],[28,-68,Math.PI],[68,-68,Math.PI],[29,26,0],[67,26,0],[29,70,Math.PI],[67,70,Math.PI]].map(([x,z,facing])=>({x,z,facing,kind:'bench'})),
- ...[[-29,-37,0],[29,-37,Math.PI],[-29,42,0],[29,42,Math.PI],[0,48,0],[-27,-12,0]].map(([x,z,facing])=>({x:x+48,z:z-190,facing,kind:'park bench'}))
+ ...needleSportsPark.seats
 ];
 function nearestPublicSeat(px,pz,max=2.6){
  let best=null,bestD=max;
@@ -943,6 +943,7 @@ addEventListener('pointermove',e=>{if(!drag)return;
 function walkable(x,z){
  if(club?.active)return club.contains(x,z);
  if(club?.blocks(x,z))return false;
+ if(needleSportsPark?.blocks(x,z))return false;
  if(universalSession)return universalInteriors.contains(x,z);
  if(apartmentSession)return apartments.contains(x,z);
   if(cafeInside)return coffeeShop.isInside(x,z);
@@ -966,6 +967,7 @@ function animate(){
  southBeach.update(dt);
  eastsideGolf.update(dt);
  forestCheckpoint.update(dt);
+ needleSportsPark.update(elapsed);
  player.clubSeated=sittingSeat?.kind==='club';
  club.update(dt,elapsed);
  if(!club.active)pedestrianSystem.update(dt,elapsed);
