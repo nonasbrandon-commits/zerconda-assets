@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-complete-sidewalk-corners-v13';
+const ZERCONDA_BUILD='2026-11-17-crosswalk-layout-v14';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -195,14 +195,22 @@ for(const ix of roadLines)for(const iz of roadLines){
   edgeX.castShadow=false;edgeZ.castShadow=false;
  }
 }
-// Pedestrian crossing stripes at intersections, inside road only.
+// Four consistent zebra crossings per intersection, set back from the
+// junction centre. The old two crossing strips formed a disconnected L.
+// Each crossing spans the asphalt and meets the sidewalk approaches.
 for(const x of roadLines)for(const z of roadLines){
- for(let i=-4;i<=4;i++){
-  box(1.1,.02,2.6,x+i*1.8,.048,z-7.4,lane);
-  box(2.6,.02,1.1,x-7.4,.049,z+i*1.8,lane);
+ for(const side of [-1,1]){
+  for(let i=-4;i<=4;i++){
+   const offset=i*2.0;
+   // East/west-running stripes cross the north/south road.
+   const ns=box(1.25,.016,2.65,x+offset,.045,z+side*18,lane);
+   // North/south-running stripes cross the east/west road.
+   const ew=box(2.65,.016,1.25,x+side*18,.045,z+offset,lane);
+   ns.castShadow=false;ns.receiveShadow=false;
+   ew.castShadow=false;ew.receiveShadow=false;
+  }
  }
 }
-
 // Tall solid concrete/stone perimeter barrier. Original 3D geometry and
 // textured PBR-style surface, not the copyrighted photographic reference.
 const wallCanvas=document.createElement('canvas');wallCanvas.width=512;wallCanvas.height=512;
