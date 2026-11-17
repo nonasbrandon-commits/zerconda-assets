@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-wilderness-v17';
+const ZERCONDA_BUILD='2026-11-17-open-beach-v18';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -236,8 +236,9 @@ function wallSegment(x1,z1,x2,z2){
   box(.15,WALL_HEIGHT,.06,pos, WALL_HEIGHT/2,WALL_THICKNESS/2+.03,wallCap,group);
  }
 }
-wallSegment(-276,-285,570,-285);wallSegment(-276,242,570,242);
-wallSegment(-276,-285,-276,242);wallSegment(570,-285,570,242);
+// The southern coastline is intentionally OPEN: no wall across the beach or ocean.
+wallSegment(-276,-285,570,-285);
+wallSegment(-276,-285,-276,174);wallSegment(570,-285,570,174);
 // Actual three-dimensional mountain terrain beyond the perimeter, with
 // rugged triangulated slopes and snow-capped upper elevations.
 const mountainRock=new THREE.MeshStandardMaterial({color:0x69746e,roughness:1,flatShading:true,side:THREE.DoubleSide});
@@ -269,20 +270,22 @@ function mountain3D(cx,cz,radius,height,seed){
 for(let i=0;i<13;i++){
  const x=-430+i*100;
  mountain3D(x,-590-(i%3)*85,105+(i%4)*22,85+(i%5)*19,i+2);
- mountain3D(x,550+(i%3)*85,105+(i%4)*22,85+(i%5)*19,i+17);
+ // No southern mountain ridge: preserve the open ocean horizon.
 }
 for(let i=0;i<9;i++){
  const z=-480+i*120;
- mountain3D(-530-(i%3)*65,z,125,100+(i%4)*22,i+30);
- mountain3D(810+(i%3)*65,z,125,100+(i%4)*22,i+44);
+ if(z<175){
+  mountain3D(-530-(i%3)*65,z,125,100+(i%4)*22,i+30);
+  mountain3D(810+(i%3)*65,z,125,100+(i%4)*22,i+44);
+ }
 }
 // Forest is populated with existing real GLB tree assets after asynchronous loading.
 function populateOuterForest(){
  const source=loaded.tree||loaded.tree2;if(!source)return;
  for(let i=0;i<180;i++){
-  const side=i%4;
+  const side=i%3;
   const x=side===0?-320-rand()*90:side===1?610+rand()*95:-350+rand()*1020;
-  const z=side===2?-325-rand()*65:side===3?280+rand()*65:-310+rand()*620;
+  const z=side===2?-325-rand()*65:side===3?-330-rand()*65:-310+rand()*480;
   cloneNormalized(loaded[i%2?'tree2':'tree']||source,x,z,8+rand()*10,rand()*Math.PI*2);
  }
 }
