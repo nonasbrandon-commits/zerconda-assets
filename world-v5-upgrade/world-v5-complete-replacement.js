@@ -583,7 +583,9 @@ function cloneNormalized(source,x,z,targetHeight,angle=0){
  g.scale.setScalar(s);
  g.position.set(x-center.x*s,-bounds.min.y*s,z-center.z*s);
  // Align the vehicle's actual long axis with the road, regardless of GLB export orientation.
- const longAxisX=size.x>size.z*1.12;
+ const longAxisX=size.x>size.z;
+ // Imported vehicles can have either local X or local Z as their forward axis.
+ // Preserve curb-parallel alignment by mapping the measured long axis to the road.
  g.rotation.y=angle+(longAxisX?Math.PI/2:0);
  g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
  scene.add(g);return g;
@@ -635,9 +637,9 @@ const avatarRest={};
 // The old recolored GLB is intentionally retired. Use actual clothing meshes.
 const dressedPlayer=createClothedPlayer();
 avatar.add(dressedPlayer.root);
-playerRig.torso.visible=false;
-playerRig.arms.forEach(a=>a.visible=false);
-playerRig.legs.forEach(l=>l.hip.visible=false);
+// Hide ALL primitive pedestrian parts, including the old head, ears, neck and hands.
+// Previously the old head remained visible over the detailed replacement.
+for(const child of [...avatar.children])if(child!==dressedPlayer.root)child.visible=false;
 function updateRealAvatar(dt,time,speed){dressedPlayer.update(time,speed);}
 
 
