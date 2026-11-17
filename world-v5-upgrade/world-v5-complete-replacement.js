@@ -11,7 +11,7 @@ import {createApartmentExperience} from './apartment-interiors.js';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 import {addAirDancers} from './air-dancers.js';
-import {createZercondaBeach} from './zerconda-beach.js?v=20261117-ocean-wall-v49';
+import {createZercondaBeach} from './zerconda-beach.js?v=20261117-water-to-wall-v50';
 import {createCityMap} from './top-city-map.js?v=20261117-open-beach-v18';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js';
@@ -21,7 +21,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261117
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261117-koi-water-v16';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-17-ocean-wall-v49';
+const ZERCONDA_BUILD='2026-11-17-water-to-wall-v50';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
