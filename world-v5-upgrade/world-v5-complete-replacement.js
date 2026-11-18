@@ -22,7 +22,7 @@ import {createScooterRentals} from './electric-scooter-rentals.js?v=20261118-vis
 import {createSeasidePier} from './seaside-pier.js?v=20261117-coastal-v77';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261118-fort-v102';
-import {createClubZerconda} from './club-zerconda.js?v=20261118-club-dance-v103';
+import {createClubZerconda} from './club-zerconda.js?v=20261118-grounded-motion-v104';
 import {createRealisticHuman} from './realistic-human.js?v=20261118-run-contact-v103';
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
@@ -48,7 +48,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261118-visible-trails-v100';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-18-run-contact-v103';
+const ZERCONDA_BUILD='2026-11-18-grounded-motion-v104';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -187,9 +187,9 @@ function authoredGroundHeightAt(x,z){
  if(club?.active)return club.heightAt(x,z);
  const coastalY=coastal?.heightAt(x,z);if(coastalY!==null&&coastalY!==undefined)return coastalY;
  if(ownableHomes?.active)return ownableHomes.heightAt(x,z);
- let height=ownableHomes?.heightAt(x,z)??needleSportsPark?.heightAt(x,z)??0;
+ let height=ownableHomes?.heightAt(x,z)??needleSportsPark?.heightAt(x,z)??-Infinity;
  for(const s of walkSurfaces)if(Math.abs(x-s.x)<=s.w/2&&Math.abs(z-s.z)<=s.d/2)height=Math.max(height,s.y);
- return height;
+ return Number.isFinite(height)?height:0;
 }
 // Exterior modules and sidewalk slabs may overlap at their physical edges.
 function groundHeightAt(x,z){
@@ -637,7 +637,8 @@ for(const c of roadLines){
     if(ownableHomes.isApproach(x,z))continue;
     if(treeSpots.some(([tx,tz])=>Math.hypot(x-tx,z-tz)<4))continue;
     if(lampSpots.some(([lx,lz])=>Math.hypot(x-lx,z-lz)<8))continue;
-    lampSpots.push([x,z]);
+    // Keep the club's front-door arrival lane free; light it from the side.
+    lampSpots.push([Math.abs(x+48)<6&&Math.abs(z+11.5)<1?-58:x,z]);
    }
   }
  }
@@ -755,7 +756,7 @@ const playerSoleOffset=0;
 // Previously the old head remained visible over the detailed replacement.
 for(const child of [...avatar.children])if(child!==dressedPlayer.root)child.visible=false;
 function updateRealAvatar(dt,time,speed){dressedPlayer.root.userData.animate?.(dt,speed,{seated:!!sittingSeat||!!marine?.riding,driving:!!marine?.riding||!!scooters?.riding,skating:!!skate?.riding,dancing:club?.dancing,backwards:movement.vx*Math.sin(yaw)+movement.vz*Math.cos(yaw)<-.03});}
-let lastAvatarX=START_X,lastAvatarZ=START_Z;
+
 
 
 let activeCar=null,yaw=0,pitch=0,drag=false,lastX=0,lastY=0;
@@ -1044,7 +1045,7 @@ function walkable(x,z){
 }
 let elapsed=0;
 function animate(){
- requestAnimationFrame(animate);const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const dt=Math.min(clock.getDelta(),.05);elapsed+=dt;
+ requestAnimationFrame(animate);const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const dt=Math.min(clock.getDelta(),.05);elapsed+=dt;let walkingDistance=0;
  airDancers.update(elapsed);
  militaryBase?.update(dt);
  observationNeedle.update(dt);
@@ -1111,15 +1112,19 @@ function animate(){
   const damping=(f||side)?ACCELERATION:DECELERATION;
   movement.vx=THREE.MathUtils.damp(movement.vx,desiredX,damping,dt);
   movement.vz=THREE.MathUtils.damp(movement.vz,desiredZ,damping,dt);
-  const wheelDistance=movement.wheelImpulse*(1-Math.exp(-11*dt));
+  const wheelDistance=Math.sign(movement.wheelImpulse)*Math.min(Math.abs(movement.wheelImpulse)*(1-Math.exp(-11*dt)),RUN_SPEED*dt);
   movement.wheelImpulse-=wheelDistance;
-  const dx=movement.vx*dt+Math.sin(yaw)*wheelDistance;
-  const dz=movement.vz*dt+Math.cos(yaw)*wheelDistance;
+  let dx=movement.vx*dt+Math.sin(yaw)*wheelDistance;
+  let dz=movement.vz*dt+Math.cos(yaw)*wheelDistance;
+  // Scrolling selects a run rather than accelerating past the leg animation.
+  const stepLength=Math.hypot(dx,dz),maxStep=RUN_SPEED*dt;if(stepLength>maxStep){dx*=maxStep/stepLength;dz*=maxStep/stepLength;}
+  const walkStartX=player.x,walkStartZ=player.z;
   const count=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.12));
   for(let n=0;n<count;n++){
    const next=townObstacles.slide(player.x,player.z,dx/count,dz/count,walkable);
    player.x=next.x;player.z=next.z;
   }
+  walkingDistance=Math.hypot(player.x-walkStartX,player.z-walkStartZ);
  }
  for(const d of doors){
   const near=Math.hypot(player.x-d.x,player.z-d.z)<3.4;
@@ -1169,12 +1174,11 @@ function animate(){
   avatar.visible=!(onObservationDeck&&Math.hypot(camera.position.x-player.x,camera.position.z-player.z)<.85)&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!rvPark.inside&&!observationNeedle.riding&&!carnival.riding&&!apartmentSession;
   avatar.position.set(player.x,0,player.z);
   avatar.rotation.y=marine.riding?marine.heading:yaw;avatar.rotation.x=marine.riding?marine.pitch:0;avatar.rotation.z=marine.riding?marine.roll:0;
-  const travelled=Math.hypot(player.x-lastAvatarX,player.z-lastAvatarZ);
-  const walkingSpeed=travelled<=RUN_SPEED*dt*1.5+.02?Math.min(6,travelled/Math.max(dt,.001)):0;
-  lastAvatarX=player.x;lastAvatarZ=player.z;
+  // Measure only movement produced by this frame's walking/scroll input. Fast
+  // scroll steps are legitimate locomotion; teleports never enter this counter.
+  const walkingSpeed=Math.min(10,walkingDistance/Math.max(dt,.001));
   // Animate the visible clothed model, using actual displacement so blocked
   // movement and teleports cannot produce skating or an in-place run.
-  updateRealAvatar(dt,elapsed,sittingSeat||marine.riding||scooters.riding||skate.riding?0:walkingSpeed);
   if(skate.riding){avatar.position.y=skate.riderY;avatar.quaternion.copy(skate.board.quaternion);avatar.rotateY(Math.PI/2);}else if(scooters.riding){avatar.position.y=scooters.riderY;}else if(marine.riding){avatar.position.y=marine.riderY;}else if(sittingSeat){
    // Seated pose: thighs forward, knees bent and torso lowered onto chair height.
    avatar.position.y=(sittingSeat.sitHeight??.51)-.78;
@@ -1184,6 +1188,9 @@ function animate(){
     if(/(lowerleg|calf|shin)/.test(name))bone.rotation.x=1.38;
    }}
   }else avatar.position.y=(apartmentSession||universalSession&&!universalSession.home||cafeInside?0:standingHeightAt(player.x,player.z))+playerSoleOffset;
+  // Place the avatar on the current surface before solving the feet.
+  avatar.updateMatrixWorld(true);
+  updateRealAvatar(dt,elapsed,sittingSeat||marine.riding||scooters.riding||skate.riding?0:walkingSpeed);
  }
  if(!Number.isFinite(camera.position.x)||!Number.isFinite(camera.position.y)||!Number.isFinite(camera.position.z))resetView();
  // Prevent the driven car body from obstructing the first-person windshield view.

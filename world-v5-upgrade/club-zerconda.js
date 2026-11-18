@@ -96,7 +96,7 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
  neonSign('CLUB',0,7.74,8.48,6.1,1.35,'#df66b4');
  neonSign('ZERCONDA',0,6.31,8.48,10.4,1.28,'#39d1e8');
  label('DANCE • LOUNGE • POOL • DARTS',0,4.91,8.48,10.2,.55);
- label('WELCOME · WALK IN OR PRESS E',0,3.31,10.34,7.8,.42);
+ // Entrance stays open and uncluttered; nearby controls explain entry.
  for(const xx of [-29,-18,-6,6,18,29]){box(.16,8.6,.20,xx,4.55,8.33,graphite);box(.055,7.9,.06,xx,4.55,8.46,xx<0?neonPink:neonBlue);}
  box(59.6,.055,.08,0,8.91,8.35,neonBlue);box(59.6,.055,.08,0,4.52,8.35,neonPink);
  for(const xx of [-18,18]){
