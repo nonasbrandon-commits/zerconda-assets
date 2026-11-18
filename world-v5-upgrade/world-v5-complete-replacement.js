@@ -1,6 +1,7 @@
+import {createMilitaryBase} from './military-base.js?v=20261118-fort-v102';
 import {upgradeMobileControls} from './mobile-controls.js?v=20261118-visible-trails-v100';
 import {createAirportLoop} from './airport-loop.js?v=20261118-visible-trails-v100';
-import {createNorthernForest} from './northern-forest.js?v=20261118-visible-trails-v100';
+import {createNorthernForest} from './northern-forest.js?v=20261118-fort-v102';
 import {createMobilePerformance} from './mobile-performance.js?v=20261118-visible-trails-v100';
 import {createTownObstacles} from './town-obstacles.js?v=20261118-visible-trails-v100';
 import {createSeasideCarnival} from './seaside-carnival.js?v=20261118-visible-trails-v100';
@@ -20,7 +21,7 @@ import {createBowlingAlley} from './bowling-alley.js?v=20261117-bowling-v79';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261118-visible-trails-v100';
 import {createSeasidePier} from './seaside-pier.js?v=20261117-coastal-v77';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
-import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261118-visible-trails-v100';
+import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261118-fort-v102';
 import {createClubZerconda} from './club-zerconda.js?v=20261117-touch-v75';
 import {createRealisticHuman} from './realistic-human.js?v=20261118-visible-trails-v100';
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
@@ -38,7 +39,7 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261118-visible-trails-v100';
-import {createCityMap} from './top-city-map.js?v=20261118-visible-trails-v100';
+import {createCityMap} from './top-city-map.js?v=20261118-fort-v102';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261117-coastal-v77';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-touch-v75';
@@ -47,7 +48,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261118-visible-trails-v100';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-18-brisk-bots-v101';
+const ZERCONDA_BUILD='2026-11-18-fort-v102';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -151,12 +152,13 @@ function architecturalWindow(group,cx,cy,cz,width,height,face='front'){
 }
 const geo=new THREE.BoxGeometry(1,1,1);
 const walkSurfaces=[];
-let club=null,needleSportsPark=null,ownableHomes=null,marine=null,coastal=null,scooters=null,bowling=null,boutique=null,news=null,apartmentExperience=null,premier=null,camp=null,airfield=null,skate=null,eastsideGolf=null,office=null,barber=null,villas=null,rvPark=null,carnival=null,townObstacles=null,airportLoop=null,northernForest=null,mobilePerformance=null,wildlifePlayer=null,southBeach=null,observationNeedle=null;const apartmentExteriors=[];let onObservationDeck=false,insideNeedleLobby=false;let dealerInside=false;
+let club=null,needleSportsPark=null,ownableHomes=null,marine=null,coastal=null,scooters=null,bowling=null,boutique=null,news=null,apartmentExperience=null,premier=null,camp=null,airfield=null,skate=null,eastsideGolf=null,office=null,barber=null,villas=null,rvPark=null,carnival=null,townObstacles=null,airportLoop=null,northernForest=null,militaryBase=null,mobilePerformance=null,wildlifePlayer=null,southBeach=null,observationNeedle=null;const apartmentExteriors=[];let onObservationDeck=false,insideNeedleLobby=false;let dealerInside=false;
 function authoredGroundHeightAt(x,z){
  if(observationNeedle?.riding)return observationNeedle.riderY;
  if(onObservationDeck)return observationNeedle.deckY;
  if(insideNeedleLobby)return observationNeedle.lobbyY;
  const loopY=airportLoop?.heightAt(x,z);if(loopY!==null&&loopY!==undefined)return loopY;
+ const baseY=militaryBase?.heightAt(x,z);if(baseY!==null&&baseY!==undefined)return baseY;
  const forestY=northernForest?.heightAt(x,z);if(forestY!==null&&forestY!==undefined)return forestY;
  const boardwalk=southBeach?.boardwalkBounds;
  if(boardwalk&&x>=boardwalk.minX&&x<=boardwalk.maxX&&z>=boardwalk.minZ&&z<=boardwalk.maxZ)return boardwalk.y;
@@ -323,11 +325,11 @@ function wallSegment(x1,z1,x2,z2){
  }
 }
 // The southern coastline is intentionally OPEN: no wall across the beach or ocean.
-wallSegment(-276,-1000,570,-1000);
-wallSegment(-276,-1000,-276,350); // Extend the west wall deep into the ocean; no beach bypass.
+wallSegment(-276,-1350,570,-1350);
+wallSegment(-276,-1350,-276,350); // Extend the west wall deep into the ocean; no beach bypass.
 // East gate aligns with the existing eastbound city street at z=0.
 // Close the old golf access opening; keep road and sidewalks clear.
-wallSegment(570,-1000,570,-18);wallSegment(570,18,570,350); // East perimeter also continues offshore.
+wallSegment(570,-1350,570,-18);wallSegment(570,18,570,350); // East perimeter also continues offshore.
 
  // East security entrance, spanning the 36m opening at z=-18..18.
  // The arch is high enough for vehicles; posts sit OUTSIDE the driving lane.
@@ -991,12 +993,13 @@ villas=createLuxuryVillas(scene,{getPlayer:()=>player,canInteract:()=>!barber.ac
 rvPark=createRVPark(scene,{getPlayer:()=>player,canUse:()=>!observationNeedle.riding&&!onObservationDeck&&!insideNeedleLobby&&!barber.active&&!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=0;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x,y+1.68,z);}});
 carnival=createSeasideCarnival(scene,{getPlayer:()=>player,canUse:()=>!observationNeedle.riding&&!onObservationDeck&&!insideNeedleLobby&&!barber.active&&!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!rvPark.inside&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onStop:()=>{sittingSeat=null;seatReturn=null;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();},onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{yaw=heading;pitch=0;camera.position.set(x,y+1.7,z);}});
 townObstacles=createTownObstacles({scene,getFloor:standingHeightAt,getDynamic:()=>cars.filter(c=>c!==activeCar).map(c=>c.group),ignore:o=>o===avatar||o===realisticPlayer.root||o.name==='Cloud sky'||o.name==='Zerconda South Beach'||cars.some(c=>c.group===o)});townObstacles.scan();
-airportLoop=createAirportLoop(scene);northernForest=createNorthernForest(scene,{mobile:MOBILE});mobilePerformance=createMobilePerformance({scene,renderer,getPlayer:()=>player,mobile:MOBILE});mobilePerformance.scan();
+airportLoop=createAirportLoop(scene);northernForest=createNorthernForest(scene,{mobile:MOBILE});militaryBase=createMilitaryBase(scene,{getPlayer:()=>player,hasClearance:()=>window.zercondaAccess?.hasClearance?.('military-base')===true,onMessage:m=>townControls.notify(m),onReject:(x,z)=>{player.x=x;player.z=z;movement.vx=0;movement.vz=0;keys.clear();townControls.stop();}});mobilePerformance=createMobilePerformance({scene,renderer,getPlayer:()=>player,mobile:MOBILE});mobilePerformance.scan();
 addEventListener('keydown',e=>{if(e.code==='Escape'&&!e.repeat){carnival.close();}if(e.code==='KeyF'&&!e.repeat&&(camp?.resting||airfield?.boarded)){e.preventDefault();e.stopImmediatePropagation();camp.stopRest();airfield?.exit();skate?.end();office?.exit();barber?.exit();villas?.close();observationNeedle?.reset();return;}if(e.code!=='KeyF'||e.repeat||carnival?.riding||carnival?.gameOpen||observationNeedle.riding||villas?.panelOpen||barber?.panelOpen||club.gameOpen||(ownableHomes.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.boarded)))))||marine?.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;const action=townControls.activeActions[0];if(action){e.preventDefault();e.stopImmediatePropagation();townControls.activate(action.id);}},true);
 function walkable(x,z){
  if(observationNeedle.riding)return false;
  if(onObservationDeck)return observationNeedle.isOnDeck(x,z);
  if(insideNeedleLobby)return observationNeedle.isInLobby(x,z);
+ if(militaryBase?.blocks(x,z))return false;
  if(northernForest?.blocks(x,z,!!activeCar||!!scooters?.riding))return false;
  if(townObstacles?.hit(x,z))return false;
  if(carnival?.blocks(x,z))return false;
@@ -1027,7 +1030,7 @@ function walkable(x,z){
  if(apartmentSession)return apartments.contains(x,z);
   if(cafeInside)return coffeeShop.isInside(x,z);
   if(coffeeShop.isInside(x,z))return false;
- if(x< -274.5||x>568.5||z< -998.5||z>(Math.abs(x)<165?248:242))return false;
+ if(x< -274.5||x>568.5||z< -1348.5||z>(Math.abs(x)<165?248:242))return false;
  // No movement around the submerged perimeter: shoreline outside the central beach is impassable.
  if(z>234&&Math.abs(x)>260)return false;
  // Eastern expansion is accessed from the city's eastbound road corridor.
@@ -1043,6 +1046,7 @@ let elapsed=0;
 function animate(){
  requestAnimationFrame(animate);const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const dt=Math.min(clock.getDelta(),.05);elapsed+=dt;
  airDancers.update(elapsed);
+ militaryBase?.update(dt);
  observationNeedle.update(dt);
  southBeach.update(dt);
  marine.update(dt,southBeach.ocean.time);
