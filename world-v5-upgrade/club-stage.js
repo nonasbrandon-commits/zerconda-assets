@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import {createRealisticHuman} from './realistic-human.js?v=20261118-run-contact-v103';
-import {createResidentHuman} from './resident-human.js?v=20261118-club-dance-v103';
+import {createRealisticHuman} from './realistic-human.js?v=20261118-faster-town-v106';
+import {createResidentHuman} from './resident-human.js?v=20261118-faster-town-v106';
 import {residentProfiles} from './resident-profiles.js?v=20261118-residents-v97';
 export function createClubStage(parent){
  const root=new THREE.Group();root.name='Neon DJ stage and resident dance crowd';parent.add(root);const black=new THREE.MeshStandardMaterial({color:0x111824,metalness:.45,roughness:.32}),chrome=new THREE.MeshStandardMaterial({color:0x80949d,metalness:.8,roughness:.24}),pink=new THREE.MeshBasicMaterial({color:0xed42c0}),cyan=new THREE.MeshBasicMaterial({color:0x35dbff}),gold=new THREE.MeshBasicMaterial({color:0xffc46a}),neon=[cyan,pink,gold];const bars=[],beams=[],spinners=[],women=[];let dj=null,loading=false,quiet=0;

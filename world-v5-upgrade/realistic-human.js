@@ -76,11 +76,11 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
  const controller={root,setHair(value={}){hairChoice={style:value.style||'original',color:value.color||'#4a3224'};if(ready){hairRig?.apply(hairChoice);for(const g of wearables)if(g.userData.isHat)g.visible=false;}return {...hairChoice};},get hair(){return hairChoice?{...hairChoice}:{style:'original',color:'#4a3224'};},setOutfit(value={}){outfit={shirt,pants,...value};applyOutfit();return {...outfit};},get outfit(){return {...outfit};},get ready(){return ready;},update(dt,speed,options={}){
   if(!ready)return;
   const {seated=false,backwards=false}=options;
-  const running=speed>(active==='run'?2.85:3.1);
+  const running=speed>(active==='run'?4.1:4.5);
   const mode=options.dancing?'dance':speed>.08?(running?'run':'walk'):'idle';
   if(active!==mode){actions[mode].reset().fadeIn(.22).play();if(active)actions[active].fadeOut(.22);active=mode;}
-  actions.walk.timeScale=(backwards?-1:1)*THREE.MathUtils.clamp(speed/1.35,.3,2.0);
-  actions.run.timeScale=THREE.MathUtils.clamp(speed/3.25,.65,2.0);mixer.update(Math.min(dt,.08));
+  actions.walk.timeScale=(backwards?-1:1)*THREE.MathUtils.clamp(speed/1.35,.3,2.8);
+  actions.run.timeScale=THREE.MathUtils.clamp(speed/3.25,.65,2.6);mixer.update(Math.min(dt,.15));
   // Authored clips animate the skeleton in place; world movement is game-controlled.
   const hip=bones.find(b=>b.name==='Bip01');if(hip){hip.position.x=hip.userData.restX;hip.position.z=hip.userData.restZ;}
   if(options.skating){for(const bone of bones){if(/thigh$/i.test(bone.name))bone.rotation.z+=.26;if(/calf$/i.test(bone.name))bone.rotation.z-=.5;if(/foot$/i.test(bone.name))bone.rotation.z+=.24;if(/UpperArm$/i.test(bone.name))bone.rotation.x+=.18;}}

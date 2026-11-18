@@ -1,9 +1,9 @@
-import {createClubStage} from './club-stage.js?v=20261118-club-dance-v103';
+import {createClubStage} from './club-stage.js?v=20261118-faster-town-v106';
 import * as THREE from 'three';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {createNaturalShrub} from './realistic-landscape-assets.js?v=20261117-club-front-v71';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
-import {createRealisticHuman} from './realistic-human.js?v=20261118-run-contact-v103';
+import {createRealisticHuman} from './realistic-human.js?v=20261118-faster-town-v106';
 import {createDarts,rackPool,stepPool,POOL} from './club-games.js?v=20261117-club-v70';
 import {createClubGameView,drawDartBoard,BALL_COLORS} from './club-game-view.js?v=20261117-club-v70';
 import {createClubSocial} from './club-social.js?v=20261117-club-v70';

@@ -1,4 +1,4 @@
-import {createMilitaryBase} from './military-base.js?v=20261118-fort-v102';
+import {createMilitaryBase} from './military-base.js?v=20261118-faster-town-v106';
 import {upgradeMobileControls} from './mobile-controls.js?v=20261118-visible-trails-v100';
 import {createAirportLoop} from './airport-loop.js?v=20261118-visible-trails-v100';
 import {createNorthernForest} from './northern-forest.js?v=20261118-fort-v102';
@@ -21,14 +21,14 @@ import {createBowlingAlley} from './bowling-alley.js?v=20261117-bowling-v79';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261118-realty-v105';
 import {createSeasidePier} from './seaside-pier.js?v=20261118-realty-v105';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
-import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261118-fort-v102';
-import {createClubZerconda} from './club-zerconda.js?v=20261118-grounded-motion-v104';
-import {createRealisticHuman} from './realistic-human.js?v=20261118-run-contact-v103';
+import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261118-faster-town-v106';
+import {createClubZerconda} from './club-zerconda.js?v=20261118-faster-town-v106';
+import {createRealisticHuman} from './realistic-human.js?v=20261118-faster-town-v106';
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
-import {createObservationNeedle} from './observation-needle.js?v=20261118-visible-trails-v100';
+import {createObservationNeedle} from './observation-needle.js?v=20261118-faster-town-v106';
 import {createCloudSky} from './cloud-sky.js';
 import {addCityDepth} from './city-depth-assets.js?v=20261118-visible-trails-v100';
 import {addBuildingIdentity} from './nine-building-styles.js';
@@ -38,17 +38,17 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
 import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
-import {createZercondaBeach} from './zerconda-beach.js?v=20261118-visible-trails-v100';
+import {createZercondaBeach} from './zerconda-beach.js?v=20261118-faster-town-v106';
 import {createCityMap} from './top-city-map.js?v=20261118-realty-v105';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261118-realty-v105';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261118-realty-v105';
-import {createPedestrians} from './animated-pedestrians.js?v=20261118-brisk-bots-v101';
+import {createPedestrians} from './animated-pedestrians.js?v=20261118-faster-town-v106';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118-visible-trails-v100';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261118-visible-trails-v100';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-18-realty-v105';
+const ZERCONDA_BUILD='2026-11-18-faster-town-v106';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -71,7 +71,7 @@ const scene=new THREE.Scene();scene.background=new THREE.Color(0x8eb7d3);
 const cloudSky=createCloudSky(scene,{count:38});
 cloudSky.dome.scale.setScalar(6); // Keep the atmosphere behind the distant terrain.
 scene.fog=new THREE.FogExp2(0xa9c8dc,.00055);
-const camera=new THREE.PerspectiveCamera(66,innerWidth/innerHeight,.1,4000);
+const camera=new THREE.PerspectiveCamera(66,innerWidth/innerHeight,.25,14000);
 const MOBILE=matchMedia('(pointer:coarse)').matches;let lastMobileFrame=0;
 const renderer=new THREE.WebGLRenderer({antialias:!MOBILE,powerPreference:MOBILE?'low-power':'high-performance'});
 renderer.setPixelRatio(Math.min(devicePixelRatio,MOBILE?.85:1.5));renderer.setSize(innerWidth,innerHeight);
@@ -108,7 +108,7 @@ function groundPBR(folder,name,repeat,tint=0xffffff){
 // markings that repeated across the ENTIRE road, causing a giant zebra pattern.
 // Solid asphalt prevents repeated high-frequency canvas grain from creating
 // horizontal moire/striping across road surfaces at grazing camera angles.
-const asphalt=new THREE.MeshStandardMaterial({color:0x333638,roughness:0.98,metalness:0,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1});
+const asphalt=new THREE.MeshStandardMaterial({color:0x333638,roughness:0.98,metalness:0,polygonOffset:false});
  // Fine, low-contrast aggregate gives asphalt material detail without repeated painted lines.
  const asphaltCanvas=document.createElement('canvas');asphaltCanvas.width=asphaltCanvas.height=256;
  const ac=asphaltCanvas.getContext('2d');let aggregateSeed=835;
@@ -156,7 +156,7 @@ let club=null,needleSportsPark=null,ownableHomes=null,marine=null,coastal=null,s
 function authoredGroundHeightAt(x,z){
  if(observationNeedle?.riding)return observationNeedle.riderY;
  if(onObservationDeck)return observationNeedle.deckY;
- if(insideNeedleLobby)return observationNeedle.lobbyY;
+ if(insideNeedleLobby||observationNeedle?.isInGroundBuilding(x,z))return observationNeedle.lobbyY;
  const loopY=airportLoop?.heightAt(x,z);if(loopY!==null&&loopY!==undefined)return loopY;
  const baseY=militaryBase?.heightAt(x,z);if(baseY!==null&&baseY!==undefined)return baseY;
  const forestY=northernForest?.heightAt(x,z);if(forestY!==null&&forestY!==undefined)return forestY;
@@ -807,7 +807,7 @@ const movement={vx:0,vz:0,wheelImpulse:0};
  });
  document.body.appendChild(beachButton);
 
-const WALK_SPEED=2.5,RUN_SPEED=5.3,ACCELERATION=7,DECELERATION=12;
+const WALK_SPEED=3.6,RUN_SPEED=7.8,ACCELERATION=9,DECELERATION=12;
 const WHEEL_STEP=1.5,WHEEL_MAX=4;
 // Live diagnostics: distinguish a blank render from a covered/lost WebGL canvas.
 const diag=document.createElement('div');
@@ -1000,6 +1000,7 @@ function walkable(x,z){
  if(observationNeedle.riding)return false;
  if(onObservationDeck)return observationNeedle.isOnDeck(x,z);
  if(insideNeedleLobby)return observationNeedle.isInLobby(x,z);
+ if(observationNeedle?.blocksGround(x,z))return false;
  if(militaryBase?.blocks(x,z))return false;
  if(northernForest?.blocks(x,z,!!activeCar||!!scooters?.riding))return false;
  if(townObstacles?.hit(x,z))return false;
@@ -1045,9 +1046,11 @@ function walkable(x,z){
 }
 let elapsed=0;
 function animate(){
- requestAnimationFrame(animate);const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const dt=Math.min(clock.getDelta(),.05);elapsed+=dt;let walkingDistance=0;
+ requestAnimationFrame(animate);const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;let walkingDistance=0;
+ // Crossing the open entrance naturally activates the authored lobby collision/camera.
+ if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
  airDancers.update(elapsed);
- militaryBase?.update(dt);
+ militaryBase?.update(motionDt);
  observationNeedle.update(dt);
  southBeach.update(dt);
  marine.update(dt,southBeach.ocean.time);
@@ -1074,7 +1077,7 @@ function animate(){
  coastal.update(dt,player);
  player.clubSeated=sittingSeat?.kind==='club';
  club.update(dt,elapsed);
- if(!club.active)pedestrianSystem.update(dt,elapsed);
+ if(!club.active)pedestrianSystem.update(motionDt,elapsed);
  cityMap.draw();
  if(realisticPlaza)realisticPlaza.update(dt);
  cloudSky.update(dt);
@@ -1110,14 +1113,14 @@ function animate(){
   const desiredX=(Math.sin(yaw)*f+Math.cos(yaw)*side)/len*speed;
   const desiredZ=(Math.cos(yaw)*f-Math.sin(yaw)*side)/len*speed;
   const damping=(f||side)?ACCELERATION:DECELERATION;
-  movement.vx=THREE.MathUtils.damp(movement.vx,desiredX,damping,dt);
-  movement.vz=THREE.MathUtils.damp(movement.vz,desiredZ,damping,dt);
-  const wheelDistance=Math.sign(movement.wheelImpulse)*Math.min(Math.abs(movement.wheelImpulse)*(1-Math.exp(-11*dt)),RUN_SPEED*dt);
+  movement.vx=THREE.MathUtils.damp(movement.vx,desiredX,damping,motionDt);
+  movement.vz=THREE.MathUtils.damp(movement.vz,desiredZ,damping,motionDt);
+  const wheelDistance=Math.sign(movement.wheelImpulse)*Math.min(Math.abs(movement.wheelImpulse)*(1-Math.exp(-11*motionDt)),RUN_SPEED*motionDt);
   movement.wheelImpulse-=wheelDistance;
-  let dx=movement.vx*dt+Math.sin(yaw)*wheelDistance;
-  let dz=movement.vz*dt+Math.cos(yaw)*wheelDistance;
+  let dx=movement.vx*motionDt+Math.sin(yaw)*wheelDistance;
+  let dz=movement.vz*motionDt+Math.cos(yaw)*wheelDistance;
   // Scrolling selects a run rather than accelerating past the leg animation.
-  const stepLength=Math.hypot(dx,dz),maxStep=RUN_SPEED*dt;if(stepLength>maxStep){dx*=maxStep/stepLength;dz*=maxStep/stepLength;}
+  const stepLength=Math.hypot(dx,dz),maxStep=RUN_SPEED*motionDt;if(stepLength>maxStep){dx*=maxStep/stepLength;dz*=maxStep/stepLength;}
   const walkStartX=player.x,walkStartZ=player.z;
   const count=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.12));
   for(let n=0;n<count;n++){
@@ -1170,13 +1173,14 @@ function animate(){
   if(onObservationDeck)observationNeedle.clampCamera(camera.position,'deck');else if(insideNeedleLobby)observationNeedle.clampCamera(camera.position,'lobby');
   camera.position.y=Math.max(onObservationDeck?observationNeedle.deckY+1.25:1.75,camera.position.y);
   const forward=new THREE.Vector3(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch));
+  const nextNear=onObservationDeck?.5:.25;if(camera.near!==nextNear){camera.near=nextNear;camera.updateProjectionMatrix();}
   camera.lookAt(camera.position.clone().addScaledVector(forward,20));
   avatar.visible=!(onObservationDeck&&Math.hypot(camera.position.x-player.x,camera.position.z-player.z)<.85)&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!rvPark.inside&&!observationNeedle.riding&&!carnival.riding&&!apartmentSession;
   avatar.position.set(player.x,0,player.z);
   avatar.rotation.y=marine.riding?marine.heading:yaw;avatar.rotation.x=marine.riding?marine.pitch:0;avatar.rotation.z=marine.riding?marine.roll:0;
   // Measure only movement produced by this frame's walking/scroll input. Fast
   // scroll steps are legitimate locomotion; teleports never enter this counter.
-  const walkingSpeed=Math.min(10,walkingDistance/Math.max(dt,.001));
+  const walkingSpeed=Math.min(10,walkingDistance/Math.max(motionDt,.001));
   // Animate the visible clothed model, using actual displacement so blocked
   // movement and teleports cannot produce skating or an in-place run.
   if(skate.riding){avatar.position.y=skate.riderY;avatar.quaternion.copy(skate.board.quaternion);avatar.rotateY(Math.PI/2);}else if(scooters.riding){avatar.position.y=scooters.riderY;}else if(marine.riding){avatar.position.y=marine.riderY;}else if(sittingSeat){
@@ -1190,7 +1194,7 @@ function animate(){
   }else avatar.position.y=(apartmentSession||universalSession&&!universalSession.home||cafeInside?0:standingHeightAt(player.x,player.z))+playerSoleOffset;
   // Place the avatar on the current surface before solving the feet.
   avatar.updateMatrixWorld(true);
-  updateRealAvatar(dt,elapsed,sittingSeat||marine.riding||scooters.riding||skate.riding?0:walkingSpeed);
+  updateRealAvatar(motionDt,elapsed,sittingSeat||marine.riding||scooters.riding||skate.riding?0:walkingSpeed);
  }
  if(!Number.isFinite(camera.position.x)||!Number.isFinite(camera.position.y)||!Number.isFinite(camera.position.z))resetView();
  // Prevent the driven car body from obstructing the first-person windshield view.

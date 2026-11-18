@@ -20,7 +20,7 @@ export function createRealisticOcean(root){
  float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
  float fbm(vec2 p){return noise(p)*.57+noise(p*2.03+8.)*.28+noise(p*4.07+13.)*.15;}
  float ripple(vec2 p){return noise(p)*.75+noise(p*2.03+8.)*.25;}
- void main(){vec2 p=seaPosition.xz;float shore=239.+sin(p.x*.027)*1.25+sin(p.x*.091)*.45;float d=p.y-shore;float wash=sin(time*.48+p.x*.008)*2.1+sin(p.x*.07+time*.25)*.7;
+ void main(){vec2 p=seaPosition.xz;float townCoast=step(-276.,p.x)*(1.-step(570.,p.x));float beachShore=239.+sin(p.x*.027)*1.25+sin(p.x*.091)*.45;float woodedShore=68.+sin(p.x*.002)*6.;float shore=mix(woodedShore,beachShore,townCoast);float d=p.y-shore;float wash=sin(time*.48+p.x*.008)*2.1+sin(p.x*.07+time*.25)*.7;
  if(d< -3.+wash*.5)discard;
  float depth=smoothstep(0.,130.,max(0.,d));float fade=smoothstep(0.,35.,p.y-238.);
  float dx=fade*(cos(p.x*.065+p.y*.021+time*1.1)*.24*.065+cos(-p.x*.025+p.y*.12-time*.83)*.12*(-.025)+cos(p.x*.16-p.y*.09+time*1.7)*.055*.16);
@@ -44,6 +44,10 @@ export function createRealisticOcean(root){
  const surfaces=[];
  function patch(x0,x1,z0,z1,nx,nz){const geo=new THREE.PlaneGeometry(x1-x0,z1-z0,nx,nz);geo.rotateX(-Math.PI/2);geo.translate((x0+x1)/2,0,(z0+z1)/2);const mesh=new THREE.Mesh(geo,material);mesh.name='Reflective moving ocean';mesh.frustumCulled=false;root.add(mesh);surfaces.push(mesh);}
  patch(-350,350,234,940,200,200);patch(-1100,-350,234,940,32,200);patch(-1100,-350,940,2440,32,64);patch(350,1100,234,940,32,200);patch(350,1100,940,2440,32,64);patch(-350,350,940,2440,200,64);
+ // Low-density outer patches carry the water past the visible horizon.
+ patch(-12000,-1100,234,16000,48,64);patch(1100,12000,234,16000,48,64);patch(-1100,1100,2440,16000,64,64);
+ // Wrap the calm coastal water around both forested sides; no sky-colored corner gaps.
+ patch(-12000,-276,70,234,48,12);patch(570,12000,70,234,48,12);
  // The shoreline is continuous at z=234. No water patches intrude under the beach or golf clubhouse.
  let elapsed=0;return {material,surfaces,get time(){return elapsed},heightAt:(x,z)=>seaHeight(x,z,elapsed),update(dt){elapsed+=dt;uniforms.time.value=elapsed;}};
 }
