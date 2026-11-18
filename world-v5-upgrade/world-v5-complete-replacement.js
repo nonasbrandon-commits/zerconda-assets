@@ -1,5 +1,5 @@
 import {createMilitaryBase} from './military-base.js?v=20261118-faster-town-v106';
-import {upgradeMobileControls} from './mobile-controls.js?v=20261118-visible-trails-v100';
+import {upgradeMobileControls} from './mobile-controls.js?v=20261118-z-needle-v107';
 import {createAirportLoop} from './airport-loop.js?v=20261118-visible-trails-v100';
 import {createNorthernForest} from './northern-forest.js?v=20261118-fort-v102';
 import {createMobilePerformance} from './mobile-performance.js?v=20261118-visible-trails-v100';
@@ -15,7 +15,7 @@ import {createAirfield} from './airfield.js?v=20261118-visible-trails-v100';
 import * as THREE from 'three';
 import {createForestCampground} from './forest-campground.js?v=20261118-realty-v105';
 import {createPremierHomes} from './premier-homes.js?v=20261118-realty-v105';
-import {createZercondaNews} from './zerconda-news.js?v=20261118-realty-v105';
+import {createZercondaNews} from './zerconda-news.js?v=20261118-z-needle-v107';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261118-realty-v105';
 import {createBowlingAlley} from './bowling-alley.js?v=20261117-bowling-v79';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261118-realty-v105';
@@ -28,18 +28,18 @@ import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-h
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
-import {createObservationNeedle} from './observation-needle.js?v=20261118-faster-town-v106';
+import {createObservationNeedle} from './observation-needle.js?v=20261118-z-needle-v107';
 import {createCloudSky} from './cloud-sky.js';
-import {addCityDepth} from './city-depth-assets.js?v=20261118-visible-trails-v100';
+import {addCityDepth} from './city-depth-assets.js?v=20261118-z-needle-v107';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js?v=20261117-commerce-restore-v69';
 import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261118-realty-v105';
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261117-interiors-v1';
 // Dealership loads separately so a failed asset cannot blank the entire city.
-import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
+import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261118-z-needle-v107';
 import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261118-faster-town-v106';
-import {createCityMap} from './top-city-map.js?v=20261118-realty-v105';
+import {createCityMap} from './top-city-map.js?v=20261118-z-needle-v107';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261118-realty-v105';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261118-realty-v105';
@@ -48,7 +48,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261118-visible-trails-v100';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-18-faster-town-v106';
+const ZERCONDA_BUILD='2026-11-18-z-needle-v107';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -594,7 +594,7 @@ let apartmentSession=null,apartmentFloor=0;
 // have been REMOVED. The GLB supplies the entire detailed plaza instead.
 let realisticPlaza=null;
 installRealisticFountain({scene,centerX:48,centerZ:48,renderer})
- .then(plaza=>{realisticPlaza=plaza;
+ .then(plaza=>{realisticPlaza=plaza;walkSurfaces.push({x:48,z:48,w:54,d:54,y:.035});
   if(status)status.textContent='Real 3D fountain plaza loaded at (48,48)';
  })
  .catch(err=>{console.error('Real fountain asset unavailable:',err);
@@ -619,7 +619,8 @@ for(const c of roadLines){
     if(x>12&&x<84&&z> -250&&z< -135||Math.abs(x+51.5)<12&&Math.abs(z+48)<44||Math.abs(x+72)<17&&Math.abs(z+48)<19||nearRoad(x,z,8.5)||insideBuilding(x,z,1.5)||inPlaza(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39||doors.some(d=>Math.hypot(x-d.x,z-d.z)<entranceClearance)||Math.abs(x+34)<22&&Math.abs(z+48)<23)continue;
     if(club?.blocks(x,z)||ownableHomes.inLot(x,z)||apartmentExteriors.some(b=>Math.hypot(x-b.entry.x,z-b.entry.z)<5)||Math.abs(x-126)<17&&Math.abs(z-69)<18||Math.abs(x-140)<28&&Math.abs(z-35)<23||Math.abs(x-188)<23&&Math.abs(z-61)<21||Math.abs(x-136)<25&&Math.abs(z+49)<25||x< -125&&x> -270&&z>48&&z<84)continue;
     if(treeSpots.some(([a,b])=>Math.hypot(x-a,z-b)<10))continue;
-    treeSpots.push([x,z]);
+    // Move the news-entrance tree to the front-left lawn corner.
+    treeSpots.push([Math.abs(x-136)<8&&z>-35&&z<-12?114:x,z]);
    }
   }
  }
@@ -699,7 +700,7 @@ function cloneNormalized(source,x,z,targetHeight,angle=0){
  scene.add(g);return g;
 }
 async function populate(){
- const keys=Object.keys(PATH).filter(k=>!MOBILE||!['bench','planter','statue','flower'].includes(k));
+ const keys=Object.keys(PATH).filter(k=>k!=='flower'&&(!MOBILE||!['bench','planter','statue'].includes(k)));
  const result=await Promise.allSettled(keys.map(load));
  result.forEach((r,i)=>{if(r.status==='fulfilled')loaded[keys[i]]=r.value;});
  populateOuterForest();
@@ -844,7 +845,7 @@ function homeAction(){if(boutique?.active||bowling?.active||scooters?.riding)ret
 const homeButton=actionButton('zerconda-home-action','H · HOME OPTIONS',365,homeAction);
 addEventListener('keydown',e=>{if(e.code==='KeyH'&&!e.repeat&&!['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)){homeAction();}});
 const towerButton=actionButton('zerconda-tower-button','ENTER TOWER / ELEVATOR',245,toggleObservationDeck);
-const towerExitButton=actionButton('zerconda-tower-exit','Exit tower',245,()=>{insideNeedleLobby=false;onObservationDeck=false;player.x=observationNeedle.entrance.x;player.z=observationNeedle.entrance.z+2.2;yaw=0;keys.clear();movement.vx=0;movement.vz=0;camera.position.set(player.x,3.2,player.z-4);});
+const towerExitButton=actionButton('zerconda-tower-exit','Exit Z-Needle',245,()=>{insideNeedleLobby=false;onObservationDeck=false;player.x=observationNeedle.entrance.x;player.z=observationNeedle.entrance.z+2.2;yaw=0;keys.clear();movement.vx=0;movement.vz=0;camera.position.set(player.x,3.2,player.z-4);});
 const doorButton=actionButton('zerconda-door-button','F · ENTER BUILDING',305,()=>{if(universalSession)exitUniversalInterior();else if(nearestUniversalEntrance())enterUniversalInterior();else toggleNearbyDoor();});
 const apartmentButton=actionButton('zerconda-apartment-action','E · ELEVATOR / EXIT',425,apartmentAction);
 const floorPanel=document.createElement('div');floorPanel.id='zerconda-apartment-floors';
@@ -944,10 +945,11 @@ function toggleObservationDeck(){
  if(insideNeedleLobby){
   if(!observationNeedle.authorized){townControls.notify('Please speak to the attendant at reception for elevator access.');return;}
   if(!observationNeedle.nearLift(player.x,player.z)){townControls.notify('Walk over to the glass elevator to ride up.');return;}
-  stop();insideNeedleLobby=false;yaw=0;pitch=-.08;observationNeedle.startRide(true,()=>{onObservationDeck=true;player.x=observationNeedle.arrival.x;player.z=observationNeedle.arrival.z;stop();yaw=Math.PI;pitch=0;camera.position.set(player.x,observationNeedle.deckY+2.7,player.z+2);townControls.notify('Needle lounge and outdoor skywalk. Walk through any of the four open portals to enjoy the city views.');});return;
+  if(observationNeedle.calling){townControls.notify('The Z-Needle elevator is on its way.');return;}
+  stop();insideNeedleLobby=false;yaw=0;pitch=-.08;observationNeedle.startRide(true,()=>{onObservationDeck=true;player.x=observationNeedle.arrival.x;player.z=observationNeedle.arrival.z;stop();yaw=Math.PI;pitch=0;camera.position.set(player.x,observationNeedle.deckY+2.7,player.z+2);townControls.notify('Z-Needle lounge and outdoor skywalk. Walk through any of the four open portals to enjoy the city views.');});return;
  }
  if(Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)>7)return;
- stop();insideNeedleLobby=true;player.x=observationNeedle.x;player.z=observationNeedle.z+11.3;yaw=Math.PI;pitch=0;camera.position.set(player.x,2.4,player.z+2);townControls.notify('Welcome to the Needle. The attendant can let you into the scenic glass elevator.');
+ stop();insideNeedleLobby=true;player.x=observationNeedle.x;player.z=observationNeedle.z+11.3;yaw=Math.PI;pitch=0;camera.position.set(player.x,2.4,player.z+2);townControls.notify('Welcome to Z-Needle. The attendant can let you into the scenic glass elevator.');
 }
 
 function toggleCar(){
@@ -977,7 +979,7 @@ const townControls=createTownInteractions({
  onLook:(dx,dy)=>{if(activeCar){driverLookYaw=THREE.MathUtils.clamp(driverLookYaw-dx*.003,-1.25,1.25);driverLookPitch=THREE.MathUtils.clamp(driverLookPitch+dy*.0025,-.45,.55);}else{yaw-=dx*.003;pitch=THREE.MathUtils.clamp(pitch-dy*.004,-1.25,1.25);}},
  onTap:(sx,sy,type,actions,activate)=>{let best=null,dist=type==='touch'?66:44;const bounds=renderer.domElement.getBoundingClientRect();for(const action of actions){const p=action.target?.();if(!p||Math.hypot(player.x-p.x,player.z-p.z)>6||Math.abs(groundHeightAt(player.x,player.z)+1.2-(p.y??1.2))>2.6)continue;const point=new THREE.Vector3(p.x,p.y??1.2,p.z).project(camera);if(point.z< -1||point.z>1)continue;const px=bounds.left+(point.x+1)*bounds.width/2,py=bounds.top+(1-point.y)*bounds.height/2,d=Math.hypot(sx-px,sy-py);if(d<dist){dist=d;best=action;}}if(best)activate(best);}
 });
-upgradeMobileControls(townControls,renderer.domElement);
+upgradeMobileControls(townControls,renderer.domElement,{onStartBackward:()=>{if(barber?.seated)barber.stand();if(camp?.resting)camp.stopRest();if(airfield?.boarded)airfield.exit();marine?.cancelFishing();if(sittingSeat)toggleCafeSeat();if(club)club.dancing=false;}});
 marine=createSeasidePier(scene,{getPlayer:()=>player,getYaw:()=>yaw,canInteract:()=>!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!scooters?.riding&&!skate?.riding&&!activeCar&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!insideNeedleLobby&&!onObservationDeck,onMessage:message=>townControls.notify(message),onTeleport:(x,y,z,heading)=>{yaw=heading;pitch=-.08;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;camera.position.set(x-Math.sin(yaw)*7,y+3.0,z-Math.cos(yaw)*7);}});
 scooters=createScooterRentals(scene,{getPlayer:()=>player,getYaw:()=>yaw,getHeight:groundHeightAt,canInteract:()=>!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!activeCar&&!marine.riding&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,canMove:(x,z)=>walkable(x,z),onMessage:m=>townControls.notify(m),onStop:()=>{keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();}});
 bowling=createBowlingAlley(scene,{getPlayer:()=>player,canEnter:()=>!barber?.active&&!office?.active&&!boutique?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=-.04;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x-Math.sin(yaw)*1.8,2.2,z-Math.cos(yaw)*1.8);}});
@@ -1084,7 +1086,7 @@ function animate(){
  // Keep detailed sunlight shadows around the player throughout the expanded city.
  sun.position.set(player.x-70,135,player.z+85);sun.target.position.set(player.x,0,player.z);sun.target.updateMatrixWorld();
  const inputLocked=carnival?.riding||carnival?.gameOpen||observationNeedle.riding||villas?.panelOpen||barber?.panelOpen||club.gameOpen||(ownableHomes.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.boarded)))))||marine.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);
- const f=inputLocked?0:Math.max(Number(keys.has('KeyW')||keys.has('ArrowUp')),Number(townControls.walking))-Number(keys.has('KeyS')||keys.has('ArrowDown'));
+ const f=inputLocked?0:townControls.backward?-1:Math.max(Number(keys.has('KeyW')||keys.has('ArrowUp')),Number(townControls.walking))-Number(keys.has('KeyS')||keys.has('ArrowDown'));
  const side=inputLocked?0:Number(keys.has('KeyD')||keys.has('ArrowRight'))-Number(keys.has('KeyA')||keys.has('ArrowLeft'));
  if(carnival.riding||carnival.gameOpen){movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
  }else if(observationNeedle.riding){
@@ -1109,7 +1111,7 @@ function animate(){
  }else{
   if((f||side)&&marine.fishing)marine.cancelFishing();
   const len=Math.hypot(f,side)||1;
-  const speed=keys.has('ShiftLeft')||keys.has('ShiftRight')||townControls.running?RUN_SPEED:WALK_SPEED;
+  const speed=townControls.backward?WALK_SPEED:keys.has('ShiftLeft')||keys.has('ShiftRight')||townControls.running?RUN_SPEED:WALK_SPEED;
   const desiredX=(Math.sin(yaw)*f+Math.cos(yaw)*side)/len*speed;
   const desiredZ=(Math.cos(yaw)*f-Math.sin(yaw)*side)/len*speed;
   const damping=(f||side)?ACCELERATION:DECELERATION;
@@ -1215,7 +1217,7 @@ function animate(){
  const nearTower=!boutique.active&&!bowling.active&&!scooters.riding&&!skate?.riding&&!activeCar&&Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)<7;
  towerButton.style.display=(!observationNeedle.riding&&((onObservationDeck&&observationNeedle.nearLift(player.x,player.z))||(insideNeedleLobby&&observationNeedle.authorized&&observationNeedle.nearLift(player.x,player.z))||(!onObservationDeck&&!insideNeedleLobby&&nearTower)))?'block':'none';
  towerExitButton.style.display=insideNeedleLobby?'block':'none';
- towerButton.textContent=onObservationDeck?'T · RIDE ELEVATOR DOWN':insideNeedleLobby?'T · RIDE ELEVATOR UP':'T · ENTER NEEDLE LOBBY';
+ towerButton.textContent=onObservationDeck?'T · RIDE Z-NEEDLE DOWN':insideNeedleLobby?'T · RIDE Z-NEEDLE UP':'T · ENTER Z-NEEDLE';
  const universalEntry=universalSession?{label:'EXIT'}:nearestUniversalEntrance();
  const door=universalEntry?null:nearestDoor();doorButton.style.display=(door||universalEntry)?'block':'none';
  doorButton.textContent=universalSession?'F · EXIT '+(universalSession.home?'HOME':'BUILDING'):universalEntry?.garage?'F · ENTER GARAGE':universalEntry?.home?'F · ENTER HOME '+universalEntry.home.id:universalEntry?.apartment?'F · ENTER APARTMENTS':'F · ENTER BUILDING';

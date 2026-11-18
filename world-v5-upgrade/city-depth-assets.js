@@ -1,3 +1,4 @@
+import {addRealisticPlanterFoliage} from './realistic-planter-foliage.js?v=20261118-z-needle-v107';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import * as THREE from 'three';
 // Original modular city-detail kit. Distant skyline fills the horizon
@@ -207,14 +208,9 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
  // Rich tower island details. All objects are outside the elevator approach.
  function planter(x,z){
   const g=new T.Group();g.position.set(x,0,z);root.add(g);
-  b(g,0,.43,0,2,.86,1.3,concrete);
-  b(g,0,.88,0,1.74,.11,1.04,grass);
-  for(let i=0;i<9;i++){
-   const px=(rnd()-.5)*1.5,pz=(rnd()-.5)*.85;
-   pole(g,px,1.04,pz,.035,.32,leaf);
-   const bloom=new T.Mesh(new T.IcosahedronGeometry(.14,1),flower[i%3]);
-   bloom.position.set(px,1.26,pz);g.add(bloom);
-  }
+  b(g,0,.05,0,2,.10,1.3,concrete);for(const side of[-1,1]){b(g,side*.94,.48,0,.12,.76,1.3,concrete);b(g,0,.48,side*.59,1.76,.76,.12,concrete);}
+  b(g,0,.78,0,1.74,.04,1.04,new T.MeshStandardMaterial({color:0x39332a,roughness:1}));
+  addRealisticPlanterFoliage(g,{width:1.65,depth:.96,soilY:.80,height:.48,count:9,seed:Math.round(x*33+z*71)>>>0});
  }
  function bench(x,z,rotation=0){
   const g=new T.Group();g.position.set(x,0,z);g.rotation.y=rotation;root.add(g);

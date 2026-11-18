@@ -1,3 +1,4 @@
+import {addRealisticPlanterFoliage} from './realistic-planter-foliage.js?v=20261118-z-needle-v107';
 import * as THREE from 'three';
 // Original detailed plaza furnishings, scaled in meters. No oversized wooden crates or candy-ball flowers.
 export function addPremiumPlazaFurniture(scene,{cx=48,cz=48}={}){
@@ -21,18 +22,9 @@ export function addPremiumPlazaFurniture(scene,{cx=48,cz=48}={}){
  }
  function planter(x,z,a,idx){
   const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=a;root.add(g);
-  box(g,1.1,.69,1.05,0,.35,0,concrete);
-  box(g,.96,.035,.9,0,.715,0,soil);
-  for(let i=0;i<35;i++){
-   const xx=((i*37%97)/97-.5)*.78,zz=((i*53%89)/89-.5)*.7;
-   const height=.2+(i*17%23)/100;
-   box(g,.025,height,.025,xx,.72+height/2,zz,leaf);
-   sphere(g,.09,xx,.76+height,zz,i%4===0?leaf2:leaf);
-   for(let k=0;k<3;k++){
-    const a=(i*2.4+k*2.09);
-    sphere(g,.052,xx+Math.cos(a)*.065,.81+height,zz+Math.sin(a)*.065,blooms[(i+k+idx)%blooms.length]);
-   }
-  }
+  box(g,1.1,.08,1.05,0,.04,0,concrete);for(const side of[-1,1]){box(g,.09,.61,1.05,side*.505,.385,0,concrete);box(g,.92,.61,.09,0,.385,side*.48,concrete);}
+  box(g,.91,.035,.86,0,.635,0,soil);
+  addRealisticPlanterFoliage(g,{width:.9,depth:.84,soilY:.655,height:.4,count:5,seed:idx+81});
  }
  // Furnish two sides of the fountain without obstructing circulation.
  const spots=[[-19,-17],[-12,-20],[12,-20],[19,-17],[-19,17],[-12,20],[12,20],[19,17]];
