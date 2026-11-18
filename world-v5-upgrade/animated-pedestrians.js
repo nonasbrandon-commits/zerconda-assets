@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {createRealisticHuman} from './realistic-human.js?v=20261117-realistic-human-v68';
 // Articulated human-shaped characters and animated pedestrian NPCs.
 // No branded or copyrighted characters; geometry is original.
-export function createPedestrians(scene,{count=16,groundHeightAt=()=>0}={}){
+export function createPedestrians(scene,{count=16,groundHeightAt=()=>0,canWalk=()=>true}={}){
  const root=new THREE.Group();root.name='Animated Zerconda pedestrians';scene.add(root);
  const skin=[0xe7b58d,0x9d6345,0xc78d68,0xf0c9a6,0x69432f].map(color=>new THREE.MeshStandardMaterial({color,roughness:.88}));
  const shirts=[0x7731a1,0x171d23,0x52705c,0xd0c7b8,0x444b64,0x9b8665,0x9b3652,0x336d96].map(color=>new THREE.MeshStandardMaterial({color,roughness:.91}));
@@ -70,7 +70,11 @@ export function createPedestrians(scene,{count=16,groundHeightAt=()=>0}={}){
  }
  function update(dt,time){
   for(const a of agents){
-   a.z+=a.direction*a.speed*dt;
+   const nx=a.baseX+Math.sin(time*.37+a.phase)*.65;
+   const nz=a.z+a.direction*a.speed*dt;
+   if(canWalk(nx,nz))a.z=nz;
+   else{a.direction*=-1;if(!canWalk(nx,a.z)){a.baseX=Math.sign(a.baseX||1)*108;a.z=THREE.MathUtils.clamp(a.z,-150,115);}}
+
    if(a.z>115){a.z=115;a.direction=-1;}
    if(a.z< -150){a.z=-150;a.direction=1;}
    a.human.root.position.set(a.baseX+Math.sin(time*.37+a.phase)*.65,.055,a.z);
@@ -88,5 +92,6 @@ export function createPedestrians(scene,{count=16,groundHeightAt=()=>0}={}){
 
   }
  }
- return {root,createHuman,update,count:agents.length};
+ return {root,createHuman,update,agents,count:agents.length};
 }
+

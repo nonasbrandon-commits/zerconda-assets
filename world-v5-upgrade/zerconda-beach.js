@@ -21,8 +21,12 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  // Road connection across the former boundary to the promenade.
  const asphalt=new THREE.MeshStandardMaterial({color:0x45474a,roughness:.96});
  const access=mesh(new THREE.PlaneGeometry(19,38),asphalt,0,.14,171);access.rotation.x=-Math.PI/2;
- const boardwalk=mesh(new THREE.PlaneGeometry(320,10),wood,0,.17,186);boardwalk.rotation.x=-Math.PI/2;
- for(let x=-158;x<159;x+=2.1){const plank=mesh(new THREE.BoxGeometry(1.98,.05,9.5),wood,x,.19,186);}
+ // A single instanced deck spans the interior faces of both perimeter walls.
+ const boardwalkBounds={minX:-275.1,maxX:569.1,minZ:181,maxZ:191,y:.215};
+ const boardwalk=mesh(new THREE.PlaneGeometry(844.2,10),wood,147,.17,186);boardwalk.name='Wall-to-wall beach boardwalk';boardwalk.rotation.x=-Math.PI/2;
+ const planks=new THREE.InstancedMesh(new THREE.BoxGeometry(2.06,.05,9.5),wood,402),plankMatrix=new THREE.Matrix4();
+ planks.name='Continuous boardwalk planks';planks.receiveShadow=true;
+ for(let i=0;i<402;i++){plankMatrix.makeTranslation(-275.1+(i+.5)*2.1,.19,186);planks.setMatrixAt(i,plankMatrix);}root.add(planks);
  const oceanSystem=createRealisticOcean(root);
  // Sand ripples and dune clusters.
  const duneMat=new THREE.MeshStandardMaterial({color:0xd7bb88,roughness:1});
@@ -67,9 +71,9 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
    console.error('Detailed palm GLB missing; using fallback palm geometry',error);
    addRealisticBeachPalms(root,{count:24});
  });
- return {root,ocean:oceanSystem,heightAt(x,z){
+ return {root,boardwalkBounds,ocean:oceanSystem,heightAt(x,z){
   // Match the visible planks (.19 centre + .025 half thickness), not sea level.
-  if(Math.abs(x)<=160&&z>=181&&z<=191)return .215;
+  if(x>=boardwalkBounds.minX&&x<=boardwalkBounds.maxX&&z>=181&&z<=191)return .215;
   if(Math.abs(x)<=9.5&&z>=152&&z<=190)return .14;
   if(x>=-276&&x<=570&&z>=154&&z<=245)return .085;
   return null;

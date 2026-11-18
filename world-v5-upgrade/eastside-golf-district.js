@@ -1,7 +1,7 @@
-import {addGolfGroves} from './golf-landscaping.js?v=20261118-carnival-v93';
+import {addGolfGroves} from './golf-landscaping.js?v=20261118-pedestrian-footing-v94';
 import * as THREE from 'three';
 import {trimGolfGround} from './golf-road-clearance.js?v=20261117-ground-golf-v86';
-import {createNineHoleGolf} from './nine-hole-golf.js?v=20261117-ground-golf-v86';
+import {createNineHoleGolf} from './nine-hole-golf.js?v=20261118-pedestrian-footing-v94';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Zerconda Eastside: residential approach and compact nine-hole public golf course.
 // Located about three 96m blocks east of the Needle at (48,-48).
@@ -135,7 +135,7 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48,getPlayer}={}){
   }
  }
  // Clubhouse: covered entrance, glazing, porch, terrace and sign.
- const club=new THREE.Group();club.position.set(-131,0,188);course.add(club);
+ const club=new THREE.Group();club.name='Zerconda Golf Clubhouse';club.position.set(-65,0,193);course.add(club);
  box(club,0,3.3,0,25,6.6,14,brick);
  box(club,0,6.9,0,26,.6,15,roof);
  box(club,0,2.1,7.1,4,4.1,.2,glass);
@@ -159,7 +159,7 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48,getPlayer}={}){
    state.cart.position.set(p.x,.07,p.z);state.cart.rotation.y=Math.atan2(-direction.x,-direction.z);
   }
  }
- return {root,center:{x,z},holes:9,residentialBuildings:0,layout,groves,heightAt:layout.heightAt,bounds:{minX:240,maxX:556,minZ:-265,maxZ:166},update};
+ return {root,clubhouse:club,movingCarts,center:{x,z},holes:9,residentialBuildings:0,layout,groves,heightAt:layout.heightAt,bounds:{minX:240,maxX:556,minZ:-265,maxZ:166},update};
 }
 
 

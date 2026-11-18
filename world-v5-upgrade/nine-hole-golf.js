@@ -80,7 +80,8 @@ export function createNineHoleGolf(course,{origin,materials,tree,getPlayer}){
  const stone=new THREE.MeshStandardMaterial({map:stoneMap,color:0xd5cfc1,roughness:1});
  const edging=new THREE.MeshStandardMaterial({color:0x777e70,roughness:1});
  // A single connected route visits each row and returns to the clubhouse.
- const route=[[249,147],[246,120],[246,69],[246,-25],[246,-120],[247,-258],[294,-258],[390,-258],[494,-258],[547,-246],[547,-150],[541,-115],[451,-115],[353,-115],[249,-115],[246,-80],[258,-18],[352,-18],[451,-18],[545,-23],[547,23],[449,18],[353,18],[253,18],[247,79],[258,117],[351,120],[451,122],[542,145],[451,157],[351,157]];
+ // The southern cart loop stays east of the carnival and clear of the relocated clubhouse.
+ const route=[[360,168],[310,168],[287,165],[296,142],[296,121],[294,112],[286,105],[246,79],[246,-25],[246,-120],[247,-258],[294,-258],[390,-258],[494,-258],[547,-246],[547,-150],[541,-115],[451,-115],[353,-115],[249,-115],[246,-80],[258,-18],[352,-18],[451,-18],[545,-23],[547,23],[449,18],[353,18],[253,18],[247,79],[286,105],[294,112],[310,120],[385,120],[451,122],[542,145],[451,168],[396,168]];
  ribbon(route,4.4,edging,.075,true);const cartCurve=ribbon(route,3.8,stone,.08,true);
  // Short stone connections from the main route to all nine tee boxes.
  for(const h of holeSpecs){const [tx,tz]=h.tee;const pathZ=h.number<4?-258:h.number<7?-18:18;ribbon([[tx,pathZ],[tx-2,(pathZ+tz)/2],[tx,tz]],2.8,stone,.082);}

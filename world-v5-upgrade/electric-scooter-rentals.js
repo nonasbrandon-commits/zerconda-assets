@@ -23,5 +23,11 @@ export function createScooterRentals(scene,{getPlayer,getYaw,onMessage=()=>{},on
  function drive(dt,forward,yaw){if(!active)return;active.angle=yaw;speed=THREE.MathUtils.damp(speed,forward>0?6.2:forward<0?-1.8:0,forward?3.3:8,dt);const travel=speed*dt,n=Math.max(1,Math.ceil(Math.abs(travel)/.15));for(let i=0;i<n;i++){const xx=active.x+Math.sin(yaw)*travel/n,zz=active.z+Math.cos(yaw)*travel/n;if(canMove(xx,zz)){active.x=xx;active.z=zz;}else{speed=0;break;}}const p=getPlayer();p.x=active.x;p.z=active.z;sync();clock+=dt;if(clock>2){clock=0;save();}}
  function update(){if(now()>=pickupAt)collect();sync();for(const o of buttons)o.b.style.display=o.visible()?'block':'none';}
  if(now()>=pickupAt)collect();sync();
- return {root,shop,desk,fleet,update,drive,blocks,ride,end,collect,stop(){speed=0;},get riding(){return !!active},get riderY(){return active?getHeight(active.x,active.z)+.31:0},get heading(){return active?.angle||0},get pickupAt(){return pickupAt},get speed(){return speed}};
+ return {root,shop,desk,fleet,update,drive,blocks,ride,end,collect,heightAt(x,z){
+  // Physical slab tops: foundation .025+.175, porch .09+.06, court -.02+.05.
+  if(Math.abs(x-126)<=9.2&&Math.abs(z-69)<=7.2)return .20;
+  if(Math.abs(x-126)<=3.5&&Math.abs(z-78.5)<=2.35)return .15;
+  if(Math.abs(x-126)<=12&&Math.abs(z-79.5)<=2.5)return .03;
+  return null;
+ },stop(){speed=0;},get riding(){return !!active},get riderY(){return active?getHeight(active.x,active.z)+.31:0},get heading(){return active?.angle||0},get pickupAt(){return pickupAt},get speed(){return speed}};
 }
