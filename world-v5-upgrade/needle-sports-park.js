@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {createZenPond} from './zen-pond.js?v=20261118-wildlife-v96';
+import {createZenPond} from './zen-pond.js?v=20261118-path-seams-v99';
 // Public park north of the Observation Needle. All features are traversable scenery.
 export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}){
  const root=new THREE.Group();root.name='Needle Park - tennis basketball fish pond';root.position.set(x,0,z);scene.add(root);

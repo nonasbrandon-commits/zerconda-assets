@@ -1,53 +1,53 @@
-import {upgradeMobileControls} from './mobile-controls.js?v=20261118-north-mobile-v98';
-import {createAirportLoop} from './airport-loop.js?v=20261118-north-mobile-v98';
-import {createNorthernForest} from './northern-forest.js?v=20261118-north-mobile-v98';
-import {createMobilePerformance} from './mobile-performance.js?v=20261118-north-mobile-v98';
-import {createTownObstacles} from './town-obstacles.js?v=20261118-north-mobile-v98';
-import {createSeasideCarnival} from './seaside-carnival.js?v=20261118-north-mobile-v98';
-import {createRVPark} from './rv-park.js?v=20261118-north-mobile-v98';
-import {createModernPickup} from './modern-pickup.js?v=20261118-north-mobile-v98';
-import {createLuxuryVillas} from './luxury-villas.js?v=20261118-north-mobile-v98';
-import {createStyleCuts} from './style-cuts.js?v=20261118-north-mobile-v98';
-import {createBusinessCentre} from './business-centre.js?v=20261118-north-mobile-v98';
-import {createSkatePark} from './skate-park.js?v=20261118-north-mobile-v98';
-import {createAirfield} from './airfield.js?v=20261118-north-mobile-v98';
+import {upgradeMobileControls} from './mobile-controls.js?v=20261118-path-seams-v99';
+import {createAirportLoop} from './airport-loop.js?v=20261118-path-seams-v99';
+import {createNorthernForest} from './northern-forest.js?v=20261118-path-seams-v99';
+import {createMobilePerformance} from './mobile-performance.js?v=20261118-path-seams-v99';
+import {createTownObstacles} from './town-obstacles.js?v=20261118-path-seams-v99';
+import {createSeasideCarnival} from './seaside-carnival.js?v=20261118-path-seams-v99';
+import {createRVPark} from './rv-park.js?v=20261118-path-seams-v99';
+import {createModernPickup} from './modern-pickup.js?v=20261118-path-seams-v99';
+import {createLuxuryVillas} from './luxury-villas.js?v=20261118-path-seams-v99';
+import {createStyleCuts} from './style-cuts.js?v=20261118-path-seams-v99';
+import {createBusinessCentre} from './business-centre.js?v=20261118-path-seams-v99';
+import {createSkatePark} from './skate-park.js?v=20261118-path-seams-v99';
+import {createAirfield} from './airfield.js?v=20261118-path-seams-v99';
 import * as THREE from 'three';
-import {createForestCampground} from './forest-campground.js?v=20261118-north-mobile-v98';
-import {createPremierHomes} from './premier-homes.js?v=20261118-north-mobile-v98';
-import {createZercondaNews} from './zerconda-news.js?v=20261118-north-mobile-v98';
+import {createForestCampground} from './forest-campground.js?v=20261118-path-seams-v99';
+import {createPremierHomes} from './premier-homes.js?v=20261118-path-seams-v99';
+import {createZercondaNews} from './zerconda-news.js?v=20261118-path-seams-v99';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261117-clothing-v80';
 import {createBowlingAlley} from './bowling-alley.js?v=20261117-bowling-v79';
-import {createScooterRentals} from './electric-scooter-rentals.js?v=20261118-north-mobile-v98';
+import {createScooterRentals} from './electric-scooter-rentals.js?v=20261118-path-seams-v99';
 import {createSeasidePier} from './seaside-pier.js?v=20261117-coastal-v77';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
-import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261118-north-mobile-v98';
+import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261118-path-seams-v99';
 import {createClubZerconda} from './club-zerconda.js?v=20261117-touch-v75';
-import {createRealisticHuman} from './realistic-human.js?v=20261118-north-mobile-v98';
+import {createRealisticHuman} from './realistic-human.js?v=20261118-path-seams-v99';
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
-import {createObservationNeedle} from './observation-needle.js?v=20261118-north-mobile-v98';
+import {createObservationNeedle} from './observation-needle.js?v=20261118-path-seams-v99';
 import {createCloudSky} from './cloud-sky.js';
-import {addCityDepth} from './city-depth-assets.js?v=20261118-north-mobile-v98';
+import {addCityDepth} from './city-depth-assets.js?v=20261118-path-seams-v99';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js?v=20261117-commerce-restore-v69';
-import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261118-north-mobile-v98';
+import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261118-path-seams-v99';
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261117-interiors-v1';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
-import {addAirDancers} from './air-dancers.js?v=20261118-north-mobile-v98';
-import {createZercondaBeach} from './zerconda-beach.js?v=20261118-north-mobile-v98';
-import {createCityMap} from './top-city-map.js?v=20261118-north-mobile-v98';
+import {addAirDancers} from './air-dancers.js?v=20261118-path-seams-v99';
+import {createZercondaBeach} from './zerconda-beach.js?v=20261118-path-seams-v99';
+import {createCityMap} from './top-city-map.js?v=20261118-path-seams-v99';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261117-coastal-v77';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-touch-v75';
-import {createPedestrians} from './animated-pedestrians.js?v=20261118-north-mobile-v98';
-import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118-north-mobile-v98';
-import {createNeedleSportsPark} from './needle-sports-park.js?v=20261118-north-mobile-v98';
+import {createPedestrians} from './animated-pedestrians.js?v=20261118-path-seams-v99';
+import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118-path-seams-v99';
+import {createNeedleSportsPark} from './needle-sports-park.js?v=20261118-path-seams-v99';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-18-north-mobile-v98';
+const ZERCONDA_BUILD='2026-11-18-path-seams-v99';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -493,7 +493,7 @@ const dealership={
  x:-31,z:-48,insidePoint:{x:-31,z:-57},exitPoint:{x:-31,z:-64},inside:()=>false,blocks:()=>false,isNear:(x,z,r=5.5)=>Math.hypot(x+31,z+62)<r,
  nearestCar:()=>null
 };
-import('./zerconda-dealership.js?v=20261118-north-mobile-v98')
+import('./zerconda-dealership.js?v=20261118-path-seams-v99')
  .then(({createDealership})=>Object.assign(dealership,createDealership(scene,{x:-31,z:-48,rotation:Math.PI/2})))
  .catch(err=>{console.error('Dealership asset failed (city continues):',err);
    if(status)status.textContent='City loaded; dealership asset unavailable: '+err.message;
