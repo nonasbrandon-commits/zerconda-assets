@@ -56,6 +56,7 @@ export function createCityMap({player,beach={x:0,z:212}}){
   ctx.fillStyle='#385e43';ctx.fillRect(tx(-266),tz(-274),150*scale,123*270/772);ctx.fillStyle='#94b38a';for(let i=0;i<34;i++){ctx.beginPath();ctx.arc(tx(-261+(i*37)%139),tz(-268+(i*29)%108),1.5,0,Math.PI*2);ctx.fill();}label(-260,-205,'CAMP','#e5d8b6');
   ctx.fillStyle='#385e43';ctx.fillRect(tx(-82),tz(-274),68*scale,129*270/772);ctx.fillStyle='#ddd8c6';for(const x of [-68,-29])for(const z of [-231,-184])ctx.fillRect(tx(x-2.3),tz(z-6),4.6*scale,12*270/772);label(-81,-243,'RV PARK','#eadbb8');
   ctx.fillStyle='#b7b19a';for(const z of [-265,-188])ctx.fillRect(tx(114),tz(z),102*scale,66*270/772);ctx.fillStyle='#68b8c4';for(const z of [-243,-166])ctx.fillRect(tx(181),tz(z),12*scale,22*270/772);label(130,-198,'ESTATES','#f8e9ca');
+  ctx.fillStyle='#c7b798';ctx.fillRect(tx(188),tz(112),86*scale,62*270/772);label(190,143,'CARNIVAL','#ffe0ab');
   ctx.fillStyle='#659647';
   for(const [lo,hi] of [[-265,-113],[-79,-17],[17,79],[113,166]])ctx.fillRect(tx(240),tz(lo),316*scale,(hi-lo)*270/772);
   ctx.fillStyle='#b5d37b';

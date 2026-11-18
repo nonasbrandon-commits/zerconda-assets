@@ -8,6 +8,7 @@ export function addGolfGroves(course,{origin,holes,pathCurves}){
  for(let tries=0;tries<6000&&trees.length<100;tries++){
   const x=[258,337,433,535][tries%4]+(rnd()-.5)*15,z=-258+rnd()*418;
   if([-96,0,96].some(v=>Math.abs(z-v)<22)||Math.hypot(x-294,z-140)<26||x<244||x>550)continue;
+  if(x<282&&z>106&&z<184)continue; // Keep the entire seaside carnival and its views clear.
   if(pathPoints.some(p=>Math.hypot(x-p.x,z-p.z)<p.r))continue;
   if(holes.some(h=>segmentDistance(x,z,h.tee,h.pin)<24||Math.hypot(x-h.pin[0],z-h.pin[1])<24))continue;
   if(trees.some(t=>Math.hypot(x-t.x,z-t.z)<12))continue;

@@ -1,6 +1,6 @@
 import {addRealisticBeachPalms} from './realistic-beach-palms.js';
 import * as THREE from 'three';
-import {createRealisticOcean} from './realistic-ocean.js?v=20261117-pier-v76';
+import {createRealisticOcean} from './realistic-ocean.js?v=20261118-carnival-v93';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Zerconda South Beach, reachable on foot from the southern city edge at z=168.
 // Tiled sand PBR, animated layered water, foam, dunes, boardwalk, umbrellas and palms.
@@ -17,7 +17,7 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  const wood=new THREE.MeshStandardMaterial({color:0x927055,roughness:.87});
  const fabric=[0xf5f2e8,0x237aaf,0xe79a60,0xe7d2a2].map(color=>new THREE.MeshStandardMaterial({color,roughness:.82,side:THREE.DoubleSide}));
  function mesh(geo,mat,x,y,z){const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.receiveShadow=true;root.add(o);return o;}
- const land=mesh(new THREE.PlaneGeometry(520,91),sand,0,.085,199.5);land.rotation.x=-Math.PI/2;
+ const land=mesh(new THREE.PlaneGeometry(846,91),sand,147,.085,199.5);land.rotation.x=-Math.PI/2;
  // Road connection across the former boundary to the promenade.
  const asphalt=new THREE.MeshStandardMaterial({color:0x45474a,roughness:.96});
  const access=mesh(new THREE.PlaneGeometry(19,38),asphalt,0,.14,171);access.rotation.x=-Math.PI/2;
@@ -71,7 +71,7 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
   // Match the visible planks (.19 centre + .025 half thickness), not sea level.
   if(Math.abs(x)<=160&&z>=181&&z<=191)return .215;
   if(Math.abs(x)<=9.5&&z>=152&&z<=190)return .14;
-  if(Math.abs(x)<=260&&z>=154&&z<=245)return .085;
+  if(x>=-276&&x<=570&&z>=154&&z<=245)return .085;
   return null;
  },update(dt){oceanSystem.update(dt);},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
 }

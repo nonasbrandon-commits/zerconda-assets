@@ -44,6 +44,6 @@ export function createRealisticOcean(root){
  const surfaces=[];
  function patch(x0,x1,z0,z1,nx,nz){const geo=new THREE.PlaneGeometry(x1-x0,z1-z0,nx,nz);geo.rotateX(-Math.PI/2);geo.translate((x0+x1)/2,0,(z0+z1)/2);const mesh=new THREE.Mesh(geo,material);mesh.name='Reflective moving ocean';mesh.frustumCulled=false;root.add(mesh);surfaces.push(mesh);}
  patch(-350,350,234,940,200,200);patch(-1100,-350,234,940,32,200);patch(-1100,-350,940,2440,32,64);patch(350,1100,234,940,32,200);patch(350,1100,940,2440,32,64);patch(-350,350,940,2440,200,64);
- patch(-277,-183,155,234,12,12);patch(280,570,155,234,24,12);
+ // The shoreline is continuous at z=234. No water patches intrude under the beach or golf clubhouse.
  let elapsed=0;return {material,surfaces,get time(){return elapsed},heightAt:(x,z)=>seaHeight(x,z,elapsed),update(dt){elapsed+=dt;uniforms.time.value=elapsed;}};
 }

@@ -1,4 +1,4 @@
-import {addGolfGroves} from './golf-landscaping.js?v=20261117-ground-golf-v86';
+import {addGolfGroves} from './golf-landscaping.js?v=20261118-carnival-v93';
 import * as THREE from 'three';
 import {trimGolfGround} from './golf-road-clearance.js?v=20261117-ground-golf-v86';
 import {createNineHoleGolf} from './nine-hole-golf.js?v=20261117-ground-golf-v86';
@@ -31,6 +31,7 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48,getPlayer}={}){
   parent.updateWorldMatrix(true,false);
   const location=parent.localToWorld(new THREE.Vector3(x,0,z));
   if([-96,0,96].some(c=>Math.abs(location.x-c)<18||Math.abs(location.z-c)<18))return;
+  if(location.x>180&&location.x<282&&location.z>106&&location.z<184)return;
   const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);parent.add(g);treeInstances.push({g,seed});
   // No cartoon placeholder crown. Model is loaded below; failed loads leave an empty planting location instead of lollipop trees.
  }
