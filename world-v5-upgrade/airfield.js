@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 export const AIRFIELD={west:-276,east:570,north:-530,south:-285,runway:{x:130,z:-452,length:730,width:28}};
-export function createAirfield(scene,{getPlayer,canUse=()=>true,onTeleport=()=>{},onMessage=()=>{}}={}){
+export function createAirfield(scene,{getPlayer,groundMaterial=null,canUse=()=>true,onTeleport=()=>{},onMessage=()=>{}}={}){
  const root=new THREE.Group();root.name='Zerconda North Airfield';root.userData.customInterior=true;scene.add(root);
  const mat=(color,roughness=.8)=>new THREE.MeshStandardMaterial({color,roughness});
  const white=mat(0xe5e5db),stripe=mat(0x278899,.4),dark=mat(0x263a43,.5),steel=mat(0x939ea0,.45),rubber=mat(0x182329),seatMat=mat(0x425a68),cream=mat(0xd4cbb9),yellow=mat(0xe7c15a),glass=new THREE.MeshPhysicalMaterial({color:0x83b4c4,transparent:true,opacity:.22,roughness:.08,metalness:.05,side:THREE.DoubleSide,depthWrite:false});
@@ -11,7 +11,8 @@ export function createAirfield(scene,{getPlayer,canUse=()=>true,onTeleport=()=>{
  function sphere(x,y,z,sx,sy,sz,m,p){const o=mesh(new THREE.SphereGeometry(1,20,12),m,x,y,z,p);o.scale.set(sx,sy,sz);return o;}
  function label(text,x,y,z,w=7,h=1,ry=0,bg='#233e49'){const c=document.createElement('canvas');c.width=1536;c.height=256;const a=c.getContext('2d');a.fillStyle=bg;a.fillRect(0,0,c.width,c.height);a.fillStyle='#f0e9d4';a.textAlign='center';a.textBaseline='middle';a.font='bold 74px sans-serif';a.fillText(text,768,128,1490);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const o=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));o.position.set(x,y,z);o.rotation.y=ry;root.add(o);return o;}
  function grain(base){const c=document.createElement('canvas');c.width=c.height=256;const a=c.getContext('2d');a.fillStyle=base;a.fillRect(0,0,256,256);let s=571;for(let i=0;i<13000;i++){s=(Math.imul(s,1664525)+1013904223)>>>0;const x=s%256;s=(Math.imul(s,1664525)+1013904223)>>>0;const y=s%256;a.fillStyle=i%2?'#ffffff18':'#00000016';a.fillRect(x,y,1,1);}const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(40,15);return t;}
- const grass=mat(0xffffff);grass.map=grain('#758264');box(846,.12,245,147,-.14,-407.5,grass);
+ // Share the town's grass and world-aligned UV scale across the airfield.
+ const grass=groundMaterial||mat(0x94a68a);const groundGeo=new THREE.BoxGeometry(846,.12,245),gp=groundGeo.attributes.position,gu=groundGeo.attributes.uv;for(let i=0;i<gu.count;i++)gu.setXY(i,(gp.getX(i)+147-165)/1250+.5,.5-(gp.getZ(i)-407.5+425)/1180);mesh(groundGeo,grass,147,-.14,-407.5);
  const asphalt=mat(0xffffff);asphalt.map=grain('#4a5051');box(730,.08,28,130,.08,-452,asphalt);box(725,.08,13,130,.08,-405,asphalt);box(324,.08,89.5,-66,.08,-353.75,mat(0x8a8f89));box(14,.08,24,-96,.08,-297,asphalt);
  // Taxiway connections, turn pads and clear runway markings.
  for(const x of [-213,473])box(13,.08,47,x,.08,-428.5,asphalt);

@@ -1,53 +1,53 @@
-import {upgradeMobileControls} from './mobile-controls.js?v=20261118-path-seams-v99';
-import {createAirportLoop} from './airport-loop.js?v=20261118-path-seams-v99';
-import {createNorthernForest} from './northern-forest.js?v=20261118-path-seams-v99';
-import {createMobilePerformance} from './mobile-performance.js?v=20261118-path-seams-v99';
-import {createTownObstacles} from './town-obstacles.js?v=20261118-path-seams-v99';
-import {createSeasideCarnival} from './seaside-carnival.js?v=20261118-path-seams-v99';
-import {createRVPark} from './rv-park.js?v=20261118-path-seams-v99';
-import {createModernPickup} from './modern-pickup.js?v=20261118-path-seams-v99';
-import {createLuxuryVillas} from './luxury-villas.js?v=20261118-path-seams-v99';
-import {createStyleCuts} from './style-cuts.js?v=20261118-path-seams-v99';
-import {createBusinessCentre} from './business-centre.js?v=20261118-path-seams-v99';
-import {createSkatePark} from './skate-park.js?v=20261118-path-seams-v99';
-import {createAirfield} from './airfield.js?v=20261118-path-seams-v99';
+import {upgradeMobileControls} from './mobile-controls.js?v=20261118-visible-trails-v100';
+import {createAirportLoop} from './airport-loop.js?v=20261118-visible-trails-v100';
+import {createNorthernForest} from './northern-forest.js?v=20261118-visible-trails-v100';
+import {createMobilePerformance} from './mobile-performance.js?v=20261118-visible-trails-v100';
+import {createTownObstacles} from './town-obstacles.js?v=20261118-visible-trails-v100';
+import {createSeasideCarnival} from './seaside-carnival.js?v=20261118-visible-trails-v100';
+import {createRVPark} from './rv-park.js?v=20261118-visible-trails-v100';
+import {createModernPickup} from './modern-pickup.js?v=20261118-visible-trails-v100';
+import {createLuxuryVillas} from './luxury-villas.js?v=20261118-visible-trails-v100';
+import {createStyleCuts} from './style-cuts.js?v=20261118-visible-trails-v100';
+import {createBusinessCentre} from './business-centre.js?v=20261118-visible-trails-v100';
+import {createSkatePark} from './skate-park.js?v=20261118-visible-trails-v100';
+import {createAirfield} from './airfield.js?v=20261118-visible-trails-v100';
 import * as THREE from 'three';
-import {createForestCampground} from './forest-campground.js?v=20261118-path-seams-v99';
-import {createPremierHomes} from './premier-homes.js?v=20261118-path-seams-v99';
-import {createZercondaNews} from './zerconda-news.js?v=20261118-path-seams-v99';
+import {createForestCampground} from './forest-campground.js?v=20261118-visible-trails-v100';
+import {createPremierHomes} from './premier-homes.js?v=20261118-visible-trails-v100';
+import {createZercondaNews} from './zerconda-news.js?v=20261118-visible-trails-v100';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261117-clothing-v80';
 import {createBowlingAlley} from './bowling-alley.js?v=20261117-bowling-v79';
-import {createScooterRentals} from './electric-scooter-rentals.js?v=20261118-path-seams-v99';
+import {createScooterRentals} from './electric-scooter-rentals.js?v=20261118-visible-trails-v100';
 import {createSeasidePier} from './seaside-pier.js?v=20261117-coastal-v77';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
-import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261118-path-seams-v99';
+import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261118-visible-trails-v100';
 import {createClubZerconda} from './club-zerconda.js?v=20261117-touch-v75';
-import {createRealisticHuman} from './realistic-human.js?v=20261118-path-seams-v99';
+import {createRealisticHuman} from './realistic-human.js?v=20261118-visible-trails-v100';
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
-import {createObservationNeedle} from './observation-needle.js?v=20261118-path-seams-v99';
+import {createObservationNeedle} from './observation-needle.js?v=20261118-visible-trails-v100';
 import {createCloudSky} from './cloud-sky.js';
-import {addCityDepth} from './city-depth-assets.js?v=20261118-path-seams-v99';
+import {addCityDepth} from './city-depth-assets.js?v=20261118-visible-trails-v100';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js?v=20261117-commerce-restore-v69';
-import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261118-path-seams-v99';
+import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261118-visible-trails-v100';
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261117-interiors-v1';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
-import {addAirDancers} from './air-dancers.js?v=20261118-path-seams-v99';
-import {createZercondaBeach} from './zerconda-beach.js?v=20261118-path-seams-v99';
-import {createCityMap} from './top-city-map.js?v=20261118-path-seams-v99';
+import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
+import {createZercondaBeach} from './zerconda-beach.js?v=20261118-visible-trails-v100';
+import {createCityMap} from './top-city-map.js?v=20261118-visible-trails-v100';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261117-coastal-v77';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-touch-v75';
-import {createPedestrians} from './animated-pedestrians.js?v=20261118-path-seams-v99';
-import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118-path-seams-v99';
-import {createNeedleSportsPark} from './needle-sports-park.js?v=20261118-path-seams-v99';
+import {createPedestrians} from './animated-pedestrians.js?v=20261118-visible-trails-v100';
+import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118-visible-trails-v100';
+import {createNeedleSportsPark} from './needle-sports-park.js?v=20261118-visible-trails-v100';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-18-path-seams-v99';
+const ZERCONDA_BUILD='2026-11-18-visible-trails-v100';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -493,7 +493,7 @@ const dealership={
  x:-31,z:-48,insidePoint:{x:-31,z:-57},exitPoint:{x:-31,z:-64},inside:()=>false,blocks:()=>false,isNear:(x,z,r=5.5)=>Math.hypot(x+31,z+62)<r,
  nearestCar:()=>null
 };
-import('./zerconda-dealership.js?v=20261118-path-seams-v99')
+import('./zerconda-dealership.js?v=20261118-visible-trails-v100')
  .then(({createDealership})=>Object.assign(dealership,createDealership(scene,{x:-31,z:-48,rotation:Math.PI/2})))
  .catch(err=>{console.error('Dealership asset failed (city continues):',err);
    if(status)status.textContent='City loaded; dealership asset unavailable: '+err.message;
@@ -982,7 +982,7 @@ boutique=createClothingBoutique(scene,{getPlayer:()=>player,canEnter:()=>!barber
 news=createZercondaNews(scene,{getPlayer:()=>player,canInteract:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});
 premier=createPremierHomes(scene,{getPlayer:()=>player,canInteract:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});
 camp=createForestCampground(scene,{getPlayer:()=>player,canUse:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x,y+1.7,z-2);}});
-airfield=createAirfield(scene,{getPlayer:()=>player,canUse:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x,y+1.6,z);}});
+airfield=createAirfield(scene,{groundMaterial:grass,getPlayer:()=>player,canUse:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x,y+1.6,z);}});
 skate=createSkatePark(scene,{getPlayer:()=>player,getYaw:()=>yaw,getHeight:groundHeightAt,canUse:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,canMove:(x,z)=>walkable(x,z),onMessage:m=>townControls.notify(m),onStop:()=>{sittingSeat=null;seatReturn=null;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();}});
 addEventListener('keydown',e=>{if(e.code==='Space'&&!e.repeat&&skate.riding&&!['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)){e.preventDefault();e.stopImmediatePropagation();skate.ollie();}},true);
 office=createBusinessCentre(scene,{getPlayer:()=>player,canEnter:()=>!barber?.active&&!activeCar&&!skate.riding&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x-Math.sin(yaw)*2.4,y+2.1,z-Math.cos(yaw)*2.4);}});
