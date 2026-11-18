@@ -32,26 +32,55 @@ export function createAirfield(scene,{getPlayer,groundMaterial=null,canUse=()=>t
   for(const z of [-10,5]){box(8,.65,1.2,-13,.4,z,dark,g);box(8,.14,1.2,-13,.8,z,cream,g);}label('HANGAR 0'+(i+1),x,8.2,-346.4,13,1,Math.PI);
  }
  // Passenger commuter aircraft, with a real open aisle, fourteen passenger seats and two pilot seats.
- const planes=[],helicopters=[],aircraft=[],sources=[];let boarded=null;
+ const planes=[],helicopters=[],aircraft=[],sources=[];const cabinFloor=1.555,apronY=.12,stairCount=8,stairRun=.35,stairInner=1.65,stairOuter=stairInner+stairCount*stairRun,doorZ=4.5,doorHalf=.60;let boarded=null;
  function seat(g,x,z,y=1.85){box(.54,.12,.62,x,y,z,seatMat,g);box(.54,.72,.13,x,y+.39,z+.26,seatMat,g);box(.45,.2,.12,x,y+.85,z+.26,seatMat,g);box(.09,.48,.09,x,y-.3,z,dark,g);}
  function tire(g,x,y,z){mesh(new THREE.CylinderGeometry(.32,.32,.22,16),rubber,x,y,z,g,[0,0,Math.PI/2]);box(.09,.7,.09,x,y+.45,z,steel,g);}
  function wing(g,span,chord,z,y,m){const sh=new THREE.Shape();sh.moveTo(-span/2,chord*.45);sh.lineTo(-span/2,-chord*.1);sh.lineTo(-1.2,-chord*.55);sh.lineTo(1.2,-chord*.55);sh.lineTo(span/2,-chord*.1);sh.lineTo(span/2,chord*.45);sh.closePath();mesh(new THREE.ExtrudeGeometry(sh,{depth:.17,bevelEnabled:false}),m,0,y,z,g,[Math.PI/2,0,0]);}
  for(const [i,x]of [-190,-130].entries()){
   const z=-377,g=new THREE.Group();g.position.set(x,0,z);g.name='Passenger plane '+(i+1)+' · 14 seats';root.add(g);
-  const p={id:'plane-'+(i+1),name:'Passenger plane '+(i+1),x,z,seats:14,group:g,entry:{x:x+2.8,z:z+4.7},eye:{x:x+.58,y:2.75,z:z+3.35},exit:{x:x+3.25,z:z+4.7}};planes.push(p);aircraft.push(p);
+  const p={id:'plane-'+(i+1),name:'Passenger plane '+(i+1),x,z,seats:14,group:g,entry:{x:x+stairOuter+.45,z:z+doorZ},eye:{x:x+.40,y:cabinFloor+1.6,z:z+doorZ},exit:{x:x+stairOuter+.60,z:z+doorZ},stairs:{inner:stairInner,outer:stairOuter,z:doorZ,halfWidth:.58,count:stairCount,rise:(cabinFloor-apronY)/stairCount,run:stairRun,floor:cabinFloor,ground:apronY}};planes.push(p);aircraft.push(p);
   // Rounded elliptical fuselage with true transparent window bands.
-  const shell=white.clone();shell.side=THREE.DoubleSide;const shellParts=[[],[]],zs=[-6.5,6.5];for(let row=0;row<7;row++){const z=-4.9+row*1.4;zs.push(z-.53,z+.53);}zs.sort((a,b)=>a-b);
-  for(let j=0;j<zs.length-1;j++)for(let k=0;k<48;k++){const aa=k/48*Math.PI*2,bb=(k+1)/48*Math.PI*2,mid=(aa+bb)/2,zz=(zs[j]+zs[j+1])/2;const sideWindow=(mid<.85||mid>Math.PI*2-.08||mid>Math.PI-.85&&mid<Math.PI+.08)&&Array.from({length:7},(_,r)=>Math.abs(zz-(-4.9+r*1.4))<.54).some(Boolean);const vertices=shellParts[sideWindow?1:0];for(const [ang,z]of [[aa,zs[j]],[bb,zs[j]],[aa,zs[j+1]],[aa,zs[j+1]],[bb,zs[j]],[bb,zs[j+1]]])vertices.push(Math.cos(ang)*1.35,2.3+Math.sin(ang)*1.02,z);}
-  for(let k=0;k<2;k++){const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(shellParts[k],3));geo.computeVertexNormals();mesh(geo,k?glass:shell,0,0,0,g);}
+  const shell=white.clone();shell.side=THREE.DoubleSide;const shellParts=[[],[]],zs=[-6.5,6.5,doorZ-doorHalf,doorZ+doorHalf];for(let row=0;row<7;row++){const z=-4.9+row*1.4;zs.push(z-.53,z+.53);}zs.sort((a,b)=>a-b);
+  const doorBottom=Math.asin((cabinFloor-2.3)/1.02)+Math.PI*2,doorTop=Math.asin((3.20-2.3)/1.02),angles=Array.from({length:49},(_,k)=>k/48*Math.PI*2).concat([doorBottom,doorTop]).sort((a,b)=>a-b);
+  for(let j=0;j<zs.length-1;j++)for(let k=0;k<angles.length-1;k++){const aa=angles[k],bb=angles[k+1],mid=(aa+bb)/2,zz=(zs[j]+zs[j+1])/2;
+   // A real opening in the curved shell, rather than a door painted on its surface.
+   if(Math.abs(zz-doorZ)<doorHalf+.001&&(mid<doorTop||mid>doorBottom))continue;
+   const sideWindow=(mid<.85||mid>Math.PI*2-.08||mid>Math.PI-.85&&mid<Math.PI+.08)&&Array.from({length:7},(_,r)=>Math.abs(zz-(-4.9+r*1.4))<.54).some(Boolean),vertices=shellParts[sideWindow?1:0];
+   for(const [ang,z]of [[aa,zs[j]],[bb,zs[j]],[aa,zs[j+1]],[aa,zs[j+1]],[bb,zs[j]],[bb,zs[j+1]]])vertices.push(Math.cos(ang)*1.35,2.3+Math.sin(ang)*1.02,z);
+  }
+   for(let k=0;k<2;k++){const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(shellParts[k],3));geo.computeVertexNormals();mesh(geo,k?glass:shell,0,0,0,g);}
   box(2.2,.13,12.8,0,1.49,0,cream,g);for(let row=0;row<7;row++)for(const side of [-1,1])seat(g,side*.65,-4.9+row*1.4,1.85);
-  for(const side of [-1,1])box(.025,.14,12.4,side*1.32,2.04,0,stripe,g);
+  for(const side of [-1,1]){if(side<0)box(.025,.14,12.4,side*1.32,2.04,0,stripe,g);else{box(.025,.14,doorZ-doorHalf+6.2,1.32,2.04,(doorZ-doorHalf-6.2)/2,stripe,g);box(.025,.14,6.2-doorZ-doorHalf,1.32,2.04,(6.2+doorZ+doorHalf)/2,stripe,g);}}
   sphere(0,2.3,-7.0,1.31,.95,2.0,white,g);sphere(0,2.75,-7.1,1.17,.55,1.25,glass,g);sphere(0,2.15,7.0,1.16,.84,2,white,g);seat(g,-.55,-6.3);seat(g,.55,-6.3);
   box(1.8,.35,.5,0,2.28,-7.35,dark,g);wing(g,24,3.5,-1,3.45,white);wing(g,8,1.8,7,3.0,white);
   const fin=new THREE.Shape();fin.moveTo(6,2.7);fin.lineTo(8.9,2.4);fin.lineTo(8,5.9);fin.lineTo(6.8,5.9);fin.closePath();mesh(new THREE.ExtrudeGeometry(fin,{depth:.15,bevelEnabled:false}),stripe,-.075,0,0,g,[0,-Math.PI/2,0]);
   for(const side of [-1,1]){sphere(side*4.2,2.95,-2.3,.58,.65,2.0,dark,g);mesh(new THREE.CylinderGeometry(.3,.48,.8,16),steel,side*4.2,2.95,-4.1,g,[Math.PI/2,0,0]);for(let blade=0;blade<4;blade++){const prop=box(.16,3.5,.08,side*4.2,2.95,-4.6,dark,g);prop.rotation.z=blade*Math.PI/2+.3;}tire(g,side*1.65,.36,2.5);}tire(g,0,.36,-6.1);
-  // Movable boarding is via nearby action; stairs remain outside the landing gear.
-  for(let j=0;j<5;j++)box(.65,.18*(j+1),1.3,2.9-j*.31,.09*(j+1),4.7,steel,g);
-  label('ZC · '+(i+1)+' · 14 PASSENGERS',x,1.0,z+10.2,8,.8);box(.09,.9,.09,x,.45,z+10.2,dark);
+  // Fold-down airstair: 18cm risers, full-width anti-slip treads, and continuous handrails.
+  const boarding=new THREE.Group();boarding.name='Open passenger doorway and grounded airstairs';g.add(boarding);
+  const tread=mat(0x344148,.9),carpet=mat(0x801e37,.95),rim=mat(0xd4d9d7,.32);
+  function rail(a,b,r=.025,m=steel){const from=new THREE.Vector3(...a),to=new THREE.Vector3(...b),o=mesh(new THREE.CylinderGeometry(r,r,from.distanceTo(to),10),m,0,0,0,boarding);o.position.copy(from).add(to).multiplyScalar(.5);o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),to.sub(from).normalize());return o;}
+  box(.55,.08,1.20,1.375,cabinFloor-.04,doorZ,steel,boarding);
+  // Recessed cream jambs join the curved fuselage to the rectangular doorway.
+  for(const side of [-1,1]){box(.57,1.72,.065,1.07,2.365,doorZ+side*.615,rim,boarding);rail([1.37,cabinFloor,doorZ+side*.615],[1.37,3.20,doorZ+side*.615],.026,rim);}
+  box(.64,.08,1.30,1.04,3.22,doorZ,white,boarding);
+  box(.55,.035,.75,.15,3.18,doorZ,new THREE.MeshBasicMaterial({color:0xffecd2}),boarding);
+  for(let j=0;j<stairCount;j++){const top=apronY+(stairCount-j)*(cabinFloor-apronY)/stairCount,x=stairInner+(j+.5)*stairRun;
+   const step=box(stairRun,.075,1.16,x,top-.0375,doorZ,white,boarding);step.name='Airstair tread '+(j+1);step.userData.walkTop=top;
+   box(stairRun-.045,.012,1.04,x,top+.006,doorZ,tread,boarding);
+   box(.045,.022,1.17,x+stairRun/2-.0225,top,doorZ,rim,boarding);
+   box(.045,(cabinFloor-apronY)/stairCount,1.16,x+stairRun/2-.0225,top-(cabinFloor-apronY)/stairCount/2,doorZ,white,boarding);
+  }
+  for(const side of [-1,1]){const zz=doorZ+side*.64;
+   rail([1.38,cabinFloor+.88,zz],[stairOuter,apronY+.88,zz],.032);
+   rail([1.55,cabinFloor-.14,zz],[stairOuter-.05,apronY+.035,zz],.065,white);
+   for(const j of [0,3,7]){const x=stairInner+(j+.5)*stairRun,h=apronY+(stairCount-j)*(cabinFloor-apronY)/stairCount;rail([x,h,zz],[x,h+.80,zz],.023);}
+  }
+  box(.18,.18,1.20,stairOuter-.12,apronY+.09,doorZ,steel,boarding);
+  box(2.9,.025,1.35,stairOuter+1.48,apronY+.0125,doorZ,carpet,boarding);
+  // A restrained red-carpet approach, with rope posts kept clear of the stair entrance.
+  for(const side of [-1,1]){const zz=doorZ+side*1.02;for(const xx of [stairOuter+.6,stairOuter+2.65]){mesh(new THREE.CylinderGeometry(.14,.19,.035,16),steel,xx,apronY+.0175,zz,boarding);rail([xx,apronY,zz],[xx,apronY+.84,zz],.028);sphere(xx,apronY+.86,zz,.065,.065,.065,steel,boarding);}const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(stairOuter+.6,apronY+.78,zz),new THREE.Vector3(stairOuter+1.625,apronY+.60,zz),new THREE.Vector3(stairOuter+2.65,apronY+.78,zz)]);mesh(new THREE.TubeGeometry(curve,16,.035,8,false),carpet,0,0,0,boarding);}
+  p.boardingGroup=boarding;
+   label('ZC · '+(i+1)+' · 14 PASSENGERS',x,1.0,z+10.2,8,.8);box(.09,.9,.09,x,.45,z+10.2,dark);
  }
  for(const [i,x]of [20,60].entries()){
   const z=-352;const pad=mesh(new THREE.CylinderGeometry(12.5,12.5,.06,64),mat(0x566466),x,.13,z);const ring=new THREE.Mesh(new THREE.RingGeometry(10.7,11.05,64),new THREE.MeshBasicMaterial({color:0xe7dca8,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.set(x,.19,z);root.add(ring);box(.4,.01,7,x-2,.2,z,white);box(.4,.01,7,x+2,.2,z,white);box(4.4,.01,.4,x,.2,z,white);
@@ -70,9 +99,9 @@ export function createAirfield(scene,{getPlayer,groundMaterial=null,canUse=()=>t
  function action(id,text,target,fn,priority=120){const b=document.createElement('button');b.style.display='none';document.body.appendChild(b);b.onclick=fn;registerTownAction(b,{id:'airfield-'+id,label:text,priority,target});sources.push({b,id});return b;}
  for(const a of aircraft){a.button=action(a.id,`Board ${a.name} · ${a.seats} seats`,()=>({...a.entry,y:1.4}),()=>{if(boarded||!canUse())return;boarded=a;const p=getPlayer();p.x=a.eye.x;p.z=a.eye.z;onTeleport(p.x,a.eye.y-1.6,p.z,Math.PI);onMessage(a.name+' · Parked cabin view. Drag to look; tap Leave aircraft to step outside.');});}
  const leave=action('leave','Leave aircraft',()=>({...getPlayer(),y:boarded?boarded.eye.y:1.4}),()=>exit(),180);
- function exit(){if(!boarded)return;const a=boarded;boarded=null;const p=getPlayer();p.x=a.exit.x;p.z=a.exit.z;onTeleport(p.x,.04,p.z,Math.PI);}
+ function exit(){if(!boarded)return;const a=boarded;boarded=null;const p=getPlayer();p.x=a.exit.x;p.z=a.exit.z;onTeleport(p.x,.12,p.z,Math.PI);}
  function update(){for(const a of aircraft)a.button.style.display=!boarded&&canUse()&&Math.hypot(getPlayer().x-a.entry.x,getPlayer().z-a.entry.z)<4.0?'block':'none';leave.style.display=boarded?'block':'none';}
- function blocks(x,z){if(z>=-285)return false;if(hangars.some(h=>Math.abs(x-h.x)<20.4&&Math.abs(z-h.z)<18.4&&(Math.abs(x-h.x)>19.4||z>h.z+17.3||z<h.z-17.3&&Math.abs(x-h.x)>15.5)))return true;return aircraft.some(a=>a.id.startsWith('plane')?Math.abs(x-a.x)<1.8&&Math.abs(z-a.z)<9.2:Math.hypot(x-a.x,z-a.z)<2.3);}
+ function blocks(x,z){if(z>=-285)return false;if(hangars.some(h=>Math.abs(x-h.x)<20.4&&Math.abs(z-h.z)<18.4&&(Math.abs(x-h.x)>19.4||z>h.z+17.3||z<h.z-17.3&&Math.abs(x-h.x)>15.5)))return true;return aircraft.some(a=>{if(!a.id.startsWith('plane'))return Math.hypot(x-a.x,z-a.z)<2.3;const lx=x-a.x,lz=z-a.z;if(lx>.15&&lx<stairOuter+.3&&Math.abs(lz-doorZ)<.44)return false;return Math.abs(lx)<1.8&&Math.abs(lz)<9.2;});}
  for(const [m,geos]of parts){const g=mergeGeometries(geos,false),o=new THREE.Mesh(g,m);o.receiveShadow=true;o.castShadow=m!==grass&&m!==asphalt;root.add(o);for(const a of geos)a.dispose();}
- return {root,hangars,planes,helicopters,exit,update,blocks,heightAt:(x,z)=>{if(boarded)return boarded.eye.y-1.6;if(x<=-275||x>=569||z<=-529||z>=-285)return null;if(hangars.some(h=>Math.abs(x-h.x)<20&&Math.abs(z-h.z)<18))return .16;if(helicopters.some(h=>Math.hypot(x-h.x,z-h.z)<12.5))return .16;if(Math.abs(x+49)<8.5&&Math.abs(z+317)<5)return .14;const paved=z> -466&&z< -438&&x> -235&&x<495||z> -411.5&&z< -398.5&&x> -233&&x<493||x> -228&&x<96&&z> -398.5&&z< -309||Math.abs(x+96)<7&&z> -309||[-213,473].some(cx=>Math.abs(x-cx)<6.5&&Math.abs(z+428.5)<23.5);return paved?.12:-.08;},updateCamera(camera){if(boarded)camera.position.set(boarded.eye.x,boarded.eye.y,boarded.eye.z);},get boarded(){return !!boarded;}};
+ return {root,hangars,planes,helicopters,exit,update,blocks,heightAt:(x,z)=>{if(boarded)return boarded.eye.y-1.6;for(const p of planes){const lx=x-p.x,lz=z-p.z;if(Math.abs(lz-doorZ)<.55){if(lx>=.15&&lx<=stairInner)return cabinFloor;if(lx>stairInner&&lx<=stairOuter){const j=Math.min(stairCount-1,Math.floor((lx-stairInner)/stairRun));return apronY+(stairCount-j)*(cabinFloor-apronY)/stairCount+.012;}if(lx>stairOuter&&lx<stairOuter+2.93)return apronY+.025;}}if(x<=-275||x>=569||z<=-529||z>=-285)return null;if(hangars.some(h=>Math.abs(x-h.x)<20&&Math.abs(z-h.z)<18))return .16;if(helicopters.some(h=>Math.hypot(x-h.x,z-h.z)<12.5))return .16;if(Math.abs(x+49)<8.5&&Math.abs(z+317)<5)return .14;const paved=z> -466&&z< -438&&x> -235&&x<495||z> -411.5&&z< -398.5&&x> -233&&x<493||x> -228&&x<96&&z> -398.5&&z< -309||Math.abs(x+96)<7&&z> -309||[-213,473].some(cx=>Math.abs(x-cx)<6.5&&Math.abs(z+428.5)<23.5);return paved?.12:-.08;},updateCamera(camera){if(boarded)camera.position.set(boarded.eye.x,boarded.eye.y,boarded.eye.z);},get boarded(){return !!boarded;}};
 }
