@@ -3,7 +3,7 @@ import * as THREE from 'three';
 export function createTownObstacles({scene,getFloor=()=>0,ignore=()=>false,getDynamic=()=>[],radius=.28}={}){
  const cells=new Map(),seen=new WeakSet(),records=[],box=new THREE.Box3(),size=new THREE.Vector3(),cell=8;let elapsed=10,dynamicElapsed=1,dynamic=[];
  function add(bounds,object){const r={minX:bounds.min.x,maxX:bounds.max.x,minZ:bounds.min.z,maxZ:bounds.max.z,minY:bounds.min.y,maxY:bounds.max.y,object};records.push(r);for(let x=Math.floor((r.minX-radius)/cell);x<=Math.floor((r.maxX+radius)/cell);x++)for(let z=Math.floor((r.minZ-radius)/cell);z<=Math.floor((r.maxZ+radius)/cell);z++){const key=x+','+z,list=cells.get(key)||[];list.push(r);cells.set(key,list);}}
- function scan(){scene.updateMatrixWorld(true);function visit(o){if(!o.visible||ignore(o)||o.userData.customInterior||o.isSkinnedMesh||o.isInstancedMesh||o.name==='Animated Zerconda pedestrians')return;
+ function scan(){scene.updateMatrixWorld(true);function visit(o){if(!o.visible||ignore(o)||o.userData.dynamicScenery||o.userData.customInterior||o.isSkinnedMesh||o.isInstancedMesh||o.name==='Animated Zerconda pedestrians')return;
   if(o.isGroup&&!seen.has(o)&&o.children.length){box.setFromObject(o);box.getSize(size);let character=false;if(size.x<6&&size.z<6&&size.y>.25&&size.y<4){o.traverse(c=>{if(c.isSkinnedMesh)character=true});if(!character){seen.add(o);add(box.clone(),o);return;}}}
   if(o.isMesh&&!seen.has(o)){seen.add(o);box.setFromObject(o);box.getSize(size);if(size.x<14&&size.z<14&&size.y>.22&&(size.y<5||(size.x<2&&size.z<2))&&size.x>.05&&size.z>.05)add(box.clone(),o);}
   for(const c of o.children)visit(c);

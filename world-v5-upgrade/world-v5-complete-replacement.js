@@ -1,49 +1,49 @@
-import {createTownObstacles} from './town-obstacles.js?v=20261118-ride-attendants-v95';
-import {createSeasideCarnival} from './seaside-carnival.js?v=20261118-ride-attendants-v95';
-import {createRVPark} from './rv-park.js?v=20261118-ride-attendants-v95';
-import {createModernPickup} from './modern-pickup.js?v=20261118-ride-attendants-v95';
-import {createLuxuryVillas} from './luxury-villas.js?v=20261118-ride-attendants-v95';
-import {createStyleCuts} from './style-cuts.js?v=20261118-ride-attendants-v95';
-import {createBusinessCentre} from './business-centre.js?v=20261118-ride-attendants-v95';
-import {createSkatePark} from './skate-park.js?v=20261118-ride-attendants-v95';
-import {createAirfield} from './airfield.js?v=20261118-ride-attendants-v95';
+import {createTownObstacles} from './town-obstacles.js?v=20261118-wildlife-v96';
+import {createSeasideCarnival} from './seaside-carnival.js?v=20261118-wildlife-v96';
+import {createRVPark} from './rv-park.js?v=20261118-wildlife-v96';
+import {createModernPickup} from './modern-pickup.js?v=20261118-wildlife-v96';
+import {createLuxuryVillas} from './luxury-villas.js?v=20261118-wildlife-v96';
+import {createStyleCuts} from './style-cuts.js?v=20261118-wildlife-v96';
+import {createBusinessCentre} from './business-centre.js?v=20261118-wildlife-v96';
+import {createSkatePark} from './skate-park.js?v=20261118-wildlife-v96';
+import {createAirfield} from './airfield.js?v=20261118-wildlife-v96';
 import * as THREE from 'three';
-import {createForestCampground} from './forest-campground.js?v=20261118-ride-attendants-v95';
-import {createPremierHomes} from './premier-homes.js?v=20261118-ride-attendants-v95';
-import {createZercondaNews} from './zerconda-news.js?v=20261118-ride-attendants-v95';
+import {createForestCampground} from './forest-campground.js?v=20261118-wildlife-v96';
+import {createPremierHomes} from './premier-homes.js?v=20261118-wildlife-v96';
+import {createZercondaNews} from './zerconda-news.js?v=20261118-wildlife-v96';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261117-clothing-v80';
 import {createBowlingAlley} from './bowling-alley.js?v=20261117-bowling-v79';
-import {createScooterRentals} from './electric-scooter-rentals.js?v=20261118-ride-attendants-v95';
+import {createScooterRentals} from './electric-scooter-rentals.js?v=20261118-wildlife-v96';
 import {createSeasidePier} from './seaside-pier.js?v=20261117-coastal-v77';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
-import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261118-ride-attendants-v95';
+import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261118-wildlife-v96';
 import {createClubZerconda} from './club-zerconda.js?v=20261117-touch-v75';
-import {createRealisticHuman} from './realistic-human.js?v=20261118-ride-attendants-v95';
+import {createRealisticHuman} from './realistic-human.js?v=20261118-wildlife-v96';
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js';
-import {createObservationNeedle} from './observation-needle.js?v=20261118-ride-attendants-v95';
+import {createObservationNeedle} from './observation-needle.js?v=20261118-wildlife-v96';
 import {createCloudSky} from './cloud-sky.js';
-import {addCityDepth} from './city-depth-assets.js?v=20261118-ride-attendants-v95';
+import {addCityDepth} from './city-depth-assets.js?v=20261118-wildlife-v96';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js?v=20261117-commerce-restore-v69';
-import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261118-ride-attendants-v95';
+import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261118-wildlife-v96';
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261117-interiors-v1';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js';
-import {addAirDancers} from './air-dancers.js?v=20261118-ride-attendants-v95';
-import {createZercondaBeach} from './zerconda-beach.js?v=20261118-ride-attendants-v95';
-import {createCityMap} from './top-city-map.js?v=20261118-ride-attendants-v95';
+import {addAirDancers} from './air-dancers.js?v=20261118-wildlife-v96';
+import {createZercondaBeach} from './zerconda-beach.js?v=20261118-wildlife-v96';
+import {createCityMap} from './top-city-map.js?v=20261118-wildlife-v96';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261117-coastal-v77';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-touch-v75';
-import {createPedestrians} from './animated-pedestrians.js?v=20261118-ride-attendants-v95';
-import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118-ride-attendants-v95';
-import {createNeedleSportsPark} from './needle-sports-park.js?v=20261118-ride-attendants-v95';
+import {createPedestrians} from './animated-pedestrians.js?v=20261118-wildlife-v96';
+import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118-wildlife-v96';
+import {createNeedleSportsPark} from './needle-sports-park.js?v=20261118-wildlife-v96';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-18-ride-attendants-v95';
+const ZERCONDA_BUILD='2026-11-18-wildlife-v96';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -146,7 +146,7 @@ function architecturalWindow(group,cx,cy,cz,width,height,face='front'){
 }
 const geo=new THREE.BoxGeometry(1,1,1);
 const walkSurfaces=[];
-let club=null,needleSportsPark=null,ownableHomes=null,marine=null,coastal=null,scooters=null,bowling=null,boutique=null,news=null,apartmentExperience=null,premier=null,camp=null,airfield=null,skate=null,eastsideGolf=null,office=null,barber=null,villas=null,rvPark=null,carnival=null,townObstacles=null,southBeach=null,observationNeedle=null;const apartmentExteriors=[];let onObservationDeck=false,insideNeedleLobby=false;let dealerInside=false;
+let club=null,needleSportsPark=null,ownableHomes=null,marine=null,coastal=null,scooters=null,bowling=null,boutique=null,news=null,apartmentExperience=null,premier=null,camp=null,airfield=null,skate=null,eastsideGolf=null,office=null,barber=null,villas=null,rvPark=null,carnival=null,townObstacles=null,wildlifePlayer=null,southBeach=null,observationNeedle=null;const apartmentExteriors=[];let onObservationDeck=false,insideNeedleLobby=false;let dealerInside=false;
 function authoredGroundHeightAt(x,z){
  if(observationNeedle?.riding)return observationNeedle.riderY;
  if(onObservationDeck)return observationNeedle.deckY;
@@ -486,7 +486,7 @@ const dealership={
  x:-31,z:-48,insidePoint:{x:-31,z:-57},exitPoint:{x:-31,z:-64},inside:()=>false,blocks:()=>false,isNear:(x,z,r=5.5)=>Math.hypot(x+31,z+62)<r,
  nearestCar:()=>null
 };
-import('./zerconda-dealership.js?v=20261118-ride-attendants-v95')
+import('./zerconda-dealership.js?v=20261118-wildlife-v96')
  .then(({createDealership})=>Object.assign(dealership,createDealership(scene,{x:-31,z:-48,rotation:Math.PI/2})))
  .catch(err=>{console.error('Dealership asset failed (city continues):',err);
    if(status)status.textContent='City loaded; dealership asset unavailable: '+err.message;
@@ -574,7 +574,7 @@ function clearRoadIntrusions(){
 clearRoadIntrusions();
 
 // Dedicated green space behind the Needle, outside the downtown building grid.
-needleSportsPark=createNeedleSportsPark(scene,{x:48,z:-190});
+needleSportsPark=createNeedleSportsPark(scene,{x:48,z:-190,getPlayer:()=>wildlifePlayer});
 // Extend pedestrian access north from the existing street grid to the park entrance.
 box(4,.065,37,48,.005,-123,paving);
 for(const zz of [-112,-123,-134]){box(.18,.025,2,48,.06,zz,yellow);}
@@ -726,7 +726,7 @@ async function populate(){
 populate();
 addPremiumPlazaFurniture(scene,{cx:48,cz:48});
 const START_X=34,START_Z=34; // Open southwest edge of fountain plaza, clear of the central lamp and fountain.
-const keys=new Set(),player={x:START_X,z:START_Z},clock=new THREE.Clock();
+const keys=new Set(),player={x:START_X,z:START_Z},clock=new THREE.Clock();wildlifePlayer=player;
 const cityMap=createCityMap({player});
 // Third-person walking avatar: forward-facing, visible from the default camera.
 // Kept lightweight so mobile devices do not need an additional model download.

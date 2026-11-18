@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import {createZenPond} from './zen-pond.js?v=20261117-zen-pond-v73';
+import {createZenPond} from './zen-pond.js?v=20261118-wildlife-v96';
 // Public park north of the Observation Needle. All features are traversable scenery.
-export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
+export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}){
  const root=new THREE.Group();root.name='Needle Park - tennis basketball fish pond';root.position.set(x,0,z);scene.add(root);
  const mat=(c,r=.85)=>new THREE.MeshStandardMaterial({color:c,roughness:r});
  const turf=mat(0x537b3c),path=mat(0xc9c2ad),asphalt=mat(0x4b555b),blue=mat(0x245b85),red=mat(0xb44f42),white=mat(0xf1eee4),metal=mat(0x424e50),wood=mat(0x795337),water=new THREE.MeshPhysicalMaterial({color:0x3c9f9d,roughness:.17,metalness:.06,transparent:true,opacity:.78,depthWrite:false});
@@ -112,7 +112,7 @@ export function createNeedleSportsPark(scene,{x=48,z=-224}={}){
  line(-18,15-7,-18,15+7,white,.09,.137);
 
 
- const garden=createZenPond(root,{x:0,z:-35});
- return {root,seats:[...garden.worldSeats(),...[-8,12,34].map(pz=>({x,z:z+pz,facing:-Math.PI/2,sitHeight:.7075,kind:'park bench'}))],blocks:garden.blocks,heightAt(wx,wz){let height=garden.heightAt(wx,wz);const px=wx-x,pz=wz-z;for(const r of walkSurfaces)if(Math.abs(px-r.x)<=r.w/2&&Math.abs(pz-r.z)<=r.d/2)height=Math.max(height??-1,r.y);return height;},walkSurfaces,counts:garden.counts,update(t){garden.update(t);}};
+ const garden=createZenPond(root,{x:0,z:-35,getPlayer,externalPaths:walkSurfaces.filter(p=>p.y>.02)});
+ return {root,garden,seats:[...garden.worldSeats(),...[-8,12,34].map(pz=>({x,z:z+pz,facing:-Math.PI/2,sitHeight:.7075,kind:'park bench'}))],blocks:garden.blocks,heightAt(wx,wz){let height=garden.heightAt(wx,wz);const px=wx-x,pz=wz-z;for(const r of walkSurfaces)if(Math.abs(px-r.x)<=r.w/2&&Math.abs(pz-r.z)<=r.d/2)height=Math.max(height??-1,r.y);return height;},walkSurfaces,counts:garden.counts,update(t){garden.update(t);}};
 }
 
