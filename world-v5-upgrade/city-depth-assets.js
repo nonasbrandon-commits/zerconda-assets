@@ -1,3 +1,4 @@
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import * as THREE from 'three';
 // Original modular city-detail kit. Distant skyline fills the horizon
 // while the near plaza gets recognizable street furniture and landscaping.
@@ -234,6 +235,16 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
  // Central plaza perimeter: planters and benches only outside fountain basin.
  for(const [x,z,rot] of [[29,26,0],[67,26,0],[29,70,Math.PI],[67,70,Math.PI]])bench(x,z,rot);
  for(const [x,z] of [[24,25],[72,25],[24,71],[72,71]])planter(x,z);
+ // Collapse static facades on phones instead of drawing each window and trim separately.
+ root.updateMatrixWorld(true);
+ for(const building of root.children.filter(g=>g.isGroup&&g.children.length>100)){
+  building.userData.outdoorSolid=true;
+  if(!matchMedia('(pointer:coarse)').matches)continue;
+  const inv=building.matrixWorld.clone().invert(),byMaterial=new Map(),remove=[];
+  building.traverse(o=>{if(!o.isMesh)return;const geo=o.geometry.clone().applyMatrix4(inv.clone().multiply(o.matrixWorld)),a=byMaterial.get(o.material)||[];a.push(geo.index?geo.toNonIndexed():geo);byMaterial.set(o.material,a);remove.push(o);});
+  remove.forEach(o=>o.parent.remove(o));
+  for(const [m,list]of byMaterial){const mesh=new T.Mesh(mergeGeometries(list),m);mesh.receiveShadow=true;building.add(mesh);list.forEach(g=>g.dispose());}
+ }
  // Brick facade, varied rooftops and fire escapes replace uniform striped skyscrapers.
  return {root,skylineCount:total,dispose(){scene.remove(root);}};
 }

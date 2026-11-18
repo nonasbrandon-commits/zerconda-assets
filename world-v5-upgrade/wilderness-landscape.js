@@ -4,9 +4,9 @@ const smooth=(a,b,x)=>{const t=THREE.MathUtils.clamp((x-a)/(b-a),0,1);return t*t
 function hash(x,z){return ((Math.sin(x*127.1+z*311.7)*43758.5453)%1+1)%1;}
 function noise(x,z){const a=Math.floor(x),b=Math.floor(z),u=smooth(0,1,x-a),v=smooth(0,1,z-b);return THREE.MathUtils.lerp(THREE.MathUtils.lerp(hash(a,b),hash(a+1,b),u),THREE.MathUtils.lerp(hash(a,b+1),hash(a+1,b+1),u),v);}
 function fbm(x,z){let n=0,a=.5;for(let i=0;i<5;i++){n+=noise(x,z)*a;x=x*2.03+17.7;z=z*2.03-8.4;a*=.5;}return n;}
-const peaks=[[-1010,-970,300,230,290],[-690,-870,370,235,270],[-360,-1040,420,220,310],[-30,-820,330,195,250],[270,-1020,455,240,320],[620,-890,360,225,270],[980,-1080,435,250,330],[1380,-850,340,270,285],[-850,-350,225,260,230],[1150,-330,245,280,260]];
+const peaks=[[-1010,-970,300,230,290],[-690,-870,370,235,270],[-360,-1040,420,220,310],[-30,-820,330,195,250],[270,-1020,455,240,320],[620,-890,360,225,270],[980,-1080,435,250,330],[1380,-850,340,270,285],[-850,-350,225,260,230],[1150,-330,245,280,260]].map(p=>p[1]<-700?[p[0],p[1]-470,...p.slice(2)]:p);
 export function wildernessHeight(x,z){
- const outside=Math.max(-276-x,x-570,-530-z);
+ const outside=Math.max(-276-x,x-570,-1000-z);
  const coast=1-smooth(10,155,z),rise=smooth(12,220,outside)*coast;
  if(!rise)return -.22;
  const warp=(fbm(x*.003,z*.003)-.5)*105;
@@ -26,7 +26,7 @@ export function createWildernessLandscape(scene){
  const material=new THREE.MeshStandardMaterial({map:rock,vertexColors:true,roughness:1,bumpMap:rock,bumpScale:1.15});
  // Project rock in world coordinates onto all three axes; steep cliffs retain detail.
  material.onBeforeCompile=shader=>{shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 terrainPosition; varying vec3 terrainNormal;').replace('#include <begin_vertex>','#include <begin_vertex>\nterrainPosition=position;terrainNormal=normal;');shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 terrainPosition; varying vec3 terrainNormal;');shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`vec3 blend=pow(abs(normalize(terrainNormal)),vec3(4.));blend/=max(dot(blend,vec3(1.)),.0001);vec3 p=terrainPosition*.055;vec4 texel=texture2D(map,p.yz)*blend.x+texture2D(map,p.xz)*blend.y+texture2D(map,p.xy)*blend.z;diffuseColor*=texel;`);};
- const tiles=[[-1450,1750,-1845,-535,240,100],[-1450,-279,-535,145,90,55],[574,1750,-535,145,90,55]];
+ const tiles=[[-1450,1750,-1845,-1005,240,100],[-1450,-279,-1005,145,90,55],[574,1750,-1005,145,90,55]];
  const base=new THREE.Color(),green=new THREE.Color('#40513b'),stone=new THREE.Color('#b5a48d'),snow=new THREE.Color('#e1e4df');
  for(const [x0,x1,z0,z1,nx,nz]of tiles){const pos=[],colors=[],uv=[],indices=[];
   for(let j=0;j<=nz;j++)for(let i=0;i<=nx;i++){const x=x0+(x1-x0)*i/nx,z=z0+(z1-z0)*j/nz,h=wildernessHeight(x,z);pos.push(x,h,z);uv.push(x*.055,z*.055);
@@ -51,9 +51,9 @@ export function createWildernessLandscape(scene){
  for(let level=0;level<22;level++){const t=level/22,y=.15+t*.83,r=((1-t)*.23+.008)*(.85+noise(level*2,8)*.3);for(let branch=0;branch<6;branch++){const angle=branch*Math.PI/3+level*2.4,c=Math.cos(angle),s=Math.sin(angle),width=r*.65;const start=vertices.length/3;for(const [u,v]of [[-1,0],[1,0],[-1,1],[1,1]]){const d=v*r;point.set(c*d-s*u*width*(1-v*.5),y-d*.27+u*width*.13,s*d+c*u*width*(1-v*.5));vertices.push(point.x,point.y,point.z);uvs.push((u+1)/2,v);}idx.push(start,start+1,start+2,start+1,start+3,start+2);}}
  const crownGeometry=new THREE.BufferGeometry();crownGeometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));crownGeometry.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));crownGeometry.setIndex(idx);crownGeometry.computeVertexNormals();
  const trees=[];
- for(let i=0;i<4700;i++){const x=-1270+random()*2780,z=-1320+random()*1450,outside=Math.max(-276-x,x-570,-530-z);if(outside<15||z>100|| (x>570&&Math.abs(z-(-Math.max(0,x-610)*.075+Math.sin((x-570)/40)*5))<15))continue;const h=wildernessHeight(x,z);if(h>215||random()>1-smooth(120,225,h))continue;const height=(25+random()*23)*(1-smooth(100,250,h)*.45);trees.push({x,z,y:h,height,rotation:random()*Math.PI*2,shade:.64+random()*.5});}
+ for(let i=0;i<4700;i++){const x=-1270+random()*2780,z=-1320+random()*1450,outside=Math.max(-276-x,x-570,-1000-z);if(outside<15||z>100|| (x>570&&Math.abs(z-(-Math.max(0,x-610)*.075+Math.sin((x-570)/40)*5))<15))continue;const h=wildernessHeight(x,z);if(h>215||random()>1-smooth(120,225,h))continue;const height=(25+random()*23)*(1-smooth(100,250,h)*.45);trees.push({x,z,y:h,height,rotation:random()*Math.PI*2,shade:.64+random()*.5});}
  // Deliberate dense edge belt tall enough to be seen above the wall.
- for(let i=0;i<470;i++){const side=i%3;const x=side===0?-296-random()*95:side===1?590+random()*110:-290+random()*970;const z=side===2?-550-random()*110:-270+random()*355;if(side===1&&Math.abs(z)<22)continue;trees.push({x,z,y:wildernessHeight(x,z),height:29+random()*19,rotation:random()*Math.PI*2,shade:.65+random()*.45});}
+ for(let i=0;i<470;i++){const side=i%3;const x=side===0?-296-random()*95:side===1?590+random()*110:-290+random()*970;const z=side===2?-1020-random()*110:-270+random()*355;if(side===1&&Math.abs(z)<22)continue;trees.push({x,z,y:wildernessHeight(x,z),height:29+random()*19,rotation:random()*Math.PI*2,shade:.65+random()*.45});}
  const crowns=new THREE.InstancedMesh(crownGeometry,leaves,trees.length),trunks=new THREE.InstancedMesh(new THREE.CylinderGeometry(.006,.013,1,7),new THREE.MeshStandardMaterial({color:0x675746,roughness:1}),trees.length);crowns.name='Instanced 3D evergreen forest';trunks.name='Forest trunks';const dummy=new THREE.Object3D(),color=new THREE.Color();
  trees.forEach((t,i)=>{dummy.position.set(t.x,t.y,t.z);dummy.rotation.set(0,t.rotation,0);dummy.scale.set(t.height,t.height,t.height);dummy.updateMatrix();crowns.setMatrixAt(i,dummy.matrix);color.setRGB(.85*t.shade,t.shade,.78*t.shade);crowns.setColorAt(i,color);dummy.position.y+=t.height*.5;dummy.updateMatrix();trunks.setMatrixAt(i,dummy.matrix);});crowns.receiveShadow=true;root.add(crowns,trunks);root.userData.treeCount=trees.length;return {root,treeCount:trees.length};
 }
