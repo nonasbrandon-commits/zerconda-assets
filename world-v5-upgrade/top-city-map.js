@@ -1,8 +1,8 @@
-// Top-center live Zerconda city map. Canvas overlay uses the same world coordinates as player movement.
+// Upper-left live Zerconda city map. Canvas overlay uses the same world coordinates as player movement.
 export function createCityMap({player,beach={x:0,z:212}}){
  // Remove previous map instances if Airo accidentally loads both old and new map scripts.
  document.querySelectorAll('#zerconda-v5-map').forEach(node=>node.remove());
- const shell=document.createElement('div');shell.id='zerconda-v5-map';shell.style.cssText='position:fixed;top:52px;right:16px;left:auto;z-index:9997;background:rgba(12,27,40,.88);border:1px solid #7a9cb0;border-radius:12px;padding:6px 10px;color:white;box-shadow:0 4px 20px #0005;font:12px Arial;max-width:95vw';
+ const shell=document.createElement('div');shell.id='zerconda-v5-map';shell.className='zerconda-left-map';shell.style.cssText='position:fixed;top:12px;left:12px;right:auto;z-index:9997;background:rgba(12,27,40,.88);border:1px solid #7a9cb0;border-radius:12px;padding:6px 10px;color:white;box-shadow:0 4px 20px #0005;font:12px Arial;max-width:95vw';
  const heading=document.createElement('div');heading.textContent='ZERCONDA  •  CITY MAP';heading.style.cssText='font-weight:700;text-align:center;letter-spacing:1px;margin-bottom:3px';shell.appendChild(heading);
  const canvas=document.createElement('canvas');canvas.width=420;canvas.height=270;canvas.style.cssText='width:min(350px,48vw);height:auto;display:block;border-radius:6px';shell.appendChild(canvas);document.body.appendChild(shell);
  const ctx=canvas.getContext('2d');

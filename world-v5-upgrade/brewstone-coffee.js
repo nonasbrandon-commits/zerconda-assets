@@ -13,7 +13,7 @@ export function createCoffeeShop(scene,{x=48,z=48}={}){
  const brickTexture=brickLoader.load('https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/expanded-models/brick-building/textures/modular_factory_facade_brick_diff_1k.jpg');
  brickTexture.colorSpace=THREE.SRGBColorSpace;brickTexture.wrapS=brickTexture.wrapT=THREE.RepeatWrapping;brickTexture.repeat.set(3,1);brick.map=brickTexture;
  const cube=new THREE.BoxGeometry(1,1,1);
- function box(x,y,z,w,h,d,m){const o=new THREE.Mesh(cube,m);o.position.set(x,y,z);o.scale.set(w,h,d);o.castShadow=h>.3&&m!==glass;o.receiveShadow=true;root.add(o);return o;}
+ function box(x,y,z,w,h,d,m){const o=new THREE.Mesh(cube,m);o.position.set(x,y,z);o.scale.set(w,h,d);o.receiveShadow=true;root.add(o);return o;}
  function cyl(x,y,z,r,h,m){const o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,16),m);o.position.set(x,y,z);root.add(o);return o;}
  // Open cafe, 24x18 meters. South-facing glazed entrance faces tower.
  box(0,.12,0,24,.24,18,floor);
@@ -67,19 +67,20 @@ export function createCoffeeShop(scene,{x=48,z=48}={}){
  const foliage=[mat(0x315d38,.96),mat(0x427b44,.96),mat(0x538b4b,.96),mat(0x668b43,.96)];
  function shrub(px,pz,seed=0){
   // Raised stone planter with dark soil, branching stems and layered leaf geometry.
-  box(px,.33,pz,1.45,.66,1.45,plaster);
-  box(px,.69,pz,1.28,.08,1.28,mat(0x493d31,.99));
-  const shrubRoot=new THREE.Group();shrubRoot.position.set(px,.72,pz);root.add(shrubRoot);shrubContainers.push(shrubRoot);
+  box(px,.05,pz,1.45,.10,1.45,plaster);
+  for(const side of [-1,1]){box(px+side*.68,.38,pz,.09,.56,1.45,plaster);box(px,.38,pz+side*.68,1.27,.56,.09,plaster);}
+  box(px,.60,pz,1.25,.04,1.25,mat(0x493d31,.99));
+  const shrubRoot=new THREE.Group();shrubRoot.position.set(px,.62,pz);root.add(shrubRoot);shrubContainers.push(shrubRoot);
   const stem=mat(0x4d4932,.98);
   const rand=(n)=>{const t=Math.sin(n*78.233+seed*43.19)*43758.5453;return t-Math.floor(t);};
-  for(let i=0;i<23;i++){
-   const angle=i*2.399963,dist=.08+rand(i+2)*.46;
-   const height=.55+rand(i+10)*.9;
+  for(let i=0;i<12;i++){
+   const angle=i*2.399963,dist=.06+rand(i+2)*.22;
+   const height=.42+rand(i+10)*.28;
    const stalk=new THREE.Mesh(new THREE.CylinderGeometry(.014,.025,height,5),stem);
    stalk.position.set(Math.cos(angle)*dist*.55,height*.5,Math.sin(angle)*dist*.55);
    stalk.rotation.z=Math.sin(angle)*.22;shrubRoot.add(stalk);
    for(let j=0;j<3;j++){
-    const leaf=new THREE.Mesh(new THREE.IcosahedronGeometry(.19+rand(i*4+j)*.15,1),foliage[(i+j+seed)%foliage.length]);
+    const leaf=new THREE.Mesh(new THREE.IcosahedronGeometry(.10+rand(i*4+j)*.035,1),foliage[(i+j+seed)%foliage.length]);
     leaf.scale.set(.8,.4,1.35);
     leaf.position.set(Math.cos(angle)*dist+(j-1)*.09,height*(.55+j*.2),Math.sin(angle)*dist);
     leaf.rotation.y=angle+j*.6;leaf.castShadow=true;shrubRoot.add(leaf);
@@ -91,14 +92,21 @@ export function createCoffeeShop(scene,{x=48,z=48}={}){
  // The procedural leaf cluster is only the fallback if the asset request fails.
  const plantUrl='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/expanded-models/foliage/nettle_plant_1k.gltf';
  new GLTFLoader().load(plantUrl,gltf=>{
-  const base=gltf.scene;const bb=new THREE.Box3().setFromObject(base);const size=bb.getSize(new THREE.Vector3());
-  if(size.y<.001)return;
+  // The source scene is a six-plant nursery lineup, not one centered shrub.
+  // Fit individual specimens to the soil bed instead of cloning the whole lineup.
+  const variants=gltf.scene.children.filter(node=>node.isMesh||node.children.length);
+  if(!variants.length)return;
   shrubContainers.forEach((holder,i)=>{
-   holder.clear();const plant=base.clone(true);const scale=(1.12+(i%3)*.14)/size.y;
-   plant.scale.setScalar(scale);plant.rotation.y=i*1.3;plant.position.set(0,0,0);plant.updateMatrixWorld(true);
-   const placed=new THREE.Box3().setFromObject(plant),center=placed.getCenter(new THREE.Vector3());plant.position.set(-center.x,-placed.min.y,-center.z);plant.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});holder.add(plant);
+   holder.clear();holder.name='Contained coffee patio planting';
+   for(const [j,offset]of [[-.28,-.20],[.28,-.20],[0,.25]].entries()){
+    const plant=variants[(i+j*2)%variants.length].clone(true);plant.position.set(0,0,0);plant.rotation.y=i*1.3+j*2.4;plant.scale.setScalar(1);plant.updateMatrixWorld(true);
+    const bb=new THREE.Box3().setFromObject(plant),size=bb.getSize(new THREE.Vector3()),center=bb.getCenter(new THREE.Vector3()),scale=Math.min((.70+(j%2)*.10)/Math.max(size.y,.001),.49/Math.max(size.x,.001),.49/Math.max(size.z,.001));
+    plant.scale.setScalar(scale);plant.position.set(offset[0]-center.x*scale,-bb.min.y*scale,offset[1]-center.z*scale);
+    plant.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});holder.add(plant);
+   }
+   holder.userData.plantingReady=true;
   });
-  console.info('ZERCONDA: textured botanical GLTF loaded at Brewstone Coffee');
+   console.info('ZERCONDA: textured botanical GLTF loaded at Brewstone Coffee');
  },undefined,e=>console.warn('Botanical GLTF failed; detailed leaf fallback retained',e));
  // Legible front fascia: fit full name within the available width and keep roof above it.
  const cv=document.createElement('canvas');cv.width=2048;cv.height=384;
@@ -113,7 +121,8 @@ export function createCoffeeShop(scene,{x=48,z=48}={}){
  for(const xx of [-9,-3,3,9]){
   const light=new THREE.PointLight(0xffd6a1,.8,6);light.position.set(xx,4.8,1);root.add(light);
  }
- return {root,seats,entrance:{x,z:z+11},isInside:(px,pz)=>Math.abs(px-x)<11.8&&Math.abs(pz-z)<8.8,
+ return {root,seats,shrubContainers,entrance:{x,z:z+11},isInside:(px,pz)=>Math.abs(px-x)<11.8&&Math.abs(pz-z)<8.8,
  nearestSeat(px,pz,max=2.1){let best=null,dist=max;for(const seat of seats){const d=Math.hypot(seat.x-px,seat.z-pz);if(d<dist){dist=d;best=seat;}}return best;},
  dispose(){scene.remove(root);}};
 }
+

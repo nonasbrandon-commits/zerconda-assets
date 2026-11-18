@@ -1,7 +1,8 @@
+import {createAreaTravel} from './area-travel.js?v=20261118-area-travel-v110';
 import {createMilitaryBase} from './military-base.js?v=20261118-faster-town-v106';
 import {upgradeMobileControls} from './mobile-controls.js?v=20261118-z-needle-v107';
 import {createAirportLoop} from './airport-loop.js?v=20261118-visible-trails-v100';
-import {createNorthernForest} from './northern-forest.js?v=20261118-fort-v102';
+import {createNorthernForest} from './northern-forest.js?v=20261118-area-travel-v110';
 import {createMobilePerformance} from './mobile-performance.js?v=20261118-visible-trails-v100';
 import {createTownObstacles} from './town-obstacles.js?v=20261118-visible-trails-v100';
 import {createSeasideCarnival} from './seaside-carnival.js?v=20261118-visible-trails-v100';
@@ -32,14 +33,14 @@ import {createObservationNeedle} from './observation-needle.js?v=20261118-z-need
 import {createCloudSky} from './cloud-sky.js';
 import {addCityDepth} from './city-depth-assets.js?v=20261118-z-needle-v107';
 import {addBuildingIdentity} from './nine-building-styles.js';
-import {createCoffeeShop} from './brewstone-coffee.js?v=20261117-commerce-restore-v69';
+import {createCoffeeShop} from './brewstone-coffee.js?v=20261118-area-travel-v110';
 import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261118-realty-v105';
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261117-interiors-v1';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261118-z-needle-v107';
 import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261118-faster-town-v106';
-import {createCityMap} from './top-city-map.js?v=20261118-z-needle-v107';
+import {createCityMap} from './top-city-map.js?v=20261118-area-travel-v110';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261118-realty-v105';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261118-realty-v105';
@@ -48,7 +49,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261118-visible-trails-v100';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-18-aircraft-boarding-v109';
+const ZERCONDA_BUILD='2026-11-18-area-travel-v110';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -781,7 +782,7 @@ function resetView(){
  camera.position.set(START_X,5,START_Z-8);camera.lookAt(48,2,48);
  if(status)status.textContent='View reset · Walk forward with W';
 }
-addEventListener('keydown',e=>{if(!['INPUT','TEXTAREA'].includes(e.target.tagName)&&!club?.gameOpen&&e.code==='KeyR')resetView();});
+addEventListener('keydown',e=>{if(!['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)&&!club?.gameOpen&&e.code==='KeyR')resetView();});
 const resetButton=document.createElement('button');resetButton.textContent='RESET VIEW';
 resetButton.id='zerconda-reset-view';resetButton.type='button';resetButton.style.cssText='position:fixed;right:12px;top:12px;z-index:9999;padding:12px 16px;background:#203b49;color:white;border:1px solid #9ab5c4;border-radius:8px;cursor:pointer';
 resetButton.addEventListener('click',resetView);document.body.appendChild(resetButton);
@@ -997,6 +998,25 @@ rvPark=createRVPark(scene,{getPlayer:()=>player,canUse:()=>!observationNeedle.ri
 carnival=createSeasideCarnival(scene,{getPlayer:()=>player,canUse:()=>!observationNeedle.riding&&!onObservationDeck&&!insideNeedleLobby&&!barber.active&&!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!rvPark.inside&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onStop:()=>{sittingSeat=null;seatReturn=null;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();},onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{yaw=heading;pitch=0;camera.position.set(x,y+1.7,z);}});
 townObstacles=createTownObstacles({scene,getFloor:standingHeightAt,getDynamic:()=>cars.filter(c=>c!==activeCar).map(c=>c.group),ignore:o=>o===avatar||o===realisticPlayer.root||o.name==='Cloud sky'||o.name==='Zerconda South Beach'||cars.some(c=>c.group===o)});townObstacles.scan();
 airportLoop=createAirportLoop(scene);northernForest=createNorthernForest(scene,{mobile:MOBILE});militaryBase=createMilitaryBase(scene,{getPlayer:()=>player,hasClearance:()=>window.zercondaAccess?.hasClearance?.('military-base')===true,onMessage:m=>townControls.notify(m),onReject:(x,z)=>{player.x=x;player.z=z;movement.vx=0;movement.vz=0;keys.clear();townControls.stop();}});mobilePerformance=createMobilePerformance({scene,renderer,getPlayer:()=>player,mobile:MOBILE});mobilePerformance.scan();
+// Fast travel always arrives outdoors, after leaving any current activity or interior.
+function travelToArea(destination){
+ if(office?.riding)office.move('lobby',0,13);
+ ownableHomes?.exit();
+ resetView();
+ keys.clear();townControls.stop();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;drag=false;driverLookYaw=0;driverLookPitch=0;driverSteer=0;
+ let arrival=null;
+ for(const radius of [0,.8,1.6,2.4,3.2,4.8,6.4,8]){for(let i=0;i<(radius?16:1);i++){const angle=i*Math.PI/8,x=destination.x+Math.cos(angle)*radius,z=destination.z+Math.sin(angle)*radius;
+ if(walkable(x,z)&&Number.isFinite(groundHeightAt(x,z))){arrival={x,z};break;}}if(arrival)break;}
+ if(!arrival){townControls.notify('That entrance is unavailable right now. Please choose another area.');return false;}
+ player.x=arrival.x;player.z=arrival.z;yaw=destination.yaw??0;pitch=0;
+ const ground=standingHeightAt(player.x,player.z);avatar.position.set(player.x,ground,player.z);avatar.visible=true;
+ camera.position.set(player.x-Math.sin(yaw)*5,ground+3.2,player.z-Math.cos(yaw)*5);camera.lookAt(player.x,ground+1.6,player.z);cityMap.draw();
+ townControls.notify(destination.name+' · You have arrived');
+ if(status)status.textContent=destination.name;
+ return true;
+}
+const areaTravel=createAreaTravel({onTravel:travelToArea,onStop:()=>{keys.clear();townControls.stop();}});
+
 addEventListener('keydown',e=>{if(e.code==='Escape'&&!e.repeat){carnival.close();}if(e.code==='KeyF'&&!e.repeat&&(camp?.resting||airfield?.boarded)){e.preventDefault();e.stopImmediatePropagation();camp.stopRest();airfield?.exit();skate?.end();office?.exit();barber?.exit();villas?.close();observationNeedle?.reset();return;}if(e.code!=='KeyF'||e.repeat||carnival?.riding||carnival?.gameOpen||observationNeedle.riding||villas?.panelOpen||barber?.panelOpen||club.gameOpen||(ownableHomes.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.boarded)))))||marine?.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;const action=townControls.activeActions[0];if(action){e.preventDefault();e.stopImmediatePropagation();townControls.activate(action.id);}},true);
 function walkable(x,z){
  if(observationNeedle.riding)return false;
