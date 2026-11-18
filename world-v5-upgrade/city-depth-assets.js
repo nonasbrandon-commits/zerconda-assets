@@ -1,4 +1,4 @@
-import {addRealisticPlanterFoliage} from './realistic-planter-foliage.js?v=20261118-z-needle-v107';
+import {addRealisticPlanterFoliage} from './realistic-planter-foliage.js?v=20261118-wall-mystery-v111';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import * as THREE from 'three';
 // Original modular city-detail kit. Distant skyline fills the horizon

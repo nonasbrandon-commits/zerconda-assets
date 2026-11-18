@@ -1,0 +1,22 @@
+# Zerconda v111: western expansion, courts and world detail
+
+## Included changes
+
+- Western wall moved168m from x=-276 to-444, with matching north-wall connection and movement bounds. All three westbound city streets and sidewalks reach the new boundary. A new x=-418 boulevard joins the airport loop. Asphalt owns each intersection without duplicate slabs. West beach, boardwalk, shoreline mask, wilderness heights, forest footprint and map coordinates expand to match. The area dropdown includes West Extension and the boardwalk hot dog cart.
+- A real jagged1.46m-wide,1.20m-high crawl opening in the north wall at(-186,-1350), blocked by an immovable textured boulder and the still-closed world boundary. Dirt/blood-stained stitched baseball cap, rubble, cracks and original spray-painted DON'T GO IN HERE warning. Inspect action. Future passage is deliberately unavailable; a future crawl mechanic would also need to open the boundary.
+- Plaza planters have colorful shaped, curved petals, pollen centers, veined leaves and fuller basal foliage. Geometry is batched by shared material; the sparse botanical asset is no longer needed.
+- Cars have explicit touch/mouse Drive, Reverse, steering and Exit controls, keyboard controls and mouse-wheel throttle. Imported car meshes stay under a centered pivot when turning. Acceleration uses elapsed motion time and collision substeps; entering/exiting stops old inputs and chooses a clear exit.
+- Wooden equipment crates beside the basketball and tennis courts. Basketball shoot-around has aim/power controls, ballistic flight, bouncing, shot/basket counts and automatic ball return; the player can walk to choose a shooting spot.
+- Live two-player tennis waits for a second person on the same court. Signed ephemeral Nostr relay events use the existing club relay services; BroadcastChannel also supports local tabs. Host-authoritative ball physics, net/out/second-bounce scoring, tennis points/games, touch/keyboard movement, serve/swing, return aim and a remote human opponent. A third visitor waits rather than entering the active match. No bot is substituted for a missing player. Connection failures are shown. Relay/network availability remains a dependency, as with the existing club.
+- Both passenger aircraft rebuilt with proper oval window openings, low wings, rear engine pods, rounded seats, clear aisles and2.185m standing headroom. Ten grounded steps and a standing-height doorway. First-person cabin walking, Sit/Stand and Leave actions; helicopter parked-view behavior remains.
+- Forest bark/bump detail, flared root bases, layered leaf-litter ground, curled fallen leaves and35mobile/75desktop fallen logs with cut growth rings, branch snags and collision. Logs batch into two materials. Smooth depth-based daylight/fog change restores normal town lighting on leaving.
+- A realistic male vendor and stainless-steel hot dog cart at(-78,183), with red/yellow umbrella, trays, hot dogs, condiment bottles, cooler, wheels and original Zerconda Dogs lettering. Cart/vendor collision keeps the boardwalk through-route open; Talk interaction. No pretend economy transaction.
+
+## Validation
+
+- Actual multi-touch Drive plus steering, release, reversing, exit and centered imported-car pivot pass. Forward movement7.25m in1s; reverse2.97m; pivot error.014m. Blocked rock and perimeter cannot be crossed.
+- Basketball scores a correctly aimed shot. Two clients match and rally in both directions. Repeated with BroadcastChannel disabled: two separate sessions match through the live public relays and return shots, no browser page errors.
+- Aircraft ray checks confirm2.185m headroom and unobstructed doorways; all10 step heights align. Native W key walks3.257m along the cabin aisle in1s, floor1.8m/eye3.42m, no floor penetration.
+- Full game confirms forest log collisions, bark texture,14000desktop fallen leaves, deep shade intensity.72 and restored town intensity1.30; vendor model loads and the passing boardwalk stays walkable.
+- Western streets, new open space, removed old-wall collision, new wall boundary, loop x=-418 and extended boardwalk checked in the full game. Exactly one north-wall breach survives the boundary extension.
+- Reviewed exterior/cabin, flower, breach/cap, court, vendor and deep-forest screenshots.18JavaScript files pass syntax checks. Legacy repository scene/render CI jobs remain separate from these focused checks and Pages deployment.

@@ -17,7 +17,7 @@ export function createCityMap({player,beach={x:0,z:212}}){
  }
 
  let frame=0;
- const scale=420/846,tx=x=>(x+276)*scale,tz=z=>(z+1350)*270/1592;
+ const scale=420/1014,tx=x=>(x+444)*scale,tz=z=>(z+1350)*270/1592;
  function label(x,z,name,color='#f7fafc'){ctx.fillStyle=color;ctx.font='bold 10px Arial';ctx.fillText(name,tx(x)+5,tz(z)-5);}
  function draw(){
   const atSea=player.z>238&&player.z<950&&Math.abs(player.x)<230,title=atSea?'ZERCONDA • PIER & OCEAN':'ZERCONDA • CITY MAP';if(heading.textContent!==title)heading.textContent=title;const legendText=atSea?'YOU · PIER · BUOY BOUNDARY':'🔵 YOU   ▰ PERIMETER WALL   🟠 POLICE GATE · CLOSED';if(legend.textContent!==legendText)legend.textContent=legendText;
@@ -33,21 +33,22 @@ export function createCityMap({player,beach={x:0,z:212}}){
   }
 
   ctx.fillStyle='#284c3b';ctx.fillRect(0,0,420,270);
-  ctx.fillStyle='#36543c';ctx.fillRect(tx(-274),tz(-1348),842*scale,780*270/1592);label(-230,-917,'NORTH WOODS','#e1e2b9');
+  ctx.fillStyle='#36543c';ctx.fillRect(tx(-442),tz(-1348),1010*scale,780*270/1592);label(-230,-917,'NORTH WOODS','#e1e2b9');
   ctx.strokeStyle='#b7aa8b';ctx.lineWidth=2;for(const pts of [[[-220,-568],[-220,-610],[-175,-655],[-80,-680],[40,-670],[120,-620],[120,-568]],[[120,-620],[220,-645],[340,-620],[485,-610],[485,-568]],[[-175,-655],[-210,-740],[-150,-825],[-30,-870],[140,-875],[300,-830],[390,-735],[340,-620]]]){ctx.beginPath();pts.forEach(([x,z],i)=>i?ctx.lineTo(tx(x),tz(z)):ctx.moveTo(tx(x),tz(z)));ctx.stroke();}
   ctx.setLineDash([2,3]);ctx.strokeStyle='#8b9576';ctx.beginPath();ctx.moveTo(tx(-210),tz(-740));ctx.lineTo(tx(-245),tz(-820));ctx.lineTo(tx(-205),tz(-927));ctx.lineTo(tx(-110),tz(-965));ctx.lineTo(tx(-30),tz(-870));ctx.stroke();ctx.setLineDash([]);
   ctx.strokeStyle='#b7aa8b';ctx.lineWidth=2;ctx.beginPath();for(const [i,p]of [[-30,-870],[-120,-1000],[-70,-1170],[70,-1255],[235,-1215],[270,-1100],[250,-980],[140,-875]].entries())i?ctx.lineTo(tx(p[0]),tz(p[1])):ctx.moveTo(tx(p[0]),tz(p[1]));ctx.stroke();
   ctx.fillStyle='#6e735b';ctx.fillRect(tx(315),tz(-1270),230*scale,210*270/1592);ctx.strokeStyle='#b8b9a7';ctx.lineWidth=1;ctx.strokeRect(tx(315),tz(-1270),230*scale,210*270/1592);label(330,-1150,'MILITARY BASE','#f7dfb3');ctx.strokeStyle='#b7aa8b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(tx(465),tz(-1060));ctx.lineTo(tx(465),tz(-554));ctx.stroke();
-  ctx.strokeStyle='#747d7c';ctx.lineWidth=5;ctx.strokeRect(tx(-250),tz(-554),792*scale,271*270/1592);for(const x of [-96,0,96]){ctx.beginPath();ctx.moveTo(tx(x),tz(-283));ctx.lineTo(tx(x),tz(-175));ctx.stroke();}
+  ctx.strokeStyle='#747d7c';ctx.lineWidth=5;ctx.strokeRect(tx(-418),tz(-554),960*scale,271*270/1592);for(const x of [-96,0,96]){ctx.beginPath();ctx.moveTo(tx(x),tz(-283));ctx.lineTo(tx(x),tz(-175));ctx.stroke();}
   ctx.fillStyle='#768565';ctx.fillRect(tx(-274),tz(-528),842*scale,243*270/1592);ctx.fillStyle='#505b5b';ctx.fillRect(tx(-235),tz(-466),730*scale,28*270/1592);ctx.strokeStyle='#ddd8bf';ctx.setLineDash([6,5]);ctx.beginPath();ctx.moveTo(tx(-215),tz(-452));ctx.lineTo(tx(475),tz(-452));ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#b0b8b4';for(const x of [-190,-130])ctx.fillRect(tx(x-20),tz(-346),40*scale,36*270/1592);label(-45,-382,'AIRFIELD','#f8e7bb');
   ctx.fillStyle='#c9b287';ctx.fillRect(0,tz(175),420,270-tz(175));
-  ctx.fillStyle='#9d805e';ctx.fillRect(tx(-275.1),tz(181),844.2*scale,10*270/1592);
+  ctx.fillStyle='#9d805e';ctx.fillRect(tx(-443.1),tz(181),1012.2*scale,10*270/1592);
   ctx.fillStyle='#187c9e';ctx.fillRect(0,tz(240),420,270-tz(240));
   ctx.strokeStyle='#737e83';ctx.lineWidth=7;
   for(const n of [-96,0,96]){ctx.beginPath();ctx.moveTo(tx(n),tz(-175));ctx.lineTo(tx(n),tz(175));ctx.stroke();ctx.beginPath();ctx.moveTo(0,tz(n));ctx.lineTo(420,tz(n));ctx.stroke();}
+  ctx.beginPath();ctx.moveTo(tx(-418),tz(-283));ctx.lineTo(tx(-418),tz(175));ctx.stroke();
   // Security gate matches the relocated entrance on the z=0 city street.
   ctx.strokeStyle='#b9bdb6';ctx.lineWidth=5;ctx.setLineDash([]);
-  ctx.beginPath();ctx.moveTo(tx(-276),tz(174));ctx.lineTo(tx(-276),tz(-1350));ctx.lineTo(tx(570),tz(-1350));ctx.lineTo(tx(570),tz(174));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(tx(-444),tz(174));ctx.lineTo(tx(-444),tz(-1350));ctx.lineTo(tx(570),tz(-1350));ctx.lineTo(tx(570),tz(174));ctx.stroke();
   ctx.fillStyle='#9de0e8';ctx.font='bold 11px Arial';ctx.textAlign='center';ctx.fillText('OPEN BEACH / OCEAN',tx(147),tz(225));ctx.textAlign='start';
   const gateX=tx(570)-3,gateY=tz(0);
   ctx.strokeStyle='#f5a23b';ctx.lineWidth=7;

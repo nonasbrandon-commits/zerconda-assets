@@ -1,4 +1,4 @@
-import {addRealisticPlanterFoliage} from './realistic-planter-foliage.js?v=20261118-z-needle-v107';
+import {addRealisticPlanterFoliage} from './realistic-planter-foliage.js?v=20261118-wall-mystery-v111';
 import * as THREE from 'three';
 // Original detailed plaza furnishings, scaled in meters. No oversized wooden crates or candy-ball flowers.
 export function addPremiumPlazaFurniture(scene,{cx=48,cz=48}={}){

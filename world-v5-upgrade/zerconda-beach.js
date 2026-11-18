@@ -1,6 +1,6 @@
 import {addRealisticBeachPalms} from './realistic-beach-palms.js';
 import * as THREE from 'three';
-import {createRealisticOcean} from './realistic-ocean.js?v=20261118-faster-town-v106';
+import {createRealisticOcean} from './realistic-ocean.js?v=20261118-wall-mystery-v111';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Zerconda South Beach, reachable on foot from the southern city edge at z=168.
 // Tiled sand PBR, animated layered water, foam, dunes, boardwalk, umbrellas and palms.
@@ -17,16 +17,16 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  const wood=new THREE.MeshStandardMaterial({color:0x927055,roughness:.87});
  const fabric=[0xf5f2e8,0x237aaf,0xe79a60,0xe7d2a2].map(color=>new THREE.MeshStandardMaterial({color,roughness:.82,side:THREE.DoubleSide}));
  function mesh(geo,mat,x,y,z){const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.receiveShadow=true;root.add(o);return o;}
- const land=mesh(new THREE.PlaneGeometry(846,91),sand,147,.085,199.5);land.rotation.x=-Math.PI/2;
+ const land=mesh(new THREE.PlaneGeometry(1014,91),sand,63,.085,199.5);land.rotation.x=-Math.PI/2;
  // Road connection across the former boundary to the promenade.
  const asphalt=new THREE.MeshStandardMaterial({color:0x45474a,roughness:.96});
  const access=mesh(new THREE.PlaneGeometry(19,38),asphalt,0,.14,171);access.rotation.x=-Math.PI/2;
  // A single instanced deck spans the interior faces of both perimeter walls.
- const boardwalkBounds={minX:-275.1,maxX:569.1,minZ:181,maxZ:191,y:.215};
- const boardwalk=mesh(new THREE.PlaneGeometry(844.2,10),wood,147,.17,186);boardwalk.name='Wall-to-wall beach boardwalk';boardwalk.rotation.x=-Math.PI/2;
- const planks=new THREE.InstancedMesh(new THREE.BoxGeometry(2.06,.05,9.5),wood,402),plankMatrix=new THREE.Matrix4();
+ const boardwalkBounds={minX:-443.1,maxX:569.1,minZ:181,maxZ:191,y:.215};
+ const boardwalk=mesh(new THREE.PlaneGeometry(1012.2,10),wood,63,.17,186);boardwalk.name='Wall-to-wall beach boardwalk';boardwalk.rotation.x=-Math.PI/2;
+ const planks=new THREE.InstancedMesh(new THREE.BoxGeometry(2.06,.05,9.5),wood,482),plankMatrix=new THREE.Matrix4();
  planks.name='Continuous boardwalk planks';planks.receiveShadow=true;
- for(let i=0;i<402;i++){plankMatrix.makeTranslation(-275.1+(i+.5)*2.1,.19,186);planks.setMatrixAt(i,plankMatrix);}root.add(planks);
+ for(let i=0;i<482;i++){plankMatrix.makeTranslation(-443.1+(i+.5)*2.1,.19,186);planks.setMatrixAt(i,plankMatrix);}root.add(planks);
  const oceanSystem=createRealisticOcean(root);
  // Sand ripples and dune clusters.
  const duneMat=new THREE.MeshStandardMaterial({color:0xd7bb88,roughness:1});
@@ -75,7 +75,7 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
   // Match the visible planks (.19 centre + .025 half thickness), not sea level.
   if(x>=boardwalkBounds.minX&&x<=boardwalkBounds.maxX&&z>=181&&z<=191)return .215;
   if(Math.abs(x)<=9.5&&z>=152&&z<=190)return .14;
-  if(x>=-276&&x<=570&&z>=154&&z<=245)return .085;
+  if(x>=-444&&x<=570&&z>=154&&z<=245)return .085;
   return null;
  },update(dt){oceanSystem.update(dt);},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
 }

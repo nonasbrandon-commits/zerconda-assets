@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-export const AIRPORT_LOOP={west:-250,east:542,north:-554,south:-283};
+export const AIRPORT_LOOP={west:-418,east:542,north:-554,south:-283};
 export function createAirportLoop(scene){const root=new THREE.Group();root.name='Connected airport perimeter road';root.userData.customInterior=true;scene.add(root);const R=AIRPORT_LOOP,mats={road:new THREE.MeshStandardMaterial({color:0x363b3c,roughness:1}),curb:new THREE.MeshStandardMaterial({color:0xd7d2c8,roughness:.9}),walk:new THREE.MeshStandardMaterial({color:0xbcb8aa,roughness:1}),line:new THREE.MeshStandardMaterial({color:0xc4ad62,roughness:1})},parts=new Map();
  function box(w,h,d,x,y,z,m){const g=new THREE.BoxGeometry(w,h,d);g.translate(x,y,z);const a=parts.get(m)||[];a.push(g.toNonIndexed());parts.set(m,a);}
  const distance=(x,z)=>Math.min(...[R.north,R.south].map(v=>Math.max(Math.abs(z-v),R.west-x,x-R.east,0)),...[R.west,R.east].map(v=>Math.max(Math.abs(x-v),R.north-z,z-R.south,0)),...[-96,0,96].map(c=>Math.max(Math.abs(x-c),R.south-z,0)));
