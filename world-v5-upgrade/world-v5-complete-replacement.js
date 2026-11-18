@@ -42,12 +42,12 @@ import {createCityMap} from './top-city-map.js?v=20261118-visible-trails-v100';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261117-coastal-v77';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261117-touch-v75';
-import {createPedestrians} from './animated-pedestrians.js?v=20261118-visible-trails-v100';
+import {createPedestrians} from './animated-pedestrians.js?v=20261118-brisk-bots-v101';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118-visible-trails-v100';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261118-visible-trails-v100';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-18-visible-trails-v100';
+const ZERCONDA_BUILD='2026-11-18-brisk-bots-v101';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -730,7 +730,7 @@ async function populate(){
 
  if(status)status.textContent='Loaded '+Object.keys(loaded).length+'/'+keys.length+' model types · Fountain plaza at (48,48)';
 }
-populate();
+const initialSceneryReady=populate();
 addPremiumPlazaFurniture(scene,{cx:48,cz:48});
 const START_X=34,START_Z=34; // Open southwest edge of fountain plaza, clear of the central lamp and fountain.
 const keys=new Set(),player={x:START_X,z:START_Z},clock=new THREE.Clock();wildlifePlayer=player;
@@ -1234,3 +1234,6 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;
  camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
 
 
+
+// Let the loading screen wait for the player, initial scenery, and a painted frame.
+export const initialReady=Promise.allSettled([initialSceneryReady,realisticPlayer.readyPromise]).then(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
