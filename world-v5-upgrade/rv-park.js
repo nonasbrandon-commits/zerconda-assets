@@ -15,7 +15,7 @@ export function createRVPark(scene,{getPlayer,canUse=()=>true,onTeleport=()=>{},
  function path(ax,az,bx,bz,w=5.6){const dx=bx-ax,dz=bz-az,len=Math.hypot(dx,dz);mesh(new THREE.BoxGeometry(w,.045,len),gravel,[(ax+bx)/2,.025,(az+bz)/2],[0,Math.atan2(dx,dz),0]);paths.push({ax,az,bx,bz,w});}
  path(-82,-154,-48,-154);path(-48,-154,-48,-258);mesh(new THREE.CylinderGeometry(9,9,.045,48),gravel,[-48,.025,-258]);
  function insideAt(x,z){return rvs.find(r=>Math.abs(x-r.x)<2.17&&Math.abs(z-r.z)<5.76);}
- function enter(r){if(!canUse())return;r.open=true;getPlayer().x=r.x+.9;getPlayer().z=r.z+1.8;onTeleport(getPlayer().x,.66,getPlayer().z,-Math.PI/2);onMessage('RV '+r.id+' · Free to hang out. Find a seat or explore inside.');}
+ function enter(r){if(!canUse())return;r.open=true;getPlayer().x=r.x+.9;getPlayer().z=r.z+1.8;onTeleport(getPlayer().x,.66,getPlayer().z,-Math.PI/2);onMessage('RV '+r.id+' · Find a seat or explore inside.');}
  function exit(r){getPlayer().x=r.x+4;getPlayer().z=r.z+1.8;onTeleport(getPlayer().x,.06,getPlayer().z,Math.PI/2);}
  function chair(x,z,a,kind='RV fire-pit chair',base=0){const g=new THREE.Group();g.position.set(x,base,z);g.rotation.y=a;root.add(g);box(.86,.16,.84,0,.48,0,wood,g);box(.86,.76,.1,0,.9,-.37,wood,g);for(const sx of [-.34,.34]){box(.08,.44,.65,sx,.22,0,dark,g);box(.1,.1,.78,sx,.8,0,wood,g);}seats.push({x,z,facing:a,sitHeight:base+.59,kind});}
  for(const [i,[x,z]]of [[-68,-231],[-29,-231],[-68,-184],[-29,-184]].entries()){
@@ -51,8 +51,8 @@ export function createRVPark(scene,{getPlayer,canUse=()=>true,onTeleport=()=>{},
   for(let j=0;j<14;j++){const a=j*Math.PI/7;mesh(new THREE.DodecahedronGeometry(.23,0),stone,[fx+Math.sin(a)*.85,.23,fz+Math.cos(a)*.85]);}for(const a of [-.5,.5])mesh(new THREE.CylinderGeometry(.1,.13,1.2,8),wood,[fx,.2,fz],[Math.PI/2,0,a]);
   f.flames=new THREE.Group();f.flames.position.set(fx,.25,fz);root.add(f.flames);for(let j=0;j<4;j++)mesh(new THREE.ConeGeometry(.18,.8,8),new THREE.MeshBasicMaterial({color:j%2?0xffc461:0xed8b3e,transparent:true,opacity:.8,depthWrite:false}),[Math.sin(j*2)*.2,.35,Math.cos(j*2)*.2],[0,0,0],f.flames);f.flames.visible=false;
   for(let j=0;j<4;j++){const a=j*Math.PI/2;chair(fx+Math.sin(a)*2.6,fz+Math.cos(a)*2.6,a+Math.PI);}
-  sign('RV '+r.id+' · FREE TO USE',x+2.5,3.35,z+1.8,3,Math.PI/2);
-  const door={x:x+3.8,z:z+1.8};action('enter-'+r.id,'Enter RV '+r.id+' · Free',door,()=>canUse()&&!insideAt(getPlayer().x,getPlayer().z)&&near(door,3.1),()=>enter(r),150);
+  sign('RV '+r.id+'',x+2.5,3.35,z+1.8,3,Math.PI/2);
+  const door={x:x+3.8,z:z+1.8};action('enter-'+r.id,'Enter RV '+r.id+'',door,()=>canUse()&&!insideAt(getPlayer().x,getPlayer().z)&&near(door,3.1),()=>enter(r),150);
   action('exit-'+r.id,'Exit RV '+r.id,{x:x+1,z:z+1.8},()=>insideAt(getPlayer().x,getPlayer().z)===r,()=>exit(r),145);
   action('fire-'+r.id,()=>`${f.lit?'Extinguish':'Light'} RV site ${r.id} fire pit`,{x:fx,z:fz},()=>canUse()&&!insideAt(getPlayer().x,getPlayer().z)&&near(f,4.4),()=>{f.lit=!f.lit;f.flames.visible=f.lit;onMessage(f.lit?'Fire pit lit. Take a chair and relax.':'Fire extinguished.');});
  }

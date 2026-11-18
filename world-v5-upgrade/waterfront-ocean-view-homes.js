@@ -1,3 +1,4 @@
+import {createRealtySign} from './property-signs.js?v=20261118-realty-v105';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
@@ -54,7 +55,7 @@ export function addWaterfrontHomes(scene,{count=12,getPlayer=()=>({x:0,z:0}),can
   // Grounded timber boundary fences separate adjacent cottages without hiding the sea.
   const fenceGeo=[];function fp(w,hh,d,x,y,z){const b=new THREE.BoxGeometry(w,hh,d);b.translate(x,y,z);fenceGeo.push(b.toNonIndexed());b.dispose();}for(const x of [-10.15,10.15]){for(let z=-22;z<=12;z+=.22)fp(.065,1.45,.20,x,.65,z);for(let z=-22;z<=12;z+=2.6)fp(.13,1.6,.13,x,.7,z);for(const y of [.35,1.05])fp(.09,.08,34,x,y,-5);}const f=new THREE.Mesh(mergeGeometries(fenceGeo),wood);f.castShadow=true;f.receiveShadow=true;g.add(f);fenceGeo.forEach(o=>o.dispose());
   // Sale boards are on posts at the street and the beach, never floating.
-  h.saleBoards=[];for(const [x,z,angle]of [[-2.8,-20.8,Math.PI],[-6.5,10.5,0]]){const sale=new THREE.Group();sale.position.set(x,0,z);sale.rotation.y=angle;g.add(sale);box(sale,.11,1.7,.11,0,.75,0,wood);const p=label('FOR SALE');p.position.set(0,1.32,.08);sale.add(p);h.saleBoards.push(sale);}
+  h.saleBoards=[createRealtySign(g,{x:-2.8,y:-.1,z:-20.8,rotation:Math.PI,scale:.85})];
   h.plate=label('COTTAGE '+h.id,2.4,.65);h.plate.position.set(1.8,3.05,-5.63);h.plate.rotation.y=Math.PI;g.add(h.plate);
   addAction(h,'options',()=>owned?.id===h.id?'My ocean cottage · Options':'Ocean cottage '+h.id+' · For sale',{x:-2.8,z:-20.8},()=>showPanel(h),3.6);addAction(h,'beach-options',()=>owned?.id===h.id?'My ocean cottage · Options':'Ocean cottage '+h.id+' · For sale',{x:-6.5,z:10.5},()=>showPanel(h),3.6);addAction(h,'inside-options',()=>owned?.id===h.id?'Customize ocean cottage':'Claim ocean cottage '+h.id,{x:1.8,z:-3.4},()=>showPanel(h),2.5);
   // Batch the static shell and furniture, leaving doors and sale boards independent.

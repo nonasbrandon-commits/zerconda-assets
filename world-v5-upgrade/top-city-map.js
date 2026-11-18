@@ -26,7 +26,7 @@ export function createCityMap({player,beach={x:0,z:212}}){
    const sx=x=>(x+230)*420/460,sz=z=>(z-220)*270/720;
    ctx.fillStyle='#ccb58c';ctx.fillRect(0,0,420,sz(240));ctx.fillStyle='#ae9672';ctx.fillRect(sx(-7),sz(238),14*420/460,(382-238)*270/720);ctx.fillRect(sx(-22),sz(374),44*420/460,26*270/720);ctx.fillRect(sx(-24),sz(242),18*420/460,32*270/720);ctx.fillRect(sx(-30),sz(286),12*420/460,20*270/720);
    ctx.strokeStyle='#d2c3a6';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(sx(-13),sz(272));ctx.lineTo(sx(-23),sz(288));ctx.stroke();
-   ctx.fillStyle='#fff2ce';ctx.font='bold 10px Arial';ctx.fillText('PIER · FREE BOATS & FISHING',sx(14),sz(310));ctx.fillText('BOATING AREA',sx(-75),sz(650));
+   ctx.fillStyle='#fff2ce';ctx.font='bold 10px Arial';ctx.fillText('PIER · BOATS & FISHING',sx(14),sz(310));ctx.fillText('BOATING AREA',sx(-75),sz(650));
    ctx.strokeStyle='#e7c38b';ctx.setLineDash([3,7]);ctx.strokeRect(sx(-210),sz(270),420*420/460,645*270/720);ctx.setLineDash([]);
    ctx.fillStyle='#00baff';ctx.beginPath();ctx.arc(sx(player.x),sz(player.z),6,0,Math.PI*2);ctx.fill();ctx.strokeStyle='white';ctx.lineWidth=2;ctx.stroke();
    return;

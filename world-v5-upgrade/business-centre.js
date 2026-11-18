@@ -55,7 +55,7 @@ export function createBusinessCentre(scene,{getPlayer,canEnter=()=>true,onTelepo
  function exit(){if(!mode)return;mode=null;door.visible=true;const p=getPlayer();p.x=cfg.entry.x;p.z=cfg.entry.z;onTeleport(p.x,.16,p.z,0);}
  action('enter','Enter Skyline Business Centre',()=>({...cfg.entry,y:1.4}),()=>!mode&&canEnter()&&near(0,22,5),()=>move('lobby',0,13),130);
  action('exit','Exit business centre',()=>world(0,16.8,1.4),()=>mode==='lobby'&&near(0,16,4),exit,130);
- action('reception','Talk to reception',()=>world(0,-.7,1.6),()=>mode==='lobby'&&near(0,-.7,4.5),()=>onMessage('Welcome to Skyline. Floors 1–7 are private businesses. The lift is free to use for the public rooftop terrace.'),120);
+ action('reception','Talk to reception',()=>world(0,-.7,1.6),()=>mode==='lobby'&&near(0,-.7,4.5),()=>onMessage('Welcome to Skyline. Floors 1–7 are private businesses. The lift connects the lobby to the public rooftop terrace.'),120);
  action('roof','Lift to rooftop terrace',()=>world(10,-8.7,1.4),()=>mode==='lobby'&&near(10,-8.7,4),()=>move('roof',10,-7.5),140);
  action('lobby','Lift to lobby',()=>world(10,-8.7,y+1.4),()=>mode==='roof'&&near(10,-8.7,4),()=>move('lobby',10,-7.5),140);
  action('fire',()=>fireOn?'Turn electric fire pit off':'Turn electric fire pit on',()=>world(-3,3.8,y+1.1),()=>mode==='roof'&&near(-3,3.8,4),()=>{fireOn=!fireOn;fire.visible=fireOn;fireLight.intensity=fireOn?3:0;onMessage(fireOn?'Electric fire pit on. Welcome to the rooftop lounge.':'Electric fire pit off.');},120);
