@@ -8,6 +8,9 @@ import {clone as cloneSkeleton} from 'three/addons/utils/SkeletonUtils.js';
 const BASE=new URL('../realistic-assets/characters/casual-human/',import.meta.url);
 let sourcePromise;
 const outfitCache=new Map();
+let footContactTexture;
+function contactTexture(){if(footContactTexture)return footContactTexture;const c=document.createElement('canvas');c.width=c.height=64;const a=c.getContext('2d'),g=a.createRadialGradient(32,32,2,32,32,31);g.addColorStop(0,'rgba(18,25,20,.8)');g.addColorStop(.45,'rgba(18,25,20,.45)');g.addColorStop(1,'rgba(18,25,20,0)');a.fillStyle=g;a.fillRect(0,0,64,64);return footContactTexture=new THREE.CanvasTexture(c);}
+
 function source(){
  if(!sourcePromise){
   const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
@@ -57,7 +60,7 @@ function colorClothes(mesh,shirt,pants,options={}){
 
 export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>{}}={}){
  const root=new THREE.Group();root.name='Textured realistic human';
- let hairRig=null,hairChoice=null;
+ let hairRig=null,hairChoice=null;const contacts=[];
  let mixer,actions,bones=[],active=null,ready=false,outfit={shirt,pants},wearables=[];
  function clearWearables(){for(const g of wearables){g.parent?.remove(g);g.traverse(o=>{o.geometry?.dispose();if(o.material&&!Array.isArray(o.material))o.material.dispose();});}wearables=[];}
  function applyOutfit(){if(!ready)return;root.traverse(mesh=>{if(mesh.isMesh&&mesh.userData.wardrobeBase)colorClothes(mesh,outfit.shirt,outfit.pants,outfit);});clearWearables();root.updateMatrixWorld(true);const mat=c=>new THREE.MeshStandardMaterial({color:c,roughness:.55}),black=mat(0x17252b),accent=mat(outfit.accessoryColor||0x8f6a45),gold=mat(0xc2a16a);
@@ -73,10 +76,11 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
  const controller={root,setHair(value={}){hairChoice={style:value.style||'original',color:value.color||'#4a3224'};if(ready){hairRig?.apply(hairChoice);for(const g of wearables)if(g.userData.isHat)g.visible=false;}return {...hairChoice};},get hair(){return hairChoice?{...hairChoice}:{style:'original',color:'#4a3224'};},setOutfit(value={}){outfit={shirt,pants,...value};applyOutfit();return {...outfit};},get outfit(){return {...outfit};},get ready(){return ready;},update(dt,speed,options={}){
   if(!ready)return;
   const {seated=false,backwards=false}=options;
-  const mode=options.dancing?'dance':speed>.08?(speed>3.4?'run':'walk'):'idle';
+  const running=speed>(active==='run'?2.85:3.1);
+  const mode=options.dancing?'dance':speed>.08?(running?'run':'walk'):'idle';
   if(active!==mode){actions[mode].reset().fadeIn(.22).play();if(active)actions[active].fadeOut(.22);active=mode;}
   actions.walk.timeScale=(backwards?-1:1)*THREE.MathUtils.clamp(speed/1.35,.3,2.0);
-  actions.run.timeScale=THREE.MathUtils.clamp(speed/4.1,.6,1.5);mixer.update(Math.min(dt,.08));
+  actions.run.timeScale=THREE.MathUtils.clamp(speed/3.25,.65,2.0);mixer.update(Math.min(dt,.08));
   // Authored clips animate the skeleton in place; world movement is game-controlled.
   const hip=bones.find(b=>b.name==='Bip01');if(hip){hip.position.x=hip.userData.restX;hip.position.z=hip.userData.restZ;}
   if(options.skating){for(const bone of bones){if(/thigh$/i.test(bone.name))bone.rotation.z+=.26;if(/calf$/i.test(bone.name))bone.rotation.z-=.5;if(/foot$/i.test(bone.name))bone.rotation.z+=.24;if(/UpperArm$/i.test(bone.name))bone.rotation.x+=.18;}}
@@ -90,11 +94,14 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
    // Two-joint arm aiming keeps both hands on the generic watercraft controls.
    for(const [side,sign]of [['L',1],['R',-1]]){
     const arm=part=>bones.find(b=>b.name.endsWith(side+'_'+part)||b.name.endsWith(side+' '+part)),upper=arm('UpperArm'),fore=arm('Forearm'),hand=arm('Hand');if(!upper||!fore||!hand)continue;
-    const target=root.parent.localToWorld(new THREE.Vector3(sign*.28,1.21,.37));
+    const target=root.parent.localToWorld(new THREE.Vector3(sign*.28,options.dj?1.38:1.21,options.dj?.65:.37));
     for(let pass=0;pass<3;pass++)for(const joint of [fore,upper]){const origin=joint.getWorldPosition(new THREE.Vector3()),from=hand.getWorldPosition(new THREE.Vector3()).sub(origin).normalize(),to=target.clone().sub(origin).normalize();if(!from.lengthSq()||!to.lengthSq())continue;const delta=new THREE.Quaternion().setFromUnitVectors(from,to),parentQ=joint.parent.getWorldQuaternion(new THREE.Quaternion()),local=parentQ.clone().invert().multiply(delta).multiply(parentQ);joint.quaternion.premultiply(local);joint.updateWorldMatrix(false,true);}
    }
   }
 
+  // Shoe contact remains readable with mobile shadows disabled. Lifted feet fade their contact.
+  root.updateWorldMatrix(true,true);const groundY=root.parent?.getWorldPosition(parentPoint).y||0;
+  for(const {foot,mesh}of contacts){mesh.visible=!seated&&!options.driving&&!options.skating&&!options.dancing;if(!mesh.visible)continue;const p=foot.getWorldPosition(new THREE.Vector3()),lift=Math.max(0,p.y-groundY-.09);mesh.material.opacity=.34*THREE.MathUtils.clamp(1-lift/.35,0,1);const target=root.worldToLocal(new THREE.Vector3(p.x,groundY+.012,p.z));mesh.position.copy(target);mesh.scale.set(.36+lift*.2,.5+lift*.2,1);}
  }};
  controller.readyPromise=source().then(([character,idle,walk,run,dance])=>{
   character.scene.updateMatrixWorld(true);
@@ -108,6 +115,7 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
    if(mesh.isSkinnedMesh){const ids=[];for(let id=0;id<mesh.geometry.attributes.position.count;id++)if(mesh.getVertexPosition(id,vertex).applyMatrix4(mesh.matrixWorld).y<floor+.16)ids.push(id);if(ids.length)soles.push({mesh,ids});}
   }});
   mixer=new THREE.AnimationMixer(model);actions={idle:mixer.clipAction(idle.animations[0]),walk:mixer.clipAction(walk.animations[0]),run:mixer.clipAction(run.animations[0]),dance:mixer.clipAction(dance.animations[0])};
+  for(const side of ['L','R']){const foot=bones.find(b=>b.name.replace(/[^a-z0-9]/gi,'').endsWith(side+'Foot'));if(!foot)continue;const material=new THREE.MeshBasicMaterial({map:contactTexture(),transparent:true,depthWrite:false,opacity:.3,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),material);mesh.name=side+' shoe contact';mesh.rotation.x=-Math.PI/2;mesh.renderOrder=1;root.add(mesh);contacts.push({foot,mesh});}
   ready=true;controller.update(0,0);hairRig=createHairCustomizer(root,bones);applyOutfit();onReady();return controller;
  }).catch(error=>{console.error('Realistic character load failed',error);return controller;});
  return controller;
