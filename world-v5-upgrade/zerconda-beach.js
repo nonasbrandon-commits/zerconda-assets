@@ -67,5 +67,11 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
    console.error('Detailed palm GLB missing; using fallback palm geometry',error);
    addRealisticBeachPalms(root,{count:24});
  });
- return {root,ocean:oceanSystem,update(dt){oceanSystem.update(dt);},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
+ return {root,ocean:oceanSystem,heightAt(x,z){
+  // Match the visible planks (.19 centre + .025 half thickness), not sea level.
+  if(Math.abs(x)<=160&&z>=181&&z<=191)return .215;
+  if(Math.abs(x)<=9.5&&z>=152&&z<=190)return .14;
+  if(Math.abs(x)<=260&&z>=154&&z<=245)return .085;
+  return null;
+ },update(dt){oceanSystem.update(dt);},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
 }
