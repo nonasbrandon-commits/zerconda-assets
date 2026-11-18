@@ -1,3 +1,5 @@
+import {createRenderBudget} from './render-budget.js?v=20261118-startup-v114';
+import {createClothedPlayer} from './clothed-player.js';
 import {createZercondaMuseum} from './zerconda-museum.js?v=20261118-museum-v113';
 import {installAvatarTattoos} from './avatar-tattoos.js?v=20261118-clear-roads-v112';
 import {createZTattoo} from './z-tattoo.js?v=20261118-clear-roads-v112';
@@ -57,7 +59,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261118-visible-trails-v100';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-18-museum-v113';
+const ZERCONDA_BUILD='2026-11-18-startup-v114';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -87,7 +89,7 @@ renderer.setPixelRatio(Math.min(devicePixelRatio,MOBILE?.85:1.5));renderer.setSi
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
 // Temporarily disable costly shadow maps while diagnosing blank WebGL output.
-renderer.shadowMap.enabled=!MOBILE;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.shadowMap.enabled=false;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 document.body.prepend(renderer.domElement);
 const hemisphere=new THREE.HemisphereLight(0xe6f4ff,0x737569,1.3);scene.add(hemisphere);let forestShade=0;const daylightFog=new THREE.Color(0xa9c8dc),forestFog=new THREE.Color(0x74846f);
 const sun=new THREE.DirectionalLight(0xffefdc,2.8);sun.position.set(-70,135,85);sun.castShadow=!MOBILE;
@@ -693,7 +695,7 @@ for(const index of [4,12]){const p=parking[index];if(!p)continue;const [x,z,angl
 
 const loader=new GLTFLoader();
 function load(key){
- return new Promise((resolve,reject)=>loader.load(BASE+PATH[key],g=>resolve(g.scene),undefined,reject));
+ return new Promise((resolve,reject)=>{const timeout=setTimeout(()=>reject(new Error('Optional model timed out: '+key)),15000);loader.load(BASE+PATH[key],g=>{clearTimeout(timeout);resolve(g.scene);},undefined,error=>{clearTimeout(timeout);reject(error);});});
 }
 function cloneNormalized(source,x,z,targetHeight,angle=0){
  const g=source.clone(true),bounds=new THREE.Box3().setFromObject(g);
@@ -751,7 +753,7 @@ async function populate(){
 
  if(status)status.textContent='Loaded '+Object.keys(loaded).length+'/'+keys.length+' model types · Fountain plaza at (48,48)';
 }
-const initialSceneryReady=populate();
+let resolveScenery;const initialSceneryReady=new Promise(resolve=>{resolveScenery=resolve;});let sceneryStarted=false;function startScenery(){if(sceneryStarted)return;sceneryStarted=true;populate().then(resolveScenery,resolveScenery);}
 addPremiumPlazaFurniture(scene,{cx:48,cz:48});
 const START_X=34,START_Z=34; // Open southwest edge of fountain plaza, clear of the central lamp and fountain.
 const keys=new Set(),player={x:START_X,z:START_Z},clock=new THREE.Clock();wildlifePlayer=player;
@@ -767,7 +769,8 @@ const avatarRest={};
 // The old recolored GLB is intentionally retired. Use actual clothing meshes.
 const dressedPlayer={root:new THREE.Group(),update:()=>{}};
 const realisticPlayer=createRealisticHuman();const avatarTattoos=installAvatarTattoos(realisticPlayer);dressedPlayer.root.add(realisticPlayer.root);
-dressedPlayer.root.userData.animate=(dt,speed,options)=>realisticPlayer.update(dt,speed,options);
+const fallbackPlayer=createClothedPlayer();dressedPlayer.root.add(fallbackPlayer.root);realisticPlayer.readyPromise.then(()=>{fallbackPlayer.root.visible=!realisticPlayer.ready;});let fallbackTime=0;
+dressedPlayer.root.userData.animate=(dt,speed,options)=>{if(realisticPlayer.ready){fallbackPlayer.root.visible=false;realisticPlayer.update(dt,speed,options);}else{fallbackTime+=dt;fallbackPlayer.update(fallbackTime,speed);}};
 avatar.add(dressedPlayer.root);
 const playerSoleOffset=0;
 // Hide ALL primitive pedestrian parts, including the old head, ears, neck and hands.
@@ -1095,9 +1098,9 @@ function walkable(x,z){
  if(Math.hypot(x-48,z-48)<11.55)return false; // actual 3D basin collision
  return true;
 }
-let elapsed=0;
+let elapsed=0,townEntered=false,paintedFrame=false;const renderBudget=createRenderBudget(scene,{getPlayer:()=>player,mobile:MOBILE});
 function animate(){
- requestAnimationFrame(animate);const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;let walkingDistance=0;
+ requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;let walkingDistance=0;
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
  if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
  airDancers.update(elapsed);
@@ -1263,8 +1266,8 @@ function animate(){
  observationNeedle.updateCamera(camera);
  carnival.updateCamera(camera);
  courtGames?.updateCamera(camera);
- try{if(!tattooShop?.panelOpen)renderer.render(scene,camera);}
- catch(err){renderFailure=String(err);console.error('ZERCONDA RENDER ERROR',err);}
+ try{if(!tattooShop?.panelOpen){renderBudget.update(motionDt);renderer.render(scene,camera);if(!paintedFrame){paintedFrame=true;window.dispatchEvent(new Event('zerconda-frame'));}}}
+ catch(err){renderFailure=String(err);console.error('ZERCONDA RENDER ERROR',err);if(!paintedFrame){townEntered=false;window.dispatchEvent(new CustomEvent('zerconda-load-failed',{detail:'The graphics could not start. Please retry.'}));}}
  finally{if(activeCar)activeCar.group.visible=true;}
  const nearHome=!boutique.active&&!bowling.active&&!scooters.riding&&!skate?.riding&&!activeCar?ownableHomes.closest(player.x,player.z,11):null;
  homeButton.style.display=nearHome?'block':'none';
@@ -1302,11 +1305,16 @@ function animate(){
  }
 
 }
-animate();
+requestAnimationFrame(animate);
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;
  camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
 
 
 
-// Let the loading screen wait for the player, initial scenery, and a painted frame.
-export const initialReady=Promise.allSettled([initialSceneryReady,realisticPlayer.readyPromise]).then(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+// Optional scenery never blocks entry; a usable local avatar is always available.
+export const initialReady=Promise.race([realisticPlayer.readyPromise,new Promise(resolve=>setTimeout(resolve,12000))]).then(()=>undefined);
+export function startWorld(){if(townEntered)return;townEntered=true;clock.getDelta();renderBudget.scan();setTimeout(startScenery,2500);}
+
+addEventListener('zerconda-enter',startWorld);
+
+export function startupStatus(){return{entered:townEntered,painted:paintedFrame,characterReady:realisticPlayer.ready,fallbackVisible:fallbackPlayer.root.visible,...renderBudget.stats()};}

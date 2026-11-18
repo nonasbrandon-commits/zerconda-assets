@@ -23,31 +23,24 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:
 <script>
 (function(){
  const status=document.getElementById('status');
- let loaded=false;
+ let loaded=false,failed=false;
  const screen=document.getElementById('loading-screen'),message=document.getElementById('loading-message'),start=document.getElementById('start-world'),spinner=screen.querySelector('.loading-spinner');
  document.addEventListener('keydown',e=>{if(screen.isConnected&&e.target!==start){e.preventDefault();e.stopImmediatePropagation();}},true);
- start.onclick=()=>{screen.remove();};
+ function enterTown(){start.disabled=true;spinner.hidden=false;message.textContent='Opening your town…';window.dispatchEvent(new Event('zerconda-enter'));}
+ start.onclick=enterTown;
+ window.addEventListener('zerconda-frame',()=>requestAnimationFrame(()=>screen.remove()),{once:true});
  function report(msg){status.textContent=msg;status.style.color='#ffdfb2';console.error('ZERCONDA LOAD:',msg);}
  window.addEventListener('error',e=>{report('3D loading error: '+(e.message||e.filename||'unknown script error'));});
  window.addEventListener('unhandledrejection',e=>{report('3D module error: '+(e.reason?.message||String(e.reason)));});
- window.addEventListener('zerconda-ready',()=>{loaded=true;spinner.hidden=true;message.textContent='Your town is ready.';start.hidden=false;start.focus();});
- setTimeout(()=>{if(!loaded)message.textContent='Still preparing Zerconda. The first visit can take a little longer…';},45000);
+ window.addEventListener('zerconda-load-failed',e=>{failed=true;spinner.hidden=true;message.textContent='Could not load Zerconda: '+e.detail;start.hidden=false;start.disabled=false;start.textContent='Try again';start.onclick=()=>location.reload();});
+ window.addEventListener('zerconda-ready',()=>{loaded=true;spinner.hidden=true;message.textContent='Your town is ready.';start.hidden=false;start.disabled=false;start.textContent='Enter Zerconda';start.onclick=enterTown;start.focus();});
+ setTimeout(()=>{if(!loaded&&!failed){message.textContent='Loading is taking longer than expected. You can retry the connection.';start.hidden=false;start.textContent='Retry loading';start.onclick=()=>location.reload();}},45000);
 })();
 </script>
 <script type="module">
-import('./world-v5-complete-replacement.js?v=20261118-museum-v113')
+import('./world-v5-complete-replacement.js?v=20261118-startup-v114')
  .then(async world=>{await world.initialReady;window.dispatchEvent(new Event('zerconda-ready'));})
- .catch(async e=>{
- const status=document.getElementById('status');
- status.textContent='Finding failing 3D module...';document.getElementById('loading-message').textContent='Could not load Zerconda. Please refresh to try again.';document.querySelector('.loading-spinner').hidden=true;
- console.error('ZERCONDA MAIN IMPORT ERROR',e,e.stack);
- const modules=['clothed-player','realistic-fountain','observation-needle','cloud-sky','city-depth-assets','nine-building-styles','brewstone-coffee','apartment-interiors','premium-plaza-furniture','air-dancers','zerconda-beach','top-city-map','signature-apartment-buildings','waterfront-ocean-view-homes','ownable-suburban-homes','animated-pedestrians','eastside-golf-district','needle-sports-park','club-zerconda','club-games','club-game-view','club-social','realistic-human'];
- const failed=[];
- for(const name of modules){
-   try{await import('./'+name+'.js?v=diagnostic-v39');}
-   catch(err){failed.push(name+': '+err.message);console.error('ZERCONDA BROKEN MODULE:',name,err,err.stack);}
- }
- status.textContent=failed.length?'Broken module: '+failed.join(' | '):'Main module error: '+e.message+' (see Console)';
-});
+ .catch(e=>{console.error('Zerconda startup failed',e);window.dispatchEvent(new CustomEvent('zerconda-load-failed',{detail:e.message||String(e)}));});
+
 </script>
 </body></html>

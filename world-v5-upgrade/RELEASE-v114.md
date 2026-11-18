@@ -1,0 +1,7 @@
+# Startup recovery · v114
+
+Fix loading-screen stalls by separating scene construction, avatar readiness, entry, and first-frame rendering. Optional imported scenery starts after entry and each optional model has a bounded wait. Character readiness is bounded at 12 seconds after module initialization; a local clothed avatar remains visible until the detailed character is ready. The loading overlay closes after the first real rendered frame, with explicit retry on startup/graphics failures. A slow module connection exposes a retry button instead of waiting silently.
+
+The renderer now limits local point/spot lights to nearby ones, partitions large static forest instance batches into frustum-cullable spatial tiles, and disables the expensive full-scene shadow pass. Architectural geometry, forest instances, museum interiors, and saved customizations remain present. Contact shadows on the detailed character remain available.
+
+Validation: syntax checks; fresh desktop Chromium startup reached entry at 26.9 seconds and the first actual WebGL frame at 33.1 seconds; deliberate 45-second character-download delay on mobile reached entry at 25.3 seconds with a visible fallback character and the first actual frame at 26.7 seconds. Both tests verified the loading overlay was removed and captured rendered screenshots. These are software-rendered test timings, not guaranteed timings for every device or connection.
