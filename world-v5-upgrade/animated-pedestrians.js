@@ -1,8 +1,10 @@
 import * as THREE from 'three';
-import {createRealisticHuman} from './realistic-human.js?v=20261117-realistic-human-v68';
+import {createResidentHuman} from './resident-human.js?v=20261118-residents-v97';
+import {residentProfiles} from './resident-profiles.js?v=20261118-residents-v97';
+import {createResidentVehicle} from './resident-vehicles.js?v=20261118-residents-v97';
 // Articulated human-shaped characters and animated pedestrian NPCs.
-// No branded or copyrighted characters; geometry is original.
-export function createPedestrians(scene,{count=16,groundHeightAt=()=>0,canWalk=()=>true}={}){
+// Adult resident meshes are adapted from the MIT-licensed Microsoft Rocketbox collection.
+export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=()=>true,getPlayer=()=>null}={}){
  const root=new THREE.Group();root.name='Animated Zerconda pedestrians';scene.add(root);
  const skin=[0xe7b58d,0x9d6345,0xc78d68,0xf0c9a6,0x69432f].map(color=>new THREE.MeshStandardMaterial({color,roughness:.88}));
  const shirts=[0x7731a1,0x171d23,0x52705c,0xd0c7b8,0x444b64,0x9b8665,0x9b3652,0x336d96].map(color=>new THREE.MeshStandardMaterial({color,roughness:.91}));
@@ -53,45 +55,20 @@ export function createPedestrians(scene,{count=16,groundHeightAt=()=>0,canWalk=(
    torso.rotation.z=Math.sin(cycle)*.025*intensity;
   }};
  }
- const footBounds=new THREE.Box3();
- const agents=[];
- for(let i=0;i<count;i++){
-  const human=createHuman(i+1);
-  const side=i%2===0?-1:1, lane=(i%4)*7;
-  const x=side*(106+lane),z=-145+((i*31)%255);
-  human.root.position.set(x,0,z);
-  root.add(human.root);
-  const outfits=[0x5f7892,0x66816e,0x9c6d68,0x4c596b];
-  const realistic=createRealisticHuman({shirt:outfits[i%outfits.length],pants:i%2?0x827563:0xa18c6d,onReady:()=>{
-   for(const child of human.root.children)if(child!==realistic.root)child.visible=false;
-  }});
-  human.root.add(realistic.root);
-  agents.push({human,realistic,x,z,baseX:x,direction:i%3===0?-1:1,speed:.75+(i%5)*.19,phase:i*1.17});
+ const agents=[];let runIndex=0,walkIndex=0,bikeIndex=0,scooterIndex=0;
+ function ellipse(cx,cz,rx,rz){return new THREE.CatmullRomCurve3(Array.from({length:64},(_,i)=>{const a=i*Math.PI/32;return new THREE.Vector3(cx+Math.cos(a)*rx,0,cz+Math.sin(a)*rz)}),true,'centripetal');}
+ for(const profile of residentProfiles){const group=new THREE.Group();group.name=profile.name+' · '+profile.activity;group.userData.dynamicScenery=true;group.visible=false;root.add(group);const human=createResidentHuman(profile);group.add(human.root);let vehicle=null,route=null,position=0,direction=1,speed=1.15+(profile.id%4)*.09;
+  if(profile.activity==='run'){position=runIndex*190;route={kind:'boardwalk',z:183+runIndex*2};runIndex++;speed=3.2+(profile.id%3)*.12;}
+  else if(profile.activity==='walk'){const lanes=[-109.2,109.2,-13.1,13.1];route={kind:'sidewalk',x:lanes[walkIndex%4]};position=-76+(walkIndex%2)*130;direction=walkIndex%2?-1:1;walkIndex++;}
+  else{vehicle=createResidentVehicle(profile.activity,0x547c88+(profile.id%3)*0x191306);group.add(vehicle.root);if(profile.activity==='bike'){route=ellipse(bikeIndex%2?96:-96,0,4,76);position=(bikeIndex<2?0:.5)*route.getLength();bikeIndex++;speed=3.8;}else{route=scooterIndex<2?ellipse(0,0,4,77):ellipse(65,0,132,4);position=(scooterIndex%2)*route.getLength()/2;scooterIndex++;speed=3.1;}}
+  const a={profile,group,human,realistic:human,vehicle,route,position,direction,speed,distance:0,phase:profile.id*.31,waiting:false};agents.push(a);human.readyPromise.then(()=>group.visible=true);
  }
- function update(dt,time){
-  for(const a of agents){
-   const nx=a.baseX+Math.sin(time*.37+a.phase)*.65;
-   const nz=a.z+a.direction*a.speed*dt;
-   if(canWalk(nx,nz))a.z=nz;
-   else{a.direction*=-1;if(!canWalk(nx,a.z)){a.baseX=Math.sign(a.baseX||1)*108;a.z=THREE.MathUtils.clamp(a.z,-150,115);}}
-
-   if(a.z>115){a.z=115;a.direction=-1;}
-   if(a.z< -150){a.z=-150;a.direction=1;}
-   a.human.root.position.set(a.baseX+Math.sin(time*.37+a.phase)*.65,.055,a.z);
-   a.human.root.rotation.y=a.direction>0?0:Math.PI;
-   a.human.animate(time+a.phase,a.speed);
-   // Plant the lowest animated shoe on the actual pavement surface.
-   if(a.realistic.ready){
-    a.human.root.position.y=groundHeightAt(a.human.root.position.x,a.z);
-    a.realistic.update(dt,a.speed);continue;
-   }
-   a.human.root.updateMatrixWorld(true);
-   let sole=Infinity;
-   for(const leg of a.human.legs)sole=Math.min(sole,footBounds.setFromObject(leg.foot).min.y);
-   a.human.root.position.y+=groundHeightAt(a.human.root.position.x,a.z)-sole;
-
-  }
- }
- return {root,createHuman,update,agents,count:agents.length};
+ function update(dt,time){const player=getPlayer();for(const a of agents){if(!a.human.ready)continue;const old=a.group.position.clone();let x,z,angle,advance=a.speed*dt,newPosition=a.position;a.waiting=false;
+  if(a.route.kind==='boardwalk'){newPosition=(a.position+advance)%(824*2);const t=newPosition<=824?newPosition:1648-newPosition;x=-266+t;z=a.route.z;angle=newPosition<=824?Math.PI/2:-Math.PI/2;}
+  else if(a.route.kind==='sidewalk'){const zz=a.position+a.direction*advance;if(zz>80||zz< -80)a.direction*=-1;x=a.route.x;z=THREE.MathUtils.clamp(a.position+a.direction*advance,-80,80);angle=a.direction>0?0:Math.PI;}
+  else{const length=a.route.getLength(),next=(a.position+advance)%length,p=a.route.getPointAt(next/length),t=a.route.getTangentAt(next/length);x=p.x;z=p.z;angle=Math.atan2(t.x,t.z);}
+  const nearPlayer=player&&Math.hypot(x-player.x,z-player.z)<(a.vehicle?2.2:.75);if(!nearPlayer&&canWalk(x,z)){a.group.position.set(x,groundHeightAt(x,z),z);a.group.rotation.y=angle;if(!a.route.kind)a.position=(a.position+advance)%a.route.getLength();else if(a.route.kind==='sidewalk')a.position=z;else if(a.route.kind==='boardwalk')a.position=newPosition;a.distance+=advance;}else{a.waiting=true;if(a.route.kind==='sidewalk')a.direction*=-1;}
+  const moving=!a.waiting;a.phase+=moving?dt*(a.profile.activity==='bike'?5.5:1):0;a.human.update(dt,moving?a.speed:0,{vehicle:a.vehicle?a.profile.activity:null,phase:a.phase});a.vehicle?.update(a.distance,a.phase);
+ }}
+ return{root,createHuman,update,agents,count:20,profiles:residentProfiles,readyPromise:Promise.all(agents.map(a=>a.human.readyPromise))};
 }
-

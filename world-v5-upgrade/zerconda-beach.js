@@ -1,6 +1,6 @@
 import {addRealisticBeachPalms} from './realistic-beach-palms.js';
 import * as THREE from 'three';
-import {createRealisticOcean} from './realistic-ocean.js?v=20261118-carnival-v93';
+import {createRealisticOcean} from './realistic-ocean.js?v=20261118-residents-v97';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Zerconda South Beach, reachable on foot from the southern city edge at z=168.
 // Tiled sand PBR, animated layered water, foam, dunes, boardwalk, umbrellas and palms.

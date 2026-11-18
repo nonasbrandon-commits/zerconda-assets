@@ -20,7 +20,7 @@ export function createRealisticOcean(root){
  float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
  float fbm(vec2 p){return noise(p)*.57+noise(p*2.03+8.)*.28+noise(p*4.07+13.)*.15;}
  float ripple(vec2 p){return noise(p)*.75+noise(p*2.03+8.)*.25;}
- void main(){vec2 p=seaPosition.xz;float shore=239.+sin(p.x*.027)*1.25+sin(p.x*.091)*.45;float channel=step(181.,abs(p.x))*step(p.y,238.);if(channel>.5)shore=150.;float d=p.y-shore;float wash=sin(time*.48+p.x*.008)*2.1+sin(p.x*.07+time*.25)*.7;
+ void main(){vec2 p=seaPosition.xz;float shore=239.+sin(p.x*.027)*1.25+sin(p.x*.091)*.45;float d=p.y-shore;float wash=sin(time*.48+p.x*.008)*2.1+sin(p.x*.07+time*.25)*.7;
  if(d< -3.+wash*.5)discard;
  float depth=smoothstep(0.,130.,max(0.,d));float fade=smoothstep(0.,35.,p.y-238.);
  float dx=fade*(cos(p.x*.065+p.y*.021+time*1.1)*.24*.065+cos(-p.x*.025+p.y*.12-time*.83)*.12*(-.025)+cos(p.x*.16-p.y*.09+time*1.7)*.055*.16);
