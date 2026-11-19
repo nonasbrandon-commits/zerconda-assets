@@ -49,7 +49,7 @@ import {createObservationNeedle} from './observation-needle.js?v=20261118-z-need
 import {createCloudSky} from './cloud-sky.js';
 import {addCityDepth} from './city-depth-assets.js?v=20261118-wall-mystery-v111';
 import {addBuildingIdentity} from './nine-building-styles.js';
-import {createCoffeeShop} from './brewstone-coffee.js?v=20261119-coffee-front-v121';
+import {createCoffeeShop} from './brewstone-coffee.js?v=20261119-coffee-stone-v123';
 import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261119-level-ground-v117';
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261117-interiors-v1';
 // Dealership loads separately so a failed asset cannot blank the entire city.
@@ -65,7 +65,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-ground-v117';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-19-z-fortune-v122';
+const ZERCONDA_BUILD='2026-11-19-coffee-stone-v123';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -514,7 +514,7 @@ zFortune=createZFortune(scene,{getPlayer:()=>player});
 const coffeeShop=createCoffeeShop(scene,{x:-28,z:-132,getPlayer:()=>player});
  // Connect the commercial forecourt and cafe patio to their respective sidewalks.
  box(8,.14,10,-48,.035,-77,paving);
- box(4,.10,6,-28,.02-.05,-112,paving);
+ // The full cafe stone terrace now meets the sidewalk directly.
  // Removed the oversized mid-block stripe crossing at the old cafe approach.
 // Walk-in showroom just west of Brewstone Coffee, with three fictional display vehicles.
 const dealership={

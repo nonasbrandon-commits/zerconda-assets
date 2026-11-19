@@ -35,7 +35,11 @@ export function createCoffeeShop(scene,{x=-28,z=-132,getPlayer=()=>null}={}){
  box(0,1.05,-6.5,14,2.1,1.8,wood);box(0,2.16,-6.5,14.4,.2,2,metal);
  for(const xx of [-4,0,4]){box(xx,3.65,-8.7,2.6,.16,.55,wood);box(xx,4.75,-8.7,2.6,.16,.55,wood);}
  for(const xx of [-3,-2.4,2.5,3.2])cyl(xx,2.55,-6.4,.22,.55,black);
- // Outdoor patio to the south of shop, away from tower access road.
+ // Full-width stone terrace extends from the glazing to both adjoining sidewalks.
+ const terraceCanvas=document.createElement('canvas');terraceCanvas.width=terraceCanvas.height=256;const tc=terraceCanvas.getContext('2d');tc.fillStyle='#c7c4b9';tc.fillRect(0,0,256,256);let stoneSeed=91;const stoneRand=()=>{stoneSeed=(Math.imul(stoneSeed,1664525)+1013904223)>>>0;return stoneSeed/4294967296;};for(let i=0;i<6000;i++){tc.fillStyle=i%2?'#ffffff16':'#554f4610';tc.fillRect(stoneRand()*256,stoneRand()*256,1.5,1.5);}tc.strokeStyle='#8e8b803f';tc.lineWidth=1.4;tc.strokeRect(0,0,256,256);tc.beginPath();tc.moveTo(128,0);tc.lineTo(128,256);tc.moveTo(0,128);tc.lineTo(256,128);tc.stroke();
+ const terraceTex=new THREE.CanvasTexture(terraceCanvas);terraceTex.colorSpace=THREE.SRGBColorSpace;terraceTex.wrapS=terraceTex.wrapT=THREE.RepeatWrapping;terraceTex.repeat.set(13.5,6.5);terraceTex.anisotropy=8;const terraceMat=mat(0xffffff,.85);terraceMat.map=terraceTex;terraceMat.polygonOffset=true;terraceMat.polygonOffsetFactor=-1;terraceMat.polygonOffsetUnits=-2;
+ const terrace=box(.5,-.06,15.5,27,.12,13,terraceMat);terrace.name='Brewstone Coffee · full stone terrace';
+
  const seats=[],solids=[{x:0,z:-6.5,w:14.4,d:2}];
  // Higher-detail patio furniture: metal frames, wood slat seats, curved chair backs,
  // tapered table pedestals, and individual leaf clusters instead of green spheres.
