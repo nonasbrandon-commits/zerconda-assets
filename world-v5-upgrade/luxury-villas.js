@@ -1,5 +1,6 @@
+import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-residential-v130';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
-import {createRealtySign} from './property-signs.js?v=20261118-realty-v105';
+import {createRealtySign} from './property-signs.js?v=20261119-residential-v130';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -48,7 +49,7 @@ export function createLuxuryVillas(scene,{getPlayer,canInteract=()=>true,onMessa
   // Kitchen, island, dining table and proper chairs with clear circulation.
   box(10,1.0,1,16,.74,-12.35,wood);box(10.1,.10,1.1,16,1.3,-12.35,linen);solid(16,-12.35,10.2,1.2);box(1.4,2.4,1.2,21,1.44,-10.5,h.wall);solid(21,-10.5,1.6,1.4);box(5,1,1.8,16,.74,-6,wood);box(5.2,.12,2,16,1.3,-6,linen);solid(16,-6,5.4,2.2);box(4,.14,2.3,16,1.05,5,wood);for(const xx of[14.5,17.5])for(const zz of[4.2,5.8])box(.12,.74,.12,xx,.61,zz,dark);solid(16,5,4.2,2.5);for(const xx of[13,19])for(const zz of[4.2,5.8]){box(.7,.15,.7,xx,.74,zz,h.fabric);box(.1,.7,.7,xx+(xx<16?-.3:.3),1.1,zz,wood);for(const dx of[-.25,.25])box(.06,.44,.06,xx+dx,.445,zz,wood);solid(xx,zz,.9,.9);}
   // Bed headboard is against the wall, with a separate generous ensuite.
-  box(2.8,.48,3.4,-14.2,.48,-10.5,wood);box(2.7,.28,3.3,-14.2,.86,-10.5,linen);box(2.72,.08,2.4,-14.2,1.04,-10.05,h.fabric);box(3.1,1.5,.16,-14.2,.99,-12.55,wood);for(const xx of[-14.9,-13.5])box(.9,.16,.5,xx,1.1,-11.7,linen);solid(-14.2,-10.5,3.0,3.5);for(const xx of[-16.3,-12.1]){box(.8,.65,.8,xx,.56,-11.8,wood);solid(xx,-11.8,1.0,1.0);}box(2.5,1.0,.8,-20,.74,-12.1,wood);solid(-20,-12.1,2.7,1);box(2.0,.12,2,-20,.24,-9,stone);box(.05,2.6,2,-18.9,1.6,-9,glass);solid(-20,-9,2.2,2.2);
+  createDetailedBed(g,{x:-14.2,y:.24,z:-10.5,width:2.7,length:3.3});solid(-14.2,-10.5,3.0,3.5);for(const xx of[-16.3,-12.1])solid(xx,-11.8,1.0,1.0);const bath=createDetailedBathroom(g,{x:-20,y:.24,z:-10,width:3.7,depth:5.6,tub:false,wallWindows:{back:[{x:0,y:2,w:3.7,h:3.4}],left:[{x:0,y:2,w:5.6,h:3.4}]}});for(const o of bath.solids)solid(o.x,o.z,o.w,o.d);
   sofa(-8,-17,3.6,0);sofa(8,-17,2.5,0);box(2.5,.12,1.2,0,.7,-18,wood);for(const x of[-1,1])box(.08,.46,.08,x,.41,-18,dark);solid(0,-18,2.7,1.4);
   // Two poolside loungers, with adjustable-looking backrests and grounded frames.
   for(const x of[-14,14]){box(1.4,.14,3.2,x,.5,-43,wood);const back=box(1.3,.12,1.5,x,.85,-44,h.fabric,new THREE.Group());back.rotation.x=-.55;g.add(back.parent);box(1.3,.10,1.7,x,.61,-42.5,h.fabric);for(const dx of[-.5,.5])for(const zz of[-44.2,-41.8])box(.1,.25,.1,x+dx,.305,zz,dark);seats.push({...world(h,x,-42.4),facing:Math.PI/2,sitHeight:.68,kind:'pool lounger',home:h});solid(x,-43,1.6,3.5);}
@@ -73,3 +74,4 @@ export function createLuxuryVillas(scene,{getPlayer,canInteract=()=>true,onMessa
  function cutGround(mesh){const x0=-460,x1=790,z0=-775,z1=165,shape=new THREE.Shape();shape.moveTo(x0,-z0);shape.lineTo(x1,-z0);shape.lineTo(x1,-z1);shape.lineTo(x0,-z1);shape.closePath();for(const h of homes){const xa=h.x+35.8,xb=h.x+48.2,za=h.z-11.2,zb=h.z+11.2,p=new THREE.Path();p.moveTo(xa,-za);p.lineTo(xa,-zb);p.lineTo(xb,-zb);p.lineTo(xb,-za);p.closePath();shape.holes.push(p);}const geo=new THREE.ShapeGeometry(shape);const p=geo.getAttribute('position'),uv=geo.getAttribute('uv');for(let i=0;i<p.count;i++)uv.setXY(i,(p.getX(i)-x0)/(x1-x0),(-p.getY(i)-z0)/(z1-z0));geo.rotateX(-Math.PI/2);mesh.geometry=geo;mesh.scale.set(1,1,1);mesh.position.set(0,-.19,0);mesh.rotation.set(0,0,0);}
  return{root,homes,seats,at,heightAt,blocks,update,world,local,treesReady,cutGround,close:closePanel,get panelOpen(){return !!panelHome},nearestSeat(x,z,max=2.6){let best=null;for(const s of seats){const d=Math.hypot(s.x-x,s.z-z);if(d<max){max=d;best=s;}}return best;},clampCamera(p,x,z){const h=at(x,z);if(!h)return;const q=local(h,p.x,p.z);q.x=THREE.MathUtils.clamp(q.x,-21.3,21.3);q.z=THREE.MathUtils.clamp(q.z,-12.2,12.2);const w=world(h,q.x,q.z);p.x=w.x;p.z=w.z;p.y=THREE.MathUtils.clamp(p.y,1.8,4.5);}};
 }
+

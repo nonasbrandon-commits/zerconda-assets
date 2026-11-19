@@ -1,4 +1,5 @@
-import {createRealtySign} from './property-signs.js?v=20261118-realty-v105';
+import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-residential-v130';
+import {createRealtySign} from './property-signs.js?v=20261119-residential-v130';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
@@ -57,8 +58,8 @@ export function addWaterfrontHomes(scene,{count=12,getPlayer=()=>({x:0,z:0}),can
   door('bathroom',-.6,-2.6,1.0,'x');door('bedroom',-.6,1.5,1.0,'x');box(g,4.4,3.15,.15,-2.8,1.775,-.55,wall);
   function obstacle(x,z,w,d){h.colliders.push({x,z,w,d});}function furniture(w,hh,d,x,y,z,m){box(g,w,hh,d,x,y,z,m);obstacle(x,z,w,d);}
   // Headboard rests against the west wall, leaving the bedroom window unobstructed.
-  furniture(3.3,.42,2.0,-3.0,.48,2.6,wood);box(g,3.25,.24,1.95,-3,.81,2.6,bedlinen);box(g,2.45,.08,1.96,-2.65,.96,2.6,fabric);box(g,.15,1.20,2.2,-4.72,.83,2.6,wood);for(const z of [2.1,3.1])box(g,.55,.17,.70,-4.05,1.0,z,bedlinen);furniture(.75,.7,.7,-4.38,.55,.65,wood);
-  furniture(1.2,.85,1.0,-3.9,.625,-4.5,wood);box(g,1.25,.08,1.05,-3.9,1.09,-4.5,ceramic);box(g,.75,1,.04,-3.9,1.95,-5.36,glass);furniture(.65,.55,1,-3.9,.48,-1.5,ceramic);box(g,.65,.6,.2,-3.9,.93,-1.05,ceramic);furniture(1.2,.07,1.3,-1.4,.24,-4.6,ceramic);pane(g,1.25,1.8,-2.05,1.2,-4.6,Math.PI/2);
+  createDetailedBed(g,{x:-3,y:.2,z:2.6,angle:Math.PI/2,width:1.8,length:3.0,compact:true});obstacle(-3,2.6,3.3,2);
+  const bath=createDetailedBathroom(g,{x:-2.8,y:.2,z:-3.0,width:4.35,depth:4.65,tub:false,wallWindows:{back:[{x:-1.1,y:1.6,w:1.8,h:1.8}]}});h.colliders.push(...bath.solids);
   // Identical starter kitchen, dining and lounge furniture in every cottage.
   furniture(1.1,1.9,.95,4.1,1.15,-4.6,ceramic);furniture(.75,.85,2.8,4.4,.625,-2.7,wood);box(g,.8,.08,2.85,4.4,1.09,-2.7,counter);box(g,.55,.04,.8,4.4,1.15,-3.45,iron);for(const x of [4.22,4.57])for(const z of [-2.25,-1.9]){const b=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.025,14),iron);b.position.set(x,1.15,z);g.add(b);}
   // Compact dining nook against the kitchen-side wall, outside the entry route.
@@ -97,3 +98,4 @@ export function addWaterfrontHomes(scene,{count=12,getPlayer=()=>({x:0,z:0}),can
  function clampCamera(p,player){const h=homeAt(player.x,player.z);if(!h)return;p.x=THREE.MathUtils.clamp(p.x,h.x-4.65,h.x+4.65);p.z=THREE.MathUtils.clamp(p.z,h.z-5.1,h.z+5.1);p.y=THREE.MathUtils.clamp(p.y,1.5,3.05);const lx=player.x-h.x,lz=player.z-h.z;if(lx<-.95){p.x=Math.min(p.x,h.x-.95);p.z=lz<-.55?Math.min(p.z,h.z-.9):Math.max(p.z,h.z-.2);}else if(p.x<h.x-.25)p.x=h.x-.25;}
  return {root,homes:homes.length,homesList:homes,blocks,heightAt,homeAt,update,clampCamera,claim,showPanel,get owned(){return owned},get panelOpen(){return panel.style.display!=='none'},nearestSeat(x,z,max=2.3){let best=null;for(const s of seats){const d=Math.hypot(x-s.x,z-s.z);if(d<max){max=d;best=s;}}return best;}};
 }
+

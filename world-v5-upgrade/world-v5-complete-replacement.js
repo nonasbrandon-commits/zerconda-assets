@@ -7,7 +7,7 @@ import {createMouseVehicleSteering} from './mouse-vehicle-steering.js?v=20261119
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import {createRenderBudget} from './render-budget.js?v=20261118-startup-v114';
 import {createClothedPlayer} from './clothed-player.js';
-import {createZercondaMuseum} from './zerconda-museum.js?v=20261119-level-ground-v117';
+import {createZercondaMuseum} from './zerconda-museum.js?v=20261119-residential-v130';
 import {installAvatarTattoos} from './avatar-tattoos.js?v=20261118-clear-roads-v112';
 import {createZTattoo} from './z-tattoo.js?v=20261119-entrance-steering-v118';
 import {treeBoundsOverlapRoad} from './tree-road-clearance.js?v=20261118-clear-roads-v112';
@@ -25,14 +25,14 @@ import {createTownObstacles} from './town-obstacles.js?v=20261118-visible-trails
 import {createSeasideCarnival} from './seaside-carnival.js?v=20261119-reference-trucks-v126';
 import {createRVPark} from './rv-park.js?v=20261119-rv-junction-v128';
 import {createModernPickup} from './modern-pickup.js?v=20261118-visible-trails-v100';
-import {createLuxuryVillas} from './luxury-villas.js?v=20261119-level-ground-v117';
+import {createLuxuryVillas} from './luxury-villas.js?v=20261119-residential-v130';
 import {createStyleCuts} from './style-cuts.js?v=20261119-showroom-gallery-v127';
 import {createBusinessCentre} from './business-centre.js?v=20261119-entrance-steering-v118';
 import {createSkatePark} from './skate-park.js?v=20261119-entrance-steering-v118';
 import {createAirfield} from './airfield.js?v=20261118-wall-mystery-v111';
 import * as THREE from 'three';
 import {createForestCampground} from './forest-campground.js?v=20261119-rv-junction-v128';
-import {createPremierHomes} from './premier-homes.js?v=20261118-realty-v105';
+import {createPremierHomes} from './premier-homes.js?v=20261119-residential-v130';
 import {createZercondaNews} from './zerconda-news.js?v=20261119-entrance-steering-v118';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261119-entrance-steering-v118';
 import {createBowlingAlley} from './bowling-alley.js?v=20261119-entrance-steering-v118';
@@ -45,13 +45,13 @@ import {createRealisticHuman} from './realistic-human.js?v=20261118-faster-town-
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import {installRealisticFountain} from './realistic-fountain.js?v=20261119-level-ground-v117';
+import {installRealisticFountain} from './realistic-fountain.js?v=20261119-residential-v130';
 import {createObservationNeedle} from './observation-needle.js?v=20261118-z-needle-v107';
 import {createCloudSky} from './cloud-sky.js';
 import {addCityDepth} from './city-depth-assets.js?v=20261118-wall-mystery-v111';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js?v=20261119-coffee-stone-v123';
-import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261119-level-ground-v117';
+import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261119-residential-v130';
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261117-interiors-v1';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261118-wall-mystery-v111';
@@ -59,14 +59,14 @@ import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261118-wall-mystery-v111';
 import {createCityMap} from './top-city-map.js?v=20261119-z-fortune-v122';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
-import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261119-cottage-space-v125';
-import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261119-home-repair-v129';
+import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261119-residential-v130';
+import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261119-residential-v130';
 import {createPedestrians} from './animated-pedestrians.js?v=20261118-faster-town-v106';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118-visible-trails-v100';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-ground-v117';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-19-home-repair-v129';
+const ZERCONDA_BUILD='2026-11-19-residential-v130';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -1287,7 +1287,7 @@ function animate(){
  observationNeedle.updateCamera(camera);
  carnival.updateCamera(camera);
  courtGames?.updateCamera(camera);
- try{if(!tattooShop?.panelOpen){renderBudget.update(motionDt);renderer.render(scene,camera);if(!paintedFrame){paintedFrame=true;window.dispatchEvent(new Event('zerconda-frame'));}}}
+ try{if(!tattooShop?.panelOpen){renderBudget.update(motionDt);ownableHomes?.renderWindows(renderer,camera);renderer.render(scene,camera);if(!paintedFrame){paintedFrame=true;window.dispatchEvent(new Event('zerconda-frame'));}}}
  catch(err){renderFailure=String(err);console.error('ZERCONDA RENDER ERROR',err);if(!paintedFrame){townEntered=false;window.dispatchEvent(new CustomEvent('zerconda-load-failed',{detail:'The graphics could not start. Please retry.'}));}}
  finally{if(activeCar)activeCar.group.visible=true;}
  const nearHome=!boutique.active&&!bowling.active&&!scooters.riding&&!skate?.riding&&!activeCar?ownableHomes.closest(player.x,player.z,11):null;

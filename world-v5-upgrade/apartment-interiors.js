@@ -1,5 +1,6 @@
+import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-residential-v130';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
-import {createRealtySign,createApartmentNameplate} from './property-signs.js?v=20261118-realty-v105';
+import {createRealtySign,createApartmentNameplate} from './property-signs.js?v=20261119-residential-v130';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
@@ -20,7 +21,7 @@ export function createApartmentExterior(scene,b){const g=new THREE.Group();g.nam
  for(const o of [...g.children])if(o.isMesh&&o.geometry.parameters?.width===b.w+.35){g.remove(o);o.geometry.dispose();for(const z of [-b.d/2,b.d/2])box(b.w+.35,.14,.25,0,o.position.y,z,trim);for(const x of [-b.w/2,b.w/2])box(.25,.14,b.d, x,o.position.y,0,trim);}
  const h=levels*3.55+.25;box(b.w+.5,.22,b.d+.5,0,h,0,roof);box(3.6,.18,1.6,0,3.15,b.d/2+.55,roof);for(const x of [-1.43,1.43])box(.12,2.9,.18,x,1.63,b.d/2+.1,wood);box(.07,2.7,.14,0,1.53,b.d/2+.2,wood);for(const x of [-.12,.12])box(.045,.5,.13,x,1.4,b.d/2+.24,wood);
  const end=Math.abs(b.z-b.street)-14,begin=b.d/2;box(3.6,.18,1.7,0,GROUND_LEVEL-.09,begin+.7,stone);const len=end-begin-1.4,path=box(3.4,.14,len,0,GROUND_LEVEL-.07,(end+begin+1.4)/2,stone);b.approachEnd=end;
- createApartmentNameplate(g,{z:b.d/2+.13});b.realEstateSign=createRealtySign(g,{x:-6,y:-.10,z:end-2.2});
+ createApartmentNameplate(g,{y:3.9,z:b.d/2+.13,height:.9});b.realEstateSign=createRealtySign(g,{x:-6,y:-.10,z:end-2.2});
 
  if(frameDetails.length){const frame=new THREE.Mesh(mergeGeometries(frameDetails,false),sash);frame.name='Apartment window sash and gaskets';g.add(frame);frameDetails.forEach(geo=>geo.dispose());}
  b.entry=apartmentPoint(b,0,b.d/2+2.1);b.door=apartmentPoint(b,0,b.d/2+.24);b.approachHeight=(x,z)=>{const dx=x-b.x,dz=z-b.z,lx=Math.cos(b.angle)*dx-Math.sin(b.angle)*dz,lz=Math.sin(b.angle)*dx+Math.cos(b.angle)*dz;return Math.abs(lx)<1.8&&lz>b.d/2&&lz<end+.1?GROUND_LEVEL:null;};return g;
@@ -71,9 +72,9 @@ export function createApartmentExperience({scene,getPlayer=()=>({x:0,z:0}),onTel
   partition(-3.3,-1.7,3.4,.15);partition(-1.6,-4.9,.15,1.2);partition(-1.6,-2.0,.15,.6);box(unit,.15,.45,1.9,-1.6,3.055,-3.45,wall);door('bathroom',-1.6,-3.45,1.9);
   function furniture(w,h,d,x,y,z,m){box(unit,w,h,d,x,y,z,m);const gap=y-h/2;if(gap>.035)for(const sx of [-1,1])for(const sz of [-1,1])box(unit,.065,gap,.065,x+sx*Math.max(.1,w/2-.13),gap/2,z+sz*Math.max(.1,d/2-.13),wood);obstacles.push({x,z,w,d});}
   // Bedroom: headboard rests on a solid partition, not across a window.
-  furniture(1.9,.4,2.7,3.15,.28,1.0,wood);box(unit,1.84,.25,2.6,3.15,.61,1.0,linen);box(unit,1.85,.07,2.0,3.15,.77,1.3,fabric);box(unit,2.1,1.2,.13,3.15,.6,-.48,wood);for(const x of [2.7,3.6])box(unit,.68,.14,.46,x,.83,.0,linen);furniture(.55,.6,.55,4.35,.3,-.13,wood);furniture(.6,2.2,2.2,.78,1.1,.55,wood);
+  createDetailedBed(unit,{x:3.15,z:1,width:1.75,length:2.6,compact:true});obstacles.push({x:3.15,z:1,w:1.9,d:2.7},{x:4.35,z:-.13,w:.55,d:.55});furniture(.6,2.2,2.2,.78,1.1,.55,wood);
   // Large bath: enclosed shower, vanity and toilet with a clear central route.
-  box(unit,3.2,.025,3.65,-3.3,.0125,-3.6,tile);furniture(1.35,.06,1.5,-4.1,.05,-4.5,tile);box(unit,.04,2.3,1.5,-3.38,1.2,-4.5,glass);furniture(.65,.56,.95,-4.1,.28,-2.4,linen);box(unit,.65,.65,.15,-4.1,.8,-1.97,linen);furniture(1.05,.85,.65,-2.2,.425,-4.9,wood);box(unit,1.10,.08,.7,-2.2,.89,-4.9,linen);
+  const bathroom=createDetailedBathroom(unit,{x:-3.3,z:-3.6,width:3.2,depth:3.65,tub:false});obstacles.push(...bathroom.solids);
   // Open kitchen and dining, with circulation around rather than through furniture.
   furniture(4.1,.85,.65,1.4,.425,-5.05,wood);box(unit,4.15,.08,.7,1.4,.89,-5.05,tile);box(unit,.8,.03,.5,.1,.95,-5.05,metal);for(const x of [2.4,2.75])for(const z of [-5.22,-4.9]){const o=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.02,16),metal);o.position.set(x,.95,z);unit.add(o);}furniture(.85,1.95,.85,4.35,.975,-4.88,linen);furniture(1.7,.09,1.0,2.5,.83,-2.75,wood);for(const [x,z]of [[1.25,-2.75],[3.75,-2.75],[2.5,-1.9]]){furniture(.55,.1,.55,x,.49,z,fabric);box(unit,.55,.65,.07,x,.8,z+.22,wood);}
   furniture(3.1,.35,.95,-2.1,.35,2.55,wood);box(unit,3.1,.65,.18,-2.1,.85,2.12,fabric);box(unit,2.85,.18,.86,-2.1,.65,2.55,fabric);for(const x of [-3.55,-.65])box(unit,.22,.4,.95,x,.8,2.55,fabric);furniture(1.7,.10,.65,-2.1,.48,4.1,wood);

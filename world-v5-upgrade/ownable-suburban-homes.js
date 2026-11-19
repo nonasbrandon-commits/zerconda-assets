@@ -1,9 +1,10 @@
+import {createHomeWindowViews} from './home-window-views.js?v=20261119-residential-v130';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
-import {createRealtySign} from './property-signs.js?v=20261118-realty-v105';
+import {createRealtySign} from './property-signs.js?v=20261119-residential-v130';
 import * as THREE from 'three';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {createHomeInterior} from './home-interior.js?v=20261119-home-repair-v129';
+import {createHomeInterior} from './home-interior.js?v=20261119-residential-v130';
 // Stable home IDs retain existing browser ownership. No account or currency is implied.
 export function createOwnableHomes(scene){
  const root=new THREE.Group();root.name='Western fenced residential neighborhood';root.userData.customInterior=true;scene.add(root);
@@ -15,7 +16,7 @@ export function createOwnableHomes(scene){
  function shingles(){const c=document.createElement('canvas');c.width=c.height=512;const ctx=c.getContext('2d');ctx.fillStyle='#4d5150';ctx.fillRect(0,0,512,512);let n=47;const rand=()=>((n=(Math.imul(n,1664525)+1013904223)>>>0)/4294967296);for(let i=0;i<60000;i++){const v=53+rand()*51;ctx.fillStyle=`rgba(${v},${v+2},${v+1},.45)`;ctx.fillRect(rand()*512,rand()*512,1,1);}for(let row=0;row<16;row++){const y=row*32;ctx.fillStyle='#22292b';ctx.fillRect(0,y,512,2);for(let x=-32;x<512;x+=64){ctx.fillStyle='#343a3b';ctx.fillRect(x+(row%2)*32,y,1,32);}}const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(2,4);return t;}const roof=m(0x9d9f99);roof.map=shingles();
  const defaults={wall:'#e7e2d8',fabric:'#75877d',wood:'#795c40',sofa:'standard',dining:'standard',bed:'standard'};
  const key='zerconda-v5-demo-home';let owned=null;try{const saved=JSON.parse(localStorage.getItem(key)||'null');if(Number.isInteger(saved?.id)&&saved.id>=1&&saved.id<=20)owned={...saved,username:String(saved.username||'Resident').slice(0,24),exterior:colors[(Number(saved.color)||0)%colors.length],config:{...defaults,...saved.config}};if(saved?.exterior&&/^#[0-9a-f]{6}$/i.test(saved.exterior))owned.exterior=saved.exterior;}catch{}
- const homes=[],interior=createHomeInterior(scene);let active=null;const originals=new Map();
+ const homes=[],interior=createHomeInterior(scene);let active=null;const originals=new Map();const windowViews=createHomeWindowViews(scene,interior,originals);
  function box(g,w,h,d,x,y,z,material){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);o.position.set(x,y,z);o.castShadow=h>.18;o.receiveShadow=true;g.add(o);return o;}
  function world(home,lx,lz){return {x:home.x+Math.cos(home.angle)*lx+Math.sin(home.angle)*lz,z:home.z-Math.sin(home.angle)*lx+Math.cos(home.angle)*lz};}
  function local(home,wx,wz){const dx=wx-home.x,dz=wz-home.z;return {x:Math.cos(home.angle)*dx-Math.sin(home.angle)*dz,z:Math.sin(home.angle)*dx+Math.cos(home.angle)*dz};}
@@ -81,5 +82,5 @@ export function createOwnableHomes(scene){
  function inLot(x,z){return homes.some(h=>{const p=local(h,x,z);return Math.abs(p.x)<13&&p.z> -19&&p.z<15;});}
  function heightAt(x,z){if(active)return interior.heightAt(x,z);for(const h of homes){const p=local(h,x,z);if(Math.abs(p.x-3.5)<1.7&&p.z> -10.1&&p.z< -7.7)return .14;if(p.z>=-18.2&&p.z<=-7.7&&(Math.abs(p.x+3.75)<3.0||Math.abs(p.x-3.5)<1.2))return GROUND_LEVEL;}if(inLot(x,z))return GROUND_LEVEL;return null;}
  function update(dt,player){if(active){interior.update(player.x,player.z,dt);active.garageOpen=interior.garageOpen;for(const obj of scene.children)if(obj!==interior.root&&!obj.isLight&&!/avatar|player/i.test(obj.name)){if(!originals.has(obj))originals.set(obj,obj.visible);obj.visible=false;}}for(const h of homes){h.overhead.rotation.x=THREE.MathUtils.damp(h.overhead.rotation.x,h.garageOpen?-Math.PI/2:0,7,dt);h.garageAction.style.display=!active&&Math.hypot(player.x-h.garageEntry.x,player.z-h.garageEntry.z)<3.7?'block':'none';const near=!active&&Math.hypot(player.x-h.entry.x,player.z-h.entry.z)<3.5;h.hinge.rotation.y=THREE.MathUtils.damp(h.hinge.rotation.y,near?-1.25:0,5,dt);}}
- return {root,homes,closest,nearEntrance,buy,decorate:customize,customize,enter,exit,update,blocks,isApproach,inLot,heightAt,contains:interior.contains,clampCamera:interior.clampCamera,nearestSeat:interior.nearestSeat,interior,get active(){return active},get owned(){return owned},get panelOpen(){return panel.style.display!=='none'||interior.panelOpen},change};
+ return {root,homes,windowViews,renderWindows:(renderer,camera)=>windowViews.render(renderer,camera,active),closest,nearEntrance,buy,decorate:customize,customize,enter,exit,update,blocks,isApproach,inLot,heightAt,contains:interior.contains,clampCamera:interior.clampCamera,nearestSeat:interior.nearestSeat,interior,get active(){return active},get owned(){return owned},get panelOpen(){return panel.style.display!=='none'||interior.panelOpen},change};
 }

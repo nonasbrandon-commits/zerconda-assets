@@ -1,4 +1,5 @@
-import {createRealtySign} from './property-signs.js?v=20261118-realty-v105';
+import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-residential-v130';
+import {createRealtySign} from './property-signs.js?v=20261119-residential-v130';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
@@ -30,7 +31,7 @@ export function createPremierHomes(scene,{getPlayer,canInteract=()=>true,onMessa
   // Open-plan ground floor: large lounge, kitchen island and dining space.
   furnishing(4.4,.4,1.4,-4.4,.42,3.4,wood,0);box(g,4.4,.75,.22,-4.4,.9,2.8,fabric);box(g,4.0,.2,1.25,-4.4,.76,3.4,fabric);furnishing(2.6,.1,1.0,-4.4,.55,5.6,wood,0);furnishing(4.8,.9,.8,-5.5,.61,-8.25,wood,0);box(g,4.9,.08,.85,-5.5,1.10,-8.25,stone);furnishing(3.0,.9,1.3,-5.5,.61,-5,wood,0);box(g,3.1,.08,1.4,-5.5,1.10,-5,stone);furnishing(1.1,2.1,1.0,-8.3,1.2,-8.1,white,0);furnishing(2.5,.12,1.5,.5,.95,-5.3,wood,0);for(const px of [-1.2,2.2])for(const pz of [-6,-4.6]){furnishing(.6,.12,.6,px,.65,pz,fabric,0);box(g,.6,.65,.1,px,1.0,pz+.22,wood);}
   // Spacious upstairs master suite, bath and lounge. Headboard on a solid interior wall.
-  box(g,11,.16,.16,-3.9,3.68,-3,white);box(g,.16,3.2,8,-1.0,5.2,-5,white);box(g,8,.16,.16,-5.0,3.68,-3,white);box(g,8,3.2,.16,-5.0,5.2,-3,white);furnishing(2.2,.5,2.9,-5.8,3.99,-1.4,wood,1);box(g,2.1,.30,2.8,-5.8,4.39,-1.4,linen);box(g,2.15,.09,2.1,-5.8,4.59,-1.1,fabric);box(g,2.5,1.3,.15,-5.8,4.25,-3.0,wood);for(const px of [-6.3,-5.3])box(g,.75,.18,.5,px,4.64,-2.35,linen);furnishing(.8,.65,.8,-7.5,4.1,-2.5,wood,1);furnishing(2.0,.9,.7,-5.9,4.2,-8.2,wood,1);box(g,2.1,.08,.75,-5.9,4.7,-8.2,white);furnishing(1.0,.6,1.3,-8.1,4.05,-4.6,white,1);furnishing(1.7,.08,1.8,-3,3.7,-7,stone,1);box(g,.04,2.5,1.8,-2.1,4.9,-7,glass);furnishing(3.4,.4,1.2,2.3,3.97,5.9,wood,1);box(g,3.4,.6,.18,2.3,4.45,5.35,fabric);box(g,3.1,.2,1.1,2.3,4.29,5.9,fabric);
+  box(g,11,.16,.16,-3.9,3.68,-3,white);box(g,.16,3.2,8,-1.0,5.2,-5,white);box(g,8,.16,.16,-5.0,3.68,-3,white);box(g,8,3.2,.16,-5.0,5.2,-3,white);createDetailedBed(g,{x:-5.8,y:3.6,z:-1.4,width:2.1,length:2.8});h.parts.push({x:-5.8,z:-1.4,w:2.3,d:2.9,f:1});const bath=createDetailedBathroom(g,{x:-5.45,y:3.6,z:-6.0,width:8.6,depth:5.7,rightWallOffset:.07,wallWindows:{back:[{x:-1.85,y:1.7,w:4.5,h:2.7},{x:3.2,y:1.7,w:4.2,h:2.7}],left:[{x:0,y:1.7,w:5.4,h:2.7}]}});for(const o of bath.solids)h.parts.push({...o,f:1});furnishing(3.4,.4,1.2,2.3,3.97,5.9,wood,1);box(g,3.4,.6,.18,2.3,4.45,5.35,fabric);box(g,3.1,.2,1.1,2.3,4.29,5.9,fabric);
   function door(id,px,pz,width,f=0,axis='z'){const pivot=new THREE.Group();pivot.position.set(axis==='z'?px-width/2:px,.16+f*3.6,axis==='x'?pz+width/2:pz);g.add(pivot);box(pivot,width,2.9,.10,width/2,1.45,0,axis==='z'?glass:wood);for(const xx of [0,width])box(pivot,.07,2.9,.14,xx,1.45,0,dark);box(pivot,.04,.35,.12,width-.15,1.3,.1,gold);const d={id,x:px,z:pz,width,f,axis,pivot,open:false};h.doors.push(d);pivot.rotation.y=axis==='x'?Math.PI/2:0;action(h,id,()=>`${d.open?'Close':'Open'} ${id} door`,{x:px,z:pz,f},()=>{d.open=!d.open;});}
   // Separate front/back entries, upstairs suite door and opening balcony doors.
   door('front',0,9,2.3);door('garden',0,-9,2.3);door('balcony',-2.5,9,2.1,1);door('suite',-1.0,1.6,2.0,1,'x');door('bathroom',-2.7,-3,1.8,1);
@@ -54,3 +55,4 @@ export function createPremierHomes(scene,{getPlayer,canInteract=()=>true,onMessa
  function clampCamera(camera,x,z){const h=at(x,z);if(!h)return;camera.x=THREE.MathUtils.clamp(camera.x,h.x-9.4,h.x+9.4);camera.z=THREE.MathUtils.clamp(camera.z,h.z-8.4,h.z+8.4);const feet=heightAt(x,z)??.16;camera.y=THREE.MathUtils.clamp(camera.y,feet+1.45,feet+3.2);}
  return {root,homes,at,heightAt,blocks,update,clampCamera,get owned(){return owned}};
 }
+
