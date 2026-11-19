@@ -65,7 +65,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-ground-v117';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-19-coffee-stone-v123';
+const ZERCONDA_BUILD='2026-11-19-showroom-v124';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -521,8 +521,8 @@ const dealership={
  x:-31,z:-48,insidePoint:{x:-31,z:-57},exitPoint:{x:-31,z:-64},inside:()=>false,blocks:()=>false,isNear:(x,z,r=5.5)=>Math.hypot(x+31,z+62)<r,
  nearestCar:()=>null
 };
-import('./zerconda-dealership.js?v=20261119-z-fortune-v122')
- .then(({createDealership})=>Object.assign(dealership,createDealership(scene,{x:-31,z:-48,rotation:Math.PI/2})))
+import('./zerconda-dealership.js?v=20261119-showroom-v124')
+ .then(({createDealership})=>Object.assign(dealership,createDealership(scene,{x:-31,z:-48,rotation:Math.PI/2,getPlayer:()=>player})))
  .catch(err=>{console.error('Dealership asset failed (city continues):',err);
    if(status)status.textContent='City loaded; dealership asset unavailable: '+err.message;
  });
@@ -1123,7 +1123,7 @@ function animate(){
  requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;let walkingDistance=0;
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
  if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
- airDancers.update(elapsed);coffeeShop.update(motionDt);zFortune?.update(motionDt);
+ airDancers.update(elapsed);dealership.update?.(motionDt);coffeeShop.update(motionDt);zFortune?.update(motionDt);
  forestShade=THREE.MathUtils.damp(forestShade,northernForest?.atmosphereAt(player.x,player.z)??0,1.4,motionDt);hemisphere.intensity=THREE.MathUtils.lerp(1.3,.72,forestShade);sun.intensity=THREE.MathUtils.lerp(2.8,1.35,forestShade);scene.fog.color.copy(daylightFog).lerp(forestFog,forestShade);scene.fog.density=THREE.MathUtils.lerp(.00055,.0020,forestShade);
  militaryBase?.update(motionDt);
  observationNeedle.update(dt);

@@ -1,10 +1,11 @@
+import {createShowroomVehicle} from './showroom-vehicles.js?v=20261119-showroom-v124';
+import {addShowroomSales} from './showroom-sales.js?v=20261119-showroom-v124';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
-import {createModernPickup} from './modern-pickup.js?v=20261117-needle-lounge-v90';
 import * as THREE from 'three';
 import {createDetailedCar} from './detailed-fictional-cars.js?v=20261117-commerce-restore-v69';
 import {createNaturalShrub} from './realistic-landscape-assets.js?v=20261117-commerce-restore-v69';
-// Zerconda Motors: original interactive 3D showroom with three fictional unbranded cars.
-export function createDealership(scene,{x=-31,z=-48,rotation=0}={}){
+// Zerconda Motors: two detailed display cars and staffed sales consultation desks.
+export function createDealership(scene,{x=-31,z=-48,rotation=0,getPlayer=()=>null}={}){
  const root=new THREE.Group();root.position.set(x,0,z);root.rotation.y=rotation;root.name='Zerconda Motors - walk-in dealership';root.userData.customInterior=true;scene.add(root);
  const cosine=Math.cos(rotation),sine=Math.sin(rotation);
  const world=(px,pz)=>({x:x+px*cosine+pz*sine,z:z-px*sine+pz*cosine});
@@ -85,22 +86,15 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0}={}){
   const plant=createNaturalShrub({width:1.55,height:1.35,seed:300+Math.round(zz*5)});
   plant.position.set(16.1,.8,zz);root.add(plant);
  }
- // Three cars, each a distinctly styled fictional model (no real logos).
- const cars=[];const worldZ=z;
- function car({name,color,z,type='sedan'}){
-  const vehicle=createDetailedCar({color,type});vehicle.position.set(-2.5,.12,z);vehicle.rotation.y=-Math.PI/2;root.add(vehicle);
-  const podium=new THREE.Mesh(new THREE.CylinderGeometry(3.15,3.15,.12,64),mat(0x939da3,.35,.25));podium.position.set(-2.5,.03,z);root.add(podium);
-  const placard=box(root,1.7,.72,.11,2.5,.74,z,steel);
-  cars.push({name,position:world(-2.5,z)});
- }
- car({name:'Zerconda City Sedan',color:0xbec6cc,z:-8,type:'sedan'});
- car({name:'Zerconda Sport Coupe',color:0x155f9f,z:0,type:'coupe'});
- car({name:'Zerconda Touring SUV',color:0x9b2733,z:8,type:'suv'});
- const pickup=createModernPickup({color:0x7b9fa9});pickup.position.set(5.2,.03,-8);pickup.rotation.y=-Math.PI/2;root.add(pickup);cars.push({name:'Zerconda Horizon Pickup',position:world(5.2,-8),type:'pickup'});
-
+ // Two full-sized premium display cars; the central entry aisle remains open.
+ const cars=[],displaySolids=[];
+ for(const [name,type,color,z]of[['Zerconda Vela GT','coupe','#8d1631',-6.5],['Zerconda Atlas Touring','suv','#547584',6.5]]){
+ const vehicle=createShowroomVehicle({type,color});vehicle.position.set(1,.08,z);vehicle.rotation.y=-Math.PI/2;root.add(vehicle);
+ const podium=new THREE.Mesh(new THREE.CylinderGeometry(3.25,3.25,.08,64),mat(0xaeb2b1,.32,.2));podium.position.set(1,.04,z);podium.name=name+' display plinth';root.add(podium);
+ cars.push({name,position:world(1,z),model:vehicle});displaySolids.push({x:1,z,w:5.2,d:2.3});
+ const placard=box(root,.08,.70,1.0,4.1,.66,z,steel);const cv=document.createElement('canvas');cv.width=768;cv.height=320;const c=cv.getContext('2d');c.fillStyle='#1e3541';c.fillRect(0,0,768,320);c.fillStyle='#f2eadc';c.textAlign='center';c.font='bold 50px Arial';c.fillText(name,384,110,710);c.fillStyle='#8ccbd8';c.font='32px Arial';c.fillText(type==='coupe'?'GRAND TOURING COUPE':'PREMIUM CROSSOVER',384,190);c.font='25px Arial';c.fillText('Speak with a sales consultant',384,260);const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;const face=new THREE.Mesh(new THREE.PlaneGeometry(1.45,.60),new THREE.MeshBasicMaterial({map:tex}));face.rotation.y=Math.PI/2;face.position.set(4.15,.70,z);root.add(face);}
+ const sales=addShowroomSales(root);
  // Reception, lounge, illuminated ceiling fixtures, offices and showroom plants.
- box(root,5,1.15,1.6,-8, .6,0,wood);box(root,5.4,.16,1.85,-8,1.25,0,white);
- for(const zz of [-10,10]){box(root,2.6,.65,1.25,-8,.45,zz,mat(0x526779));box(root,2.6,.7,.24,-8,.96,zz-.65,mat(0x526779));box(root,1.4,.38,1.1,-5.2,.4,zz,wood);}
  for(const zz of [-9,0,9]){const light=new THREE.PointLight(0xf1f6ff,2.1,14);light.position.set(0,7.8,zz);root.add(light);box(root,1.6,.08,5.4,0,8.25,zz,new THREE.MeshBasicMaterial({color:0xe8f5ff}));}
  // Level stone forecourt with painted parking bays and landscape islands.
  const asphalt=mat(0xb8b9b3,.85),stripe=mat(0xe8e7df,.8),curb=mat(0xbfc4c3,.9);
@@ -119,10 +113,11 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0}={}){
  // Exterior road-facing banner.
  const banner=box(root,.2,4.5,1.5,15,2.35,12.7,steel);
  const entrance=world(14,0),insidePoint=world(9,0),exitPoint=world(16,0);
- return {root,x,z,cars,entrance,insidePoint,exitPoint,
+ return {root,x,z,cars,sales,entrance,insidePoint,exitPoint,
+ update(dt){const p=getPlayer();sales.update(dt,!!p&&Math.hypot(p.x-x,p.z-z)<55);},
  isNear(px,pz,r=4.5){return Math.hypot(px-entrance.x,pz-entrance.z)<r;},
  blocks(px,pz){const p=local(px,pz);return Math.abs(p.z)<14.5&&p.x>-12.5&&p.x<12.6;},
- inside(px,pz){const p=local(px,pz);return p.x>-11.4&&p.x<11.7&&Math.abs(p.z)<13.6;},
+ inside(px,pz){const p=local(px,pz);return p.x>-11.4&&p.x<11.7&&Math.abs(p.z)<13.6&&![...displaySolids,...sales.solids].some(s=>Math.abs(p.x-s.x)<s.w/2+.28&&Math.abs(p.z-s.z)<s.d/2+.28);},
  nearestCar(px,pz,max=4.5){let best=null,d=max;for(const c of cars){const dist=Math.hypot(px-c.position.x,pz-c.position.z);if(dist<d){d=dist;best=c;}}return best;}};
 }
 
