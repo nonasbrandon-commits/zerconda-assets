@@ -44,6 +44,7 @@ export function createHomeInterior(scene){
  for(let i=0;i<18;i++)box(2,(i+1)*3.2/18,.30,-6,(i+1)*3.2/36,.65+i*.30,wood);
  // Close the back and underside of the landing, tight against the west wall.
  box(2,3.0,1.8,-6,1.5,6.8,wall);block(-6,6.8,2,1.8,0,'stair base');box(.03,3.0,7.2,-7.005,1.5,4.1,wall);
+ for(const [x,w,h]of[[-3.75,5.8,2.8],[3.5,2.3,2.6]]){const view=box(w,h,.012,x,h/2,-7.73,new THREE.MeshBasicMaterial({color:'#ffffff'}));view.name=x<0?'Live view through open garage':'Live view through front entrance';view.userData.cameraPassThrough=true;windowPanes.push(view);}
  const rail=box(.07,.07,Math.hypot(5.4,3.2),-4.92,2.65,3.2,wood);rail.rotation.x=-Math.atan2(3.2,5.4);
  for(let i=0;i<18;i++){const z=.65+i*.30,base=(i+1)*3.2/18;box(.045,1.0,.045,-4.92,base+.50,z,metal);}
  const wallRail=box(.065,.065,Math.hypot(5.4,3.2),-6.95,2.65,3.2,wood);wallRail.rotation.x=-Math.atan2(3.2,5.4);

@@ -1,10 +1,11 @@
-import {createHomeWindowViews} from './home-window-views.js?v=20261119-residential-v130';
+import {createPorchPlanter} from './porch-planters.js?v=20261119-porch-planters-v134';
+import {createHomeWindowViews} from './home-window-views.js?v=20261119-porch-planters-v134';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import {createRealtySign} from './property-signs.js?v=20261119-residential-v130';
 import * as THREE from 'three';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {createHomeInterior} from './home-interior.js?v=20261119-clear-mirrors-v133';
+import {createHomeInterior} from './home-interior.js?v=20261119-porch-planters-v134';
 // Stable home IDs retain existing browser ownership. No account or currency is implied.
 export function createOwnableHomes(scene){
  const root=new THREE.Group();root.name='Western fenced residential neighborhood';root.userData.customInterior=true;scene.add(root);
@@ -42,7 +43,7 @@ export function createOwnableHomes(scene){
   box(g,3.35,.44,2.4,3.5,-.08,-8.85,foundation);box(g,2.4,.30,.55,3.5,-.08,-10.27,concrete);box(g,.25,.44,.18,5.25,2.2,-7.88,iron);box(g,.18,.30,.19,5.25,2.2,-8.0,m(0xf3e3bc,.55));
   // Garage panel is separate from the pedestrian entrance.
   const overhead=new THREE.Group();overhead.position.set(-3.75,2.9,-7.84);g.add(overhead);box(overhead,5.55,2.75,.15,0,-1.375,0,garage);for(let i=0;i<6;i++)box(overhead,5.4,.025,.035,0,-2.5+i*.43,-.10,trim);for(let i=0;i<4;i++)box(overhead,1.07,.32,.03,-1.88+i*1.25,-.35,-.11,glass);box(g,6.55,.06,6.8,-3.75,.17,-4.25,foundation);box(g,6.55,2.85,.16,-3.75,1.58,-.8,wall);box(g,.16,2.85,6.8,-.35,1.58,-4.25,wall);box(g,6.55,.12,6.8,-3.75,3.05,-4.25,trim);
-  function window(xx,yy,zz,side=0){const win=new THREE.Group();win.position.set(xx,yy,zz);win.rotation.y=side;g.add(win);box(win,1.8,1.6,.05,0,0,0,glass);for(const sign of [-1,1]){box(win,.09,1.8,.12,sign*.95,0,-.03,trim);box(win,2,.09,.12,0,sign*.85,-.03,trim);}box(win,.055,1.65,.07,0,0,-.065,trim);box(win,1.85,.055,.07,0,0,-.065,trim);box(win,2.1,.10,.26,0,-.94,-.01,foundation);}
+  function window(xx,yy,zz,side=0){const win=new THREE.Group();win.userData.windowViewHideHouse=true;win.position.set(xx,yy,zz);win.rotation.y=side;g.add(win);box(win,1.8,1.6,.05,0,0,0,glass);for(const sign of [-1,1]){box(win,.09,1.8,.12,sign*.95,0,-.03,trim);box(win,2,.09,.12,0,sign*.85,-.03,trim);}box(win,.055,1.65,.07,0,0,-.065,trim);box(win,1.85,.055,.07,0,0,-.065,trim);box(win,2.1,.10,.26,0,-.94,-.01,foundation);}
   for(const xx of [-4.5,-.5,3.7])window(xx,4.95,-7.84);for(const xx of [-3.8,3.8])for(const yy of [1.8,4.95])window(xx,yy,7.82,Math.PI);for(const side of [-1,1])for(const zz of [-3,3.5])for(const yy of [1.8,4.95])if(!(side===-1&&zz===3.5&&yy===1.8))window(side*7.22,yy,zz,side===-1?Math.PI/2:-Math.PI/2);
   // Grounded, gently sloped access surfaces connect directly to the public sidewalk at 14m.
   function approach(cx,width,start,end){const len=end-start,mesh=box(g,width,.34,len,cx,GROUND_LEVEL-.17,(start+end)/2,concrete);return mesh;}approach(-3.75,5.8,-18,-7.75);approach(3.5,2.1,-18,-9.9);
@@ -51,10 +52,10 @@ export function createOwnableHomes(scene){
   function fence(x1,z1,x2,z2,height=1.55){const dx=x2-x1,dz=z2-z1,len=Math.hypot(dx,dz),a=-Math.atan2(dz,dx),n=Math.ceil(len/.18);for(let i=0;i<n;i++){const t=(i+.5)/n;part(len/n-.016,height,.055,x1+dx*t,height/2-.12,z1+dz*t,a);}for(let i=0;i<=Math.ceil(len/2.5);i++){const t=i/Math.ceil(len/2.5);part(.11,height+.12,.11,x1+dx*t,height/2-.06,z1+dz*t);}for(const y of [height*.28-.12,height*.73-.12])part(len,.09,.075,(x1+x2)/2,y,(z1+z2)/2,a);}
   fence(-12,-18,-12,14);fence(12,-18,12,14);fence(-12,14,12,14);for(const [a,b]of [[-12,-6.8],[-.65,2.3],[4.7,12]])fence(a,-18,b,-18,.95);
   const fg=mergeGeometries(fenceParts),fm=new THREE.Mesh(fg,fenceMat);fm.name='Timber privacy fence';fm.receiveShadow=true;g.add(fm);fenceParts.forEach(p=>p.dispose());
-  // Reserved front garden; no bulky decorative bushes across the pedestrian route.
-  const garden=m(0x365139);for(const xx of [-6.4,6.3])for(let i=0;i<3;i++){const plant=new THREE.Mesh(new THREE.SphereGeometry(.25+i*.035,10,7),garden);plant.position.set(xx,.12,-8.5+i*.55);plant.scale.y=.75;g.add(plant);}
+  // Matching cross-braced white planters flank the porch without narrowing the entry.
+  for(const px of[.8,6.2])createPorchPlanter(g,px,-9.2,GROUND_LEVEL);
   // Batch static architecture by material; animated doors stay separate.
-  const batches=new Map();for(const mesh of [...g.children])if(mesh.isMesh){const list=batches.get(mesh.material)||[];mesh.updateMatrix();const geometry=mesh.geometry.clone().applyMatrix4(mesh.matrix);list.push({mesh,geometry:geometry.index?geometry.toNonIndexed():geometry});batches.set(mesh.material,list);g.remove(mesh);}for(const [material,list]of batches){const mesh=new THREE.Mesh(mergeGeometries(list.map(o=>o.geometry)),material);mesh.castShadow=list.some(o=>o.mesh.castShadow);mesh.receiveShadow=true;g.add(mesh);for(const o of list){o.mesh.geometry.dispose();o.geometry.dispose();}}
+  const batches=new Map();for(const mesh of [...g.children])if(mesh.isMesh){const list=batches.get(mesh.material)||[];mesh.updateMatrix();const geometry=mesh.geometry.clone().applyMatrix4(mesh.matrix);list.push({mesh,geometry:geometry.index?geometry.toNonIndexed():geometry});batches.set(mesh.material,list);g.remove(mesh);}for(const [material,list]of batches){const mesh=new THREE.Mesh(mergeGeometries(list.map(o=>o.geometry)),material);mesh.userData.windowViewHideHouse=material!==lawn&&material!==concrete&&material!==fenceMat;mesh.castShadow=list.some(o=>o.mesh.castShadow);mesh.receiveShadow=true;g.add(mesh);for(const o of list){o.mesh.geometry.dispose();o.geometry.dispose();}}
   const home={id,x,z,angle,street,group:g,body:{material:wall},wall,exteriorMaterials:[wall,...gableMaterials],hinge,overhead,garageOpen:false,garageEntry:world({x,z,angle},-3.75,-10.7),garageDoor:world({x,z,angle},-3.75,-7.84),entry:world({x,z,angle},3.5,-10.7),door:world({x,z,angle},3.5,-7.82)};homes.push(home);label(home);const garageAction=document.createElement('button');garageAction.style.display='none';document.body.appendChild(garageAction);garageAction.onclick=()=>{home.garageOpen=!home.garageOpen;};home.garageAction=garageAction;registerTownAction(garageAction,{id:'outside-garage-'+id,priority:115,label:()=>home.garageOpen?'Close garage door':'Open garage door',target:()=>({...home.garageDoor,y:1.5})});
  }
  function save(){try{localStorage.setItem(key,JSON.stringify(owned));return true;}catch{return false;}}
@@ -77,7 +78,7 @@ export function createOwnableHomes(scene){
  function focusInterior(visible){if(visible){for(const obj of scene.children)if(obj!==interior.root&&!obj.isLight&&!/avatar|player/i.test(obj.name)){originals.set(obj,obj.visible);obj.visible=false;}}else{for(const [obj,value]of originals)obj.visible=value;originals.clear();}}
  function enter(home){active=home;interior.show(home,owned?.id===home.id?owned.config:defaults);focusInterior(true);}
  function exit(){if(active)active.garageOpen=interior.garageOpen;panel.style.display='none';interior.hide();focusInterior(false);active=null;}
- function blocks(x,z){if(active)return false;for(const h of homes){const p=local(h,x,z);if(Math.abs(p.x)<7.45&&Math.abs(p.z)<7.95)return true;const side=Math.abs(Math.abs(p.x)-12)<.24&&p.z> -18.2&&p.z<14.2,back=Math.abs(p.z-14)<.24&&Math.abs(p.x)<12.3,front=Math.abs(p.z+18)<.18&&Math.abs(p.x)<12.2&&!(p.x> -6.9&&p.x<-.55)&&!(p.x>2.25&&p.x<4.75);if(side||back||front)return true;}return false;}
+ function blocks(x,z){if(active)return false;for(const h of homes){const p=local(h,x,z);if(Math.abs(p.x)<7.45&&Math.abs(p.z)<7.95)return true;if([.8,6.2].some(px=>Math.abs(p.x-px)<1.05&&Math.abs(p.z+9.2)<.55))return true;const side=Math.abs(Math.abs(p.x)-12)<.24&&p.z> -18.2&&p.z<14.2,back=Math.abs(p.z-14)<.24&&Math.abs(p.x)<12.3,front=Math.abs(p.z+18)<.18&&Math.abs(p.x)<12.2&&!(p.x> -6.9&&p.x<-.55)&&!(p.x>2.25&&p.x<4.75);if(side||back||front)return true;}return false;}
  function isApproach(x,z){return homes.some(h=>{const p=local(h,x,z);return p.z> -23&&p.z< -8&&((Math.abs(p.x+3.75)<3.4)||(Math.abs(p.x-3.5)<1.55));});}
  function inLot(x,z){return homes.some(h=>{const p=local(h,x,z);return Math.abs(p.x)<13&&p.z> -19&&p.z<15;});}
  function heightAt(x,z){if(active)return interior.heightAt(x,z);for(const h of homes){const p=local(h,x,z);if(Math.abs(p.x-3.5)<1.7&&p.z> -10.1&&p.z< -7.7)return .14;if(p.z>=-18.2&&p.z<=-7.7&&(Math.abs(p.x+3.75)<3.0||Math.abs(p.x-3.5)<1.2))return GROUND_LEVEL;}if(inLot(x,z))return GROUND_LEVEL;return null;}
