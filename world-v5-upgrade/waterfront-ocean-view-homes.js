@@ -1,5 +1,5 @@
 import {createFrenchDoorFridge} from './french-door-fridge.js?v=20261119-fridge-v142';
-import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-bathroom-cleanup-v141';
+import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-lamps-v143';
 import {createRealtySign} from './property-signs.js?v=20261119-residential-v130';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
