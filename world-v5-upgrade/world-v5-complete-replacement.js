@@ -58,14 +58,14 @@ import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261118-wall-mystery-v111';
 import {createCityMap} from './top-city-map.js?v=20261119-z-fortune-v122';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
-import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261118-realty-v105';
+import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261119-cottage-space-v125';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261119-level-ground-v117';
 import {createPedestrians} from './animated-pedestrians.js?v=20261118-faster-town-v106';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118-visible-trails-v100';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-ground-v117';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-19-showroom-v124';
+const ZERCONDA_BUILD='2026-11-19-cottage-space-v125';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
