@@ -1,4 +1,4 @@
-import {AREA_DESTINATIONS} from './area-travel.js?v=20261118-museum-v113';
+import {AREA_DESTINATIONS} from './area-travel.js?v=20261119-stone-court-v115';
 import {FOREST_ROUTES} from './northern-forest.js?v=20261118-wall-mystery-v111';
 export function createCityMap({player}){
  document.querySelectorAll('#zerconda-v5-map').forEach(e=>e.remove());const shell=document.createElement('section');shell.id='zerconda-v5-map';shell.className='zerconda-left-map';shell.setAttribute('aria-label','Zerconda map');shell.style.cssText='position:fixed;top:12px;left:12px;z-index:9997;background:#102b3bed;border:1px solid #91adb9;border-radius:12px;padding:8px 10px;color:#f3f1e7;box-shadow:0 4px 20px #0004;font:12px system-ui';
