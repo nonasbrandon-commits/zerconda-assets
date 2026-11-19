@@ -35,11 +35,6 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0}={}){
  box(root,3.4,.25,8,12.5,7.7,0,steel);
  for(const zz of [-12.2,12.2]){box(root,1.1,1,1.1,13,.5,zz,wood);
   const p=createNaturalShrub({width:1.05,height:1.4,seed:83+Math.round(zz*3)});p.position.set(13,.8,zz);root.add(p);}
- // Realistic dealership sign as authored image asset loaded from GitHub.
- const sign=new THREE.Mesh(new THREE.PlaneGeometry(19,3.4),new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide}));
- sign.position.set(12.22,7.15,0);sign.rotation.y=Math.PI/2;root.add(sign);
- const url='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/dealership/zerconda-auto-center-sign.svg';
- new THREE.TextureLoader().load(url,t=>{t.colorSpace=THREE.SRGBColorSpace;sign.material.map=t;sign.material.needsUpdate=true;},undefined,()=>{sign.material.color.set(0x0b314f);});
  // Architectural facade upgrade: layered graphite cladding, bright storefront,
  // illuminated brand fascia and metal details, all real 3D scene geometry.
  const fascia=mat(0x17252e,.27,.62),reveal=mat(0x0a151b,.38,.5);
@@ -57,23 +52,22 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0}={}){
   box(root,.85,9.6,.85,12.25,4.8,zz,fascia);
   box(root,.12,8.5,.16,12.76,4.25,zz,blueGlow);
  }
- box(root,.72,1.65,29.6,12.35,8.95,0,fascia);
+ box(root,.72,3.6,29.6,12.35,9.8,0,fascia);
  box(root,.12,.10,29.4,12.82,7.99,0,blueGlow);
- box(root,.12,.10,29.4,12.82,9.65,0,silver);
+ box(root,.12,.10,29.4,12.82,11.61,0,silver);
  // Raised canopy with thin luminous front edge.
  box(root,3.8,.34,10,13.35,7.42,0,fascia);
  box(root,.12,.09,10,15.29,7.29,0,blueGlow);
- // Lit sign as a procedural canvas texture: no remote image or SVG loader dependency.
- const brandCanvas=document.createElement('canvas');brandCanvas.width=2048;brandCanvas.height=512;
- const brandCtx=brandCanvas.getContext('2d');
- brandCtx.fillStyle='#15252e';brandCtx.fillRect(0,0,2048,512);
- brandCtx.textAlign='center';brandCtx.fillStyle='#f7fafb';
- brandCtx.font='bold 170px Arial';brandCtx.fillText('ZERCONDA MOTORS',1024,245);
- brandCtx.fillStyle='#42baff';brandCtx.font='bold 91px Arial';brandCtx.fillText('AUTO CENTER',1024,375);
+ // One opaque sign face sits ahead of every fascia rail, with generous margins.
+ const brandCanvas=document.createElement('canvas');brandCanvas.width=2304;brandCanvas.height=288;
+ const brandCtx=brandCanvas.getContext('2d');brandCtx.fillStyle='#10232d';brandCtx.fillRect(0,0,2304,288);
+ brandCtx.textAlign='center';brandCtx.textBaseline='middle';brandCtx.fillStyle='#f7fafb';
+ let fontSize=180;do{brandCtx.font='bold '+fontSize+'px Arial';if(brandCtx.measureText('ZERCONDA MOTORS').width<=2060)break;fontSize-=2;}while(fontSize>100);
+ brandCtx.fillText('ZERCONDA MOTORS',1152,105);
+ brandCtx.fillStyle='#67d3ff';brandCtx.font='bold 70px Arial';brandCtx.fillText('AUTO CENTER',1152,232);
  const brandTex=new THREE.CanvasTexture(brandCanvas);brandTex.colorSpace=THREE.SRGBColorSpace;brandTex.anisotropy=8;
- // Facade faces +X: text plane normal is rotated to point out toward the street.
- const brandPanel=new THREE.Mesh(new THREE.PlaneGeometry(20,4.2),new THREE.MeshBasicMaterial({map:brandTex,side:THREE.DoubleSide,depthTest:true}));
- brandPanel.rotation.y=Math.PI/2;brandPanel.position.set(12.84,8.78,0);root.add(brandPanel);
+ const brandPanel=new THREE.Mesh(new THREE.PlaneGeometry(25,3.125),new THREE.MeshBasicMaterial({map:brandTex,side:THREE.FrontSide,toneMapped:false}));
+ brandPanel.name='Zerconda Motors · clear illuminated sign';brandPanel.rotation.y=Math.PI/2;brandPanel.position.set(13.02,9.8,0);root.add(brandPanel);
  // Vertical glass bays and mullion trim add depth to the transparent frontage.
  for(const zz of [-11,-7.5,-4,4,7.5,11]){
   box(root,.09,5.7,3.3,12.04,3.05,zz,glass);
