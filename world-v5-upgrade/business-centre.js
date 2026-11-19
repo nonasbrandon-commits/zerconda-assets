@@ -1,3 +1,4 @@
+import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -22,7 +23,7 @@ export function createBusinessCentre(scene,{getPlayer,canEnter=()=>true,onTelepo
  // Lobby transparent glazing surrounds an actual door opening.
  for(const side of [-1,1]){box(13.3,4.45,.1,side*9.35,2.55,18,glass);for(const xx of [3,7,11,15.8])box(.12,4.7,.16,side*xx,2.57,18.05,dark);}box(5.6,.7,.18,0,4.6,18,dark);
  const door=new THREE.Group();door.name='Lobby sliding glass doors';root.add(door);for(const side of [-1,1]){box(2.6,3.9,.10,side*1.35,2.2,18.12,glass,door);box(.08,3.9,.14,side*2.65,2.2,18.14,metal,door);box(.07,.6,.1,side*.2,2.2,18.25,metal,door);}
- box(11,.25,4.4,0,4.6,19.3,dark);box(10,.16,16.5,0,.08,25.25,stone);sign('SKYLINE BUSINESS CENTRE',0,4.1,18.25,15,.65);sign('PUBLIC LOBBY & ROOFTOP',-8,1.4,21.4,5,.6);for(const x of [-10,-6])box(.08,1.3,.08,x,.65,21.4,dark);
+ box(11,.25,4.4,0,4.6,19.3,dark);box(10,.16,17,0,GROUND_LEVEL-.08,25.5,stone);sign('SKYLINE BUSINESS CENTRE',0,4.1,18.25,15,.65);sign('PUBLIC LOBBY & ROOFTOP',-8,1.4,21.4,5,.6);for(const x of [-10,-6])box(.08,1.3,.08,x,.65,21.4,dark);
  // Seven private commercial floors are opaque, with no public stops or hidden entrances.
  shaftCut(31.6,29.8,35.6,0,20.1,0,dark);
  for(let f=0;f<7;f++){const y=7.1+f*4.1;for(let i=0;i<8;i++){const x=-14+i*4;for(const side of [-1,1])box(3.7,3.65,.12,x,y,side*17.86,(i+f)%4?officeGlass:teal);}for(let i=0;i<9;i++){const z=-16+i*4;for(const side of [-1,1])box(.12,3.65,3.7,side*15.86,y,z,(i+f)%4?officeGlass:teal);}shaftCut(32.5,.17,36.5,0,y+2.0,0,metal);}
@@ -87,7 +88,7 @@ export function createBusinessCentre(scene,{getPlayer,canEnter=()=>true,onTelepo
  function startLift(next){if(trip||!mode||next===mode)return false;const p=getPlayer();p.x=cfg.x+10;p.z=cfg.z-12;trip={from:cabinY,to:next==='roof'?cfg.roofY:.22,next,elapsed:0};doorOpen=1;onTeleport(p.x,cabinY,p.z,Math.PI);onMessage('Doors closing. '+(next==='roof'?'Going up to the rooftop terrace.':'Going down to the lobby.'));return true;}
   function contains(x,z){const p=local(x,z);if(trip)return Math.abs(p.x-10)<.7&&Math.abs(p.z+12)<.7;return Math.abs(p.x)<15.4&&Math.abs(p.z)<17.4&&!solids[mode||'lobby'].some(s=>Math.abs(p.x-s.x)<s.w/2+.25&&Math.abs(p.z-s.z)<s.d/2+.25);}
  function blocks(x,z){return !mode&&Math.abs(x-cfg.x)<16.4&&Math.abs(z-cfg.z)<18.4;}
- function heightAt(x,z){if(trip)return cabinY;if(mode&&Math.abs(x-cfg.x)<16.5&&Math.abs(z-cfg.z)<18.5)return mode==='roof'?y:.22;if(!mode&&Math.abs(x-cfg.x)<5&&z>=cfg.z+17&&z<=cfg.z+33.5)return .16;return null;}
+ function heightAt(x,z){if(trip)return cabinY;if(mode&&Math.abs(x-cfg.x)<16.5&&Math.abs(z-cfg.z)<18.5)return mode==='roof'?y:.22;if(!mode&&Math.abs(x-cfg.x)<5&&z>=cfg.z+17&&z<=cfg.z+34)return GROUND_LEVEL;return null;}
  function update(dt){time+=dt;if(trip){trip.elapsed+=Math.max(0,dt);const t=trip.elapsed;doorOpen=t<1?1-t:t>9?Math.min(1,t-9):0;const u=THREE.MathUtils.clamp((t-1)/8,0,1),ease=u*u*(3-2*u);cabinY=THREE.MathUtils.lerp(trip.from,trip.to,ease);cabin.position.y=cabinY;const p=getPlayer();p.x=cfg.x+10;p.z=cfg.z-12;if(t>=10){mode=trip.next;trip=null;doorOpen=1;onMessage(mode==='roof'?'Rooftop terrace. Doors open.':'Lobby. Doors open.');}}for(const {g,side}of carDoors)g.position.x=side*(.49+doorOpen*.98);for(const landing of liftDoors){const opening=landing.level===mode?doorOpen:trip&&landing.level===trip.next&&trip.elapsed>9?doorOpen:0;for(const {g,side}of landing.pair)g.position.x=10+side*(.49+opening*.98);}
  receptionist.update(dt,0);if(fireOn)fire.children.forEach((f,i)=>f.scale.y=.14+.08*Math.sin(time*4+i));for(const a of actions)a.b.style.display=a.when()?'block':'none';}
  function clampCamera(p){if(!mode)return;const person=local(getPlayer().x,getPlayer().z);if(trip||Math.abs(person.x-10)<1.0&&person.z< -10){p.x=cfg.x+10;p.z=cfg.z-10.6;p.y=cabinY+2.15;return;}p.x=THREE.MathUtils.clamp(p.x,cfg.x-15.2,cfg.x+15.2);p.z=THREE.MathUtils.clamp(p.z,cfg.z-17.2,cfg.z+17.2);if(mode==='lobby')p.y=THREE.MathUtils.clamp(p.y,1.7,4.55);else p.y=Math.max(p.y,y+1.6);}
