@@ -25,7 +25,7 @@ import {createSeasideCarnival} from './seaside-carnival.js?v=20261119-reference-
 import {createRVPark} from './rv-park.js?v=20261119-level-ground-v117';
 import {createModernPickup} from './modern-pickup.js?v=20261118-visible-trails-v100';
 import {createLuxuryVillas} from './luxury-villas.js?v=20261119-level-ground-v117';
-import {createStyleCuts} from './style-cuts.js?v=20261119-entrance-steering-v118';
+import {createStyleCuts} from './style-cuts.js?v=20261119-showroom-gallery-v127';
 import {createBusinessCentre} from './business-centre.js?v=20261119-entrance-steering-v118';
 import {createSkatePark} from './skate-park.js?v=20261119-entrance-steering-v118';
 import {createAirfield} from './airfield.js?v=20261118-wall-mystery-v111';
@@ -65,7 +65,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-ground-v117';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-19-reference-trucks-v126';
+const ZERCONDA_BUILD='2026-11-19-showroom-gallery-v127';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -513,7 +513,7 @@ observationNeedle=createObservationNeedle(scene,{x:48,z:-48,getPlayer:()=>player
 zFortune=createZFortune(scene,{getPlayer:()=>player});
 const coffeeShop=createCoffeeShop(scene,{x:-28,z:-132,getPlayer:()=>player});
  // Connect the commercial forecourt and cafe patio to their respective sidewalks.
- box(8,.14,10,-48,.035,-77,paving);
+ // Removed the obsolete central slab overlapping the shared salon/dealership forecourt.
  // The full cafe stone terrace now meets the sidewalk directly.
  // Removed the oversized mid-block stripe crossing at the old cafe approach.
 // Walk-in showroom just west of Brewstone Coffee, with three fictional display vehicles.
@@ -521,7 +521,7 @@ const dealership={
  x:-31,z:-48,insidePoint:{x:-31,z:-57},exitPoint:{x:-31,z:-64},inside:()=>false,blocks:()=>false,isNear:(x,z,r=5.5)=>Math.hypot(x+31,z+62)<r,
  nearestCar:()=>null
 };
-import('./zerconda-dealership.js?v=20261119-reference-trucks-v126')
+import('./zerconda-dealership.js?v=20261119-showroom-gallery-v127')
  .then(({createDealership})=>Object.assign(dealership,createDealership(scene,{x:-31,z:-48,rotation:Math.PI/2,getPlayer:()=>player})))
  .catch(err=>{console.error('Dealership asset failed (city continues):',err);
    if(status)status.textContent='City loaded; dealership asset unavailable: '+err.message;

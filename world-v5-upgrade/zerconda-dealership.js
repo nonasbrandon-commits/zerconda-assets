@@ -1,3 +1,4 @@
+import {addShowroomGallery} from './showroom-gallery.js?v=20261119-showroom-gallery-v127';
 import {createShowroomPickup} from './showroom-pickup.js?v=20261119-reference-trucks-v126';
 import {addShowroomSales} from './showroom-sales.js?v=20261119-reference-trucks-v126';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
@@ -93,7 +94,7 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0,getPlayer=()=>nul
  const podium=new THREE.Mesh(new THREE.CylinderGeometry(3.25,3.25,.08,64),mat(0xaeb2b1,.32,.2));podium.position.set(1,.04,z);podium.name=name+' display plinth';root.add(podium);
  cars.push({name,position:world(1,z),model:vehicle});displaySolids.push({x:1,z,w:6.0,d:2.7});
  const placard=box(root,.08,.70,1.0,4.1,.66,z,steel);const cv=document.createElement('canvas');cv.width=768;cv.height=320;const c=cv.getContext('2d');c.fillStyle='#1e3541';c.fillRect(0,0,768,320);c.fillStyle='#f2eadc';c.textAlign='center';c.font='bold 50px Arial';c.fillText(name,384,110,710);c.fillStyle='#8ccbd8';c.font='32px Arial';c.fillText('4 × 4 CREW-CAB PICKUP',384,190);c.font='25px Arial';c.fillText('Speak with a sales consultant',384,260);const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;const face=new THREE.Mesh(new THREE.PlaneGeometry(1.45,.60),new THREE.MeshBasicMaterial({map:tex}));face.rotation.y=Math.PI/2;face.position.set(4.15,.70,z);root.add(face);}
- const sales=addShowroomSales(root);
+ const sales=addShowroomSales(root);const gallery=addShowroomGallery(root,{getPlayer});
  // Reception, lounge, illuminated ceiling fixtures, offices and showroom plants.
  for(const zz of [-9,0,9]){const light=new THREE.PointLight(0xf1f6ff,2.1,14);light.position.set(0,7.8,zz);root.add(light);box(root,1.6,.08,5.4,0,8.25,zz,new THREE.MeshBasicMaterial({color:0xe8f5ff}));}
  // Level stone forecourt with painted parking bays and landscape islands.
@@ -113,11 +114,11 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0,getPlayer=()=>nul
  // Exterior road-facing banner.
  const banner=box(root,.2,4.5,1.5,15,2.35,12.7,steel);
  const entrance=world(14,0),insidePoint=world(9,0),exitPoint=world(16,0);
- return {root,x,z,cars,sales,entrance,insidePoint,exitPoint,
- update(dt){const p=getPlayer();sales.update(dt,!!p&&Math.hypot(p.x-x,p.z-z)<55);},
+ return {root,x,z,cars,sales,gallery,entrance,insidePoint,exitPoint,
+ update(dt){const p=getPlayer();const near=!!p&&Math.hypot(p.x-x,p.z-z)<55;sales.update(dt,near);gallery.update(near);},
  isNear(px,pz,r=4.5){return Math.hypot(px-entrance.x,pz-entrance.z)<r;},
  blocks(px,pz){const p=local(px,pz);return Math.abs(p.z)<14.5&&p.x>-12.5&&p.x<12.6;},
- inside(px,pz){const p=local(px,pz);return p.x>-11.4&&p.x<11.7&&Math.abs(p.z)<13.6&&![...displaySolids,...sales.solids].some(s=>Math.abs(p.x-s.x)<s.w/2+.28&&Math.abs(p.z-s.z)<s.d/2+.28);},
+ inside(px,pz){const p=local(px,pz);return p.x>-11.4&&p.x<11.7&&Math.abs(p.z)<13.6&&![...displaySolids,...sales.solids,...gallery.solids].some(s=>Math.abs(p.x-s.x)<s.w/2+.28&&Math.abs(p.z-s.z)<s.d/2+.28);},
  nearestCar(px,pz,max=4.5){let best=null,d=max;for(const c of cars){const dist=Math.hypot(px-c.position.x,pz-c.position.z);if(dist<d){d=dist;best=c;}}return best;}};
 }
 
