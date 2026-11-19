@@ -73,7 +73,6 @@ export function createZercondaMuseum(scene,{getPlayer=()=>({x:0,z:0})}={}){
  // Solid gray-stone landing, enclosed stair foundation, and one nonoverlapping forecourt.
  box(46,1.34,18.09,0,.67,55.045,stone);box(45.7,.10,18.09,0,1.39,55.045,paving);
  const stairShape=new THREE.Shape();stairShape.moveTo(64.09,0);stairShape.lineTo(68.23,0);stairShape.lineTo(68.23,.16);for(let i=0;i<9;i++){const back=68.23-(i+1)*.46,top=(i+1)*.16;stairShape.lineTo(back,top);if(i<8)stairShape.lineTo(back,top+.16);}stairShape.closePath();const stairGeo=new THREE.ExtrudeGeometry(stairShape,{depth:44,bevelEnabled:false});stairGeo.rotateY(-Math.PI/2);stairGeo.translate(22,0,0);add(stairGeo,stone);
- for(let i=0;i<9;i++){const rise=(i+1)*.16,z=68.0-i*.46;box(44,.018,.055,0,rise-.009,z+.19,trim);}
  for(const side of[-1,1]){solid(side*23,55.045,.16,18.09);solid(side*22.6,64.05,.8,.16);}
  const courtShape=new THREE.Shape();[[-23.8,68.23],[23.8,68.23],[23.8,90],[7,90],[7,94],[-7,94],[-7,90],[-23.8,90]].forEach(([x,z],i)=>i?courtShape.lineTo(x,z):courtShape.moveTo(x,z));courtShape.closePath();const courtGeo=new THREE.ExtrudeGeometry(courtShape,{depth:.15,bevelEnabled:false});courtGeo.rotateX(Math.PI/2);courtGeo.translate(0,.15,0);add(courtGeo,paving);
  const fountain=createMuseumFountain(root);const seats=fountain.seats.map(seat=>({...seat,x:seat.x+cfg.x,z:seat.z+cfg.z}));
