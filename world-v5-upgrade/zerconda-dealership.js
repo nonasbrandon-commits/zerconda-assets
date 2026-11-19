@@ -1,4 +1,4 @@
-import {improveVehicleCabin} from './vehicle-cabins.js?v=20261119-profile-v136';
+import {improveVehicleCabin} from './vehicle-cabins.js?v=20261119-cabin-v137';
 import {addShowroomGallery} from './showroom-gallery.js?v=20261119-showroom-gallery-v127';
 import {createShowroomPickup} from './showroom-pickup.js?v=20261119-reference-trucks-v126';
 import {addShowroomSales} from './showroom-sales.js?v=20261119-reference-trucks-v126';
