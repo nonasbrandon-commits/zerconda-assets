@@ -25,8 +25,15 @@ export async function installRealisticFountain({scene,centerX=48,centerZ=48,rend
   const rim=add(new THREE.TorusGeometry(radius-.06,.27,12,96),limestone,0,baseY+wallH,0);rim.rotation.x=Math.PI/2;
   waterFX.surface(radius-.43,baseY+wallH-.10);
  }
- disk(11.35,.25,.12,limestone);basin(10.8,.45,1.35);
- disk(3.35,1.45,1.65,limestone);
+ // A low, broad coping supports seated visitors at 58cm above the plaza.
+ disk(11.15,.12,.02,limestone);disk(10.8,.14,.09,limestone);
+ add(new THREE.CylinderGeometry(10.8,10.8,.34,96,1,true),limestone,0,.30,0);
+ add(new THREE.CylinderGeometry(10.25,10.25,.30,96,1,true),accent,0,.30,0);
+ add(new THREE.CylinderGeometry(10.95,10.95,.12,128,1,true),limestone,0,.52,0);
+ add(new THREE.CylinderGeometry(10.25,10.25,.12,128,1,true),limestone,0,.52,0);
+ const coping=add(new THREE.RingGeometry(10.25,10.95,128),limestone,0,.58,0);coping.rotation.x=-Math.PI/2;coping.name='Comfort-height fountain seating rim';coping.userData.sitHeight=.58;
+ waterFX.surface(10.25,.40);
+ disk(3.35,2.22,1.265,limestone);
  add(new THREE.CylinderGeometry(1.5,2.15,3.4,48),limestone,0,3.95,0);
  basin(4.35,5.55,.65);
  add(new THREE.CylinderGeometry(.92,1.4,2.5,48),limestone,0,7.05,0);
@@ -42,13 +49,13 @@ export async function installRealisticFountain({scene,centerX=48,centerZ=48,rend
  const jet=waterFX.jet;
  for(let i=0;i<32;i++){
   const a=i*Math.PI/16;
-  jet(new THREE.Vector3(Math.cos(a)*9.8,1.82,Math.sin(a)*9.8),
-      new THREE.Vector3(Math.cos(a)*5.4,1.70,Math.sin(a)*5.4),3.0,.022);
+  jet(new THREE.Vector3(Math.cos(a)*9.8,.52,Math.sin(a)*9.8),
+      new THREE.Vector3(Math.cos(a)*5.4,.40,Math.sin(a)*5.4),3.0,.022);
  }
  for(let i=0;i<16;i++){
   const a=i*Math.PI/8;
   jet(new THREE.Vector3(Math.cos(a)*3.75,6.22,Math.sin(a)*3.75),
-      new THREE.Vector3(Math.cos(a)*7.4,1.7,Math.sin(a)*7.4),1.5,.020);
+      new THREE.Vector3(Math.cos(a)*7.4,.40,Math.sin(a)*7.4),1.5,.020);
  }
  for(let i=0;i<12;i++){
   const a=i*Math.PI/6;
@@ -59,7 +66,8 @@ export async function installRealisticFountain({scene,centerX=48,centerZ=48,rend
  let elapsed=0;
  const flow=waterFX.finish();
  function update(dt){elapsed+=dt;flow.update(elapsed);}
- function canWalk(x,z,radius=.45){return Math.hypot(x-centerX,z-centerZ)>11.35+radius;}
+ function canWalk(x,z,radius=.45){return Math.hypot(x-centerX,z-centerZ)>10.95+radius;}
  function dispose(){scene.remove(root);root.traverse(o=>{if(o.isMesh||o.isPoints){o.geometry.dispose();o.material.map?.dispose();o.material.dispose();}});tex.dispose();}
- return {root,update,canWalk,dispose,obstacles:[{x:centerX,z:centerZ,r:11.35}],stats:{replacedBlackGLB:true}};
+ const seats=Array.from({length:32},(_,i)=>{const angle=i*Math.PI/16;return{x:centerX+Math.cos(angle)*10.76,z:centerZ+Math.sin(angle)*10.76,facing:Math.PI/2-angle,sitHeight:.58,kind:'fountain edge'};});
+ return {root,seats,update,canWalk,dispose,obstacles:[{x:centerX,z:centerZ,r:10.95}],stats:{replacedBlackGLB:true}};
 }

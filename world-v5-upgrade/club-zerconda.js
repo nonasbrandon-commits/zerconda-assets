@@ -1,3 +1,5 @@
+import {createClubMusic} from './club-music.js?v=20261119-fountain-seating-v135';
+import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import {createClubStage} from './club-stage.js?v=20261118-faster-town-v106';
 import * as THREE from 'three';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
@@ -9,16 +11,12 @@ import {createClubGameView,drawDartBoard,BALL_COLORS} from './club-game-view.js?
 import {createClubSocial} from './club-social.js?v=20261117-club-v70';
 
 export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pauseMovement=stopMovement,canEnter=()=>true,x=-48,z=-24}={}){
- const root=new THREE.Group();root.name='Club Zerconda · two-floor social club';root.position.set(x,0,z);root.userData.customInterior=true;scene.add(root);
+ const root=new THREE.Group();root.name='Club Zerconda · two-floor social club';root.position.set(x,-.14,z);root.userData.customInterior=true;scene.add(root);
  const mat=(color,roughness=.8,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
  const brick=mat(0x635c55),trim=mat(0x232c30,.4,.55),oak=mat(0x70513b,.7),floorMat=mat(0x6c6257,.85),velvet=mat(0x5c3041,.95),leather=mat(0x293f43,.88),brass=mat(0xa78b52,.35,.65),glass=new THREE.MeshPhysicalMaterial({color:0x799da7,roughness:.2,metalness:.12,transparent:true,opacity:.35,side:THREE.DoubleSide,depthWrite:false});
  const loader=new THREE.TextureLoader();const map=loader.load('https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/realistic-assets/expanded-models/brick-building/textures/modular_factory_facade_brick_diff_1k.jpg');map.wrapS=map.wrapT=THREE.RepeatWrapping;map.repeat.set(6,2);map.colorSpace=THREE.SRGBColorSpace;brick.map=map;
- const woodCanvas=document.createElement('canvas');woodCanvas.width=woodCanvas.height=1024;const wc=woodCanvas.getContext('2d');
  let grainSeed=512;const grain=()=>((grainSeed=(Math.imul(grainSeed,1664525)+1013904223)>>>0)/4294967296);
- wc.fillStyle='#9b856c';wc.fillRect(0,0,1024,1024);
- for(let row=0;row<16;row++){const tone=120+Math.floor(grain()*28);wc.fillStyle=`rgb(${tone+24},${tone+4},${tone-19})`;wc.fillRect(0,row*64,1024,64);wc.fillStyle='#382d25';wc.fillRect(0,row*64,1024,2);wc.fillRect(row%2?320:760,row*64,2,64);}
- for(let i=0;i<26000;i++){const y=grain()*1024,v=70+Math.floor(grain()*70);wc.fillStyle=`rgba(${v+15},${v},${v-20},.14)`;wc.fillRect(grain()*1024,y,10+grain()*130,.5+grain());}
- const woodTexture=new THREE.CanvasTexture(woodCanvas);woodTexture.colorSpace=THREE.SRGBColorSpace;woodTexture.wrapS=woodTexture.wrapT=THREE.RepeatWrapping;woodTexture.repeat.set(12,3);woodTexture.anisotropy=4;floorMat.color.set(0xffffff);floorMat.map=woodTexture;floorMat.bumpMap=woodTexture;floorMat.bumpScale=.008;
+ const stoneCanvas=document.createElement('canvas');stoneCanvas.width=stoneCanvas.height=512;const sc=stoneCanvas.getContext('2d');sc.fillStyle='#b9b5a9';sc.fillRect(0,0,512,512);for(let i=0;i<18000;i++){sc.fillStyle=i%2?'#ffffff0b':'#00000009';sc.fillRect((i*73)%512,(i*127)%512,2,2);}sc.strokeStyle='#a19f94';sc.lineWidth=2;for(let i=0;i<=512;i+=128){sc.beginPath();sc.moveTo(i,0);sc.lineTo(i,512);sc.moveTo(0,i);sc.lineTo(512,i);sc.stroke();}const stoneTexture=new THREE.CanvasTexture(stoneCanvas);stoneTexture.colorSpace=THREE.SRGBColorSpace;stoneTexture.wrapS=stoneTexture.wrapT=THREE.RepeatWrapping;stoneTexture.repeat.set(15,4);floorMat.color.set(0xffffff);floorMat.map=stoneTexture;floorMat.roughness=.88;
  const upholsteryCanvas=document.createElement('canvas');upholsteryCanvas.width=upholsteryCanvas.height=256;const uc=upholsteryCanvas.getContext('2d');uc.fillStyle='#d2ccca';uc.fillRect(0,0,256,256);for(let i=0;i<10000;i++){const v=135+Math.floor(grain()*90);uc.fillStyle=`rgba(${v},${v},${v},.4)`;uc.fillRect(grain()*256,grain()*256,1,2);}
  const upholstery=new THREE.CanvasTexture(upholsteryCanvas);upholstery.wrapS=upholstery.wrapT=THREE.RepeatWrapping;upholstery.repeat.set(5,3);velvet.map=upholstery;velvet.bumpMap=upholstery;velvet.bumpScale=.003;
  const cube=new THREE.BoxGeometry(1,1,1),softCube=new RoundedBoxGeometry(1,1,1,3,.12);
@@ -51,7 +49,7 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
   for(const side of [-1,1])box(7.4,.09,.12,xx,level+2.25+side*1.25,8.26,brass);
  }
  const welcome=label('DANCE · LOUNGE · GAMES',-30.24,5.6,0,12,.65,-Math.PI/2);
- box(5,.15,4,-32.2,.07,0,floorMat);box(2,.1,4,-29.1,.16,0,oak);
+ box(5,.15,4,-32.2,.085,0,floorMat);box(2,.1,4,-29.1,.11,0,floorMat);
  // A street-facing entrance: a real opening, hinged glazing and a short
  // arrival terrace that stops before the public sidewalk.
  const graphite=mat(0x17252e,.4,.55),neonBlue=new THREE.MeshBasicMaterial({color:0x37cde5}),neonPink=new THREE.MeshBasicMaterial({color:0xd250a5});
@@ -64,6 +62,7 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
  box(4.45,5.35,.18,0,6.34,8.25,graphite);
  box(11.8,.18,.16,0,8.96,8.39,neonBlue);
  box(4.5,.13,.2,0,3.55,8.45,brass);
+ const westHinge=new THREE.Group();westHinge.name='Club west entrance glass door';westHinge.position.set(-30.18,.16,-1.9);westHinge.rotation.y=-Math.PI/2;root.add(westHinge);box(3.8,2.66,.065,1.9,1.33,0,doorGlass,westHinge);for(const xx of[.03,3.77])box(.06,2.72,.10,xx,1.33,0,brass,westHinge);for(const yy of[.025,2.635])box(3.8,.055,.10,1.9,yy,0,brass,westHinge);box(.08,.60,.14,3.35,1.30,.10,brass,westHinge);
  const frontDoors=[];
  for(const side of [-1,1]){
   const hinge=new THREE.Group();hinge.name=side<0?'Club entrance left door':'Club entrance right door';hinge.position.set(side*2.1,.16,8.4);root.add(hinge);
@@ -126,7 +125,7 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
   box(3,.30,1.05,0,.28,0,velvet,group);box(3,.9,.22,0,.86,-.46,velvet,group);
   for(const offset of [-1,0,1]){box(.94,.12,.91,offset,.47,.015,velvet,group);const button=new THREE.Mesh(new THREE.SphereGeometry(.025,10,8),leather);button.scale.z=.35;button.position.set(offset,.92,-.335);group.add(button);}
   for(const side of [-1,1]){box(.24,.52,1.1,side*1.5,.54,0,leather,group);for(const zz of [-.4,.4])cyl(.045,.35,side*1.3,.19,zz,brass,group);}
-  for(const side of [-1,1]){const p=new THREE.Vector3(side*.72,.16,.09).applyAxisAngle(new THREE.Vector3(0,1,0),angle);seats.push({x:x+px+p.x,z:z+pz+p.z,y:level+.16,sitHeight:level+.69,facing:angle,kind:'club',floor:level?1:0});}
+  for(const side of [-1,1]){const p=new THREE.Vector3(side*.72,.16,.09).applyAxisAngle(new THREE.Vector3(0,1,0),angle);seats.push({x:x+px+p.x,z:z+pz+p.z,y:level+.02,sitHeight:level+.55,facing:angle,kind:'club',floor:level?1:0});}
  }
  for(const level of [0,4.5])for(const xx of [6,12,19]){
   sofa(xx,5.4,level,Math.PI);cyl(.75,.1,xx,level+.7,3.4,oak);cyl(.065,.5,xx,level+.4,3.4,brass);
@@ -182,6 +181,7 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
  const gameView=createClubGameView({getPool:()=>pool,setPool:value=>pool=value,getDarts:()=>darts,setDarts:value=>darts=value,stopMovement,onDart:showDart,
   changed(kind){if(kind==='pool'){poolStamp=Math.max(poolStamp+1,Date.now());poolAuthority=true;social.sendGame({pool,poolStamp});}else{dartsStamp=Math.max(dartsStamp+1,Date.now());social.sendGame({darts,dartsStamp});}}
  });
+ const music=createClubMusic(),musicButton=document.createElement('button');musicButton.style.display='none';document.body.appendChild(musicButton);musicButton.onclick=()=>music.toggle();registerTownAction(musicButton,{id:'club-music',priority:90,label:()=>music.muted?'Unmute club music':'Mute club music',target:()=>({x:getPlayer().x,y:1.4,z:getPlayer().z})});
  const enterButton=document.createElement('button'),danceButton=document.createElement('button'),gameButton=document.createElement('button');
  for(const [button,bottom] of [[enterButton,500],[danceButton,555],[gameButton,610]]){button.style.cssText=`position:fixed;right:14px;bottom:${bottom}px;z-index:12001;background:#263b41;color:#fff0d7;padding:12px;border:1px solid #b69c64;border-radius:8px;display:none;font-weight:bold`;document.body.appendChild(button);}
  registerTownAction(enterButton,{id:'club-enter',priority:100,target:()=>({x,y:1.6,z:z+8.4})});registerTownAction(danceButton,{id:'club-dance',priority:110,target:()=>({x:x-12,y:.4,z})});registerTownAction(gameButton,{id:'club-game',priority:120,target:()=>{const p=getPlayer();return Math.hypot(p.x-(x+3),p.z-(z-.3))<5?{x:x+3,y:5.4,z:z-.3}:{x:x-18,y:6.4,z:z-7.7};}});
@@ -191,10 +191,10 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
  function near(){const p=getPlayer();return Math.min(frontDistance(p),westDistance(p))<6;}
  function toggle(){
   const p=getPlayer(),front=frontDistance(p)<westDistance(p);
-  if(active){gameView.close();social.close();active=false;floor=0;dancing=false;focusInterior(false);p.x=front?x:x-33;p.z=front?z+11.8:z;stopMovement();return;}
-  if(!canEnter())return;active=true;floor=0;dancing=false;focusInterior(true);p.x=front?x:x-27;p.z=front?z+5.8:z;stopMovement();social.open();
+  if(active){gameView.close();social.close();music.stop();active=false;floor=0;dancing=false;focusInterior(false);p.x=front?x:x-33;p.z=front?z+11.8:z;stopMovement();return;}
+  if(!canEnter())return;active=true;floor=0;dancing=false;focusInterior(true);p.x=front?x:x-27;p.z=front?z+5.8:z;stopMovement();social.open();music.start();
  }
- function heightAt(px,pz){const lx=px-x,lz=pz-z;if(lx>22.8&&lx<27.2&&lz>=-6&&lz<=6)return .16+Math.ceil(Math.max(0,(lz+6)/12)*24)/24*4.5;if(floor===0&&Math.abs(lx+12)<8&&Math.abs(lz)<5)return .258;return .16+floor*4.5;}
+ function heightAt(px,pz){const lx=px-x,lz=pz-z;if(lx>22.8&&lx<27.2&&lz>=-6&&lz<=6)return GROUND_LEVEL+Math.ceil(Math.max(0,(lz+6)/12)*24)/24*4.5;if(floor===0&&Math.abs(lx+12)<8&&Math.abs(lz)<5)return .118;return GROUND_LEVEL+floor*4.5;}
  function contains(px,pz){const lx=px-x,lz=pz-z;if(Math.abs(lx)>29.3||Math.abs(lz)>7.3)return false;
   const p=getPlayer(),prevX=p.x-x,prevZ=p.z-z,inStairs=lx>22.7&&lx<27.3&&lz>-6&&lz<6,wasStairs=prevX>22.7&&prevX<27.3&&prevZ>-6&&prevZ<6;
   if(wasStairs&&prevZ>-5.7&&prevZ<5.7&&!inStairs)return false;
@@ -212,7 +212,7 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
  // A small resident dance group keeps the floor alive without masquerading as live users.
  const dancers=[];for(let i=0;i<2;i++){const human=createRealisticHuman({shirt:[0x754c64,0x467782,0x8b7857][i],pants:0x343e47});const spot=new THREE.Group();spot.position.set(-16+i*6,.258,4);spot.add(human.root);root.add(spot);human.readyPromise.then(()=>{for(let j=0;j<i*8;j++)human.update(.05,0,{dancing:true});});dancers.push(human);}
  const indoor=new THREE.Group();indoor.name='Club interior details';for(const child of [...root.children])if(!exteriorParts.has(child))indoor.add(child);root.add(indoor);indoor.visible=false;
- return {root,roof,seats,stage,get games(){return {pool,darts};},get online(){return social.connected;},get peers(){return social.peers;},get active(){return active;},get floor(){return floor;},get dancing(){return dancing;},set dancing(value){dancing=value;},get gameOpen(){return gameView.open;},near,toggle,heightAt,contains,
+ return {root,roof,seats,stage,music,westHinge,get games(){return {pool,darts};},get online(){return social.connected;},get peers(){return social.peers;},get active(){return active;},get floor(){return floor;},get dancing(){return dancing;},set dancing(value){dancing=value;},get gameOpen(){return gameView.open;},near,toggle,heightAt,contains,
   blocks(px,pz){return Math.abs(px-x)<30.3&&Math.abs(pz-z)<8.3;},
   nearestSeat(px,pz,max=2.4){if(!active)return null;let best=null,distance=max;for(const seat of seats){if(seat.floor!==floor)continue;const d=Math.hypot(px-seat.x,pz-seat.z);if(d<distance){best=seat;distance=d;}}return best;},
   clampCamera(point){point.x=THREE.MathUtils.clamp(point.x,x-28.6,x+28.6);point.z=THREE.MathUtils.clamp(point.z,z-6.8,z+6.8);},
@@ -220,6 +220,7 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
    const p=getPlayer(),lx=p.x-x,lz=p.z-z;
    if(active)focusInterior(true);
    indoor.visible=active||near();
+   musicButton.style.display=active?'block':'none';westHinge.rotation.y=THREE.MathUtils.damp(westHinge.rotation.y,-Math.PI/2+(westDistance(p)<5?1.35:0),7,dt);
    const frontNear=frontDistance(p)<5&&(!active||floor===0);
    for(const door of frontDoors)door.hinge.rotation.y=THREE.MathUtils.damp(door.hinge.rotation.y,frontNear?door.side*1.18:0,7,dt);
    // Entry and exit use the same explicit nearby action as other buildings.
@@ -239,4 +240,5 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
   }
  };
 }
+
 
