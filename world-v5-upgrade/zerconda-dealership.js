@@ -1,5 +1,5 @@
-import {createShowroomVehicle} from './showroom-vehicles.js?v=20261119-showroom-v124';
-import {addShowroomSales} from './showroom-sales.js?v=20261119-showroom-v124';
+import {createShowroomPickup} from './showroom-pickup.js?v=20261119-reference-trucks-v126';
+import {addShowroomSales} from './showroom-sales.js?v=20261119-reference-trucks-v126';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
 import {createDetailedCar} from './detailed-fictional-cars.js?v=20261117-commerce-restore-v69';
@@ -86,13 +86,13 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0,getPlayer=()=>nul
   const plant=createNaturalShrub({width:1.55,height:1.35,seed:300+Math.round(zz*5)});
   plant.position.set(16.1,.8,zz);root.add(plant);
  }
- // Two full-sized premium display cars; the central entry aisle remains open.
+ // Two detailed crew-cab pickup displays; the central entry aisle remains open.
  const cars=[],displaySolids=[];
- for(const [name,type,color,z]of[['Zerconda Vela GT','coupe','#8d1631',-6.5],['Zerconda Atlas Touring','suv','#547584',6.5]]){
- const vehicle=createShowroomVehicle({type,color});vehicle.position.set(1,.08,z);vehicle.rotation.y=-Math.PI/2;root.add(vehicle);
+ for(const [name,type,color,z]of[['Zerconda Ridge Sandstone','pickup','#c7bb96',-6.5],['Zerconda Ridge Graphite','pickup','#49535c',6.5]]){
+ const vehicle=createShowroomPickup({name,color});vehicle.position.set(1,.08,z);vehicle.rotation.y=-Math.PI/2;root.add(vehicle);
  const podium=new THREE.Mesh(new THREE.CylinderGeometry(3.25,3.25,.08,64),mat(0xaeb2b1,.32,.2));podium.position.set(1,.04,z);podium.name=name+' display plinth';root.add(podium);
- cars.push({name,position:world(1,z),model:vehicle});displaySolids.push({x:1,z,w:5.2,d:2.3});
- const placard=box(root,.08,.70,1.0,4.1,.66,z,steel);const cv=document.createElement('canvas');cv.width=768;cv.height=320;const c=cv.getContext('2d');c.fillStyle='#1e3541';c.fillRect(0,0,768,320);c.fillStyle='#f2eadc';c.textAlign='center';c.font='bold 50px Arial';c.fillText(name,384,110,710);c.fillStyle='#8ccbd8';c.font='32px Arial';c.fillText(type==='coupe'?'GRAND TOURING COUPE':'PREMIUM CROSSOVER',384,190);c.font='25px Arial';c.fillText('Speak with a sales consultant',384,260);const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;const face=new THREE.Mesh(new THREE.PlaneGeometry(1.45,.60),new THREE.MeshBasicMaterial({map:tex}));face.rotation.y=Math.PI/2;face.position.set(4.15,.70,z);root.add(face);}
+ cars.push({name,position:world(1,z),model:vehicle});displaySolids.push({x:1,z,w:6.0,d:2.7});
+ const placard=box(root,.08,.70,1.0,4.1,.66,z,steel);const cv=document.createElement('canvas');cv.width=768;cv.height=320;const c=cv.getContext('2d');c.fillStyle='#1e3541';c.fillRect(0,0,768,320);c.fillStyle='#f2eadc';c.textAlign='center';c.font='bold 50px Arial';c.fillText(name,384,110,710);c.fillStyle='#8ccbd8';c.font='32px Arial';c.fillText('4 × 4 CREW-CAB PICKUP',384,190);c.font='25px Arial';c.fillText('Speak with a sales consultant',384,260);const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;const face=new THREE.Mesh(new THREE.PlaneGeometry(1.45,.60),new THREE.MeshBasicMaterial({map:tex}));face.rotation.y=Math.PI/2;face.position.set(4.15,.70,z);root.add(face);}
  const sales=addShowroomSales(root);
  // Reception, lounge, illuminated ceiling fixtures, offices and showroom plants.
  for(const zz of [-9,0,9]){const light=new THREE.PointLight(0xf1f6ff,2.1,14);light.position.set(0,7.8,zz);root.add(light);box(root,1.6,.08,5.4,0,8.25,zz,new THREE.MeshBasicMaterial({color:0xe8f5ff}));}
