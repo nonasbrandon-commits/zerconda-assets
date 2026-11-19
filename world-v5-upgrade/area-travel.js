@@ -1,4 +1,5 @@
 export const AREA_DESTINATIONS=[
+ {id:'fortune',name:'Z Fortune',group:'Town & shops',x:-56,z:-111,yaw:Math.PI},
  {id:'z-store',name:'Z Store',group:'Town & shops',x:155,z:80,yaw:Math.PI},
  {id:'museum',name:'Zerconda Museum',group:'Town & shops',x:-346,z:-134,yaw:Math.PI},
  {id:'tattoo',name:'Z Tattoo',group:'Town & shops',x:-390,z:-12.5,yaw:Math.PI},

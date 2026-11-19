@@ -1,3 +1,4 @@
+import {createZFortune} from './z-fortune.js?v=20261119-z-fortune-v122';
 import {createZStore} from './z-store.js?v=20261119-z-store-v119';
 import {createPlayerMenu} from './player-menu.js?v=20261119-z-store-v119';
 import {createMouseSkateControls} from './mouse-skate-controls.js?v=20261119-entrance-steering-v118';
@@ -13,7 +14,7 @@ import {createCourtGames} from './court-games.js?v=20261118-wall-mystery-v111';
 import {createHotDogVendor} from './boardwalk-hotdogs.js?v=20261118-wall-mystery-v111';
 import {createVehicleControls} from './vehicle-controls.js?v=20261119-entrance-steering-v118';
 import {createDamagedWallPanel,createBlockedWallOpening,WALL_OPENING} from './blocked-wall-opening.js?v=20261118-wall-mystery-v111';
-import {createAreaTravel} from './area-travel.js?v=20261119-coffee-front-v121';
+import {createAreaTravel} from './area-travel.js?v=20261119-z-fortune-v122';
 import {createMilitaryBase} from './military-base.js?v=20261118-faster-town-v106';
 import {upgradeMobileControls} from './mobile-controls.js?v=20261118-z-needle-v107';
 import {createAirportLoop} from './airport-loop.js?v=20261119-level-ground-v117';
@@ -55,7 +56,7 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261118-wall-mystery-v111';
 import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261118-wall-mystery-v111';
-import {createCityMap} from './top-city-map.js?v=20261119-coffee-front-v121';
+import {createCityMap} from './top-city-map.js?v=20261119-z-fortune-v122';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261118-realty-v105';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261119-level-ground-v117';
@@ -64,7 +65,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-ground-v117';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-19-coffee-front-v121';
+const ZERCONDA_BUILD='2026-11-19-z-fortune-v122';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -168,9 +169,10 @@ function architecturalWindow(group,cx,cy,cz,width,height,face='front'){
 }
 const geo=new THREE.BoxGeometry(1,1,1);
 const walkSurfaces=[];
-let zStore=null,playerMenu=null,museum=null,tattooShop=null,courtGames=null,hotDogVendor=null,club=null,needleSportsPark=null,ownableHomes=null,marine=null,coastal=null,scooters=null,bowling=null,boutique=null,news=null,apartmentExperience=null,premier=null,camp=null,airfield=null,skate=null,eastsideGolf=null,office=null,barber=null,villas=null,rvPark=null,carnival=null,townObstacles=null,airportLoop=null,northernForest=null,militaryBase=null,mobilePerformance=null,wildlifePlayer=null,southBeach=null,observationNeedle=null;const apartmentExteriors=[];let onObservationDeck=false,insideNeedleLobby=false;let dealerInside=false;
+let zFortune=null,zStore=null,playerMenu=null,museum=null,tattooShop=null,courtGames=null,hotDogVendor=null,club=null,needleSportsPark=null,ownableHomes=null,marine=null,coastal=null,scooters=null,bowling=null,boutique=null,news=null,apartmentExperience=null,premier=null,camp=null,airfield=null,skate=null,eastsideGolf=null,office=null,barber=null,villas=null,rvPark=null,carnival=null,townObstacles=null,airportLoop=null,northernForest=null,militaryBase=null,mobilePerformance=null,wildlifePlayer=null,southBeach=null,observationNeedle=null;const apartmentExteriors=[];let onObservationDeck=false,insideNeedleLobby=false;let dealerInside=false;
 function authoredGroundHeightAt(x,z){
  const museumY=museum?.heightAt(x,z);if(museumY!==null&&museumY!==undefined)return museumY;
+ const fortuneY=zFortune?.heightAt(x,z);if(fortuneY!==null&&fortuneY!==undefined)return fortuneY;
  const storeY=zStore?.heightAt(x,z);if(storeY!==null&&storeY!==undefined)return storeY;
  const tattooY=tattooShop?.heightAt(x,z);if(tattooY!==null&&tattooY!==undefined)return tattooY;
  if(observationNeedle?.riding)return observationNeedle.riderY;
@@ -508,6 +510,7 @@ for(const dx of [-20,20])for(const dz of [-20,20]){
 observationNeedle=createObservationNeedle(scene,{x:48,z:-48,getPlayer:()=>player,inLobby:()=>insideNeedleLobby,onMessage:m=>townControls.notify(m),onTravel:(x,y,z)=>{player.x=x;player.z=z;}});
 // Place Brewstone on the north side of the east-west street, opposite the dealership.
 // Its south-facing entrance and patio face the road; the showroom stays unobstructed.
+zFortune=createZFortune(scene,{getPlayer:()=>player});
 const coffeeShop=createCoffeeShop(scene,{x:-28,z:-132,getPlayer:()=>player});
  // Connect the commercial forecourt and cafe patio to their respective sidewalks.
  box(8,.14,10,-48,.035,-77,paving);
@@ -518,7 +521,7 @@ const dealership={
  x:-31,z:-48,insidePoint:{x:-31,z:-57},exitPoint:{x:-31,z:-64},inside:()=>false,blocks:()=>false,isNear:(x,z,r=5.5)=>Math.hypot(x+31,z+62)<r,
  nearestCar:()=>null
 };
-import('./zerconda-dealership.js?v=20261119-motors-sign-v120')
+import('./zerconda-dealership.js?v=20261119-z-fortune-v122')
  .then(({createDealership})=>Object.assign(dealership,createDealership(scene,{x:-31,z:-48,rotation:Math.PI/2})))
  .catch(err=>{console.error('Dealership asset failed (city continues):',err);
    if(status)status.textContent='City loaded; dealership asset unavailable: '+err.message;
@@ -1060,6 +1063,7 @@ playerMenu=createPlayerMenu({travelElement:areaTravel.element,onStop:()=>{keys.c
 
 addEventListener('keydown',e=>{if(zStore?.panelOpen||playerMenu?.panelOpen)return;if(e.code==='Escape'&&!e.repeat){carnival.close();}if(e.code==='KeyF'&&!e.repeat&&(camp?.resting||airfield?.boarded)){e.preventDefault();e.stopImmediatePropagation();camp.stopRest();airfield?.exit();skate?.end();office?.exit();barber?.exit();villas?.close();observationNeedle?.reset();return;}if(e.code!=='KeyF'||e.repeat||carnival?.riding||carnival?.gameOpen||observationNeedle.riding||villas?.panelOpen||barber?.panelOpen||club.gameOpen||(ownableHomes.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.boarded)))))||marine?.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;const action=townControls.activeActions[0];if(action){e.preventDefault();e.stopImmediatePropagation();townControls.activate(action.id);}},true);
 function walkable(x,z){
+ const fortuneWalk=zFortune?.canWalk(x,z);if(fortuneWalk!==null&&fortuneWalk!==undefined)return fortuneWalk;
  const museumWalk=museum?.canWalk(x,z,!!activeCar||!!scooters?.riding||!!skate?.riding);if(museumWalk!==null&&museumWalk!==undefined)return museumWalk;
  const storeWalk=zStore?.canWalk(x,z);if(storeWalk!==null&&storeWalk!==undefined)return storeWalk;
  const tattooWalk=tattooShop?.canWalk(x,z);if(tattooWalk!==null&&tattooWalk!==undefined)return tattooWalk;
@@ -1119,7 +1123,7 @@ function animate(){
  requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;let walkingDistance=0;
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
  if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
- airDancers.update(elapsed);coffeeShop.update(motionDt);
+ airDancers.update(elapsed);coffeeShop.update(motionDt);zFortune?.update(motionDt);
  forestShade=THREE.MathUtils.damp(forestShade,northernForest?.atmosphereAt(player.x,player.z)??0,1.4,motionDt);hemisphere.intensity=THREE.MathUtils.lerp(1.3,.72,forestShade);sun.intensity=THREE.MathUtils.lerp(2.8,1.35,forestShade);scene.fog.color.copy(daylightFog).lerp(forestFog,forestShade);scene.fog.density=THREE.MathUtils.lerp(.00055,.0020,forestShade);
  militaryBase?.update(motionDt);
  observationNeedle.update(dt);

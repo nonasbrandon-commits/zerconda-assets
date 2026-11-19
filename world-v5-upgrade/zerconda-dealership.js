@@ -1,3 +1,4 @@
+import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import {createModernPickup} from './modern-pickup.js?v=20261117-needle-lounge-v90';
 import * as THREE from 'three';
 import {createDetailedCar} from './detailed-fictional-cars.js?v=20261117-commerce-restore-v69';
@@ -101,11 +102,13 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0}={}){
  box(root,5,1.15,1.6,-8, .6,0,wood);box(root,5.4,.16,1.85,-8,1.25,0,white);
  for(const zz of [-10,10]){box(root,2.6,.65,1.25,-8,.45,zz,mat(0x526779));box(root,2.6,.7,.24,-8,.96,zz-.65,mat(0x526779));box(root,1.4,.38,1.1,-5.2,.4,zz,wood);}
  for(const zz of [-9,0,9]){const light=new THREE.PointLight(0xf1f6ff,2.1,14);light.position.set(0,7.8,zz);root.add(light);box(root,1.6,.08,5.4,0,8.25,zz,new THREE.MeshBasicMaterial({color:0xe8f5ff}));}
- // Asphalt forecourt with parking bays, concrete curbs, lighting and landscape islands.
- const asphalt=mat(0x353b40,.95),stripe=mat(0xe8e7df,.8),curb=mat(0xbfc4c3,.9);
- box(root,10.5,.09,28,18.75,-.12,0,asphalt);
- for(const zz of [-11,-5.5,0,5.5,11])box(root,7,.014,.11,19,.01,zz,stripe);
- box(root,.8,.26,28,24,.03,0,curb);
+ // Level stone forecourt with painted parking bays and landscape islands.
+ const asphalt=mat(0xb8b9b3,.85),stripe=mat(0xe8e7df,.8),curb=mat(0xbfc4c3,.9);
+ const pavingCanvas=document.createElement('canvas');pavingCanvas.width=pavingCanvas.height=256;const pc=pavingCanvas.getContext('2d');pc.fillStyle='#b9bab3';pc.fillRect(0,0,256,256);pc.strokeStyle='#888c8680';pc.lineWidth=2;pc.strokeRect(0,0,256,256);pc.beginPath();pc.moveTo(128,0);pc.lineTo(128,256);pc.stroke();const pt=new THREE.CanvasTexture(pavingCanvas);pt.colorSpace=THREE.SRGBColorSpace;pt.wrapS=pt.wrapT=THREE.RepeatWrapping;pt.repeat.set(5,14);asphalt.map=pt;asphalt.polygonOffset=true;asphalt.polygonOffsetFactor=-1;asphalt.polygonOffsetUnits=-2;
+ const forecourt=box(root,10.5,.09,28,18.75,GROUND_LEVEL-.045,0,asphalt);forecourt.name='Zerconda Motors · level stone parking';
+ stripe.polygonOffset=true;stripe.polygonOffsetFactor=-2;stripe.polygonOffsetUnits=-4;
+ for(const zz of [-11,-5.5,0,5.5,11])box(root,7,.004,.11,19,GROUND_LEVEL+.003,zz,stripe);
+ box(root,.8,.26,28,24,GROUND_LEVEL-.13,0,curb);
  for(const zz of [-12,12]){
   box(root,2.4,.4,2.4,23.5,.2,zz,curb);
   const bush=createNaturalShrub({width:1.8,height:1.65,seed:500+Math.round(zz*4)});bush.position.set(23.5,.4,zz);root.add(bush);
