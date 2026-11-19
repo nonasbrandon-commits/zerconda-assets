@@ -1,4 +1,4 @@
-import {createVarusExhibit} from './museum-varus.js?v=20261119-residential-v130';
+import {createVarusExhibit} from './museum-varus.js?v=20261119-original-exhibit-v131';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import {createMuseumFountain} from './museum-fountain.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';

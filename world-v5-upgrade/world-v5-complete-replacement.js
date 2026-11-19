@@ -7,7 +7,7 @@ import {createMouseVehicleSteering} from './mouse-vehicle-steering.js?v=20261119
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import {createRenderBudget} from './render-budget.js?v=20261118-startup-v114';
 import {createClothedPlayer} from './clothed-player.js';
-import {createZercondaMuseum} from './zerconda-museum.js?v=20261119-residential-v130';
+import {createZercondaMuseum} from './zerconda-museum.js?v=20261119-original-exhibit-v131';
 import {installAvatarTattoos} from './avatar-tattoos.js?v=20261118-clear-roads-v112';
 import {createZTattoo} from './z-tattoo.js?v=20261119-entrance-steering-v118';
 import {treeBoundsOverlapRoad} from './tree-road-clearance.js?v=20261118-clear-roads-v112';
@@ -66,7 +66,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-ground-v117';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-19-residential-v130';
+const ZERCONDA_BUILD='2026-11-19-original-exhibit-v131';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
