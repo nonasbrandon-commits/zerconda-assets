@@ -1,5 +1,6 @@
+import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
-export function createMuseumFountain(parent,{x=0,z=80,ground=.15}={}){
+export function createMuseumFountain(parent,{x=0,z=80,ground=GROUND_LEVEL}={}){
  const root=new THREE.Group();root.name='Museum stone fountain and seating';root.position.set(x,ground,z);parent.add(root);const seats=[],benches=[];
  const stone=new THREE.MeshStandardMaterial({color:0xa9b1b0,roughness:.72}),coping=new THREE.MeshStandardMaterial({color:0xd1d5d3,roughness:.48}),dark=new THREE.MeshStandardMaterial({color:0x587375,roughness:.65});
  function mesh(geo,mat,px=0,y=0,pz=0){const o=new THREE.Mesh(geo,mat);o.position.set(px,y,pz);o.receiveShadow=true;root.add(o);return o;}

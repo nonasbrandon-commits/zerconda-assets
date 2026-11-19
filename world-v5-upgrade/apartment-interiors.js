@@ -1,3 +1,4 @@
+import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import {createRealtySign,createApartmentNameplate} from './property-signs.js?v=20261118-realty-v105';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -18,11 +19,11 @@ export function createApartmentExterior(scene,b){const g=new THREE.Group();g.nam
  // Remove opaque horizontal trim over the stairwell: only the exterior edge bands remain.
  for(const o of [...g.children])if(o.isMesh&&o.geometry.parameters?.width===b.w+.35){g.remove(o);o.geometry.dispose();for(const z of [-b.d/2,b.d/2])box(b.w+.35,.14,.25,0,o.position.y,z,trim);for(const x of [-b.w/2,b.w/2])box(.25,.14,b.d, x,o.position.y,0,trim);}
  const h=levels*3.55+.25;box(b.w+.5,.22,b.d+.5,0,h,0,roof);box(3.6,.18,1.6,0,3.15,b.d/2+.55,roof);for(const x of [-1.43,1.43])box(.12,2.9,.18,x,1.63,b.d/2+.1,wood);box(.07,2.7,.14,0,1.53,b.d/2+.2,wood);for(const x of [-.12,.12])box(.045,.5,.13,x,1.4,b.d/2+.24,wood);
- const end=Math.abs(b.z-b.street)-14,begin=b.d/2;box(3.6,.18,1.7,0,.09,begin+.7,stone);const len=end-begin-1.4,path=box(3.4,.14,len,0,.15,(end+begin+1.4)/2,stone);path.rotation.x=-Math.atan2(.08,len);b.approachEnd=end;
+ const end=Math.abs(b.z-b.street)-14,begin=b.d/2;box(3.6,.18,1.7,0,GROUND_LEVEL-.09,begin+.7,stone);const len=end-begin-1.4,path=box(3.4,.14,len,0,GROUND_LEVEL-.07,(end+begin+1.4)/2,stone);b.approachEnd=end;
  createApartmentNameplate(g,{z:b.d/2+.13});b.realEstateSign=createRealtySign(g,{x:-6,y:-.10,z:end-2.2});
 
  if(frameDetails.length){const frame=new THREE.Mesh(mergeGeometries(frameDetails,false),sash);frame.name='Apartment window sash and gaskets';g.add(frame);frameDetails.forEach(geo=>geo.dispose());}
- b.entry=apartmentPoint(b,0,b.d/2+2.1);b.door=apartmentPoint(b,0,b.d/2+.24);b.approachHeight=(x,z)=>{const dx=x-b.x,dz=z-b.z,lx=Math.cos(b.angle)*dx-Math.sin(b.angle)*dz,lz=Math.sin(b.angle)*dx+Math.cos(b.angle)*dz;return Math.abs(lx)<1.8&&lz>b.d/2&&lz<end+.1?.18+Math.min(1,(lz-b.d/2)/(end-b.d/2))*.08:null;};return g;
+ b.entry=apartmentPoint(b,0,b.d/2+2.1);b.door=apartmentPoint(b,0,b.d/2+.24);b.approachHeight=(x,z)=>{const dx=x-b.x,dz=z-b.z,lx=Math.cos(b.angle)*dx-Math.sin(b.angle)*dz,lz=Math.sin(b.angle)*dx+Math.cos(b.angle)*dz;return Math.abs(lx)<1.8&&lz>b.d/2&&lz<end+.1?GROUND_LEVEL:null;};return g;
 }
 export function createApartmentExperience({scene,getPlayer=()=>({x:0,z:0}),onTeleport=()=>{},onMessage=()=>{}}={}){
  const root=new THREE.Group();root.name='Spacious apartments in the town';root.userData.customInterior=true;root.visible=false;scene.add(root);const hall=new THREE.Group(),unit=new THREE.Group();root.add(hall,unit);

@@ -1,3 +1,4 @@
+import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import {createGardenWildlife} from './garden-wildlife.js?v=20261118-wildlife-v96';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -14,8 +15,8 @@ export function createZenPond(parent,{x=0,z=-35,getPlayer=()=>null,externalPaths
  const stone=new THREE.MeshStandardMaterial({map:rockMap,color:0xcacac1,roughness:1});
  const paving=new THREE.MeshStandardMaterial({map:rockMap,color:0xdbd7cc,roughness:.98}),connectorPaving=new THREE.MeshStandardMaterial({map:paverMap,color:0xd4cfc3,roughness:.98});
  for(const m of [stone,paving])m.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\ndiffuseColor.rgb=mix(diffuseColor.rgb,vec3(dot(diffuseColor.rgb,vec3(.2126,.7152,.0722))),.84);');};
- const gravel=mat(0x8f8c79),moss=mat(0x687254),wood=mat(0x705d43,.82),iron=mat(0x35423d,.58);
- const pieces={stone:[],paving:[],gravel:[],moss:[],wood:[],iron:[]};
+ for(const m of[paving,connectorPaving]){m.polygonOffset=true;m.polygonOffsetFactor=-2;m.polygonOffsetUnits=-4;}const gravel=mat(0x8f8c79),moss=mat(0x687254),wood=mat(0x705d43,.82),iron=mat(0x35423d,.58);
+ gravel.polygonOffset=true;gravel.polygonOffsetFactor=-1;gravel.polygonOffsetUnits=-2;const pieces={stone:[],paving:[],gravel:[],moss:[],wood:[],iron:[]};
  function add(geometry,material,position=[0,0,0],scale=[1,1,1],rotation=[0,0,0],batch=null){const mesh=new THREE.Mesh(geometry,material);mesh.position.set(...position);mesh.scale.set(...scale);mesh.rotation.set(...rotation);if(batch){mesh.updateMatrix();const g=geometry.clone();g.applyMatrix4(mesh.matrix);pieces[batch].push(g.index?g.toNonIndexed():g);geometry.dispose();}else{root.add(mesh);mesh.receiveShadow=true;}return mesh;}
  function box(w,h,d,px,py,pz,material,batch=null,ry=0){return add(new THREE.BoxGeometry(w,h,d),material,[px,py,pz],[1,1,1],[0,ry,0],batch);}
  function boundary(a){const r=1+.055*Math.sin(a*3+.7)+.035*Math.sin(a*5+1.4);return new THREE.Vector2(Math.cos(a)*13*r,Math.sin(a)*8.3*r);}
@@ -24,7 +25,7 @@ export function createZenPond(parent,{x=0,z=-35,getPlayer=()=>null,externalPaths
  function shapeFor(points){return new THREE.Shape(points.map(p=>new THREE.Vector2(p.x,-p.y)));}
  const shoreline=Array.from({length:128},(_,i)=>boundary(i*TAU/128));
  // Textured garden turf replaces the flat green park overlay in this northern section.
- const turf=new THREE.Mesh(new THREE.PlaneGeometry(65,39),new THREE.MeshStandardMaterial({map:grassMap,color:0xb3b99b,roughness:1}));turf.rotation.x=-Math.PI/2;turf.position.set(0,.006,-.5);turf.receiveShadow=true;root.add(turf);
+ const turf=new THREE.Mesh(new THREE.PlaneGeometry(65,39),new THREE.MeshStandardMaterial({map:grassMap,color:0xb3b99b,roughness:1}));turf.rotation.x=-Math.PI/2;turf.material.polygonOffset=true;turf.material.polygonOffsetFactor=.5;turf.material.polygonOffsetUnits=1;turf.position.set(0,GROUND_LEVEL,-.5);turf.receiveShadow=true;root.add(turf);
  // A dark, variegated pebble bed gives depth through the gently transparent surface.
  const bedCanvas=document.createElement('canvas');bedCanvas.width=bedCanvas.height=512;const bc=bedCanvas.getContext('2d');bc.fillStyle='#1c3831';bc.fillRect(0,0,512,512);
  for(let i=0;i<19000;i++){const px=rnd()*512,py=rnd()*512,s=1+rnd()*3;bc.fillStyle=['#2b4940','#3b5145','#263d38','#526053'][Math.floor(rnd()*4)];bc.beginPath();bc.ellipse(px,py,s,s*.65,rnd()*TAU,0,TAU);bc.fill();}
@@ -32,12 +33,12 @@ export function createZenPond(parent,{x=0,z=-35,getPlayer=()=>null,externalPaths
  const uv=bed.geometry.attributes.uv;for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)/26+.5,uv.getY(i)/18+.5);
  // Continuous, 2.4m-wide promenade with open pedestrian links to the courts.
  const outer=shoreline.map((_,i)=>ringPoint(i*TAU/128,3.7)),inner=shoreline.map((_,i)=>ringPoint(i*TAU/128,1.25));const loop=shapeFor(outer);loop.holes.push(new THREE.Path(inner.map(p=>new THREE.Vector2(p.x,-p.y)).reverse()));
- add(new THREE.ShapeGeometry(loop),gravel,[0,.073,0],[1,1,1],[-Math.PI/2,0,0]);
+ add(new THREE.ShapeGeometry(loop),gravel,[0,GROUND_LEVEL,0],[1,1,1],[-Math.PI/2,0,0]);
  // Individual staggered, irregular flagstones are merged into one draw call.
- for(let row=0;row<2;row++)for(let i=0;i<100;i++){const a=(i+(row%2)*.5)*TAU/100,da=TAU/100*.46,lo=1.32+row*1.19,hi=lo+1.1;const poly=[ringPoint(a-da,lo),ringPoint(a+da,lo+.035),ringPoint(a+da*.97,hi),ringPoint(a-da*.94,hi-.035)];const g=new THREE.ExtrudeGeometry(shapeFor(poly),{depth:.055,bevelEnabled:false});add(g,paving,[0,.086,0],[1,1,1],[-Math.PI/2,0,0],'paving');}
- const walkCurves=[];function walkway(points,width=2.4){const curve=new THREE.CatmullRomCurve3(points.map(([xx,zz])=>new THREE.Vector3(xx,.105,zz)));walkCurves.push({curve,width});const pos=[],uvs=[],indices=[];for(let i=0;i<=40;i++){const t=i/40,p=curve.getPoint(t),d=curve.getTangent(t),n=new THREE.Vector3(-d.z,0,d.x).normalize();for(const side of [-1,1]){const q=p.clone().addScaledVector(n,side*width*.5);pos.push(q.x,q.y,q.z);uvs.push(side<0?0:1,t*8);}if(i<40){const k=i*2;indices.push(k,k+1,k+2,k+1,k+3,k+2);}}// Cut connector triangles at existing promenade edges. Both surfaces are at
+ for(let row=0;row<2;row++)for(let i=0;i<100;i++){const a=(i+(row%2)*.5)*TAU/100,da=TAU/100*.46,lo=1.32+row*1.19,hi=lo+1.1;const poly=[ringPoint(a-da,lo),ringPoint(a+da,lo+.035),ringPoint(a+da*.97,hi),ringPoint(a-da*.94,hi-.035)];const g=new THREE.ExtrudeGeometry(shapeFor(poly),{depth:.055,bevelEnabled:false});add(g,paving,[0,GROUND_LEVEL-.055,0],[1,1,1],[-Math.PI/2,0,0],'paving');}
+ const walkCurves=[];function walkway(points,width=2.4){const curve=new THREE.CatmullRomCurve3(points.map(([xx,zz])=>new THREE.Vector3(xx,GROUND_LEVEL,zz)));walkCurves.push({curve,width});const pos=[],uvs=[],indices=[];for(let i=0;i<=40;i++){const t=i/40,p=curve.getPoint(t),d=curve.getTangent(t),n=new THREE.Vector3(-d.z,0,d.x).normalize();for(const side of [-1,1]){const q=p.clone().addScaledVector(n,side*width*.5);pos.push(q.x,q.y,q.z);uvs.push(side<0?0:1,t*8);}if(i<40){const k=i*2;indices.push(k,k+1,k+2,k+1,k+3,k+2);}}// Cut connector triangles at existing promenade edges. Both surfaces are at
  // y=.105; retaining their overlap caused depth-buffer flicker as the camera moved.
- const rects=externalPaths.filter(r=>Math.abs(r.y-.105)<.01).map(r=>({x0:r.x-x-r.w/2,x1:r.x-x+r.w/2,z0:r.z-z-r.d/2,z1:r.z-z+r.d/2}));
+ const rects=externalPaths.filter(r=>Math.abs(r.y-GROUND_LEVEL)<.01).map(r=>({x0:r.x-x-r.w/2,x1:r.x-x+r.w/2,z0:r.z-z-r.d/2,z1:r.z-z+r.d/2}));
  function half(poly,axis,value,sign){const out=[];for(let j=0;j<poly.length;j++){const a=poly[j],b=poly[(j+1)%poly.length],da=(a[axis]-value)*sign,db=(b[axis]-value)*sign;if(da>=0)out.push(a);if((da>=0)!==(db>=0)){const t=da/(da-db);out.push(a.map((v,k)=>v+(b[k]-v)*t));}}return out;}
  const clipped=[],tex=[];
  for(let j=0;j<indices.length;j+=3){let polys=[indices.slice(j,j+3).map(i=>[pos[i*3],pos[i*3+1],pos[i*3+2],uvs[i*2],uvs[i*2+1]])];for(const r of rects){const next=[];for(const poly of polys){let remaining=poly;for(const [axis,value,sign]of [[0,r.x0,1],[0,r.x1,-1],[2,r.z0,1],[2,r.z1,-1]]){if(remaining.length<3)break;const outside=half(remaining,axis,value,-sign);if(outside.length>=3)next.push(outside);remaining=half(remaining,axis,value,sign);}}polys=next;}for(const poly of polys)for(let k=1;k<poly.length-1;k++)for(const p of [poly[0],poly[k],poly[k+1]]){clipped.push(...p.slice(0,3));tex.push(...p.slice(3));}}
@@ -100,7 +101,7 @@ export function createZenPond(parent,{x=0,z=-35,getPlayer=()=>null,externalPaths
  for(const [key,list]of Object.entries(pieces)){if(!list.length)continue;const geom=mergeGeometries(list.map(g=>{if(!g.attributes.uv)g.setAttribute('uv',new THREE.Float32BufferAttribute(new Float32Array(g.attributes.position.count*2),2));return g;}));const mesh=new THREE.Mesh(geom,{stone,paving,gravel,moss,wood,iron}[key]);mesh.name='Garden '+key;mesh.receiveShadow=true;root.add(mesh);for(const g of list)g.dispose();}
  function local(wx,wz){parent.updateWorldMatrix(true,false);const p=parent.worldToLocal(new THREE.Vector3(wx,0,wz));return new THREE.Vector2(p.x-x,p.z-z);}
  function blocks(wx,wz){const p=local(wx,wz),a=Math.atan2(p.y/8.3,p.x/13);return p.length()<edgeRadius(a)+.35;}
- function heightAt(wx,wz){const p=local(wx,wz),a=Math.atan2(p.y/8.3,p.x/13),r=p.length(),edge=edgeRadius(a);if(r>edge+1.1&&r<edge+3.85)return .141;for(const {curve,width}of walkCurves)for(let i=0;i<=24;i++){const q=curve.getPoint(i/24);if(Math.hypot(p.x-q.x,p.y-q.z)<width*.5+.08)return .105;}return null;}
+ function heightAt(wx,wz){const p=local(wx,wz),a=Math.atan2(p.y/8.3,p.x/13),r=p.length(),edge=edgeRadius(a);if(r>edge+1.1&&r<edge+3.85)return GROUND_LEVEL;for(const {curve,width}of walkCurves)for(let i=0;i<=24;i++){const q=curve.getPoint(i/24);if(Math.hypot(p.x-q.x,p.y-q.z)<width*.5+.08)return GROUND_LEVEL;}return null;}
  function update(time){waterTime.value=time;flowTime.value=time;for(const f of fish){const a=time*f.speed+f.phase;f.group.position.set(Math.cos(a)*f.r,.13+Math.sin(time*.7+f.phase)*.008,Math.sin(a)*f.r*.57);f.group.rotation.y=Math.atan2(-Math.cos(a)*f.r*.57,-Math.sin(a)*f.r);f.tail.rotation.y=Math.sin(time*4.8+f.phase)*.27;}wildlife.update(time);for(const r of ripples){const t=(time*.25+r.phase)%1;r.mesh.scale.set(1+t*2,.55+t*.8,1);r.mesh.material.opacity=.23*(1-t);} }
  update(0);
  return {root,seats,blocks,heightAt,update,wildlife,plantClusters,plantClear,onPath,atBench,counts:{fish:8,frogs:2,birds:3,squirrels:2,trees:treePositions.length},worldSeats(){parent.updateWorldMatrix(true,false);return seats.map(s=>{const p=parent.localToWorld(new THREE.Vector3(s.x,0,s.z));return {...s,x:p.x,z:p.z};});}};

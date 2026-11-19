@@ -1,6 +1,7 @@
+import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import {createRenderBudget} from './render-budget.js?v=20261118-startup-v114';
 import {createClothedPlayer} from './clothed-player.js';
-import {createZercondaMuseum} from './zerconda-museum.js?v=20261119-stone-court-v115';
+import {createZercondaMuseum} from './zerconda-museum.js?v=20261119-level-ground-v117';
 import {installAvatarTattoos} from './avatar-tattoos.js?v=20261118-clear-roads-v112';
 import {createZTattoo} from './z-tattoo.js?v=20261118-clear-roads-v112';
 import {treeBoundsOverlapRoad} from './tree-road-clearance.js?v=20261118-clear-roads-v112';
@@ -11,20 +12,20 @@ import {createDamagedWallPanel,createBlockedWallOpening,WALL_OPENING} from './bl
 import {createAreaTravel} from './area-travel.js?v=20261119-stone-court-v115';
 import {createMilitaryBase} from './military-base.js?v=20261118-faster-town-v106';
 import {upgradeMobileControls} from './mobile-controls.js?v=20261118-z-needle-v107';
-import {createAirportLoop} from './airport-loop.js?v=20261118-wall-mystery-v111';
+import {createAirportLoop} from './airport-loop.js?v=20261119-level-ground-v117';
 import {createNorthernForest} from './northern-forest.js?v=20261118-wall-mystery-v111';
 import {createMobilePerformance} from './mobile-performance.js?v=20261118-visible-trails-v100';
 import {createTownObstacles} from './town-obstacles.js?v=20261118-visible-trails-v100';
 import {createSeasideCarnival} from './seaside-carnival.js?v=20261118-visible-trails-v100';
-import {createRVPark} from './rv-park.js?v=20261118-clear-roads-v112';
+import {createRVPark} from './rv-park.js?v=20261119-level-ground-v117';
 import {createModernPickup} from './modern-pickup.js?v=20261118-visible-trails-v100';
-import {createLuxuryVillas} from './luxury-villas.js?v=20261118-realty-v105';
+import {createLuxuryVillas} from './luxury-villas.js?v=20261119-level-ground-v117';
 import {createStyleCuts} from './style-cuts.js?v=20261118-visible-trails-v100';
 import {createBusinessCentre} from './business-centre.js?v=20261118-office-lift-v108';
 import {createSkatePark} from './skate-park.js?v=20261118-realty-v105';
 import {createAirfield} from './airfield.js?v=20261118-wall-mystery-v111';
 import * as THREE from 'three';
-import {createForestCampground} from './forest-campground.js?v=20261118-clear-roads-v112';
+import {createForestCampground} from './forest-campground.js?v=20261119-level-ground-v117';
 import {createPremierHomes} from './premier-homes.js?v=20261118-realty-v105';
 import {createZercondaNews} from './zerconda-news.js?v=20261119-julie-news-v116';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261118-realty-v105';
@@ -38,13 +39,13 @@ import {createRealisticHuman} from './realistic-human.js?v=20261118-faster-town-
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import {installRealisticFountain} from './realistic-fountain.js';
+import {installRealisticFountain} from './realistic-fountain.js?v=20261119-level-ground-v117';
 import {createObservationNeedle} from './observation-needle.js?v=20261118-z-needle-v107';
 import {createCloudSky} from './cloud-sky.js';
 import {addCityDepth} from './city-depth-assets.js?v=20261118-wall-mystery-v111';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js?v=20261118-area-travel-v110';
-import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261119-stone-court-v115';
+import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261119-level-ground-v117';
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261117-interiors-v1';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261118-wall-mystery-v111';
@@ -53,13 +54,13 @@ import {createZercondaBeach} from './zerconda-beach.js?v=20261118-wall-mystery-v
 import {createCityMap} from './top-city-map.js?v=20261119-stone-court-v115';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261118-realty-v105';
-import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261118-realty-v105';
+import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261119-level-ground-v117';
 import {createPedestrians} from './animated-pedestrians.js?v=20261118-faster-town-v106';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118-visible-trails-v100';
-import {createNeedleSportsPark} from './needle-sports-park.js?v=20261118-visible-trails-v100';
+import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-ground-v117';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-19-julie-news-v116';
+const ZERCONDA_BUILD='2026-11-19-level-ground-v117';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -128,7 +129,7 @@ const asphalt=new THREE.MeshStandardMaterial({color:0x333638,roughness:0.98,meta
  const aggregate=new THREE.CanvasTexture(asphaltCanvas);aggregate.wrapS=aggregate.wrapT=THREE.RepeatWrapping;aggregate.repeat.set(12,12);aggregate.anisotropy=4;asphalt.map=aggregate;asphalt.bumpMap=aggregate;asphalt.bumpScale=.012;
 const paving=groundPBR('PavingStones070','PavingStones070',18,0xe4ddd0);
 const curb=M(0xd7d2c8);
-const grass=groundPBR('Ground037','Ground037',65,0x94a68a);
+const grass=groundPBR('Ground037','Ground037',65,0x94a68a);grass.polygonOffset=true;grass.polygonOffsetFactor=2;grass.polygonOffsetUnits=4;
 const lane=M(0xeae5d7),yellow=M(0xc4ad62),dark=M(0x252a2d),stone=M(0xc4bcae);
 const bronze=M(0x6b5c48,.38,.62),wood=M(0x6a4a31);
 const glassCanvas=document.createElement('canvas');glassCanvas.width=512;glassCanvas.height=512;
@@ -202,7 +203,7 @@ function authoredGroundHeightAt(x,z){
  if(ownableHomes?.active)return ownableHomes.heightAt(x,z);
  let height=ownableHomes?.heightAt(x,z)??needleSportsPark?.heightAt(x,z)??-Infinity;
  for(const s of walkSurfaces)if(Math.abs(x-s.x)<=s.w/2&&Math.abs(z-s.z)<=s.d/2)height=Math.max(height,s.y);
- return Number.isFinite(height)?height:0;
+ return Number.isFinite(height)?height:GROUND_LEVEL;
 }
 // Exterior modules and sidewalk slabs may overlap at their physical edges.
 function groundHeightAt(x,z){
@@ -218,12 +219,13 @@ function standingHeightAt(x,z){
  return support+.004;
 }
 function box(w,h,d,x,y,z,material,parent=scene){
+ if(parent===scene&&h<=.3&&[asphalt,paving,curb].includes(material))y=GROUND_LEVEL-h/2;
  const o=new THREE.Mesh(geo,material);o.scale.set(w,h,d);o.position.set(x,y,z);
  o.castShadow=true;o.receiveShadow=true;
  // Horizontal road/sidewalk slabs must not cast shadows on themselves or each other.
  if(material===asphalt||material===paving||material===curb){o.castShadow=false;o.receiveShadow=true;}
  if(material===lane||material===yellow){o.castShadow=false;o.receiveShadow=false;}
- if(h<=.3&&parent===scene&&[asphalt,paving,curb,grass].includes(material))walkSurfaces.push({x,z,w,d,y:y+h/2});
+ if(h<=.3&&parent===scene&&[asphalt,paving,curb].includes(material))walkSurfaces.push({x,z,w,d,y:y+h/2});
  parent.add(o);return o;
 }
 function cylinder(rt,rb,h,x,y,z,material,parent=scene,n=48){
@@ -244,8 +246,7 @@ const insideBuilding=(x,z,pad=0)=>buildings.some(b=>Math.abs(x-b.x)<b.w/2+pad&&M
 // Seamless mainland under the skyline: stops the blue sky void and floating towers.
 // Southern edge ends before the beach/ocean; city roads and landscaping sit above it.
 const mainlandGround=box(1250,.18,1180,165,-.28,-425,grass);
-box(350,.12,350,0,-.16,0,grass);
-box(168,.12,1525,-360,-.16,-587.5,grass);
+const cityLawn=box(1014,.12,743,63,GROUND_LEVEL-.06,-196.5,grass);
 // All three original road corridors now run continuously to the perimeter fence.
 // East-west roads: x=-276..570. North-south roads: z=-285..242.
 const roadWest=-444,roadEast=570,roadNorth=-273.5,roadSouth=242;
@@ -478,7 +479,8 @@ const towerDistrict={x:48,z:-48,outer:37,inner:29};
 const loopRoadMaterial=asphalt;
 const towerPavingMaterial=paving;
 const towerLawnMaterial=grass;
-function towerSurface(w,d,x,z,material,y=.045){
+function towerSurface(w,d,x,z,material,y=GROUND_LEVEL){
+ y=GROUND_LEVEL;
  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,d),material);
  mesh.rotation.x=-Math.PI/2;mesh.position.set(x,y,z);
  walkSurfaces.push({x,z,w,d,y});
@@ -494,8 +496,8 @@ towerSurface(9,11,48,-90.5,loopRoadMaterial,.067);
 towerSurface(57.5,57.5,48,-48,towerPavingMaterial,.09);
 // Landscape pockets at the four corners of the tower island.
 for(const dx of [-21,21])for(const dz of [-21,21]){
- const bed=new THREE.Mesh(new THREE.CircleGeometry(6,32),towerLawnMaterial);
- bed.rotation.x=-Math.PI/2;bed.position.set(48+dx,.108,-48+dz);
+ const insetLawnMaterial=towerLawnMaterial.clone();insetLawnMaterial.polygonOffsetFactor=-2;insetLawnMaterial.polygonOffsetUnits=-4;const bed=new THREE.Mesh(new THREE.CircleGeometry(6,32),insetLawnMaterial);
+ bed.rotation.x=-Math.PI/2;bed.position.set(48+dx,GROUND_LEVEL,-48+dz);
  bed.receiveShadow=true;scene.add(bed);
 }
 // Removed elevated decorative curb strips around the tower loop.
@@ -613,7 +615,7 @@ let apartmentSession=null,apartmentFloor=0;
 // have been REMOVED. The GLB supplies the entire detailed plaza instead.
 let realisticPlaza=null;
 installRealisticFountain({scene,centerX:48,centerZ:48,renderer})
- .then(plaza=>{realisticPlaza=plaza;walkSurfaces.push({x:48,z:48,w:54,d:54,y:.035});
+ .then(plaza=>{realisticPlaza=plaza;walkSurfaces.push({x:48,z:48,w:54,d:54,y:GROUND_LEVEL});
   if(status)status.textContent='Real 3D fountain plaza loaded at (48,48)';
  })
  .catch(err=>{console.error('Real fountain asset unavailable:',err);
@@ -1015,6 +1017,9 @@ addEventListener('keydown',e=>{if(e.code==='Space'&&!e.repeat&&skate.riding&&!['
 office=createBusinessCentre(scene,{getPlayer:()=>player,canEnter:()=>!barber?.active&&!activeCar&&!skate.riding&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x-Math.sin(yaw)*2.4,y+2.1,z-Math.cos(yaw)*2.4);}});
 barber=createStyleCuts(scene,{getPlayer:()=>player,canEnter:()=>!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,applyHair:h=>realisticPlayer.setHair(h),onMessage:m=>townControls.notify(m),onSeat:seat=>{sittingSeat=seat;seatReturn=null;yaw=seat.facing;keys.clear();movement.vx=0;movement.vz=0;townControls.stop();},onStand:()=>{sittingSeat=null;seatReturn=null;keys.clear();movement.vx=0;movement.vz=0;townControls.stop();},onTeleport:(x,y,z,heading)=>{yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x-Math.sin(yaw)*2.4,y+2.1,z-Math.cos(yaw)*2.4);}});
 villas=createLuxuryVillas(scene,{getPlayer:()=>player,canInteract:()=>!barber.active&&!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});villas.cutGround(mainlandGround);
+ // Continuous level grass keeps the real openings into the villa swimming pools.
+ {const shape=new THREE.Shape();shape.moveTo(-444,568);shape.lineTo(570,568);shape.lineTo(570,-175);shape.lineTo(-444,-175);shape.closePath();for(const h of villas.homes){const xa=h.x+35.8,xb=h.x+48.2,za=h.z-11.2,zb=h.z+11.2,path=new THREE.Path();path.moveTo(xa,-za);path.lineTo(xa,-zb);path.lineTo(xb,-zb);path.lineTo(xb,-za);path.closePath();shape.holes.push(path);}const g=new THREE.ShapeGeometry(shape),p=g.attributes.position,u=g.attributes.uv;for(let i=0;i<p.count;i++)u.setXY(i,(p.getX(i)+444)/350,(-p.getY(i)+568)/350);g.rotateX(-Math.PI/2);cityLawn.geometry=g;cityLawn.position.set(0,GROUND_LEVEL,0);cityLawn.scale.set(1,1,1);}
+
 rvPark=createRVPark(scene,{getPlayer:()=>player,canUse:()=>!observationNeedle.riding&&!onObservationDeck&&!insideNeedleLobby&&!barber.active&&!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=0;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x,y+1.68,z);}});
 carnival=createSeasideCarnival(scene,{getPlayer:()=>player,canUse:()=>!observationNeedle.riding&&!onObservationDeck&&!insideNeedleLobby&&!barber.active&&!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!rvPark.inside&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onStop:()=>{sittingSeat=null;seatReturn=null;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();},onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{yaw=heading;pitch=0;camera.position.set(x,y+1.7,z);}});
 townObstacles=createTownObstacles({scene,getFloor:standingHeightAt,getDynamic:()=>cars.filter(c=>c!==activeCar).map(c=>c.group),ignore:o=>o===avatar||o===realisticPlayer.root||o.name==='Cloud sky'||o.name==='Zerconda South Beach'||cars.some(c=>c.group===o)});townObstacles.scan();

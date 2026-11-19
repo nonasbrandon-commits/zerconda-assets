@@ -1,3 +1,4 @@
+import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
 // Replacement fountain: eliminates the black GLB geometry entirely.
 // Physically lit limestone tiers, clear water, water jets and a walkable plaza.
@@ -34,7 +35,7 @@ export async function installRealisticFountain({scene,centerX=48,centerZ=48,rend
  const spray=new THREE.MeshBasicMaterial({color:0x7fc9dd,transparent:true,opacity:.35,depthWrite:false,side:THREE.DoubleSide});
  const add=(geo,mat,x=0,y=0,z=0)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.receiveShadow=true;m.castShadow=false;root.add(m);return m};
  // All plaza geometry is explicitly upward-facing: no dark/inverted GLB faces.
- const plaza=add(new THREE.PlaneGeometry(54,54),paving,0,.035,0);plaza.rotation.x=-Math.PI/2;
+ const plaza=add(new THREE.PlaneGeometry(54,54),paving,0,GROUND_LEVEL,0);plaza.rotation.x=-Math.PI/2;
  const ring=(outer,inner,h,y,mat)=>add(new THREE.RingGeometry(inner,outer,96),mat,0,y,0);
  function disk(radius,height,y,mat){return add(new THREE.CylinderGeometry(radius,radius,height,96),mat,0,y,0);}
  function basin(radius,baseY,wallH){

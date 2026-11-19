@@ -1,5 +1,6 @@
+import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
-import {createZenPond} from './zen-pond.js?v=20261118-path-seams-v99';
+import {createZenPond} from './zen-pond.js?v=20261119-level-ground-v117';
 // Public park north of the Observation Needle. All features are traversable scenery.
 export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}){
  const root=new THREE.Group();root.name='Needle Park - tennis basketball fish pond';root.position.set(x,0,z);scene.add(root);
@@ -24,15 +25,15 @@ export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}
   return new THREE.MeshStandardMaterial({map:texture,roughness:.95,metalness:0});
  }
  const tennisSurface=courtSurface(0x245b85,3),basketSurface=courtSurface(0xb44f42,7);
- const walkSurfaces=[];
- function box(w,h,d,px,py,pz,m,parent=root){if(parent===root&&h<=.3&&w*d>2)walkSurfaces.push({x:px,z:pz,w,d,y:py+h/2});const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(px,py,pz);o.receiveShadow=true;o.castShadow=h>.5;parent.add(o);return o;}
+ turf.polygonOffset=true;turf.polygonOffsetFactor=1;turf.polygonOffsetUnits=2;for(const m of[tennisSurface,basketSurface]){m.polygonOffset=true;m.polygonOffsetFactor=-1;m.polygonOffsetUnits=-2;}const walkSurfaces=[];
+ function box(w,h,d,px,py,pz,m,parent=root){if(parent===root&&h<=.3&&w*d>2){py=GROUND_LEVEL-h/2;walkSurfaces.push({x:px,z:pz,w,d,y:GROUND_LEVEL,kind:m===turf?'lawn':m===asphalt||h<.05?'court':'path'});}const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(px,py,pz);o.receiveShadow=true;o.castShadow=h>.5;parent.add(o);return o;}
  function cyl(rt,rb,h,px,py,pz,m,n=10){const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,n),m);o.position.set(px,py,pz);o.castShadow=true;root.add(o);return o;}
  box(66,.14,108,0,-.15,0,turf);
  // Walkway links the park to the city's northern boulevard.
  // A continuous promenade now reaches the boulevard sidewalk.
  
  function line(x1,z1,x2,z2,color=white,width=.11,y=.08){
-  const dx=x2-x1,dz=z2-z1,o=box(Math.hypot(dx,dz),.025,width,(x1+x2)/2,y,(z1+z2)/2,color);o.rotation.y=-Math.atan2(dz,dx);
+  const dx=x2-x1,dz=z2-z1,o=box(Math.hypot(dx,dz),color===white?.004:.025,width,(x1+x2)/2,color===white?GROUND_LEVEL+.002:y,(z1+z2)/2,color);o.rotation.y=-Math.atan2(dz,dx);
  }
  function court(cx,cz,tennis){
   const w=tennis?24:17,d=tennis?43:29;
@@ -99,10 +100,7 @@ export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}
  // Courts need recognisable equipment and contrasting painted regulation markings.
  // Add a basketball center circle and key arcs with low-profile white painted lines.
  const paint=mat(0xf3f0e6,.95);
- function paintArc(cx,cz,r,start,end){
-  const pts=[];for(let k=0;k<=48;k++){const ang=start+(end-start)*k/48;pts.push(new THREE.Vector3(cx+Math.cos(ang)*r,.135,cz+Math.sin(ang)*r));}
-  const mesh=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),48,.052,5,false),paint);root.add(mesh);
- }
+ function paintArc(cx,cz,r,start,end){const pos=[],idx=[];for(let k=0;k<=48;k++){const a=start+(end-start)*k/48;for(const rr of[r-.052,r+.052])pos.push(cx+Math.cos(a)*rr,GROUND_LEVEL+.003,cz+Math.sin(a)*rr);if(k<48){const j=k*2;idx.push(j,j+2,j+1,j+1,j+2,j+3);}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();root.add(new THREE.Mesh(g,paint));}
  paintArc(18,15,1.8,0,Math.PI*2);
  for(const dz of [-1,1])paintArc(18,15+dz*9,3.1,dz===1?0:Math.PI,dz===1?Math.PI:Math.PI*2);
  // Tennis service boxes and distinct singles sidelines.
@@ -112,7 +110,7 @@ export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}
  line(-18,15-7,-18,15+7,white,.09,.137);
 
 
- const garden=createZenPond(root,{x:0,z:-35,getPlayer,externalPaths:walkSurfaces.filter(p=>p.y>.02)});
+ const garden=createZenPond(root,{x:0,z:-35,getPlayer,externalPaths:walkSurfaces.filter(p=>p.kind==='path')});
  return {root,garden,seats:[...garden.worldSeats(),...[-8,12,34].map(pz=>({x,z:z+pz,facing:-Math.PI/2,sitHeight:.7075,kind:'park bench'}))],blocks:garden.blocks,heightAt(wx,wz){let height=garden.heightAt(wx,wz);const px=wx-x,pz=wz-z;for(const r of walkSurfaces)if(Math.abs(px-r.x)<=r.w/2&&Math.abs(pz-r.z)<=r.d/2)height=Math.max(height??-1,r.y);return height;},walkSurfaces,counts:garden.counts,update(t){garden.update(t);}};
 }
 

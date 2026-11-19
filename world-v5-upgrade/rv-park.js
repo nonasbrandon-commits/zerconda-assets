@@ -1,3 +1,4 @@
+import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import {treeOverlapsRoad} from './tree-road-clearance.js?v=20261118-clear-roads-v112';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -12,16 +13,16 @@ export function createRVPark(scene,{getPlayer,canUse=()=>true,onTeleport=()=>{},
  const near=(p,d=3)=>Math.hypot(getPlayer().x-p.x,getPlayer().z-p.z)<d;
  function sign(text,x,y,z,w=4,ry=0){const c=document.createElement('canvas');c.width=1024;c.height=160;const a=c.getContext('2d');a.fillStyle='#294b3d';a.fillRect(0,0,1024,160);a.fillStyle='#efe4c9';a.textAlign='center';a.textBaseline='middle';a.font='bold 52px system-ui';a.fillText(text,512,80,990);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const o=new THREE.Mesh(new THREE.PlaneGeometry(w,w*.15625),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));o.position.set(x,y,z);o.rotation.y=ry;root.add(o);}
  function action(id,label,target,when,fn,priority=130){const b=document.createElement('button');b.style.display='none';b.onclick=fn;document.body.appendChild(b);registerTownAction(b,{id:'rv-'+id,label,priority,target:()=>({...target,y:1.5})});sources.push({b,when});}
- const canvas=document.createElement('canvas');canvas.width=canvas.height=256;const gravelCtx=canvas.getContext('2d');gravelCtx.fillStyle='#a8a295';gravelCtx.fillRect(0,0,256,256);for(let i=0;i<9000;i++){const v=115+rnd()*80;gravelCtx.fillStyle=`rgb(${v},${v-3},${v-12})`;gravelCtx.beginPath();gravelCtx.ellipse(rnd()*256,rnd()*256,1+rnd()*2,.7+rnd()*1.5,rnd()*6.3,0,6.3);gravelCtx.fill();}const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(2,18);tex.anisotropy=4;const gravel=M(0xffffff);gravel.map=tex;
- function path(ax,az,bx,bz,w=5.6){const dx=bx-ax,dz=bz-az,len=Math.hypot(dx,dz);mesh(new THREE.BoxGeometry(w,.045,len),gravel,[(ax+bx)/2,.025,(az+bz)/2],[0,Math.atan2(dx,dz),0]);paths.push({ax,az,bx,bz,w});}
- path(-82,-154,-48,-154);path(-48,-154,-48,-258);mesh(new THREE.CylinderGeometry(9,9,.045,48),gravel,[-48,.025,-258]);
+ const canvas=document.createElement('canvas');canvas.width=canvas.height=256;const gravelCtx=canvas.getContext('2d');gravelCtx.fillStyle='#a8a295';gravelCtx.fillRect(0,0,256,256);for(let i=0;i<9000;i++){const v=115+rnd()*80;gravelCtx.fillStyle=`rgb(${v},${v-3},${v-12})`;gravelCtx.beginPath();gravelCtx.ellipse(rnd()*256,rnd()*256,1+rnd()*2,.7+rnd()*1.5,rnd()*6.3,0,6.3);gravelCtx.fill();}const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(2,18);tex.anisotropy=4;const gravel=M(0xffffff);gravel.map=tex;gravel.polygonOffset=true;gravel.polygonOffsetFactor=-1;gravel.polygonOffsetUnits=-2;
+ function path(ax,az,bx,bz,w=5.6){const dx=bx-ax,dz=bz-az,len=Math.hypot(dx,dz);mesh(new THREE.BoxGeometry(w,.045,len),gravel,[(ax+bx)/2,GROUND_LEVEL-.0225,(az+bz)/2],[0,Math.atan2(dx,dz),0]);paths.push({ax,az,bx,bz,w});}
+ path(-82,-154,-48,-154);path(-48,-154,-48,-258);mesh(new THREE.CylinderGeometry(9,9,.045,48),gravel,[-48,GROUND_LEVEL-.0225,-258]);
  function insideAt(x,z){return rvs.find(r=>Math.abs(x-r.x)<2.17&&Math.abs(z-r.z)<5.76);}
  function enter(r){if(!canUse())return;r.open=true;getPlayer().x=r.x+.9;getPlayer().z=r.z+1.8;onTeleport(getPlayer().x,.66,getPlayer().z,-Math.PI/2);onMessage('RV '+r.id+' · Find a seat or explore inside.');}
  function exit(r){getPlayer().x=r.x+4;getPlayer().z=r.z+1.8;onTeleport(getPlayer().x,.06,getPlayer().z,Math.PI/2);}
  function chair(x,z,a,kind='RV fire-pit chair',base=0){const g=new THREE.Group();g.position.set(x,base,z);g.rotation.y=a;root.add(g);box(.86,.16,.84,0,.48,0,wood,g);box(.86,.76,.1,0,.9,-.37,wood,g);for(const sx of [-.34,.34]){box(.08,.44,.65,sx,.22,0,dark,g);box(.1,.1,.78,sx,.8,0,wood,g);}seats.push({x,z,facing:a,sitHeight:base+.59,kind});}
  for(const [i,[x,z]]of [[-68,-231],[-29,-231],[-68,-184],[-29,-184]].entries()){
   const g=new THREE.Group();g.position.set(x,0,z);g.name='Public RV '+(i+1);root.add(g);const r={id:i+1,x,z,g,open:false,obstacles:[]};rvs.push(r);
-  box(9,.04,19,x,.03,z,gravel);path(-48,z+9,x+3.6,z+1.8,2.3);
+  box(9,.04,19,x,GROUND_LEVEL-.02,z,gravel);path(-48,z+9,x+3.6,z+1.8,2.3);
   box(4.65,.28,12,0,.48,0,dark,g);box(4.5,.12,11.8,0,.60,0,wood,g);box(4.85,.16,12.4,0,3.96,0,body,g);
   // Actual wall openings give every window an uninterrupted view of the forest.
   for(const side of [-1,1]){
@@ -48,7 +49,7 @@ export function createRVPark(scene,{getPlayer,canUse=()=>true,onTeleport=()=>{},
   box(1.25,.85,2.8,-1.33,1.1,3.6,fabric,g);box(.15,.75,2.8,-1.94,1.75,3.6,fabric,g);for(const zz of [2.8,3.6,4.4])seats.push({x:x-1.3,z:z+zz,facing:Math.PI/2,sitHeight:1.56,kind:'RV lounge sofa'});r.obstacles.push({x:-1.33,z:3.6,w:1.45,d:3});
   box(.6,.75,1.7,1.86,1.03,-1.3,wood,g);box(.65,.06,1.76,1.86,1.45,-1.3,linen,g);r.obstacles.push({x:1.86,z:-1.3,w:.75,d:1.8});
   chair(x+.9,z+4.6,Math.PI,'RV lounge chair',.66);r.obstacles.push({x:.9,z:4.6,w:1.0,d:1});
-  const fx=x+9.1,fz=z-1;mesh(new THREE.CylinderGeometry(4.3,4.3,.04,40),gravel,[fx,.03,fz]);const f={id:r.id,x:fx,z:fz,lit:false};fires.push(f);
+  const fx=x+9.1,fz=z-1;mesh(new THREE.CylinderGeometry(4.3,4.3,.04,40),gravel,[fx,GROUND_LEVEL-.02,fz]);const f={id:r.id,x:fx,z:fz,lit:false};fires.push(f);
   for(let j=0;j<14;j++){const a=j*Math.PI/7;mesh(new THREE.DodecahedronGeometry(.23,0),stone,[fx+Math.sin(a)*.85,.23,fz+Math.cos(a)*.85]);}for(const a of [-.5,.5])mesh(new THREE.CylinderGeometry(.1,.13,1.2,8),wood,[fx,.2,fz],[Math.PI/2,0,a]);
   f.flames=new THREE.Group();f.flames.position.set(fx,.25,fz);root.add(f.flames);for(let j=0;j<4;j++)mesh(new THREE.ConeGeometry(.18,.8,8),new THREE.MeshBasicMaterial({color:j%2?0xffc461:0xed8b3e,transparent:true,opacity:.8,depthWrite:false}),[Math.sin(j*2)*.2,.35,Math.cos(j*2)*.2],[0,0,0],f.flames);f.flames.visible=false;
   for(let j=0;j<4;j++){const a=j*Math.PI/2;chair(fx+Math.sin(a)*2.6,fz+Math.cos(a)*2.6,a+Math.PI);}
@@ -69,7 +70,7 @@ export function createRVPark(scene,{getPlayer,canUse=()=>true,onTeleport=()=>{},
  for(const [m,list]of staticParts){const o=new THREE.Mesh(mergeGeometries(list),m);o.receiveShadow=true;root.add(o);list.forEach(g=>g.dispose());}
  const inArea=(x,z)=>x>RV_BOUNDS.x0&&x<RV_BOUNDS.x1&&z>RV_BOUNDS.z0&&z<RV_BOUNDS.z1;
  function blocks(x,z,vehicle=false){if(!inArea(x,z))return false;for(const r of rvs){const xx=x-r.x,zz=z-r.z;if(Math.abs(xx)<2.65&&Math.abs(zz)<6.3){if(vehicle)return true;if(Math.abs(zz)>5.65||xx< -1.98)return true;if(xx>1.98&&(!r.open||zz<1.32||zz>2.28))return true;if(r.obstacles.some(o=>Math.abs(xx-o.x)<o.w/2+.2&&Math.abs(zz-o.z)<o.d/2+.2))return true;}}if(fires.some(f=>Math.hypot(x-f.x,z-f.z)<1.25))return true;if(trees.some(t=>Math.hypot(x-t.x,z-t.z)<t.height*.013+.28))return true;return seats.some(s=>Math.hypot(x-s.x,z-s.z)<.4);}
- function heightAt(x,z){if(!inArea(x,z))return null;for(const r of rvs){if(Math.abs(x-r.x)<2.35&&Math.abs(z-r.z)<5.95)return .66;if(z>r.z+.9&&z<r.z+2.7&&x>r.x+2.3&&x<r.x+4.3)return x<r.x+3.1?.66:x<r.x+3.7?.44:.22;if(Math.abs(x-r.x)<4.5&&Math.abs(z-r.z)<9.5)return .05;}if(paths.some(p=>segmentDistance(x,z,p)<p.w/2)||Math.hypot(x+48,z+258)<9||fires.some(f=>Math.hypot(x-f.x,z-f.z)<4.3))return .0475;return 0;}
+ function heightAt(x,z){if(!inArea(x,z))return null;for(const r of rvs){if(Math.abs(x-r.x)<2.35&&Math.abs(z-r.z)<5.95)return .66;if(z>r.z+.9&&z<r.z+2.7&&x>r.x+2.3&&x<r.x+4.3)return x<r.x+3.1?.66:x<r.x+3.7?.44:.22;if(Math.abs(x-r.x)<4.5&&Math.abs(z-r.z)<9.5)return GROUND_LEVEL;}if(paths.some(p=>segmentDistance(x,z,p)<p.w/2)||Math.hypot(x+48,z+258)<9||fires.some(f=>Math.hypot(x-f.x,z-f.z)<4.3))return GROUND_LEVEL;return GROUND_LEVEL;}
  function update(dt){time+=dt;for(const r of rvs)r.hinge.rotation.y=THREE.MathUtils.damp(r.hinge.rotation.y,r.open?1.65:0,8,dt);for(const f of fires)if(f.lit)f.flames.children.forEach((o,j)=>o.scale.y=1+Math.sin(time*5+j)*.2);for(const s of sources)s.b.style.display=s.when()?'block':'none';}
  function clampCamera(v){const r=insideAt(getPlayer().x,getPlayer().z);if(!r)return;v.x=THREE.MathUtils.clamp(v.x,r.x-1.95,r.x+1.95);v.z=THREE.MathUtils.clamp(v.z,r.z-5.55,r.z+5.55);v.y=THREE.MathUtils.clamp(v.y,2.1,3.5);}
  return{root,rvs,fires,trees,seats,paths,inArea,blocks,heightAt,update,clampCamera,entry:{x:-82,z:-154},get inside(){return !!insideAt(getPlayer().x,getPlayer().z);},nearestSeat(x,z,max=2.3){let best=null;const current=insideAt(x,z);for(const s of seats){if(!!insideAt(s.x,s.z)!==!!current)continue;const d=Math.hypot(x-s.x,z-s.z);if(d<max){max=d;best=s;}}return best;}};
