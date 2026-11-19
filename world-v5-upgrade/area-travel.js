@@ -6,7 +6,7 @@ export const AREA_DESTINATIONS=[
  {id:'plaza',name:'Town Plaza',group:'Town & shops',x:48,z:69},
  {id:'club',name:'Club Zerconda',group:'Town & shops',x:-48,z:-10.5,yaw:Math.PI},
  {id:'needle',name:'Z-Needle',group:'Town & shops',x:48,z:-30,yaw:Math.PI},
- {id:'coffee',name:'Brewstone Coffee',group:'Town & shops',x:-48,z:-111,yaw:Math.PI},
+ {id:'coffee',name:'Brewstone Coffee',group:'Town & shops',x:-28,z:-111,yaw:Math.PI},
  {id:'news',name:'Zerconda News',group:'Town & shops',x:136,z:-20,yaw:Math.PI},
  {id:'business',name:'Skyline Business Centre',group:'Town & shops',x:188,z:-25,yaw:Math.PI},
  {id:'bowling',name:'Luxe Lanes Bowling',group:'Town & shops',x:115,z:35,yaw:Math.PI/2},

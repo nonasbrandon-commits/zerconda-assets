@@ -13,7 +13,7 @@ import {createCourtGames} from './court-games.js?v=20261118-wall-mystery-v111';
 import {createHotDogVendor} from './boardwalk-hotdogs.js?v=20261118-wall-mystery-v111';
 import {createVehicleControls} from './vehicle-controls.js?v=20261119-entrance-steering-v118';
 import {createDamagedWallPanel,createBlockedWallOpening,WALL_OPENING} from './blocked-wall-opening.js?v=20261118-wall-mystery-v111';
-import {createAreaTravel} from './area-travel.js?v=20261119-z-store-v119';
+import {createAreaTravel} from './area-travel.js?v=20261119-coffee-front-v121';
 import {createMilitaryBase} from './military-base.js?v=20261118-faster-town-v106';
 import {upgradeMobileControls} from './mobile-controls.js?v=20261118-z-needle-v107';
 import {createAirportLoop} from './airport-loop.js?v=20261119-level-ground-v117';
@@ -48,14 +48,14 @@ import {createObservationNeedle} from './observation-needle.js?v=20261118-z-need
 import {createCloudSky} from './cloud-sky.js';
 import {addCityDepth} from './city-depth-assets.js?v=20261118-wall-mystery-v111';
 import {addBuildingIdentity} from './nine-building-styles.js';
-import {createCoffeeShop} from './brewstone-coffee.js?v=20261118-area-travel-v110';
+import {createCoffeeShop} from './brewstone-coffee.js?v=20261119-coffee-front-v121';
 import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261119-level-ground-v117';
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261117-interiors-v1';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261118-wall-mystery-v111';
 import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261118-wall-mystery-v111';
-import {createCityMap} from './top-city-map.js?v=20261119-z-store-v119';
+import {createCityMap} from './top-city-map.js?v=20261119-coffee-front-v121';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261117-window-rebuild-3';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261118-realty-v105';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261119-level-ground-v117';
@@ -64,7 +64,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-ground-v117';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const ZERCONDA_BUILD='2026-11-19-motors-sign-v120';
+const ZERCONDA_BUILD='2026-11-19-coffee-front-v121';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -508,11 +508,11 @@ for(const dx of [-20,20])for(const dz of [-20,20]){
 observationNeedle=createObservationNeedle(scene,{x:48,z:-48,getPlayer:()=>player,inLobby:()=>insideNeedleLobby,onMessage:m=>townControls.notify(m),onTravel:(x,y,z)=>{player.x=x;player.z=z;}});
 // Place Brewstone on the north side of the east-west street, opposite the dealership.
 // Its south-facing entrance and patio face the road; the showroom stays unobstructed.
-const coffeeShop=createCoffeeShop(scene,{x:-48,z:-132});
+const coffeeShop=createCoffeeShop(scene,{x:-28,z:-132,getPlayer:()=>player});
  // Connect the commercial forecourt and cafe patio to their respective sidewalks.
  box(8,.14,10,-48,.035,-77,paving);
- box(8,.14,6,-48,.035,-112,paving);
- for(let i=-4;i<=4;i++)box(1.25,.016,17.5,-48+i*2,.045,-96,lane);
+ box(4,.10,6,-28,.02-.05,-112,paving);
+ // Removed the oversized mid-block stripe crossing at the old cafe approach.
 // Walk-in showroom just west of Brewstone Coffee, with three fictional display vehicles.
 const dealership={
  x:-31,z:-48,insidePoint:{x:-31,z:-57},exitPoint:{x:-31,z:-64},inside:()=>false,blocks:()=>false,isNear:(x,z,r=5.5)=>Math.hypot(x+31,z+62)<r,
@@ -638,6 +638,7 @@ for(const c of roadLines){
     // Reserve the complete residential frontage plus tree-canopy clearance.
     if(x>110&&x<220&&z> -270&&z< -121)continue;
     if(x> -82&&x< -15&&z> -84&&z< -34)continue;
+    if(x> -82&&x< -14&&z> -153&&z< -109)continue; // Clear the relocated cafe, its entrance and the future building lot.
     if(z>72&&z<172&&Math.abs(x)<185)continue; // Protect entire beachside residential blocks, including full tree canopies
     if(x>12&&x<84&&z> -250&&z< -135||Math.abs(x+51.5)<12&&Math.abs(z+48)<44||Math.abs(x+72)<17&&Math.abs(z+48)<19||nearRoad(x,z,8.5)||insideBuilding(x,z,1.5)||inPlaza(x,z,2)||Math.abs(x-48)<39&&Math.abs(z+48)<39||doors.some(d=>Math.hypot(x-d.x,z-d.z)<entranceClearance)||Math.abs(x+34)<22&&Math.abs(z+48)<23)continue;
     if(club?.blocks(x,z)||ownableHomes.inLot(x,z)||apartmentExteriors.some(b=>Math.hypot(x-b.entry.x,z-b.entry.z)<5)||Math.abs(x-126)<17&&Math.abs(z-69)<18||Math.abs(x-140)<28&&Math.abs(z-35)<23||Math.abs(x-188)<23&&Math.abs(z-61)<21||Math.abs(x-136)<25&&Math.abs(z+49)<25||x< -125&&x> -270&&z>48&&z<84)continue;
@@ -731,6 +732,7 @@ async function populate(){
   const [x,z]=treeSpots[i],src=loaded[i%2?'tree2':'tree']||loaded.tree||loaded.tree2;
   if(x>110&&x<220&&z> -270&&z< -121)continue;
     if(x> -82&&x< -15&&z> -84&&z< -34)continue;
+    if(x> -82&&x< -14&&z> -153&&z< -109)continue; // Clear the relocated cafe, its entrance and the future building lot.
     if(z>72&&z<172&&Math.abs(x)<185)continue; // Protect entire beachside residential blocks, including full tree canopies
   if(src&&!doors.some(d=>Math.hypot(x-d.x,z-d.z)<13)&&!(Math.abs(x+34)<24&&Math.abs(z+48)<24)){const tree=cloneNormalized(src,x,z,7+rand()*2.5,rand()*6.28);if(tree){tree.name='Road-cleared street tree';tree.userData.roadCleared=true;if(treeBoundsOverlapRoad(new THREE.Box3().setFromObject(tree)))scene.remove(tree);}}
  }
@@ -1097,7 +1099,8 @@ function walkable(x,z){
  if(universalSession)return universalSession.home?ownableHomes.contains(x,z):universalInteriors.contains(x,z);
  if(ownableHomes.blocks(x,z)||coastal.blocks(x,z,!!activeCar||!!scooters?.riding))return false;
  if(apartmentSession)return apartments.contains(x,z);
-  if(cafeInside)return coffeeShop.isInside(x,z);
+  if(cafeInside)return coffeeShop.isInside(x,z)&&coffeeShop.canWalk(x,z)!==false;
+  if(coffeeShop.canWalk(x,z)===false)return false;
   if(coffeeShop.isInside(x,z))return false;
  if(x< -442.5||x>568.5||z< -1348.5||z>(Math.abs(x)<165?248:242))return false;
  // No movement around the submerged perimeter: shoreline outside the central beach is impassable.
@@ -1116,7 +1119,7 @@ function animate(){
  requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;let walkingDistance=0;
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
  if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
- airDancers.update(elapsed);
+ airDancers.update(elapsed);coffeeShop.update(motionDt);
  forestShade=THREE.MathUtils.damp(forestShade,northernForest?.atmosphereAt(player.x,player.z)??0,1.4,motionDt);hemisphere.intensity=THREE.MathUtils.lerp(1.3,.72,forestShade);sun.intensity=THREE.MathUtils.lerp(2.8,1.35,forestShade);scene.fog.color.copy(daylightFog).lerp(forestFog,forestShade);scene.fog.density=THREE.MathUtils.lerp(.00055,.0020,forestShade);
  militaryBase?.update(motionDt);
  observationNeedle.update(dt);
@@ -1263,7 +1266,7 @@ function animate(){
     if(/(upperleg|upleg|thigh)/.test(name))bone.rotation.x=-1.12;
     if(/(lowerleg|calf|shin)/.test(name))bone.rotation.x=1.38;
    }}
-  }else avatar.position.y=(apartmentSession||universalSession&&!universalSession.home||cafeInside?0:standingHeightAt(player.x,player.z))+playerSoleOffset;
+  }else avatar.position.y=(apartmentSession||universalSession&&!universalSession.home?0:standingHeightAt(player.x,player.z))+playerSoleOffset;
   // Place the avatar on the current surface before solving the feet.
   avatar.updateMatrixWorld(true);
   updateRealAvatar(motionDt,elapsed,sittingSeat||marine.riding||scooters.riding||skate.riding?0:walkingSpeed);
