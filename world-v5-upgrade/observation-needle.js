@@ -1,3 +1,4 @@
+import {createPhotoPlanter} from './photo-planter.js?v=20261119-zdogz-v146';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -39,7 +40,7 @@ export function createObservationNeedle(scene,{x=48,z=-48,getPlayer=()=>({x,z}),
  // Compact reception desk and separate standing space for the attendant.
  box(3.6,1.05,1.4,-3.4,.705,8.5,wood);box(3.9,.12,1.6,-3.4,1.29,8.5,linen);box(3.6,.08,.06,-3.4,.24,9.22,black);lobbySolids.push({x:-3.4,z:8.5,w:3.9,d:1.6});
  box(2.4,.20,.8,-3.8,.65,11.5,cushion);box(2.4,.65,.12,-3.8,.95,11.82,dark);for(const xx of[-4.7,-2.9])box(.10,.4,.6,xx,.38,11.5,metal);lobbySolids.push({x:-3.8,z:11.5,w:2.5,d:1.0});
- box(.75,.9,.75,4.85,.63,11.45,black);mesh(new THREE.SphereGeometry(.55,12,8),M(0x57725c),4.85,1.35,11.45);lobbySolids.push({x:4.85,z:11.45,w:1.1,d:1.1});
+ createPhotoPlanter(root,{x:4.85,y:.18,z:11.45,width:1.1});lobbySolids.push({x:4.85,z:11.45,w:1.1,d:1.1});
  const stand=new THREE.Group();stand.position.set(-3.4,lobbyY,6.8);root.add(stand);const attendant=createRealisticHuman({shirt:0x385d6c,pants:0x515b5b});stand.add(attendant.root);lobbySolids.push({x:-3.4,z:6.8,w:.7,d:.7});
  // Exposed scenic lift: transparent cabin and slim rails, no opaque shaft in front of the view.
  const liftX=3,liftZ=6,cabin=new THREE.Group();cabin.name='Scenic glass elevator cabin';cabin.position.set(liftX,lobbyY,liftZ);root.add(cabin);const cabinFloor=box(3.5,.16,3.5,0,-.08,0,black,cabin);cabinFloor.name="Solid black elevator floor";box(3.6,.14,3.6,0,2.95,0,stone,cabin);for(const sx of[-1,1])for(const sz of[-1,1])box(.075,2.9,.075,sx*1.7,1.45,sz*1.7,metal,cabin);for(const sx of[-1,1])box(.035,2.7,3.3,sx*1.71,1.42,0,clear,cabin);box(3.3,2.7,.035,0,1.42,-1.71,clear,cabin);const cabinDoors=new THREE.Group();cabin.add(cabinDoors);box(3.3,2.7,.035,0,1.42,1.71,clear,cabinDoors);

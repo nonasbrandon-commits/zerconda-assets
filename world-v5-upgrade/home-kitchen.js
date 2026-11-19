@@ -1,3 +1,4 @@
+import {createReferenceRange,createShakerCabinet} from './reference-range.js?v=20261119-zdogz-v146';
 import {createFrenchDoorFridge} from './french-door-fridge.js?v=20261119-fridge-v142';
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -15,8 +16,8 @@ export function createHomeKitchen(parent,{getHome=()=>null,getPlayer=()=>null,ge
  box(4.19,.89,.035,.6,1.46,7.585,white);for(let x=-1.45;x<2.7;x+=.35)box(.009,.86,.008,x,1.46,7.56,M('#bcc3bd'));for(const y of[1.13,1.46,1.79])box(4.16,.009,.008,.6,y,7.56,M('#bcc3bd'));
  // Inset sink with a curved mixer tap.
  box(.83,.025,.52,.6,1.005,6.94,steel);box(.66,.03,.39,.6,1.014,6.94,dark);box(.57,.02,.30,.6,1.028,6.94,glass);const faucet=new THREE.Mesh(new THREE.TorusGeometry(.16,.018,10,24,Math.PI),steel);faucet.rotation.z=Math.PI/2;faucet.rotation.y=Math.PI/2;faucet.position.set(.6,1.22,7.19);root.add(faucet);cylinder(.022,.22,.6,1.10,7.35,steel);box(.06,.025,.10,.82,1.06,7.26,brass);
- // Detailed freestanding oven: glazed door, racks, control panel and four burners.
- box(1.30,.92,.75,2,.46,6.96,steel);box(1.18,.16,.055,2,.80,6.555,steel);box(1.08,.57,.055,2,.405,6.55,black);box(.88,.37,.018,2,.41,6.513,glass);for(const y of[.30,.48]){box(.85,.012,.025,2,y,6.53,steel);for(let x=1.62;x<2.4;x+=.12)box(.014,.01,.14,x,y,6.55,steel);}box(.89,.045,.055,2,.67,6.49,brass);for(const x of[1.64,1.87,2.13,2.36]){const knob=cylinder(.043,.035,x,.81,6.51,black);knob.rotation.x=Math.PI/2;box(.008,.025,.006,x,.825,6.488,white);}box(1.31,.055,.76,2,.958,6.96,black);for(const x of[1.69,2.31])for(const z of[6.77,7.16]){cylinder(.125,.02,x,1.005,z,dark);const ring=new THREE.Mesh(new THREE.TorusGeometry(.112,.016,8,24),steel);ring.rotation.x=Math.PI/2;ring.position.set(x,1.02,z);root.add(ring);for(const ry of[0,Math.PI/2]){const support=box(.30,.025,.025,x,1.045,z,black);support.rotation.y=ry;}}
+ // Stainless double oven with red controls and cast-iron burner grates.
+ createReferenceRange(root,{x:2,z:6.96,width:1.3,height:1.0,depth:.75,angle:Math.PI});
  // Fridge shell is hollow: shelves, drawers and stored groceries are visible when opened.
  const fx=-2.10,fz=6.96;const refrigerator=createFrenchDoorFridge(root,{x:fx,z:fz,width:.88,height:2,depth:.88,angle:Math.PI});const fridgeDoor=refrigerator.leftDoor;
  const fridgeLight=new THREE.PointLight('#e4f5ff',0,2.4);fridgeLight.position.set(fx,1.75,7.04);root.add(fridgeLight);const groceries=new THREE.Group();groceries.name='Visible fridge groceries';root.add(groceries);

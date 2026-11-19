@@ -1,4 +1,4 @@
-import {createReferenceLamp} from './reference-lamp.js?v=20261119-lamps-v143';
+import {createReferenceLamp} from './reference-lamp.js?v=20261119-zdogz-v146';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import * as THREE from 'three';
 import {createClearMirror} from './clear-mirrors.js?v=20261119-clear-mirrors-v133';

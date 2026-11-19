@@ -1,11 +1,13 @@
+import {beginHomePassage} from './home-passage.js?v=20261119-zdogz-v146';
+import {createReferenceRange,createShakerCabinet} from './reference-range.js?v=20261119-zdogz-v146';
 import {createFrenchDoorFridge} from './french-door-fridge.js?v=20261119-fridge-v142';
-import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-lamps-v143';
+import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-zdogz-v146';
 import {createRealtySign} from './property-signs.js?v=20261119-residential-v130';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 // Real, furnished shells in the town: windows and decks share the actual ocean view.
-export function addWaterfrontHomes(scene,{count=12,getPlayer=()=>({x:0,z:0}),canInteract=()=>true,onMessage=()=>{}}={}){
+export function addWaterfrontHomes(scene,{count=12,getPlayer=()=>({x:0,z:0}),canInteract=()=>true,onMessage=()=>{},onPassage=()=>{}}={}){
  const root=new THREE.Group();root.name='Fenced ocean cottages';root.userData.customInterior=true;scene.add(root);
  const mat=(c,r=.9)=>new THREE.MeshStandardMaterial({color:c,roughness:r});
  const trim=mat(0xe9e4d9),stone=mat(0xa4a498),wood=mat(0x9a7a57),iron=mat(0x384544,.5),roof=mat(0x56605d),counter=mat(0xd6d6ca),ceramic=mat(0xe7e5dc),bedlinen=mat(0xe8e4d6),leaf=mat(0x486346);
@@ -44,7 +46,7 @@ export function addWaterfrontHomes(scene,{count=12,getPlayer=()=>({x:0,z:0}),can
    const base=axis==='x'?Math.PI/2:0;pivot.rotation.y=base;
    // Stationary jambs overlap the wall opening so there are no daylight gaps.
    const frame=new THREE.Group();frame.position.set(x,.2,z);frame.rotation.y=base;g.add(frame);for(const side of[-1,1])box(frame,.075,height+.08,.20,side*(width/2+.025),height/2,0,trim);box(frame,width+.15,.075,.20,0,height+.015,0,trim);
-   const d={id,x,z,width,axis,pivot,base,sliding,closedZ:pivot.position.z,progress:0,open:false};h.doors.push(d);addAction(h,id,()=>`${d.open?'Close':'Open'} ${id==='front'?'front door':id==='bedroom'?'bedroom sliding door':'bathroom sliding door'}`,{x,z},()=>{d.open=!d.open;const player=getPlayer();d.openedSide=Math.sign(d.axis==='x'?player.x-h.x-d.x:player.z-h.z-d.z);});return d;
+   const d={id,x,z,width,axis,pivot,base,sliding,closedZ:pivot.position.z,progress:0,open:false};h.doors.push(d);addAction(h,id,()=>id==='front'?(getPlayer().z-h.z>d.z?'Exit Home':'Enter home'):`${d.open?'Close':'Open'} ${id==='bedroom'?'bedroom sliding door':'bathroom sliding door'}`,{x,z},()=>{if(id==='front'){const inside=getPlayer().z-h.z>d.z;beginHomePassage({open:()=>{d.open=true;d.passageHold=1.1;},move:()=>onPassage({x:h.x+d.x,z:h.z+d.z+(inside?-1.4:1.4),heading:inside?Math.PI:0}),close:()=>{d.open=false;}});return;}d.open=!d.open;const player=getPlayer();d.openedSide=Math.sign(d.axis==='x'?player.x-h.x-d.x:player.z-h.z-d.z);});return d;
   }
   door('front',1.8,-5.5,1.04);
   // Full-height glazed beach slider: one fixed panel and one overlapping sliding leaf.
@@ -62,7 +64,7 @@ export function addWaterfrontHomes(scene,{count=12,getPlayer=()=>({x:0,z:0}),can
   createDetailedBed(g,{x:-3,y:.2,z:2.6,angle:Math.PI/2,width:1.8,length:3.0,compact:true});obstacle(-3,2.6,3.3,2);
   const bath=createDetailedBathroom(g,{x:-2.8,y:.2,z:-3.0,width:4.35,depth:4.65,tub:false,wallWindows:{back:[{x:-1.1,y:1.6,w:1.8,h:1.8}]}});h.colliders.push(...bath.solids);
   // Identical starter kitchen, dining and lounge furniture in every cottage.
-  createFrenchDoorFridge(g,{x:4.1,y:.2,z:-4.6,width:1.1,height:1.9,depth:.95,angle:-Math.PI/2});obstacle(4.1,-4.6,1.1,.95);furniture(.75,.85,2.8,4.4,.625,-2.7,wood);box(g,.8,.08,2.85,4.4,1.09,-2.7,counter);box(g,.55,.04,.8,4.4,1.15,-3.45,iron);for(const x of [4.22,4.57])for(const z of [-2.25,-1.9]){const b=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.025,14),iron);b.position.set(x,1.15,z);g.add(b);}
+  createFrenchDoorFridge(g,{x:4.1,y:.2,z:-4.6,width:1.1,height:1.9,depth:.95,angle:-Math.PI/2});obstacle(4.1,-4.6,1.1,.95);createShakerCabinet(g,{x:4.4,y:.2,z:-3.35,width:1.5,height:.95,depth:.80,angle:-Math.PI/2});createReferenceRange(g,{x:4.4,y:.2,z:-1.95,width:1.3,height:.95,depth:.80,angle:-Math.PI/2});obstacle(4.4,-2.7,.80,2.85);box(g,.55,.04,.8,4.4,1.15,-3.45,iron);
   // Compact dining nook against the kitchen-side wall, outside the entry route.
   furniture(1.15,.09,.85,3.95,.99,-.05,wood);for(const x of[3.5,4.4])for(const z of[-.35,.25])box(g,.065,.75,.065,x,.58,z,wood);
   furniture(.56,.12,.58,2.85,.64,-.05,fabric);box(g,.08,.62,.58,2.61,.96,-.05,wood);for(const x of[2.65,3.05])for(const z of[-.26,.16])box(g,.055,.38,.055,x,.4,z,wood);
@@ -94,7 +96,7 @@ export function addWaterfrontHomes(scene,{count=12,getPlayer=()=>({x:0,z:0}),can
  function doorBlocks(d,x,z){if(d.progress>.9)return false;return d.axis==='z'?Math.abs(z-d.z)<.36&&Math.abs(x-d.x)<d.width/2+.2:Math.abs(x-d.x)<.36&&Math.abs(z-d.z)<d.width/2+.2;}
  function blocks(x,z,vehicle=false){for(const h of homes){const lx=x-h.x,lz=z-h.z;if(Math.abs(lx)>10.6||lz< -23||lz>12.5)continue;if(Math.abs(Math.abs(lx)-10.15)<.28&&lz> -22.3&&lz<12.3)return true;if(vehicle){if(Math.abs(lx)<5.65&&lz> -7.4&&lz<9.8)return true;continue;}if(Math.abs(lx)<5.4&&Math.abs(lz)<5.9){if(Math.abs(lx)>4.65)return true;if(lz< -5.12&&!(lx>1.53&&lx<2.07))return true;if(lz>5.12&&!(lx>1.48&&lx<2.22))return true;if(Math.abs(lx+.6)<.36&&!(lz> -2.85&&lz< -2.35)&&!(lz>1.25&&lz<1.75))return true;if(Math.abs(lz+.55)<.35&&lx<-.35)return true;if(h.doors.some(d=>doorBlocks(d,lx,lz)))return true;if(h.colliders.some(c=>Math.abs(lx-c.x)<c.w/2+.28&&Math.abs(lz-c.z)<c.d/2+.28))return true;}if(lz>5.5&&lz<9.8){if(Math.abs(Math.abs(lx)-5.05)<.3)return true;if(Math.abs(lz-9.4)<.3&&Math.abs(lx)>1.0&&Math.abs(lx)<5.4)return true;if(h.colliders.some(c=>Math.abs(lx-c.x)<c.w/2+.28&&Math.abs(lz-c.z)<c.d/2+.28))return true;}}return false;}
  function heightAt(x,z){for(const h of homes){const lx=x-h.x,lz=z-h.z;if(Math.abs(lx)<5.2&&lz>=-5.6&&lz<=9.5)return .21;if(Math.abs(lx-1.8)<2&&lz>=-7.2&&lz< -5.5)return .21;if(Math.abs(lx-1.8)<1.2&&lz>=-12&&lz< -7.2)return .21*(lz+12)/4.8;if(Math.abs(lx)<1.2&&lz>9.5&&lz<12)return .21*(12-lz)/2.5;if(lx>5.5&&lx<9&&lz> -23&&lz<7)return .045;}return null;}
- function update(dt,player){for(const r of buttons){const p=r.target;r.b.style.display=canInteract()&&Math.hypot(player.x-r.home.x-p.x,player.z-r.home.z-p.z)<r.range?'block':'none';}for(const h of homes)for(const d of h.doors){const across=d.axis==='x'?player.x-h.x-d.x:player.z-h.z-d.z;if(d.open&&d.openedSide&&Math.sign(across)!==d.openedSide&&Math.abs(across)>.75)d.open=false;d.progress=THREE.MathUtils.damp(d.progress,d.open?1:0,9,dt);if(d.id==='deck'){d.pivot.position.x=d.closedX+d.progress*1.30;}else if(d.sliding){d.pivot.position.z=d.closedZ+d.progress*1.10;}else d.pivot.rotation.y=d.base+d.progress*1.45;}}
+ function update(dt,player){for(const r of buttons){const p=r.target;r.b.style.display=canInteract()&&Math.hypot(player.x-r.home.x-p.x,player.z-r.home.z-p.z)<r.range?'block':'none';}for(const h of homes)for(const d of h.doors){const across=d.axis==='x'?player.x-h.x-d.x:player.z-h.z-d.z;d.passageHold=Math.max(0,(d.passageHold||0)-dt);if(!d.passageHold&&d.open&&d.openedSide&&Math.sign(across)!==d.openedSide&&Math.abs(across)>.75)d.open=false;d.progress=THREE.MathUtils.damp(d.progress,d.open?1:0,9,dt);if(d.id==='deck'){d.pivot.position.x=d.closedX+d.progress*1.30;}else if(d.sliding){d.pivot.position.z=d.closedZ+d.progress*1.10;}else d.pivot.rotation.y=d.base+d.progress*1.45;}}
 
  function clampCamera(p,player){const h=homeAt(player.x,player.z);if(!h)return;p.x=THREE.MathUtils.clamp(p.x,h.x-4.65,h.x+4.65);p.z=THREE.MathUtils.clamp(p.z,h.z-5.1,h.z+5.1);p.y=THREE.MathUtils.clamp(p.y,1.5,3.05);const lx=player.x-h.x,lz=player.z-h.z;if(lx<-.95){p.x=Math.min(p.x,h.x-.95);p.z=lz<-.55?Math.min(p.z,h.z-.9):Math.max(p.z,h.z-.2);}else if(p.x<h.x-.25)p.x=h.x-.25;}
  return {root,homes:homes.length,homesList:homes,blocks,heightAt,homeAt,update,clampCamera,claim,showPanel,get owned(){return owned},get panelOpen(){return panel.style.display!=='none'},nearestSeat(x,z,max=2.3){let best=null;for(const s of seats){const d=Math.hypot(x-s.x,z-s.z);if(d<max){max=d;best=s;}}return best;}};

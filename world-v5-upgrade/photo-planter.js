@@ -1,0 +1,3 @@
+import * as THREE from 'three';
+let material;
+export function createPhotoPlanter(parent,{x=0,y=0,z=0,width=2,height=width*(1052/1495)}={}){if(!material){const map=new THREE.TextureLoader().load(new URL('./assets/flower-planter-photo-v145.png',import.meta.url).href);map.colorSpace=THREE.SRGBColorSpace;material=new THREE.SpriteMaterial({map,transparent:true,alphaTest:.035,depthWrite:false,toneMapped:false});}const photo=new THREE.Sprite(material);photo.name='White paneled flower planter · photographic default';photo.center.set(.5,0);photo.scale.set(width,height,1);photo.position.set(x,y,z);parent.add(photo);return photo;}

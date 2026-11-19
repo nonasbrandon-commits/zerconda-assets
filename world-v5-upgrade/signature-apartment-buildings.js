@@ -1,3 +1,4 @@
+import {createPhotoPlanter} from './photo-planter.js?v=20261119-zdogz-v146';
 import * as THREE from 'three';
 // Shared real CC0 photo-scanned PBR maps already present in this repository.
 // Loading is non-blocking: existing brick colors remain visible if a texture fails.
@@ -141,7 +142,7 @@ export function addSignatureArchitecture(group,{w,d,h,style=0}={}){
    box(w-.8,.92,.06,0,y-.87,d/2+depth+.36,glass);
    for(const xx of [-w/2+.5,w/2-.5])box(.08,.95,.08,xx,y-.85,d/2+depth+.4,white);
    if(floor%2===0){
-    for(const xx of [-w*.34,w*.34]){box(.85,.5,.55,xx,y-1.12,d/2+depth-.1,white);const shrub=new THREE.Mesh(new THREE.SphereGeometry(.48,8,6),plant);shrub.position.set(xx,y-.67,d/2+depth-.1);group.add(shrub);}
+    for(const xx of [-w*.34,w*.34])createPhotoPlanter(group,{x:xx,y:y-1.37,z:d/2+depth-.1,width:1.10});
    }
   }
  }

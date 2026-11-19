@@ -1,3 +1,4 @@
+import {createPhotoPlanter} from './photo-planter.js?v=20261119-zdogz-v146';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -14,7 +15,7 @@ export function createClothingBoutique(scene,{getPlayer,canEnter=()=>true,applyO
  box(root,30.4,.32,26.4,188,0,61,stone);box(root,30,5.2,26,188,2.6,61,stone);box(root,30.7,.22,26.7,188,5.35,61,dark);box(root,30.6,.1,26.6,188,5.52,61,gold);
  for(const x of [178.5,197.5]){box(root,10,3.5,.15,x,2.2,74.12,glass);for(const xx of [-5.1,5.1])box(root,.16,4.6,.2,x+xx,2.5,74.25,gold);box(root,10.3,.15,.22,x,.55,74.25,dark);}
  box(root,4,3.6,.16,188,1.85,74.18,dark);for(const x of [187,189]){box(root,1.8,3.3,.10,x,1.75,74.3,glass);box(root,.06,.75,.12,x+(x<188?.68:-.68),1.6,74.42,gold);}box(root,9,.2,3.5,188,3.9,75.4,dark);box(root,9.1,.07,3.6,188,3.78,75.4,gold);box(root,8,.16,8,188,GROUND_LEVEL-.08,78,stone);sign(root,'THREAD & COAST',188,4.65,74.25,22,1.0);sign(root,'CLOTHING · ACCESSORIES',188,3.95,77.2,8,.55);
- for(const x of [174.5,201.5]){box(root,1.6,.8,1.6,x,.4,76,wood);const shrub=new THREE.Mesh(new THREE.SphereGeometry(.85,16,12),M(0x5a7158));shrub.position.set(x,1.1,76);root.add(shrub);}for(let x=175;x<202;x+=3){box(root,.13,4,.2,x,2.65,48.05,gold);}
+ for(const x of [174.5,201.5])createPhotoPlanter(root,{x,z:76,width:2.2});for(let x=175;x<202;x+=3){box(root,.13,4,.2,x,2.65,48.05,gold);}
  batch(root);
  box(interior,22,.18,20,0,-.09,0,stone);box(interior,22,.18,20,0,3.9,0,cream);for(const x of [-11,11])box(interior,.18,3.9,20,x,1.95,0,cream);for(const z of [-10,10])box(interior,22,3.9,.18,0,1.95,z,cream);sign(interior,'THREAD & COAST',0,2.95,-9.85,12,.8);sign(interior,'FIT · MIX · MAKE IT YOURS',0,2.1,-9.84,9,.4);
  function rack(x,z,collection){box(interior,4.6,.10,1.2,x,.05,z,wood);for(const xx of [-2.1,2.1])box(interior,.07,1.9,.07,x+xx,.95,z,gold);box(interior,4.3,.07,.07,x,1.9,z,gold);for(let i=0;i<5;i++){const outfit=CLOTHING_CATALOG[(collection==='Men'?0:10)+i],m=M(outfit.shirt),xx=x-1.7+i*.84;box(interior,.56,.73,.16,xx,1.32,z,m);for(const side of [-1,1]){const sleeve=box(interior,.23,.42,.17,xx+side*.34,1.5,z,m);sleeve.rotation.z=side*.3;}box(interior,.12,.08,.2,xx,1.73,z,cream);}sign(interior,collection.toUpperCase()+' · 10 LOOKS',x,2.45,z,4.8,.45);}
