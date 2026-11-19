@@ -3,7 +3,7 @@ import {createRealtySign} from './property-signs.js?v=20261118-realty-v105';
 import * as THREE from 'three';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {createHomeInterior} from './home-interior.js?v=20261119-rv-junction-v128';
+import {createHomeInterior} from './home-interior.js?v=20261119-home-repair-v129';
 // Stable home IDs retain existing browser ownership. No account or currency is implied.
 export function createOwnableHomes(scene){
  const root=new THREE.Group();root.name='Western fenced residential neighborhood';root.userData.customInterior=true;scene.add(root);
@@ -81,5 +81,5 @@ export function createOwnableHomes(scene){
  function inLot(x,z){return homes.some(h=>{const p=local(h,x,z);return Math.abs(p.x)<13&&p.z> -19&&p.z<15;});}
  function heightAt(x,z){if(active)return interior.heightAt(x,z);for(const h of homes){const p=local(h,x,z);if(Math.abs(p.x-3.5)<1.7&&p.z> -10.1&&p.z< -7.7)return .14;if(p.z>=-18.2&&p.z<=-7.7&&(Math.abs(p.x+3.75)<3.0||Math.abs(p.x-3.5)<1.2))return GROUND_LEVEL;}if(inLot(x,z))return GROUND_LEVEL;return null;}
  function update(dt,player){if(active){interior.update(player.x,player.z,dt);active.garageOpen=interior.garageOpen;for(const obj of scene.children)if(obj!==interior.root&&!obj.isLight&&!/avatar|player/i.test(obj.name)){if(!originals.has(obj))originals.set(obj,obj.visible);obj.visible=false;}}for(const h of homes){h.overhead.rotation.x=THREE.MathUtils.damp(h.overhead.rotation.x,h.garageOpen?-Math.PI/2:0,7,dt);h.garageAction.style.display=!active&&Math.hypot(player.x-h.garageEntry.x,player.z-h.garageEntry.z)<3.7?'block':'none';const near=!active&&Math.hypot(player.x-h.entry.x,player.z-h.entry.z)<3.5;h.hinge.rotation.y=THREE.MathUtils.damp(h.hinge.rotation.y,near?-1.25:0,5,dt);}}
- return {root,homes,closest,nearEntrance,buy,decorate:customize,customize,enter,exit,update,blocks,isApproach,inLot,heightAt,contains:interior.contains,clampCamera:interior.clampCamera,nearestSeat:interior.nearestSeat,interior,get active(){return active},get owned(){return owned},get panelOpen(){return panel.style.display!=='none'},change};
+ return {root,homes,closest,nearEntrance,buy,decorate:customize,customize,enter,exit,update,blocks,isApproach,inLot,heightAt,contains:interior.contains,clampCamera:interior.clampCamera,nearestSeat:interior.nearestSeat,interior,get active(){return active},get owned(){return owned},get panelOpen(){return panel.style.display!=='none'||interior.panelOpen},change};
 }
