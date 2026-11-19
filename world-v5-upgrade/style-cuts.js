@@ -1,3 +1,4 @@
+import {createClearMirror} from './clear-mirrors.js?v=20261119-clear-mirrors-v133';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -18,10 +19,9 @@ export function createStyleCuts(scene,{getPlayer,canEnter=()=>true,applyHair=()=
  // North-facing shop and relocated dealership share a broad, level, uncluttered forecourt.
  box(65,.2,8,18,GROUND_LEVEL-.10,-28,floor);for(const x of[0,36])box(5,.22,2,x,GROUND_LEVEL-.11,-33,floor);box(5,.18,11,0,GROUND_LEVEL-.09,-18.5,floor);
  const chairs=[],solids=[],waiting=[];function block(x,z,w,d){solids.push({x,z,w,d});}
- const mirrorCanvas=document.createElement('canvas');mirrorCanvas.width=256;mirrorCanvas.height=512;const mc=mirrorCanvas.getContext('2d'),grad=mc.createLinearGradient(0,0,256,512);grad.addColorStop(0,'#b6cac9');grad.addColorStop(.4,'#e7eeea');grad.addColorStop(.43,'#95b2b2');grad.addColorStop(1,'#aec2bf');mc.fillStyle=grad;mc.fillRect(0,0,256,512);mc.strokeStyle='#ffffff66';mc.lineWidth=10;mc.beginPath();mc.moveTo(20,460);mc.lineTo(220,35);mc.stroke();const mt=new THREE.CanvasTexture(mirrorCanvas);mt.colorSpace=THREE.SRGBColorSpace;const mirror=new THREE.MeshStandardMaterial({map:mt,roughness:.17,metalness:.5});
  for(const side of[-1,1])for(const z of[-5,5]){const x=side*6,g=new THREE.Group();g.position.set(x,.22,z);g.rotation.y=side*Math.PI/2;root.add(g);mesh(new THREE.CylinderGeometry(.57,.62,.15,24),metal,0,.075,0,g);mesh(new THREE.CylinderGeometry(.12,.16,.55,16),metal,0,.4,0,g);mesh(new RoundedBoxGeometry(.95,.18,.96,3,.08),leather,0,.72,0,g);mesh(new RoundedBoxGeometry(.95,.92,.18,3,.07),leather,0,1.18,-.44,g);mesh(new RoundedBoxGeometry(.6,.25,.18,3,.05),leather,0,1.78,-.44,g);for(const s of[-1,1]){box(.12,.12,.85,s*.55,1.02,0,dark,g);box(.07,.3,.07,s*.55,.87,0,metal,g);}box(.85,.08,.42,0,.27,.72,metal,g);box(.09,.26,.09,0,.43,.54,metal,g);
   const chair={id:chairs.length+1,x:cfg.x+x,z:cfg.z+z,facing:side*Math.PI/2,sitHeight:1.02,kind:'barber chair',exit:{x:cfg.x+x+side*1.7,z:cfg.z+z},target:{x:cfg.x+x+side*1.7,z:cfg.z+z}};chairs.push(chair);block(x,z,1.4,1.4);
-  box(1.5,.92,4.2,side*12,.68,z,oak);box(1.65,.12,4.3,side*12,1.2,z,ivory);block(side*12,z,1.8,4.5);box(.16,3.0,3.6,side*13.78,2.95,z,metal);box(.08,2.7,3.3,side*13.65,2.95,z,mirror);for(let i=0;i<5;i++){const bottle=new THREE.Mesh(new THREE.CylinderGeometry(.055,.07,.24,10),i%2?dark:ivory);bottle.position.set(side*12,1.4,z-1.3+i*.24);root.add(bottle);}sign('STATION '+chair.id,side*13.5,4.65,z,3,.5,-side*Math.PI/2);
+  box(1.5,.92,4.2,side*12,.68,z,oak);box(1.65,.12,4.3,side*12,1.2,z,ivory);block(side*12,z,1.8,4.5);box(.16,3.0,3.6,side*13.78,2.95,z,metal);createClearMirror(root,{width:3.3,height:2.7,x:side*13.64,y:2.95,z,angle:-side*Math.PI/2,name:'Clear salon station mirror'});for(let i=0;i<5;i++){const bottle=new THREE.Mesh(new THREE.CylinderGeometry(.055,.07,.24,10),i%2?dark:ivory);bottle.position.set(side*12,1.4,z-1.3+i*.24);root.add(bottle);}sign('STATION '+chair.id,side*13.5,4.65,z,3,.5,-side*Math.PI/2);
  }
  // Roomy waiting lounge and a staffed welcome desk, clear of the central aisle.
  for(const [x,z,facing]of [[-8,-10,0],[8,-10,0]]){box(3.8,.35,1.2,x,.5,z,oak);box(3.8,.7,.18,x,.98,z-.48,leather);for(const s of[-1,1])for(const dz of[-.4,.4])box(.1,.2,.1,x+s*1.5,.22,z+dz,dark);for(let i=-1;i<=1;i++){box(1.1,.16,1.0,x+i*1.18,.75,z,leather);waiting.push({x:cfg.x+x+i*1.18,z:cfg.z+z,facing,sitHeight:.85,kind:'salon waiting sofa'});}block(x,z,4.0,1.3);}
@@ -51,4 +51,5 @@ export function createStyleCuts(scene,{getPlayer,canEnter=()=>true,applyHair=()=
  for(const[m,geos]of parts){const o=new THREE.Mesh(mergeGeometries(geos,false),m);o.castShadow=m!==glass;o.receiveShadow=true;root.add(o);for(const g of geos)g.dispose();}
  return{root,cfg,chairs,stylist,enterPoint:cfg.entry,update,contains,heightAt,exit,stand:standUp,open,save,get active(){return active;},get seated(){return !!current;},get panelOpen(){return editing;},get saved(){return{...saved}},get draft(){return draft?{...draft}:null},panel,blocks(x,z){return !active&&Math.abs(x-cfg.x)<14.3&&Math.abs(z-cfg.z)<13.3;},nearestSeat(x,z,max=2.5){return active&&!current?waiting.find(s=>Math.hypot(x-s.x,z-s.z)<max)||null:current;},clampCamera(p){if(active){p.x=THREE.MathUtils.clamp(p.x,cfg.x-13.2,cfg.x+13.2);p.z=THREE.MathUtils.clamp(p.z,cfg.z-12.2,cfg.z+12.2);p.y=THREE.MathUtils.clamp(p.y,1.7,5.3);}},updateCamera:cameraPreview};
 }
+
 

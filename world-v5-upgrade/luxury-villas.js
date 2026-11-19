@@ -1,4 +1,4 @@
-import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-residential-v130';
+import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-clear-mirrors-v133';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import {createRealtySign} from './property-signs.js?v=20261119-residential-v130';
 import * as THREE from 'three';

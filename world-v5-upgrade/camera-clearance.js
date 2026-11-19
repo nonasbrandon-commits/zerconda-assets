@@ -1,0 +1,8 @@
+import * as THREE from 'three';
+export function createCameraClearance(){
+ const ray=new THREE.Raycaster(),direction=new THREE.Vector3(),right=new THREE.Vector3(),origin=new THREE.Vector3(),center=new THREE.Vector3(),worldSphere=new THREE.Sphere(),up=new THREE.Vector3(0,1,0),candidates=[];
+ return{resolve(camera,focus,root){direction.copy(camera.position).sub(focus);const distance=direction.length();if(distance<.12)return false;direction.divideScalar(distance);right.crossVectors(direction,up).normalize();candidates.length=0;root.updateWorldMatrix(true,true);root.traverseVisible(o=>{if(!o.isMesh||o.isSkinnedMesh||o.isReflector||o.userData.cameraPassThrough)return;let p=o;while(p&&p!==root){if(/avatar|player/i.test(p.name)||p.userData.localPlayer)return;p=p.parent;}const materials=Array.isArray(o.material)?o.material:[o.material];if(materials.every(m=>m.transparent||m.depthWrite===false))return;if(!o.geometry.boundingSphere)o.geometry.computeBoundingSphere();if(o.geometry.boundingSphere){worldSphere.copy(o.geometry.boundingSphere).applyMatrix4(o.matrixWorld);if(worldSphere.distanceToPoint(focus)>distance+.35)return;}candidates.push(o);});
+ let safe=distance;for(const offset of[0,-.16,.16]){origin.copy(focus).addScaledVector(right,offset);ray.set(origin,direction);ray.near=.03;ray.far=distance+.18;const hits=ray.intersectObjects(candidates,false);if(hits.length)safe=Math.min(safe,Math.max(.16,hits[0].distance-.24));}
+ if(safe<distance){camera.position.copy(focus).addScaledVector(direction,safe);if(safe<.7)camera.position.y=Math.max(camera.position.y,focus.y+.30);return true;}return false;
+ }};
+}

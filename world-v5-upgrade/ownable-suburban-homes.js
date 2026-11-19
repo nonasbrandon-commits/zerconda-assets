@@ -4,7 +4,7 @@ import {createRealtySign} from './property-signs.js?v=20261119-residential-v130'
 import * as THREE from 'three';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {createHomeInterior} from './home-interior.js?v=20261119-residential-v130';
+import {createHomeInterior} from './home-interior.js?v=20261119-clear-mirrors-v133';
 // Stable home IDs retain existing browser ownership. No account or currency is implied.
 export function createOwnableHomes(scene){
  const root=new THREE.Group();root.name='Western fenced residential neighborhood';root.userData.customInterior=true;scene.add(root);
@@ -43,12 +43,12 @@ export function createOwnableHomes(scene){
   // Garage panel is separate from the pedestrian entrance.
   const overhead=new THREE.Group();overhead.position.set(-3.75,2.9,-7.84);g.add(overhead);box(overhead,5.55,2.75,.15,0,-1.375,0,garage);for(let i=0;i<6;i++)box(overhead,5.4,.025,.035,0,-2.5+i*.43,-.10,trim);for(let i=0;i<4;i++)box(overhead,1.07,.32,.03,-1.88+i*1.25,-.35,-.11,glass);box(g,6.55,.06,6.8,-3.75,.17,-4.25,foundation);box(g,6.55,2.85,.16,-3.75,1.58,-.8,wall);box(g,.16,2.85,6.8,-.35,1.58,-4.25,wall);box(g,6.55,.12,6.8,-3.75,3.05,-4.25,trim);
   function window(xx,yy,zz,side=0){const win=new THREE.Group();win.position.set(xx,yy,zz);win.rotation.y=side;g.add(win);box(win,1.8,1.6,.05,0,0,0,glass);for(const sign of [-1,1]){box(win,.09,1.8,.12,sign*.95,0,-.03,trim);box(win,2,.09,.12,0,sign*.85,-.03,trim);}box(win,.055,1.65,.07,0,0,-.065,trim);box(win,1.85,.055,.07,0,0,-.065,trim);box(win,2.1,.10,.26,0,-.94,-.01,foundation);}
-  for(const xx of [-4.5,-.5,3.7])window(xx,4.95,-7.84);for(const xx of [-3.8,3.8])for(const yy of [1.8,4.95])window(xx,yy,7.82,Math.PI);for(const side of [-1,1])for(const zz of [-3,3.5])for(const yy of [1.8,4.95])window(side*7.22,yy,zz,side===-1?Math.PI/2:-Math.PI/2);
+  for(const xx of [-4.5,-.5,3.7])window(xx,4.95,-7.84);for(const xx of [-3.8,3.8])for(const yy of [1.8,4.95])window(xx,yy,7.82,Math.PI);for(const side of [-1,1])for(const zz of [-3,3.5])for(const yy of [1.8,4.95])if(!(side===-1&&zz===3.5&&yy===1.8))window(side*7.22,yy,zz,side===-1?Math.PI/2:-Math.PI/2);
   // Grounded, gently sloped access surfaces connect directly to the public sidewalk at 14m.
   function approach(cx,width,start,end){const len=end-start,mesh=box(g,width,.34,len,cx,GROUND_LEVEL-.17,(start+end)/2,concrete);return mesh;}approach(-3.75,5.8,-18,-7.75);approach(3.5,2.1,-18,-9.9);
   // Warm timber privacy fences with clear driveway and pedestrian openings at the street.
   const fenceParts=[];function part(w,h,d,px,py,pz,ry=0){const b=new THREE.BoxGeometry(w,h,d),mesh=new THREE.Mesh(b);mesh.position.set(px,py,pz);mesh.rotation.y=ry;mesh.updateMatrix();b.applyMatrix4(mesh.matrix);fenceParts.push(b.toNonIndexed());}
-  function fence(x1,z1,x2,z2,height=1.55){const dx=x2-x1,dz=z2-z1,len=Math.hypot(dx,dz),a=-Math.atan2(dz,dx),n=Math.ceil(len/.18);for(let i=0;i<n;i++){const t=(i+.5)/n;part(len/n-.016,height,.055,x1+dx*t,height/2-.12,z1+dz*t,a);}for(let i=0;i<=Math.ceil(len/2.5);i++){const t=i/Math.ceil(len/2.5);part(.11,height+.12,.11,x1+dx*t,height/2-.06,z1+dz*t);}for(const y of [.35,1.1])part(len,.09,.075,(x1+x2)/2,y,(z1+z2)/2,a);}
+  function fence(x1,z1,x2,z2,height=1.55){const dx=x2-x1,dz=z2-z1,len=Math.hypot(dx,dz),a=-Math.atan2(dz,dx),n=Math.ceil(len/.18);for(let i=0;i<n;i++){const t=(i+.5)/n;part(len/n-.016,height,.055,x1+dx*t,height/2-.12,z1+dz*t,a);}for(let i=0;i<=Math.ceil(len/2.5);i++){const t=i/Math.ceil(len/2.5);part(.11,height+.12,.11,x1+dx*t,height/2-.06,z1+dz*t);}for(const y of [height*.28-.12,height*.73-.12])part(len,.09,.075,(x1+x2)/2,y,(z1+z2)/2,a);}
   fence(-12,-18,-12,14);fence(12,-18,12,14);fence(-12,14,12,14);for(const [a,b]of [[-12,-6.8],[-.65,2.3],[4.7,12]])fence(a,-18,b,-18,.95);
   const fg=mergeGeometries(fenceParts),fm=new THREE.Mesh(fg,fenceMat);fm.name='Timber privacy fence';fm.receiveShadow=true;g.add(fm);fenceParts.forEach(p=>p.dispose());
   // Reserved front garden; no bulky decorative bushes across the pedestrian route.
