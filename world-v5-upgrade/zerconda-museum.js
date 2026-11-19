@@ -1,4 +1,4 @@
-import {createVarusExhibit} from './museum-varus.js?v=20261119-original-exhibit-v131';
+import {createVarusExhibit} from './museum-varus.js?v=20261119-museum-barrier-v132';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import {createMuseumFountain} from './museum-fountain.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
@@ -56,8 +56,9 @@ export function createZercondaMuseum(scene,{getPlayer=()=>({x:0,z:0})}={}){
  partition('z',-21,91,16.6,[-24,24],12);partition('z',21,91,16.6,[-24,24],12);
  for(const side of[-1,1]){const shift=side*35.5,groupStart=colliders.length;const before=new Map([...batches].map(([m,g])=>[m,g.length]));partition('x',0,27.7,10.7,[0],7.5);for(const[m,g]of batches)for(let i=before.get(m)||0;i<g.length;i++)g[i].translate(shift,0,0);for(let i=groupStart;i<colliders.length;i++)colliders[i].x+=shift;}
  // Interior wall paneling, cornices, pilasters, and layered plaster coffers.
- for(const x of[-49.4,-21.48,21.48,49.4])for(const y of[1.65,2.55,9.95,10.35])box(.17,.16,89.5,x,y,0,trim);
- for(const x of[-20.5,20.5]){for(const y of[12.0,15.4,16.15])box(.34,.22,90.5,x,y,0,trim);for(let z=-40;z<=40;z+=10){box(.22,12.8,.56,x,8.0,z,trim);box(.4,.34,.86,x,14.5,z,trim);}}
+ for(const x of[-49.4,49.4])for(const y of[1.65,2.55,9.95,10.35])box(.17,.16,89.5,x,y,0,trim);
+ for(const x of[-21.48,21.48])for(const y of[1.65,2.55,9.95,10.35])for(const [a,b]of[[-44.75,-30.3],[-17.7,17.7],[30.3,44.75]])box(.17,.16,b-a,x,y,(a+b)/2,trim);
+ for(const x of[-20.5,20.5]){for(const y of[12.0,15.4,16.15])box(.34,.22,90.5,x,y,0,trim);for(let z=-40;z<=40;z+=10){if(Math.abs(z-24)<6.7||Math.abs(z+24)<6.7)continue;box(.22,12.8,.56,x,8.0,z,trim);box(.4,.34,.86,x,14.5,z,trim);}}
  function coffers(x0,x1,z0,z1,y,nx,nz){const w=(x1-x0)/nx,d=(z1-z0)/nz;for(let ix=0;ix<nx;ix++)for(let iz=0;iz<nz;iz++){const x=x0+(ix+.5)*w,z=z0+(iz+.5)*d;box(w-.18,.22,d-.18,x,y+.15,z,plaster);for(const side of[-1,1]){box(.28,.36,d-.12,x+side*w/2,y-.10,z,trim);box(.08,.12,d-.66,x+side*(w/2-.4),y-.17,z,gold);box(w-.12,.36,.28,x,y-.10,z+side*d/2,trim);box(w-.66,.12,.08,x,y-.17,z+side*(d/2-.4),gold);}cyl(.24,.24,.09,x,y-.03,z,trim,16);ring(.38,.035,x,y-.10,z,gold);for(let k=0;k<8;k++){const a=k*Math.PI/4;cyl(.09,.09,.07,x+Math.cos(a)*.17,y-.12,z+Math.sin(a)*.17,gold,6);}}}
  for(const side of[-1,1])coffers(side<0?-49.4:21.5,side<0?-21.5:49.4,-45.4,45.4,10.75,3,10);
  // Central nave ceiling leaves a long glazed skylight above the open hall.
@@ -69,7 +70,7 @@ export function createZercondaMuseum(scene,{getPlayer=()=>({x:0,z:0})}={}){
  for(const x of[-35.5,35.5])for(const[y,w,h,d]of[[1.7,30.1,.30,94.2],[10.5,30.0,.28,94.0],[10.9,30.5,.24,94.6],[11.45,31,.34,95.2]])box(w,h,d,x,y,0,trim);
  // Remove the solid interior of cornice blocks: only perimeter strips are authored below.
  // (The courses above are hollowed into edges before batching.)
- for(const[m,geos]of batches){if(m!==trim)continue;for(let i=geos.length-1;i>=0;i--){const g=geos[i];g.computeBoundingBox();const b=g.boundingBox,s=b.getSize(new THREE.Vector3());if(s.x>=30&&s.x<=31.1&&s.z>=93.9){const center=b.getCenter(new THREE.Vector3());geos.splice(i,1);g.dispose();box(s.x,s.y,.55,center.x,center.y,center.z+s.z/2-.275,m);box(s.x,s.y,.55,center.x,center.y,center.z-s.z/2+.275,m);box(.55,s.y,s.z-.9,center.x-s.x/2+.275,center.y,center.z,m);box(.55,s.y,s.z-.9,center.x+s.x/2-.275,center.y,center.z,m);}}}
+ for(const[m,geos]of batches){if(m!==trim)continue;for(let i=geos.length-1;i>=0;i--){const g=geos[i];g.computeBoundingBox();const b=g.boundingBox,s=b.getSize(new THREE.Vector3());if(s.x>=30&&s.x<=31.1&&s.z>=93.9){const center=b.getCenter(new THREE.Vector3());geos.splice(i,1);g.dispose();box(s.x,s.y,.55,center.x,center.y,center.z+s.z/2-.275,m);box(s.x,s.y,.55,center.x,center.y,center.z-s.z/2+.275,m);for(const edgeX of[center.x-s.x/2+.275,center.x+s.x/2-.275]){if(Math.abs(edgeX)<22){for(const [a,b]of[[-(s.z-.9)/2,-30.3],[-17.7,17.7],[30.3,(s.z-.9)/2]])box(.55,s.y,b-a,edgeX,center.y,(a+b)/2,m);}else box(.55,s.y,s.z-.9,edgeX,center.y,center.z,m);}}}}
  for(const side of[-1,1])for(let z=-42;z<=42;z+=7){box(.30,8.8,1.05,side*50.48,6.2,z,trim);box(.48,.32,1.6,side*50.48,10.25,z,trim);}
  for(let x=-49;x<50;x+=1.1)for(const z of[-46.75,46.75])box(.38,.36,.32,x,10.60,z,trim);
  // Solid gray-stone landing, enclosed stair foundation, and one nonoverlapping forecourt.
