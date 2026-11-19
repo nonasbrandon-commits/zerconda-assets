@@ -5,7 +5,7 @@ import {createRealtySign} from './property-signs.js?v=20261119-residential-v130'
 import * as THREE from 'three';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {createHomeInterior} from './home-interior.js?v=20261119-fountain-seating-v135';
+import {createHomeInterior} from './home-interior.js?v=20261119-bathroom-cleanup-v141';
 // Stable home IDs retain existing browser ownership. No account or currency is implied.
 export function createOwnableHomes(scene){
  const root=new THREE.Group();root.name='Western fenced residential neighborhood';root.userData.customInterior=true;scene.add(root);

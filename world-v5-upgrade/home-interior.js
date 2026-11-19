@@ -1,5 +1,5 @@
 import {createClearMirror} from './clear-mirrors.js?v=20261119-clear-mirrors-v133';
-import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-clear-mirrors-v133';
+import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-bathroom-cleanup-v141';
 import {createHomeKitchen} from './home-kitchen.js?v=20261119-home-repair-v129';
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
