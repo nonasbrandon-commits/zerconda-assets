@@ -1,0 +1,29 @@
+import {CLOTHING_CATALOG} from './clothing-boutique.js?v=20261119-entrance-steering-v118';
+import {HAIR_STYLES,HAIR_COLORS} from './hair-styles.js?v=20261117-style-cuts-v88';
+import {residentProfiles} from './resident-profiles.js?v=20261118-residents-v97';
+export function renderProfileEditor(panel,{name,onSaveName,getAppearance,onAppearanceChange,getTattoos=()=>[],getAccessories=()=>[],onAccessoryChange=()=>{}}){
+ let draft=getAppearance(),busy=0;const controls=[];const status=document.createElement('p');status.setAttribute('role','status');
+ function label(text,element){const l=document.createElement('label');l.textContent=text;element.setAttribute('aria-label',text);element.style.width=element.type==='checkbox'?'20px':'100%';l.append(element);panel.append(l);return element;}
+ const nameInput=label('Display name',document.createElement('input'));nameInput.value=name;nameInput.maxLength=32;
+ const summary=document.createElement('p');summary.setAttribute('aria-label','Current appearance');panel.append(summary);
+ function updateSummary(){const body=residentProfiles.find(p=>'resident-'+p.id===draft.model);summary.textContent=[draft.gender==='female'?'Female':'Male',body?`${body.skinTone} skin · ${body.outfit}`:'Classic character',draft.outfit.name||'Custom clothing',(draft.hair.style==='original'&&body?body.hair:HAIR_STYLES.find(h=>h[0]===draft.hair.style)?.[1]||'Original')+' hair'].join(' · ');}
+ async function apply(){for(const [element,get]of controls){const value=get();if(element.type==='checkbox')element.checked=!!value;else if(value!==undefined)element.value=value;}const token=++busy;status.textContent='Updating appearance…';try{await onAppearanceChange(draft);if(token===busy)status.textContent='Appearance saved on this browser.';}catch{if(token===busy)status.textContent='The appearance could not load. Please try another look.';}updateSummary();}
+ function select(text,options,value,change){const s=document.createElement('select');for(const [v,n]of options)s.add(new Option(n,v));s.value=value;s.onchange=()=>change(s.value);return label(text,s);}
+ function colors(text,key){const i=document.createElement('input');i.type='color';i.value=typeof draft.outfit[key]==='string'?draft.outfit[key]:'#405f71';controls.push([i,()=>draft.outfit[key]]);i.oninput=()=>{draft.outfit={...draft.outfit,[key]:i.value,native:false,name:'Custom clothing'};apply();};return label(text,i);}
+ let modelSelect,clothesSelect,hairSelect;
+ function models(){modelSelect.replaceChildren();if(draft.gender==='male')modelSelect.add(new Option('Classic character','classic'));for(const p of residentProfiles.filter(p=>p.gender===(draft.gender==='female'?'woman':'man')))modelSelect.add(new Option(`${p.outfit} · ${p.hair} hair · ${p.skinTone} skin`,'resident-'+p.id));modelSelect.value=draft.model;}
+ function clothes(){clothesSelect.replaceChildren();clothesSelect.add(new Option('Original outfit for this character','native'));for(const o of CLOTHING_CATALOG.filter(o=>o.collection===(draft.gender==='female'?'Women':'Men')))clothesSelect.add(new Option(o.name,o.id));clothesSelect.value=draft.outfit.native?'native':draft.outfit.id||'';}
+ function useNative(){const body=residentProfiles.find(p=>'resident-'+p.id===draft.model);draft.outfit={...draft.outfit,id:'native',native:true,name:body?.outfit||'Original outfit',collection:draft.gender==='female'?'Women':'Men'};draft.hair={...draft.hair,style:'original'};if(hairSelect)hairSelect.value='original';}
+ select('Gender',[['male','Male'],['female','Female']],draft.gender,v=>{draft.gender=v;draft.model=v==='female'?'resident-0':'classic';useNative();models();clothes();apply();});
+ modelSelect=select('Character and original outfit',[],draft.model,v=>{draft.model=v;useNative();clothes();apply();});models();
+ clothesSelect=select('Clothing look',[],draft.outfit.id,v=>{if(v==='native')useNative();else draft.outfit={...CLOTHING_CATALOG.find(o=>o.id===v),native:false};apply();});clothes();
+ hairSelect=select('Hairstyle',HAIR_STYLES,draft.hair.style,v=>{draft.hair={...draft.hair,style:v};apply();});select('Hair color',HAIR_COLORS,draft.hair.color,v=>{draft.hair={...draft.hair,color:v};apply();});
+ colors('Top color','shirt');colors('Bottom color','pants');colors('Shoes color','shoes');
+ for(const [key,text]of[['shorts','Shorts'],['tee','Short sleeves'],['glasses','Glasses']]){const i=document.createElement('input');i.type='checkbox';i.checked=!!draft.outfit[key];controls.push([i,()=>draft.outfit[key]]);i.onchange=()=>{draft.outfit={...draft.outfit,[key]:i.checked,native:key==='glasses'?draft.outfit.native:false,name:'Custom clothing'};apply();};label(text,i);}
+ const hatControl=select('Hat',[['none','None'],['cap','Cap'],['fedora','Fedora']],draft.outfit.hat||'none',v=>{draft.outfit={...draft.outfit,hat:v};apply();});
+ controls.push([hatControl,()=>draft.outfit.hat||'none']);
+ const bagControl=select('Handbag or shoulder bag',[['none','None'],['purse','Handbag'],['crossbody','Shoulder bag']],draft.outfit.bag||'none',v=>{draft.outfit={...draft.outfit,bag:v};apply();});controls.push([bagControl,()=>draft.outfit.bag||'none']);colors('Accessories color','accessoryColor');
+ for(const accessory of getAccessories())if(accessory.items.length)select(accessory.label,[['','None'],...accessory.items.map(i=>[i.value,i.label])],accessory.value,v=>onAccessoryChange(accessory.id,v));
+ const tattoos=getTattoos();if(tattoos.length){const p=document.createElement('p');p.textContent='Tattoos: '+tattoos.map(t=>t.design).join(', ');panel.append(p);}
+ const save=document.createElement('button');save.textContent='Save profile';save.onclick=()=>{onSaveName(nameInput.value.trim()||'Resident');apply();};panel.append(save,status);updateSummary();
+}
