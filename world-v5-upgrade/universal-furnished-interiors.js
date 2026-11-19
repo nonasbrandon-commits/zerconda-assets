@@ -1,3 +1,4 @@
+import {createFrenchDoorFridge} from './french-door-fridge.js?v=20261119-fridge-v142';
 import * as THREE from 'three';
 // Shared furnished, enterable interior for every city building and residential home.
 // All furniture is original reusable 3D geometry; no external model URLs or licensing dependencies.
@@ -35,7 +36,7 @@ export function createUniversalInteriors(scene){
  for(const xx of [1.35,3.45])for(const zz of [2.1,4.9])chair(xx,zz,zz<3.5?0:Math.PI);
  // Kitchen counters, cabinets, island, sink and refrigerator.
  for(const xx of [-5.7,-3.9,-2.1]){cube(root,1.7,.9,.75,xx,.46,-7.9,wood);cube(root,1.7,.12,.8,xx,.96,-7.9,mat(0xbcbdb8));}
- cube(root,1,.95,.85,-6,.48,-5.6,dark);cube(root,1,1.9,.9,-6,1,-6.8,mat(0xd3d6d5));
+ cube(root,1,.95,.85,-6,.48,-5.6,dark);createFrenchDoorFridge(root,{x:-6,y:.05,z:-6.8,width:1,height:1.9,depth:.9});
  // Bedroom nook: bed, pillows, nightstands and dresser.
  cube(root,2.5,.4,3.3,4,.44,-6.4,wood);cube(root,2.3,.25,2.8,4,.76,-6.25,mat(0xe4dfd5));
  cube(root,2.3,.75,.22,4,.95,-8.08,wood);

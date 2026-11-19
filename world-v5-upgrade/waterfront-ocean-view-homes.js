@@ -1,3 +1,4 @@
+import {createFrenchDoorFridge} from './french-door-fridge.js?v=20261119-fridge-v142';
 import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-bathroom-cleanup-v141';
 import {createRealtySign} from './property-signs.js?v=20261119-residential-v130';
 import * as THREE from 'three';
@@ -61,7 +62,7 @@ export function addWaterfrontHomes(scene,{count=12,getPlayer=()=>({x:0,z:0}),can
   createDetailedBed(g,{x:-3,y:.2,z:2.6,angle:Math.PI/2,width:1.8,length:3.0,compact:true});obstacle(-3,2.6,3.3,2);
   const bath=createDetailedBathroom(g,{x:-2.8,y:.2,z:-3.0,width:4.35,depth:4.65,tub:false,wallWindows:{back:[{x:-1.1,y:1.6,w:1.8,h:1.8}]}});h.colliders.push(...bath.solids);
   // Identical starter kitchen, dining and lounge furniture in every cottage.
-  furniture(1.1,1.9,.95,4.1,1.15,-4.6,ceramic);furniture(.75,.85,2.8,4.4,.625,-2.7,wood);box(g,.8,.08,2.85,4.4,1.09,-2.7,counter);box(g,.55,.04,.8,4.4,1.15,-3.45,iron);for(const x of [4.22,4.57])for(const z of [-2.25,-1.9]){const b=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.025,14),iron);b.position.set(x,1.15,z);g.add(b);}
+  createFrenchDoorFridge(g,{x:4.1,y:.2,z:-4.6,width:1.1,height:1.9,depth:.95,angle:-Math.PI/2});obstacle(4.1,-4.6,1.1,.95);furniture(.75,.85,2.8,4.4,.625,-2.7,wood);box(g,.8,.08,2.85,4.4,1.09,-2.7,counter);box(g,.55,.04,.8,4.4,1.15,-3.45,iron);for(const x of [4.22,4.57])for(const z of [-2.25,-1.9]){const b=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.025,14),iron);b.position.set(x,1.15,z);g.add(b);}
   // Compact dining nook against the kitchen-side wall, outside the entry route.
   furniture(1.15,.09,.85,3.95,.99,-.05,wood);for(const x of[3.5,4.4])for(const z of[-.35,.25])box(g,.065,.75,.065,x,.58,z,wood);
   furniture(.56,.12,.58,2.85,.64,-.05,fabric);box(g,.08,.62,.58,2.61,.96,-.05,wood);for(const x of[2.65,3.05])for(const z of[-.26,.16])box(g,.055,.38,.055,x,.4,z,wood);
