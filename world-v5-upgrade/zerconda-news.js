@@ -11,12 +11,12 @@ export function createZercondaNews(scene,{getPlayer,canInteract=()=>true,onMessa
  for(let y=18;y<35;y+=3)for(let x=132;x<151;x+=3){box(2.6,1.9,.13,x,y,-42.8,glass);box(2.6,.08,.18,x,y+1.0,-42.7,silver);}for(let y=18;y<35;y+=3)for(let z=-63;z< -43;z+=3)box(.12,1.9,2.6,130.8,y,z,glass);
  for(const x of [119,153]){box(.4,14,.5,x,7,-29.8,silver);box(.5,.12,37,x,14.1,-49,emissive);}for(const z of [-66,-31])box(35,.10,.2,136,14.1,z,emissive);
  // Wall-mounted bulletin faces the north street on the formerly blank rear facade.
- const billboardFrame=box(34.4,11.5,.20,136,9,-68.14,silver);billboardFrame.name='Young genius cure billboard frame';
- const billboardCanvas=document.createElement('canvas');billboardCanvas.width=3072;billboardCanvas.height=1024;
- const billboardContext=billboardCanvas.getContext('2d');billboardContext.fillStyle='#0a2635';billboardContext.fillRect(0,0,3072,1024);
+ const billboardFrame=box(32.6,8.0,.20,136,10.1,-68.14,silver);billboardFrame.name='Young genius cure billboard frame';
+ const billboardCanvas=document.createElement('canvas');billboardCanvas.width=4096;billboardCanvas.height=986;
+ const billboardContext=billboardCanvas.getContext('2d');billboardContext.fillStyle='#0a2635';billboardContext.fillRect(0,0,4096,986);
  const billboardTexture=new THREE.CanvasTexture(billboardCanvas);billboardTexture.colorSpace=THREE.SRGBColorSpace;billboardTexture.anisotropy=4;
- const billboard=new THREE.Mesh(new THREE.PlaneGeometry(33.8,11.2667),new THREE.MeshBasicMaterial({map:billboardTexture,toneMapped:false}));billboard.name='Young genius finds a cure · six-hour injection deadline';billboard.position.set(136,9,-68.255);billboard.rotation.y=Math.PI;billboard.userData.discoverer='Dr. Elliot Drew';billboard.userData.headline='New Young Genius finds a cure for the virus, but it must be injected within 6 hours of contracting it!';root.add(billboard);
- const billboardImage=new Image();billboardImage.decoding='async';billboardImage.onload=()=>{billboardContext.drawImage(billboardImage,0,0,3072,1024);billboardTexture.needsUpdate=true;billboard.userData.artworkReady=true;};billboardImage.src=new URL('./assets/young-genius-billboard-v138.png',import.meta.url).href;
+ const billboard=new THREE.Mesh(new THREE.PlaneGeometry(32,7.7),new THREE.MeshBasicMaterial({map:billboardTexture,toneMapped:false}));billboard.name='Young genius finds a cure · six-hour injection deadline';billboard.position.set(136,10.1,-68.255);billboard.rotation.y=Math.PI;billboard.userData.discoverer='Dr. Elliot Drew';billboard.userData.headline='New Young Genius finds a cure for the virus, but it must be injected within 6 hours of contracting it!';root.add(billboard);
+ const billboardImage=new Image();billboardImage.decoding='async';billboardImage.onload=()=>{const h=986,w=h*billboardImage.naturalWidth/billboardImage.naturalHeight;billboardContext.drawImage(billboardImage,(4096-w)/2,0,w,h);billboardTexture.needsUpdate=true;billboard.userData.artworkReady=true;};billboardImage.src=new URL('./assets/young-genius-billboard-v138.png',import.meta.url).href;
  // Standard 1.8m double doors, with tinted sidelights filling the former opening.
  const tint=M(0x193a49,.22);
  box(8,4.2,.14,136,2.2,-29.8,tint);
