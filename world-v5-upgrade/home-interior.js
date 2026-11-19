@@ -1,6 +1,6 @@
 import {createClearMirror} from './clear-mirrors.js?v=20261119-clear-mirrors-v133';
-import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-zdogz-v146';
-import {createHomeKitchen} from './home-kitchen.js?v=20261119-zdogz-v146';
+import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-performance-v147';
+import {createHomeKitchen} from './home-kitchen.js?v=20261119-performance-v147';
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';

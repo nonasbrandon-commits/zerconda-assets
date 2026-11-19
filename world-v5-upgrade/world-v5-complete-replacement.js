@@ -1,23 +1,25 @@
-import {beginHomePassage,updateHomePassage,homePassageActive,cancelHomePassage} from './home-passage.js?v=20261119-zdogz-v146';
-import {updateReferenceLampLights} from './reference-lamp.js?v=20261119-zdogz-v146';
+import {addVehicleLOD} from './vehicle-lod.js?v=20261119-performance-v147';
+import {optimizeStaticModel} from './static-model-batching.js?v=20261119-performance-v147';
+import {beginHomePassage,updateHomePassage,homePassageActive,cancelHomePassage} from './home-passage.js?v=20261119-performance-v147';
+import {updateReferenceLampLights} from './reference-lamp.js?v=20261119-performance-v147';
 import {improveVehicleCabin} from './vehicle-cabins.js?v=20261119-cabin-v137';
 import {createPlayerAppearance} from './player-appearance.js?v=20261119-profile-v136';
-import {createCameraClearance} from './camera-clearance.js?v=20261119-clear-mirrors-v133';
+import {createCameraClearance} from './camera-clearance.js?v=20261119-performance-v147';
 import {createSignBackMaintenance} from './readable-signs.js?v=20261119-rv-junction-v128';
-import {createZFortune} from './z-fortune.js?v=20261119-zdogz-v146';
+import {createZFortune} from './z-fortune.js?v=20261119-performance-v147';
 import {createZStore} from './z-store.js?v=20261119-profile-v136';
 import {createPlayerMenu} from './player-menu.js?v=20261119-profile-v136';
 import {createMouseSkateControls} from './mouse-skate-controls.js?v=20261119-entrance-steering-v118';
 import {createMouseVehicleSteering} from './mouse-vehicle-steering.js?v=20261119-entrance-steering-v118';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
-import {createRenderBudget} from './render-budget.js?v=20261118-startup-v114';
+import {createRenderBudget} from './render-budget.js?v=20261119-performance-v147';
 import {createClothedPlayer} from './clothed-player.js';
 import {createZercondaMuseum} from './zerconda-museum.js?v=20261119-museum-barrier-v132';
 import {installAvatarTattoos} from './avatar-tattoos.js?v=20261119-profile-v136';
 import {createZTattoo} from './z-tattoo.js?v=20261119-entrance-steering-v118';
 import {treeBoundsOverlapRoad} from './tree-road-clearance.js?v=20261118-clear-roads-v112';
 import {createCourtGames} from './court-games.js?v=20261118-wall-mystery-v111';
-import {createHotDogVendor} from './boardwalk-hotdogs.js?v=20261119-zdogz-v146';
+import {createHotDogVendor} from './boardwalk-hotdogs.js?v=20261119-performance-v147';
 import {createVehicleControls} from './vehicle-controls.js?v=20261119-entrance-steering-v118';
 import {createDamagedWallPanel,createBlockedWallOpening,WALL_OPENING} from './blocked-wall-opening.js?v=20261118-wall-mystery-v111';
 import {createAreaTravel} from './area-travel.js?v=20261119-z-fortune-v122';
@@ -30,16 +32,16 @@ import {createTownObstacles} from './town-obstacles.js?v=20261118-visible-trails
 import {createSeasideCarnival} from './seaside-carnival.js?v=20261119-reference-trucks-v126';
 import {createRVPark} from './rv-park.js?v=20261119-rv-junction-v128';
 import {createModernPickup} from './modern-pickup.js?v=20261118-visible-trails-v100';
-import {createLuxuryVillas} from './luxury-villas.js?v=20261119-zdogz-v146';
+import {createLuxuryVillas} from './luxury-villas.js?v=20261119-performance-v147';
 import {createStyleCuts} from './style-cuts.js?v=20261119-clear-mirrors-v133';
 import {createBusinessCentre} from './business-centre.js?v=20261119-entrance-steering-v118';
 import {createSkatePark} from './skate-park.js?v=20261119-entrance-steering-v118';
 import {createAirfield} from './airfield.js?v=20261118-wall-mystery-v111';
 import * as THREE from 'three';
 import {createForestCampground} from './forest-campground.js?v=20261119-rv-junction-v128';
-import {createPremierHomes} from './premier-homes.js?v=20261119-zdogz-v146';
+import {createPremierHomes} from './premier-homes.js?v=20261119-performance-v147';
 import {createZercondaNews} from './zerconda-news.js?v=20261119-ticker-v140';
-import {createClothingBoutique} from './clothing-boutique.js?v=20261119-zdogz-v146';
+import {createClothingBoutique} from './clothing-boutique.js?v=20261119-performance-v147';
 import {createBowlingAlley} from './bowling-alley.js?v=20261119-entrance-steering-v118';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261119-reference-trucks-v126';
 import {createSeasidePier} from './seaside-pier.js?v=20261118-realty-v105';
@@ -51,28 +53,28 @@ import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-h
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js?v=20261119-fountain-seating-v135';
-import {createObservationNeedle} from './observation-needle.js?v=20261119-zdogz-v146';
+import {createObservationNeedle} from './observation-needle.js?v=20261119-performance-v147';
 import {createCloudSky} from './cloud-sky.js';
 import {addCityDepth} from './city-depth-assets.js?v=20261118-wall-mystery-v111';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js?v=20261119-coffee-stone-v123';
-import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261119-zdogz-v146';
+import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261119-performance-v147';
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261119-fridge-v142';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261118-wall-mystery-v111';
 import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
-import {createZercondaBeach} from './zerconda-beach.js?v=20261118-wall-mystery-v111';
+import {createZercondaBeach} from './zerconda-beach.js?v=20261119-performance-v147';
 import {createCityMap} from './top-city-map.js?v=20261119-fountain-seating-v135';
-import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-zdogz-v146';
-import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261119-zdogz-v146';
-import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261119-zdogz-v146';
+import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
+import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261119-performance-v147';
+import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261119-performance-v147';
 import {createPedestrians} from './animated-pedestrians.js?v=20261118-faster-town-v106';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118-visible-trails-v100';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-ground-v117';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-19-zdogz-v146';
+const ZERCONDA_BUILD='2026-11-19-performance-v147';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -389,16 +391,17 @@ wallSegment(570,-1350,570,-18);wallSegment(570,18,570,350); // East perimeter al
 // Gate geometry is loaded after core scene setup to avoid blocking world startup.
 // Connected eroded ridges and instanced forest around all landward boundaries.
 const wilderness=createWildernessLandscape(scene);
-function populateOuterForest(){
+async function prepareScenery(object){if(!object||!renderer.compileAsync)return;const visible=object.visible;object.visible=false;try{await renderer.compileAsync(object,camera,scene);}catch(error){console.warn('Optional scenery shader warmup:',error);}finally{object.visible=visible;}}
+async function populateOuterForest(){
  const source=loaded.tree||loaded.tree2;if(!source)return;
  // Photographic broadleaf assets break up the near evergreen forest edge.
- for(let i=0;i<72;i++){
+ for(let i=0;i<72;i++){if(i%4===0)await new Promise(resolve=>setTimeout(resolve,0));
   const side=i%3,x=side===0?-473-rand()*75:side===1?605+rand()*85:-280+rand()*960;
   const z=side===2?-567-rand()*65:-260+rand()*345;
   if(side===1&&Math.abs(z)<24)continue;
   const tree=cloneNormalized(loaded[i%2?'tree2':'tree']||source,x,z,24+rand()*15,rand()*Math.PI*2);
   if(tree&&treeBoundsOverlapRoad(new THREE.Box3().setFromObject(tree))){scene.remove(tree);continue;}
-  if(tree){tree.name='Road-cleared outer tree';tree.userData.roadCleared=true;tree.position.y+=wildernessHeight(x,z);tree.traverse(o=>{if(o.isMesh)o.castShadow=false;});}
+  if(tree){tree.name='Road-cleared outer tree';tree.userData.roadCleared=true;tree.position.y+=wildernessHeight(x,z);tree.traverse(o=>{if(o.isMesh)o.castShadow=false;});optimizeStaticModel(tree,'outer-tree-'+(i%2));await prepareScenery(tree);}
  }
 }
 // Facade texture generator: architectural materials, varied stonework,
@@ -541,7 +544,7 @@ club=createClubZerconda(scene,{
  canEnter:()=>!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!scooters?.riding&&!skate?.riding&&!activeCar&&!apartmentSession&&!universalSession&&!onObservationDeck,
  stopMovement:()=>{keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;sittingSeat=null;seatReturn=null;player.clubSeated=false;}
 });
-southBeach=createZercondaBeach(scene);
+southBeach=createZercondaBeach(scene,{prepareModel:prepareScenery});
 
 // Ocean safety: remove legacy oversized pyramid/mountain meshes if a previous
 // scene module adds them. Never remove the observation needle or beach umbrellas.
@@ -740,27 +743,27 @@ async function populate(){
  const keys=Object.keys(PATH).filter(k=>k!=='flower'&&(!MOBILE||!['bench','planter','statue'].includes(k)));
  const result=await Promise.allSettled(keys.map(load));
  result.forEach((r,i)=>{if(r.status==='fulfilled')loaded[keys[i]]=r.value;});
- populateOuterForest();
- for(let i=0;i<treeSpots.length;i+=MOBILE?2:1){
+ await populateOuterForest();
+ for(let i=0;i<treeSpots.length;i+=MOBILE?2:1){if(i%4===0)await new Promise(resolve=>setTimeout(resolve,0));
   const [x,z]=treeSpots[i],src=loaded[i%2?'tree2':'tree']||loaded.tree||loaded.tree2;
   if(x>110&&x<220&&z> -270&&z< -121)continue;
     if(x> -82&&x< -15&&z> -84&&z< -34)continue;
     if(x> -82&&x< -14&&z> -153&&z< -109)continue; // Clear the relocated cafe, its entrance and the future building lot.
     if(z>72&&z<172&&Math.abs(x)<185)continue; // Protect entire beachside residential blocks, including full tree canopies
-  if(src&&!doors.some(d=>Math.hypot(x-d.x,z-d.z)<13)&&!(Math.abs(x+34)<24&&Math.abs(z+48)<24)){const tree=cloneNormalized(src,x,z,7+rand()*2.5,rand()*6.28);if(tree){tree.name='Road-cleared street tree';tree.userData.roadCleared=true;if(treeBoundsOverlapRoad(new THREE.Box3().setFromObject(tree)))scene.remove(tree);}}
+  if(src&&!doors.some(d=>Math.hypot(x-d.x,z-d.z)<13)&&!(Math.abs(x+34)<24&&Math.abs(z+48)<24)){const tree=cloneNormalized(src,x,z,7+rand()*2.5,rand()*6.28);if(tree){tree.name='Road-cleared street tree';tree.userData.roadCleared=true;if(treeBoundsOverlapRoad(new THREE.Box3().setFromObject(tree)))scene.remove(tree);else {optimizeStaticModel(tree,'street-tree-'+(i%2));await prepareScenery(tree);}}}
  }
- for(const [x,z] of lampSpots){
-  if(loaded.lamp)cloneNormalized(loaded.lamp,x,z,4.4);
+ let lampBatch=0;for(const [x,z] of lampSpots){if(lampBatch++%8===0)await new Promise(resolve=>setTimeout(resolve,0));
+  if(loaded.lamp){const lamp=cloneNormalized(loaded.lamp,x,z,4.4);await prepareScenery(lamp);}
   else {cylinder(.09,.12,4.3,x,2.15,z,dark,scene,12);
     box(.5,.55,.5,x,4.6,z,stone);}
  }
  const carModels=Array.from({length:MOBILE?16:32},(_,i)=>['sedan','white','sport','white','sedan'][i%5]);
- for(let i=0;i<Math.min(carModels.length,parking.length);i++){
+ for(let i=0;i<Math.min(carModels.length,parking.length);i++){await new Promise(resolve=>setTimeout(resolve,0));
   if(i===4||i===12)continue;
   const [x,z,angle]=parking[i],src=loaded[carModels[i]];
   if(!src)continue;
   const model=cloneNormalized(src,0,0,1.55,0);
-  if(model){const pivot=new THREE.Group();pivot.name='Drivable passenger car';pivot.position.set(x,0,z);pivot.rotation.y=angle;pivot.add(model);improveVehicleCabin(pivot);scene.add(pivot);cars.push({group:pivot,x,z,angle,speed:0});}
+  if(model){const pivot=new THREE.Group();pivot.name='Drivable passenger car';pivot.position.set(x,0,z);pivot.rotation.y=angle;pivot.add(model);improveVehicleCabin(pivot);optimizeStaticModel(pivot,'passenger-'+carModels[i]);addVehicleLOD(pivot,carModels[i]);await prepareScenery(pivot);scene.add(pivot);cars.push({group:pivot,x,z,angle,speed:0});}
  }
  // Populate the plaza perimeter with real scanned GLTF street furniture.
  // Unlike primitive placeholder meshes these contain authored textures and normals.

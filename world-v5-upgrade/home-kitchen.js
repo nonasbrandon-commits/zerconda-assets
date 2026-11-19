@@ -1,5 +1,5 @@
-import {createReferenceRange,createShakerCabinet} from './reference-range.js?v=20261119-zdogz-v146';
-import {createFrenchDoorFridge} from './french-door-fridge.js?v=20261119-fridge-v142';
+import {createReferenceRange,createShakerCabinet} from './reference-range.js?v=20261119-performance-v147';
+import {createFrenchDoorFridge} from './french-door-fridge.js?v=20261119-performance-v147';
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';

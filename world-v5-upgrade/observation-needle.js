@@ -1,4 +1,4 @@
-import {createPhotoPlanter} from './photo-planter.js?v=20261119-zdogz-v146';
+import {createPhotoPlanter} from './photo-planter.js?v=20261119-performance-v147';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';

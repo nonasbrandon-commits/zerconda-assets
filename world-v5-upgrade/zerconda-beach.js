@@ -1,10 +1,11 @@
+import {optimizeStaticModel} from './static-model-batching.js?v=20261119-performance-v147';
 import {addRealisticBeachPalms} from './realistic-beach-palms.js';
 import * as THREE from 'three';
 import {createRealisticOcean} from './realistic-ocean.js?v=20261118-wall-mystery-v111';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Zerconda South Beach, reachable on foot from the southern city edge at z=168.
 // Tiled sand PBR, animated layered water, foam, dunes, boardwalk, umbrellas and palms.
-export function createZercondaBeach(scene,{base='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/'}={}){
+export function createZercondaBeach(scene,{base='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/',prepareModel=async()=>{}}={}){
  const root=new THREE.Group();root.name='Zerconda South Beach';scene.add(root);
  // Original grain-scale sand texture; avoids using green grass photography as sand.
  const canvas=document.createElement('canvas');canvas.width=512;canvas.height=512;
@@ -49,8 +50,8 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  // Detailed coconut palms with individual curved fronds, no low-poly cone foliage.
  // Load an actual CC0 GLB palm model. Geometry fallback only on failed download.
  const palmUrl=base+'realistic-assets/palms/palm-detailed.glb';
- new GLTFLoader().load(palmUrl,gltf=>{
-   const template=gltf.scene;
+ new GLTFLoader().load(palmUrl,async gltf=>{
+   const template=gltf.scene;optimizeStaticModel(template,'beach-palm-source');await prepareModel(template);
    template.updateMatrixWorld(true);
    const bounds=new THREE.Box3().setFromObject(template);
    const size=bounds.getSize(new THREE.Vector3());
@@ -64,7 +65,7 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
      palm.scale.setScalar(scale*(.86+(i%5)*.055));
      palm.rotation.y=i*2.39996;
      palm.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
-     root.add(palm);
+     root.add(palm);optimizeStaticModel(palm,'beach-palm');
    }
    console.info('Zerconda: loaded real CC0 GLB beach palms',palmUrl);
  },undefined,error=>{

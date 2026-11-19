@@ -1,4 +1,4 @@
-import {createPhotoPlanter} from './photo-planter.js?v=20261119-zdogz-v146';
+import {createPhotoPlanter} from './photo-planter.js?v=20261119-performance-v147';
 import * as THREE from 'three';
 // Shared real CC0 photo-scanned PBR maps already present in this repository.
 // Loading is non-blocking: existing brick colors remain visible if a texture fails.

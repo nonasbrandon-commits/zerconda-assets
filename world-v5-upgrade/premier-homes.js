@@ -1,8 +1,8 @@
-import {createPhotoPlanter} from './photo-planter.js?v=20261119-zdogz-v146';
-import {beginHomePassage} from './home-passage.js?v=20261119-zdogz-v146';
-import {createReferenceRange,createShakerCabinet} from './reference-range.js?v=20261119-zdogz-v146';
-import {createFrenchDoorFridge} from './french-door-fridge.js?v=20261119-fridge-v142';
-import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-zdogz-v146';
+import {createPhotoPlanter} from './photo-planter.js?v=20261119-performance-v147';
+import {beginHomePassage} from './home-passage.js?v=20261119-performance-v147';
+import {createReferenceRange,createShakerCabinet} from './reference-range.js?v=20261119-performance-v147';
+import {createFrenchDoorFridge} from './french-door-fridge.js?v=20261119-performance-v147';
+import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-performance-v147';
 import {createRealtySign} from './property-signs.js?v=20261119-residential-v130';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';

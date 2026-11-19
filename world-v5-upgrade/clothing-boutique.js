@@ -1,4 +1,4 @@
-import {createPhotoPlanter} from './photo-planter.js?v=20261119-zdogz-v146';
+import {createPhotoPlanter} from './photo-planter.js?v=20261119-performance-v147';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';

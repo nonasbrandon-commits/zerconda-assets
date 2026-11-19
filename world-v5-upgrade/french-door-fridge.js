@@ -1,8 +1,9 @@
+import {batchApplianceParts} from './appliance-batching.js?v=20261119-performance-v147';
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
-let materials;
+let materials,fridgeTemplate;
 function palette(){if(materials)return materials;const c=document.createElement('canvas');c.width=c.height=256;const a=c.getContext('2d');a.fillStyle='#656b6d';a.fillRect(0,0,256,256);for(let y=0;y<256;y++){a.fillStyle=y%3?'#ffffff09':'#0000000d';a.fillRect(0,y,256,1);}const map=new THREE.CanvasTexture(c);map.colorSpace=THREE.SRGBColorSpace;const metal=new THREE.MeshStandardMaterial({color:'#a3a8a9',map,metalness:.58,roughness:.34});return materials={metal,edge:new THREE.MeshStandardMaterial({color:'#303638',metalness:.5,roughness:.4}),handle:new THREE.MeshStandardMaterial({color:'#b7bdbf',metalness:.72,roughness:.25}),black:new THREE.MeshStandardMaterial({color:'#11191d',roughness:.45}),white:new THREE.MeshStandardMaterial({color:'#e5e9e7',roughness:.5}),glass:new THREE.MeshPhysicalMaterial({color:'#bdced0',transparent:true,opacity:.28,depthWrite:false,roughness:.12}),led:new THREE.MeshBasicMaterial({color:'#a1e5e8'})};}
-export function createFrenchDoorFridge(parent,{x=0,y=0,z=0,width=1,height=2,depth=.9,angle=0}={}){
+export function createFrenchDoorFridge(parent,{x=0,y=0,z=0,width=1,height=2,depth=.9,angle=0}={}){if(fridgeTemplate){const root=fridgeTemplate.clone(true);root.position.set(x,y,z);root.rotation.y=angle;root.scale.set(width,height/2,depth/.9);parent.add(root);return controller(root);}
  const root=new THREE.Group();root.name='Dark stainless French-door refrigerator';root.position.set(x,y,z);root.rotation.y=angle;root.scale.set(width,height/2,depth/.9);parent.add(root);const m=palette();
  function box(w,h,d,x,y,z,material,p=root,r=.012){const o=new THREE.Mesh(new RoundedBoxGeometry(w,h,d,2,Math.min(r,w/3,h/3,d/3)),material);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;p.add(o);return o;}
  // A hollow, insulated cabinet with visible shelves behind the opening doors.
@@ -13,5 +14,7 @@ export function createFrenchDoorFridge(parent,{x=0,y=0,z=0,width=1,height=2,dept
  box(.245,.43,.018,.210,1.15,.047,m.black,leftDoor,.018);box(.185,.30,.012,.210,1.10,.058,m.edge,leftDoor);box(.18,.018,.073,.210,.947,.083,m.handle,leftDoor);box(.028,.06,.032,.210,1.23,.083,m.handle,leftDoor);box(.04,.095,.016,.210,1.13,.073,m.handle,leftDoor);for(let i=0;i<3;i++)box(.027,.009,.005,.155+i*.055,1.337,.060,m.led,leftDoor,.002);
  box(.94,.045,.035,0,.546,.451,m.black);
  const freezer=new THREE.Group();freezer.name='Lower freezer drawer';root.add(freezer);box(.973,.46,.085,0,.293,.455,m.metal,freezer,.025);box(.85,.026,.055,0,.451,.54,m.handle,freezer);for(const xx of[-.40,.40])box(.035,.035,.065,xx,.451,.505,m.handle,freezer);box(.90,.065,.035,0,.075,.492,m.black);for(const xx of[-.38,.38])box(.08,.045,.10,xx,.022,.28,m.black);
- root.userData.appliance='French-door refrigerator';return{root,leftDoor,rightDoor,freezer,setOpenProgress(value){const t=THREE.MathUtils.clamp(value,0,1);leftDoor.rotation.y=-t*1.62;rightDoor.rotation.y=t*1.62;}};
+ root.userData.appliance='French-door refrigerator';for(const part of[leftDoor,rightDoor,freezer,root])batchApplianceParts(part);fridgeTemplate=root.clone(true);fridgeTemplate.position.set(0,0,0);fridgeTemplate.quaternion.identity();fridgeTemplate.scale.set(1,1,1);return controller(root);
 }
+
+function controller(root){const leftDoor=root.getObjectByName('Left refrigerator door with water dispenser'),rightDoor=root.getObjectByName('Right refrigerator door'),freezer=root.getObjectByName('Lower freezer drawer');return{root,leftDoor,rightDoor,freezer,setOpenProgress(value){const t=THREE.MathUtils.clamp(value,0,1);leftDoor.rotation.y=-t*1.62;rightDoor.rotation.y=t*1.62;}};}
