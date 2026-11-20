@@ -22,7 +22,7 @@ import {installAvatarTattoos} from './avatar-tattoos.js?v=20261119-profile-v136'
 import {createZTattoo} from './z-tattoo.js?v=20261119-entrance-steering-v118';
 import {treeBoundsOverlapRoad} from './tree-road-clearance.js?v=20261118-clear-roads-v112';
 import {createCourtGames} from './court-games.js?v=20261118-wall-mystery-v111';
-import {createHotDogVendor} from './boardwalk-hotdogs.js?v=20261119-beach-v149';
+import {createHotDogVendor} from './boardwalk-hotdogs.js?v=20261120-zdog-voice-v171';
 import {createVehicleControls} from './vehicle-controls.js?v=20261119-entrance-steering-v118';
 import {createDamagedWallPanel,createBlockedWallOpening,WALL_OPENING} from './blocked-wall-opening.js?v=20261118-wall-mystery-v111';
 import {createAreaTravel} from './area-travel.js?v=20261119-z-fortune-v122';
@@ -43,7 +43,7 @@ import {createAirfield} from './airfield.js?v=20261118-wall-mystery-v111';
 import * as THREE from 'three';
 import {createForestCampground} from './forest-campground.js?v=20261119-rv-junction-v128';
 import {createPremierHomes} from './premier-homes.js?v=20261119-performance-v147';
-import {createZercondaNews} from './zerconda-news.js?v=20261119-ticker-v140';
+import {createZercondaNews} from './zerconda-news.js?v=20261120-news-voice-v172';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261119-performance-v147';
 import {createBowlingAlley} from './bowling-alley.js?v=20261119-entrance-steering-v118';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261120-beach-guests-v168';
