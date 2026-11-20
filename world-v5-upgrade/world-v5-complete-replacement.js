@@ -1,4 +1,4 @@
-import {createBeachVisitors} from './beach-visitors.js?v=20261119-coastal-fixes-v165';
+import {createBeachVisitors} from './beach-visitors.js?v=20261120-coastal-v166';
 import {positionBeachLoungeCamera} from './beach-lounge-camera.js?v=20261119-coastal-breeze-v154';
 import {applyBeachLoungePose} from './beach-lounge-pose.js?v=20261119-beach-seating-v151';
 import {addVehicleLOD} from './vehicle-lod.js?v=20261119-performance-v147';
@@ -47,7 +47,7 @@ import {createZercondaNews} from './zerconda-news.js?v=20261119-ticker-v140';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261119-performance-v147';
 import {createBowlingAlley} from './bowling-alley.js?v=20261119-entrance-steering-v118';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261119-reference-trucks-v126';
-import {createSeasidePier} from './seaside-pier.js?v=20261119-coastal-fixes-v165';
+import {createSeasidePier} from './seaside-pier.js?v=20261120-coastal-v166';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261119-sand-mountains-v157';
 import {createClubZerconda} from './club-zerconda.js?v=20261119-fountain-seating-v135';
@@ -66,10 +66,10 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261118-wall-mystery-v111';
 import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
-import {createZercondaBeach} from './zerconda-beach.js?v=20261119-coastal-fixes-v165';
+import {createZercondaBeach} from './zerconda-beach.js?v=20261120-coastal-v166';
 import {createCityMap} from './top-city-map.js?v=20261119-fountain-seating-v135';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
-import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261119-timber-cottages-v156';
+import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261120-coastal-v166';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261119-performance-v147';
 import {createPedestrians} from './animated-pedestrians.js?v=20261119-beach-v149';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118-visible-trails-v100';
@@ -77,7 +77,7 @@ import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-g
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-19-coastal-fixes-v165';
+const ZERCONDA_BUILD='2026-11-20-coastal-v166';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -550,7 +550,7 @@ club=createClubZerconda(scene,{
  canEnter:()=>!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!scooters?.riding&&!skate?.riding&&!activeCar&&!apartmentSession&&!universalSession&&!onObservationDeck,
  stopMovement:()=>{keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;sittingSeat=null;seatReturn=null;player.clubSeated=false;}
 });
-southBeach=createZercondaBeach(scene,{prepareModel:prepareScenery});
+southBeach=createZercondaBeach(scene,{prepareModel:prepareScenery,roadMaterial:asphalt});
 
 // Ocean safety: remove legacy oversized pyramid/mountain meshes if a previous
 // scene module adds them. Never remove the observation needle or beach umbrellas.
@@ -1151,8 +1151,8 @@ function animate(){
  forestShade=THREE.MathUtils.damp(forestShade,northernForest?.atmosphereAt(player.x,player.z)??0,1.4,motionDt);hemisphere.intensity=THREE.MathUtils.lerp(1.3,.72,forestShade);sun.intensity=THREE.MathUtils.lerp(2.8,1.35,forestShade);scene.fog.color.copy(daylightFog).lerp(forestFog,forestShade);scene.fog.density=THREE.MathUtils.lerp(.00055,.0020,forestShade);
  militaryBase?.update(motionDt);
  observationNeedle.update(dt);
- southBeach.update(dt);beachVisitors.update(dt);
- marine.update(dt,southBeach.ocean.time);
+ southBeach.update(dt);beachVisitors.update(motionDt);
+ marine.update(motionDt,southBeach.ocean.time);
  scooters.update(dt);
  bowling.update(dt);
  boutique.update(dt);

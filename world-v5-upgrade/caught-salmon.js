@@ -1,0 +1,6 @@
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+export function createCaughtSalmon(parent){const root=new THREE.Group();root.name='Caught salmon · mouth attached to fishing line';root.visible=false;parent.add(root);const hang=new THREE.Group();hang.rotation.x=-Math.PI/2;root.add(hang);const skins=[];let ready=false;
+ const readyPromise=new GLTFLoader().loadAsync(new URL('./assets/salmon-v166.glb',import.meta.url).href).then(g=>{const fish=g.scene;fish.position.z=-.425;fish.traverse(o=>{if(!o.isMesh)return;o.geometry=o.geometry.clone();const a=o.geometry.attributes.position;skins.push({mesh:o,rest:a.array.slice()});o.castShadow=true;o.material.roughness=.4;});hang.add(fish);ready=true;return api;}).catch(e=>{root.userData.loadError=String(e);console.error('Salmon model load failed',e);return api;});
+ function update(t){if(!ready)return;root.rotation.set(Math.sin(t*8)*.06,t*.8,Math.sin(t*6.7)*.13);for(const {mesh,rest}of skins){const a=mesh.geometry.attributes.position;for(let i=0;i<a.count;i++){const x=rest[i*3],y=rest[i*3+1],z=rest[i*3+2],tail=THREE.MathUtils.clamp((.30-z)/.70,0,1);a.setXYZ(i,x+Math.sin(t*18+z*13)*.055*tail*tail,y,z);}a.needsUpdate=true;mesh.geometry.computeVertexNormals();}}
+ const api={root,readyPromise,update,get ready(){return ready;}};return api;}

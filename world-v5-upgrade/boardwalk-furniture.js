@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {batchApplianceParts} from './appliance-batching.js?v=20261119-performance-v147';
-import {createPierFernPlanter} from './pier-fern-planter.js?v=20261119-coastal-breeze-v154';
+import {createPierFernPlanter} from './pier-fern-planter.js?v=20261120-coastal-v166';
 const deckMap=new THREE.TextureLoader().load(new URL('./assets/weathered-pier-wood-v151.png',import.meta.url).href);deckMap.colorSpace=THREE.SRGBColorSpace;deckMap.wrapS=deckMap.wrapT=THREE.RepeatWrapping;deckMap.anisotropy=8;
 const deckMaterial=new THREE.MeshStandardMaterial({name:'Weathered boardwalk · long timber planks, grain and nails',map:deckMap,bumpMap:deckMap,bumpScale:.010,roughness:.91});
 const timber=new THREE.MeshStandardMaterial({color:'#c5a07c',map:deckMap,bumpMap:deckMap,bumpScale:.003,roughness:.72}),iron=new THREE.MeshStandardMaterial({color:'#252c30',metalness:.68,roughness:.52}),bolts=new THREE.MeshStandardMaterial({color:'#b5bec1',metalness:.85,roughness:.28});

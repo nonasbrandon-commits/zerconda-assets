@@ -1,4 +1,4 @@
-import {cedarMap,addCottageExteriorDetails,createCottagePorchChair} from './cottage-exterior-details.js?v=20261119-timber-cottages-v156';
+import {cedarMap,addCottageExteriorDetails,createCottagePorchChair} from './cottage-exterior-details.js?v=20261120-coastal-v166';
 import {beginHomePassage} from './home-passage.js?v=20261119-performance-v147';
 import {createReferenceRange,createShakerCabinet} from './reference-range.js?v=20261119-performance-v147';
 import {createFrenchDoorFridge} from './french-door-fridge.js?v=20261119-performance-v147';
