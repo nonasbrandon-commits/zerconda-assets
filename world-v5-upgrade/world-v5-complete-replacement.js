@@ -1,4 +1,4 @@
-import {createBeachVisitors} from './beach-visitors.js?v=20261119-reference-people-v163';
+import {createBeachVisitors} from './beach-visitors.js?v=20261119-coastal-fixes-v165';
 import {positionBeachLoungeCamera} from './beach-lounge-camera.js?v=20261119-coastal-breeze-v154';
 import {applyBeachLoungePose} from './beach-lounge-pose.js?v=20261119-beach-seating-v151';
 import {addVehicleLOD} from './vehicle-lod.js?v=20261119-performance-v147';
@@ -47,7 +47,7 @@ import {createZercondaNews} from './zerconda-news.js?v=20261119-ticker-v140';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261119-performance-v147';
 import {createBowlingAlley} from './bowling-alley.js?v=20261119-entrance-steering-v118';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261119-reference-trucks-v126';
-import {createSeasidePier} from './seaside-pier.js?v=20261119-lively-attendants-v161';
+import {createSeasidePier} from './seaside-pier.js?v=20261119-coastal-fixes-v165';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261119-sand-mountains-v157';
 import {createClubZerconda} from './club-zerconda.js?v=20261119-fountain-seating-v135';
@@ -66,7 +66,7 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261118-wall-mystery-v111';
 import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
-import {createZercondaBeach} from './zerconda-beach.js?v=20261119-boardwalk-edge-v164';
+import {createZercondaBeach} from './zerconda-beach.js?v=20261119-coastal-fixes-v165';
 import {createCityMap} from './top-city-map.js?v=20261119-fountain-seating-v135';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261119-timber-cottages-v156';
@@ -77,7 +77,7 @@ import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-g
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-19-boardwalk-edge-v164';
+const ZERCONDA_BUILD='2026-11-19-coastal-fixes-v165';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -1203,7 +1203,7 @@ function animate(){
   c.speed=THREE.MathUtils.damp(c.speed,keys.has('Space')?0:throttle*(throttle<0?4.5:11),keys.has('Space')?12:2.6,motionDt);
   const oldAngle=c.angle;c.angle-=steering*motionDt*(.55+Math.abs(c.speed)*.06)*(c.speed<-.05?-1:1);
   const length=c.speed*motionDt,count=Math.max(1,Math.ceil(Math.abs(length)/.12));let blocked=false;
-  for(let i=0;i<count;i++){const nx=c.x+Math.sin(c.angle)*length/count,nz=c.z+Math.cos(c.angle)*length/count;if(!walkable(nx,nz)){blocked=true;break;}c.group.position.x+=nx-c.x;c.group.position.z+=nz-c.z;c.x=nx;c.z=nz;}
+  for(let i=0;i<count;i++){const nx=c.x+Math.sin(c.angle)*length/count,nz=c.z+Math.cos(c.angle)*length/count;if(!walkable(nx,nz)||southBeach.blocksVehicle(nx,nz)){blocked=true;break;}c.group.position.x+=nx-c.x;c.group.position.z+=nz-c.z;c.x=nx;c.z=nz;}
   if(blocked)c.speed=0;
   c.group.rotation.y=c.angle;player.x=c.x;player.z=c.z;yaw=c.angle;
  }else if(sittingSeat){
