@@ -9,12 +9,12 @@ export function addRentalAttendant(kiosk){
  person.readyPromise.then(()=>{if(!female)person.setHair({style:'original',color:'#4a3224'});person.root.updateMatrixWorld(true);person.root.visible=true;anchor.userData.ready=person.ready;});kiosk.attendant=anchor;return anchor;
 }
 const point=new THREE.Vector3();
-export function updateRentalAttendants(kiosks,dt,player,talking=null){for(const kiosk of kiosks){const a=kiosk.attendant;if(!a)continue;const d=Math.hypot(player.x-kiosk.root.position.x,player.z-kiosk.root.position.z);if(d>65)continue;const u=a.userData;u.time+=Math.min(dt,.1);const t=u.time,cycle=t%14;
+export function updateRentalAttendants(kiosks,dt,player,talking=null){for(const kiosk of kiosks){const a=kiosk.attendant;if(!a)continue;const d=Math.hypot(player.x-kiosk.root.position.x,player.z-kiosk.root.position.z);if(d>65)continue;const u=a.userData;for(const pose of u.gestureBase||[])pose.bone.quaternion.copy(pose.quaternion);u.gestureBase=[];u.time+=Math.min(dt,.1);const t=u.time,cycle=t%14;
  const destination=cycle<5?-.45:cycle<10?.22:-.25,old=a.position.x;a.position.x=THREE.MathUtils.damp(a.position.x,destination,1.5,dt);const speed=Math.abs(a.position.x-old)/Math.max(dt,.001);
  u.controller.update(dt,speed>.065?.18:0);kiosk.root.updateWorldMatrix(true,false);point.set(player.x,kiosk.root.position.y+1.6,player.z);kiosk.root.worldToLocal(point);const turn=THREE.MathUtils.clamp(Math.atan2(point.x-a.position.x,point.z-a.position.z),-.32,.32);a.rotation.y=THREE.MathUtils.damp(a.rotation.y,turn,3,dt);
  let head;const arms=[];a.traverse(o=>{if(!o.isBone)return;const n=o.name.replace(/[^a-z0-9]/gi,'');if(/Head$/.test(n))head=o;if(/Forearm$|UpperArm$/.test(n))arms.push(o);});const engaged=talking===kiosk.kind;u.talkLeft=engaged&&!u.wasEngaged?4:Math.max(0,(u.talkLeft||0)-dt);u.wasEngaged=engaged;const speaking=engaged&&u.talkLeft>0;u.speaking=speaking;
- if(head){head.rotation.y+=Math.sin(t*.61)*.025+turn*.2;head.rotation.z+=Math.sin(t*.83)*.018;head.rotation.x+=speaking?Math.sin(t*3.2)*.035:Math.sin(t*.72)*.012;}
- if(speaking)for(const arm of arms){if(/R.*Forearm/.test(arm.name.replace(/[^a-z0-9]/gi,'')))arm.rotation.x+=Math.sin(t*2.1)*.12;}
+ if(head){u.gestureBase.push({bone:head,quaternion:head.quaternion.clone()});head.rotation.y+=Math.sin(t*.61)*.025+turn*.2;head.rotation.z+=Math.sin(t*.83)*.018;head.rotation.x+=speaking?Math.sin(t*3.2)*.035:Math.sin(t*.72)*.012;}
+ if(speaking)for(const arm of arms){if(/R.*Forearm/.test(arm.name.replace(/[^a-z0-9]/gi,''))){u.gestureBase.push({bone:arm,quaternion:arm.quaternion.clone()});arm.rotation.x+=Math.sin(t*2.1)*.12;}}
  a.updateMatrixWorld(true);
  }}
 export function createRentalConversation({getPlayer,canInteract,desks,onYes}){
