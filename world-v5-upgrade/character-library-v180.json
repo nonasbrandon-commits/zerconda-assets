@@ -1,11 +1,11 @@
 {
-  "version": 180,
+  "version": 181,
   "default": "reference-hero-v180",
-  "identityAnchor": "Adult muscular tan man, short black curly fade, fitted black polo, white cargo shorts, white low sneakers, silver left wristwatch. Front face interpreted from supplied rear view.",
+  "identityAnchor": "Adult muscular tan man; tightly curled short black top with tapered skin fade; fitted black polo; knee length white cargo shorts with rear and side pockets; silver left wristwatch; white low sneakers. Rebuilt from matching front and rear A-pose references.",
   "playerModels": [
     {
       "id": "reference-hero-v180",
-      "asset": "./assets/hero-rigged-v180.glb"
+      "asset": "./assets/hero-rigged-v181.glb"
     },
     {
       "id": "classic",
@@ -270,6 +270,11 @@
       "outfit": "shirtless, running shorts and sneakers",
       "hair": "short",
       "asset": "../realistic-assets/characters/residents/resident-19.glb"
+    },
+    {
+      "id": "reference-hero-v180-previous",
+      "asset": "./assets/hero-rigged-v180.glb",
+      "name": "Previous main character version retained"
     }
   ],
   "preservedCatalogs": [
