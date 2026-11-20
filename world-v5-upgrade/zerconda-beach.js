@@ -3,7 +3,7 @@ import {createBoardwalkAccess} from './boardwalk-access.js?v=20261120-beach-gues
 import {createBoardwalkFurniture} from './boardwalk-furniture.js?v=20261120-standing-attendant-v167';
 import {createBeachSandMaterial} from './beach-sand-material.js?v=20261119-sand-mountains-v157';
 import {advanceCoastalBreeze} from './coastal-breeze.js?v=20261119-coastal-breeze-v154';
-import {createReferenceBeachPalm} from './reference-beach-palm.js?v=20261120-standing-attendant-v167';
+import {createReferenceBeachPalm} from './reference-beach-palm.js?v=20261120-date-palms-v184';
 import {createBeachLounge3D} from './beach-lounge-3d.js?v=20261120-flat-loungers-v178';
 import * as THREE from 'three';
 import {createRealisticOcean} from './realistic-ocean.js?v=20261118-wall-mystery-v111';

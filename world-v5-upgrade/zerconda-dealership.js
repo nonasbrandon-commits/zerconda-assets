@@ -21,19 +21,18 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0,getPlayer=()=>nul
  box(root,.32,8.7,28,-12,4.35,0,white);
  for(const zz of [-14,14])box(root,24,8.7,.3,0,4.35,zz,white);
  // Glass curtain wall with aluminum mullions and dark facade cladding.
- for(const zz of [-14,-10.5,-7,-3.5,0,3.5,7,10.5,14])box(root,.22,6.2,.14,12.12,3.15,zz,steel);
- for(const yy of [1.2,3.5,5.8])box(root,.22,.13,28,12.12,yy,0,silver);
  box(root,.4,2.35,28,12.14,7.62,0,dark);
  box(root,.17,.12,28,12.39,6.36,0,new THREE.MeshBasicMaterial({color:0x138eea}));
- // Transparent front glazing with a 4.8m-wide unobstructed pedestrian entry.
- for(const zz of [-10.5,-7,-3.5,3.5,7,10.5]){
-  box(root,.1,5.8,3.3,11.95,3.1,zz,glass);
-  box(root,.18,8.3,.12,12,4.2,zz+1.7,steel);
- }
- box(root,.28,8.5,2.1,12,4.25,-12.9,steel);box(root,.28,8.5,2.1,12,4.25,12.9,steel);
- box(root,.35,.25,28,12,8.45,0,steel);
- // Glass entrance doors with metal framing.
- for(const zz of [-1,1]){box(root,.09,3.35,1.4,12,1.75,zz*.75,glass);box(root,.14,3.45,.08,12.15,1.75,zz*1.5,steel);box(root,.2,.65,.09,12.2,1.55,zz*.22,silver);}
+ // One clear pane and one frame per bay: no coplanar trim or duplicate glass.
+ glass.forceSinglePass=true;
+ function glazing(from,to,bottom=0,top=6.15){const pane=new THREE.Mesh(new THREE.PlaneGeometry(to-from,top-bottom),glass);pane.name='Clear showroom glass bay '+from+':'+to;pane.rotation.y=Math.PI/2;pane.position.set(12.04,(top+bottom)/2,(from+to)/2);pane.renderOrder=1;root.add(pane);}
+ for(const [a,b]of[[-14,-10.5],[-10.5,-7],[-7,-3.5],[-3.5,-2.4],[2.4,3.5],[3.5,7],[7,10.5],[10.5,14]])glazing(a,b,.08,6.15);
+ for(const zz of[-10.5,-7,-3.5,-2.4,2.4,3.5,7,10.5])box(root,.18,6.18,.09,12.20,3.13,zz,steel);
+ for(const yy of[1.2,3.5,5.8])for(const side of[-1,1])box(root,.20,.075,11.6,12.20,yy,side*8.2,silver);
+ box(root,.20,.075,4.8,12.20,3.5,0,silver);box(root,.20,.12,28,12.20,6.2,0,steel);
+ glazing(-2.4,-1.5,.08,3.46);glazing(1.5,2.4,.08,3.46);glazing(-2.4,2.4,3.54,6.15);glazing(-1.5,0,.08,3.46);glazing(0,1.5,.08,3.46);
+ for(const zz of[-1.5,0,1.5])box(root,.18,3.46,.055,12.20,1.77,zz,steel);
+ for(const sign of[-1,1])box(root,.10,.65,.065,12.34,1.55,sign*.20,silver);
  // Entrance threshold, planters, and canopy.
  box(root,3.3,.14,5,13.1,.04,0,white);
  box(root,3.4,.25,8,12.5,7.7,0,steel);
@@ -72,12 +71,6 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0,getPlayer=()=>nul
  const brandTex=new THREE.CanvasTexture(brandCanvas);brandTex.colorSpace=THREE.SRGBColorSpace;brandTex.anisotropy=8;
  const brandPanel=new THREE.Mesh(new THREE.PlaneGeometry(25,3.125),new THREE.MeshBasicMaterial({map:brandTex,side:THREE.FrontSide,toneMapped:false}));
  brandPanel.name='Zerconda Motors · clear illuminated sign';brandPanel.rotation.y=Math.PI/2;brandPanel.position.set(13.02,9.8,0);root.add(brandPanel);
- // Vertical glass bays and mullion trim add depth to the transparent frontage.
- for(const zz of [-11,-7.5,-4,4,7.5,11]){
-  // One glazing layer per bay; preserve clear sightlines.
-  box(root,.17,5.9,.09,12.21,3.05,zz+1.65,silver);
- }
- for(const yy of [1.2,3.4,5.85])box(root,.12,.07,27.5,12.28,yy,0,silver);
  // Exterior concrete pavers and planters are authored as scene meshes.
  const paver=mat(0xb5b8b3,.93),planterDark=mat(0x343d3c,.78),leaf=mat(0x3d784c,.88);
  for(let k=0;k<10;k++){
@@ -95,6 +88,8 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0,getPlayer=()=>nul
  const podium=new THREE.Mesh(new THREE.CylinderGeometry(3.25,3.25,.08,64),mat(0xaeb2b1,.32,.2));podium.position.set(19,GROUND_LEVEL+.04,z);podium.name=name+' display plinth';root.add(podium);
  cars.push({name,position:world(19,z),model:vehicle});displaySolids.push({x:19,z,w:6.0,d:2.7});
  const placard=box(root,.08,.70,1.0,22.4,GROUND_LEVEL+.66,z,steel);const cv=document.createElement('canvas');cv.width=768;cv.height=320;const c=cv.getContext('2d');c.fillStyle='#1e3541';c.fillRect(0,0,768,320);c.fillStyle='#f2eadc';c.textAlign='center';c.font='bold 50px Arial';c.fillText(name,384,110,710);c.fillStyle='#8ccbd8';c.font='32px Arial';c.fillText('4 × 4 CREW-CAB PICKUP',384,190);c.font='25px Arial';c.fillText('Speak with a sales consultant',384,260);const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;const face=new THREE.Mesh(new THREE.PlaneGeometry(1.45,.60),new THREE.MeshBasicMaterial({map:tex}));face.rotation.y=Math.PI/2;face.position.set(22.45,GROUND_LEVEL+.70,z);root.add(face);}
+ // Two additional paint colors displayed inside the showroom.
+ for(const [name,color,z]of[['Zerconda Ridge Burgundy','#8b1e27',-6.5],['Zerconda Ridge Pearl White','#e8e9e3',6.5]]){const vehicle=improveVehicleCabin(createShowroomPickup({name,color}));vehicle.position.set(1,.08,z);vehicle.rotation.y=Math.PI/2;root.add(vehicle);const podium=new THREE.Mesh(new THREE.CylinderGeometry(3.25,3.25,.08,64),mat(0xaeb2b1,.32,.2));podium.position.set(1,.04,z);podium.name=name+' interior display plinth';root.add(podium);cars.push({name,position:world(1,z),model:vehicle});displaySolids.push({x:1,z,w:6,d:2.7});}
  const sales=addShowroomSales(root,{getPlayer});const gallery=addShowroomGallery(root,{getPlayer});
  // Reception, lounge, illuminated ceiling fixtures, offices and showroom plants.
  for(const zz of [-9,0,9]){const light=new THREE.PointLight(0xf1f6ff,2.1,14);light.position.set(0,7.8,zz);root.add(light);box(root,1.6,.08,5.4,0,8.25,zz,new THREE.MeshBasicMaterial({color:0xe8f5ff}));}

@@ -4,7 +4,7 @@ export function addAirDancers(scene,{x=-31,z=-48}={}){
  const group=new THREE.Group();group.position.set(x,.14,z);group.name='Zerconda Motors front air dancers';group.userData.customInterior=true;scene.add(group);
  const dancers=[];
  for(let i=0;i<3;i++){
-  const root=new THREE.Group();root.position.set([-11,-6,11][i],0,-27.3);group.add(root);
+  const root=new THREE.Group();root.position.set([-11,-6,11][i],0,-27.3);root.rotation.y=Math.PI;group.add(root);
   const orange=new THREE.MeshStandardMaterial({color:i===1?0xff8126:i===2?0xf35b21:0xffa02c,roughness:.86,side:THREE.DoubleSide});
   const black=new THREE.MeshStandardMaterial({color:0x14191c,roughness:.8});
   const white=new THREE.MeshBasicMaterial({color:0xfafafa});

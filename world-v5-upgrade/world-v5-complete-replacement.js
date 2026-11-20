@@ -1,6 +1,7 @@
+import {createShaderWarmup} from './shader-warmup.js?v=20261120-responsive-v184';
 import {loadReferenceProp} from './reference-props.js?v=20261120-reference-props-v180';
 import {createZCabs}from './z-cabs.js?v=20261120-lighter-v180-20261120-z-cabs-v178';
-import {createLuxurySedan,loadLuxurySedan,sedanColors} from './luxury-sedan.js?v=20261120-repaired-sedan-v181';
+import {createLuxurySedan,loadLuxurySedan,sedanColors} from './luxury-sedan.js?v=20261120-original-model-v184';
 import {createBeachVisitors} from './beach-visitors.js?v=20261120-natural-arms-v182';
 import {positionBeachLoungeCamera} from './beach-lounge-camera.js?v=20261119-coastal-breeze-v154';
 import {applyBeachLoungePose} from './beach-lounge-pose.js?v=20261119-beach-seating-v151';
@@ -59,7 +60,7 @@ import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-h
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js?v=20261119-fountain-seating-v135';
-import {createObservationNeedle} from './observation-needle.js?v=20261120-concrete-v181-20261120-camera-map-v177';
+import {createObservationNeedle} from './observation-needle.js?v=20261120-date-palms-v184';
 import {createCloudSky} from './cloud-sky.js?v=20261120-standing-attendant-v167';
 import {addCityDepth} from './city-depth-assets.js?v=20261120-benches-v180-20261118-wall-mystery-v111';
 import {addBuildingIdentity} from './nine-building-styles.js';
@@ -68,9 +69,9 @@ import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartm
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261119-fridge-v142';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261118-wall-mystery-v111';
-import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
-import {createZercondaBeach} from './zerconda-beach.js?v=20261120-flat-loungers-v178';
-import {createCityMap} from './top-city-map.js?v=20261120-proportional-map-v181-20261120-camera-map-v177';
+import {addAirDancers} from './air-dancers.js?v=20261120-facing-v184';
+import {createZercondaBeach} from './zerconda-beach.js?v=20261120-date-palms-v184';
+import {createCityMap} from './top-city-map.js?v=20261120-left-map-v184';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261120-standing-attendant-v167';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261119-performance-v147';
@@ -80,7 +81,7 @@ import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-g
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-20-beach-guests-v168';
+const ZERCONDA_BUILD='2026-11-20-responsive-map-original-car-v184';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -105,7 +106,9 @@ cloudSky.dome.scale.setScalar(6); // Keep the atmosphere behind the distant terr
 scene.fog=new THREE.FogExp2(0xa9c8dc,.00055);
 const camera=new THREE.PerspectiveCamera(66,innerWidth/innerHeight,.25,14000);
 const MOBILE=matchMedia('(pointer:coarse)').matches;let lastMobileFrame=0;
-const renderer=new THREE.WebGLRenderer({antialias:!MOBILE,powerPreference:MOBILE?'low-power':'high-performance'});
+const renderer=new THREE.WebGLRenderer({antialias:false,powerPreference:MOBILE?'low-power':'high-performance'});
+renderer.debug.checkShaderErrors=new URLSearchParams(location.search).get('debugShaders')==='1';
+const shaderWarmup=createShaderWarmup(renderer);
 let preferredPixelRatio=Math.min(devicePixelRatio,MOBILE?.85:1),slowRenderFrames=0,lastRenderTime=performance.now();renderer.setPixelRatio(preferredPixelRatio);renderer.setSize(innerWidth,innerHeight);
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
@@ -400,11 +403,13 @@ wallSegment(570,-1350,570,-18);wallSegment(570,18,570,350); // East perimeter al
 // Gate geometry is loaded after core scene setup to avoid blocking world startup.
 // Connected eroded ridges and instanced forest around all landward boundaries.
 const wilderness=createWildernessLandscape(scene);
+let lastScenerySlice=0;
+async function waitForScenerySlot(){while(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].some(k=>keys.has(k))||townControls.walking||townControls.backward||Math.hypot(movement.vx,movement.vz)>.15||performance.now()-lastScenerySlice<100)await new Promise(resolve=>setTimeout(resolve,75));lastScenerySlice=performance.now();}
 async function prepareScenery(object){if(!object||!renderer.compileAsync)return;const visible=object.visible;object.visible=false;try{await renderer.compileAsync(object,camera,scene);}catch(error){console.warn('Optional scenery shader warmup:',error);}finally{object.visible=visible;}}
 async function populateOuterForest(){
  const source=loaded.tree||loaded.tree2;if(!source)return;
  // Photographic broadleaf assets break up the near evergreen forest edge.
- for(let i=0;i<72;i++){if(i%4===0)await new Promise(resolve=>setTimeout(resolve,0));
+ for(let i=0;i<72;i++){await waitForScenerySlot();
   const side=i%3,x=side===0?-473-rand()*75:side===1?605+rand()*85:-280+rand()*960;
   const z=side===2?-567-rand()*65:-260+rand()*345;
   if(side===1&&Math.abs(z)<24)continue;
@@ -542,7 +547,7 @@ const dealership={
  x:-31,z:-48,insidePoint:{x:-31,z:-57},exitPoint:{x:-31,z:-64},inside:()=>false,blocks:()=>false,isNear:(x,z,r=5.5)=>Math.hypot(x+31,z+62)<r,
  nearestCar:()=>null
 };
-import('./zerconda-dealership.js?v=20261120-forecourt-sales-v183')
+import('./zerconda-dealership.js?v=20261120-four-trucks-v184')
  .then(({createDealership})=>Object.assign(dealership,createDealership(scene,{x:-31,z:-48,rotation:Math.PI/2,getPlayer:()=>player})))
  .catch(err=>{console.error('Dealership asset failed (city continues):',err);
    if(status)status.textContent='City loaded; dealership asset unavailable: '+err.message;
@@ -750,11 +755,19 @@ function cloneNormalized(source,x,z,targetHeight,angle=0){
  scene.add(g);return g;
 }
 async function populate(){
- const keys=Object.keys(PATH).filter(k=>k!=='flower'&&(!MOBILE||!['bench','planter','statue'].includes(k)));
- const result=await Promise.allSettled(keys.map(load));
- result.forEach((r,i)=>{if(r.status==='fulfilled')loaded[keys[i]]=r.value;});
+ await waitForScenerySlot();const sportTemplate=await loadReferenceProp('sport');
+ const carModels=Array.from({length:MOBILE?16:32},(_,i)=>['sedan','white','sport','white','sedan'][i%5]);
+ const luxuryReady=await loadLuxurySedan().then(()=>true,error=>{console.error('Reference sedan load failed',error);return false;});let luxuryIndex=0;for(let i=0;i<Math.min(carModels.length,parking.length);i++){await waitForScenerySlot();
+  if(i===4||i===12)continue;
+  const [x,z,angle]=parking[i],src=loaded[carModels[i]];
+  const luxury=carModels[i]==='sedan'||carModels[i]==='white';if(luxury&&!luxuryReady||!luxury&&carModels[i]==='sport'&&!sportTemplate||!luxury&&carModels[i]!=='sport'&&!src)continue;
+  const model=luxury?createLuxurySedan({color:sedanColors[(luxuryIndex++)%sedanColors.length]}):carModels[i]==='sport'?sportTemplate.clone(true):cloneNormalized(src,0,0,1.55,0);
+  if(model){const pivot=new THREE.Group();pivot.name='Drivable passenger car';pivot.position.set(x,0,z);pivot.rotation.y=angle;pivot.add(model);if(luxury||carModels[i]==='sport')pivot.userData.cabinImproved=true;else improveVehicleCabin(pivot);const variantKey=luxury?'luxury-'+model.userData.paint:carModels[i];pivot.userData.vehicleType=luxury?'luxury-sedan':carModels[i];optimizeStaticModel(pivot,'passenger-'+variantKey);addVehicleLOD(pivot,variantKey);await prepareScenery(pivot);scene.add(pivot);cars.push({group:pivot,x,z,angle,speed:0,eyeHeight:luxury?1.22:carModels[i]==='sport'?.95:1.58});}
+ }
+ const assetKeys=['tree','tree2','lamp'];
+ for(const key of assetKeys){await waitForScenerySlot();try{loaded[key]=await load(key);}catch(error){console.warn('Optional model unavailable',key,error);}}
  await populateOuterForest();
- for(let i=0;i<treeSpots.length;i+=MOBILE?2:1){if(i%4===0)await new Promise(resolve=>setTimeout(resolve,0));
+ for(let i=0;i<treeSpots.length;i+=MOBILE?2:1){await waitForScenerySlot();
   const [x,z]=treeSpots[i],src=loaded[i%2?'tree2':'tree']||loaded.tree||loaded.tree2;
   if(x>110&&x<220&&z> -270&&z< -121)continue;
     if(x> -82&&x< -15&&z> -84&&z< -34)continue;
@@ -762,29 +775,12 @@ async function populate(){
     if(z>72&&z<172&&Math.abs(x)<185)continue; // Protect entire beachside residential blocks, including full tree canopies
   if(src&&!doors.some(d=>Math.hypot(x-d.x,z-d.z)<13)&&!(Math.abs(x+34)<24&&Math.abs(z+48)<24)){const tree=cloneNormalized(src,x,z,7+rand()*2.5,rand()*6.28);if(tree){tree.name='Road-cleared street tree';tree.userData.roadCleared=true;if(treeBoundsOverlapRoad(new THREE.Box3().setFromObject(tree)))scene.remove(tree);else {optimizeStaticModel(tree,'street-tree-'+(i%2));await prepareScenery(tree);}}}
  }
- let lampBatch=0;for(const [x,z] of lampSpots){if(lampBatch++%8===0)await new Promise(resolve=>setTimeout(resolve,0));
+ let lampBatch=0;for(const [x,z] of lampSpots){await waitForScenerySlot();lampBatch++;
   if(loaded.lamp){const lamp=cloneNormalized(loaded.lamp,x,z,4.4);await prepareScenery(lamp);}
   else {cylinder(.09,.12,4.3,x,2.15,z,dark,scene,12);
     box(.5,.55,.5,x,4.6,z,stone);}
  }
- const sportTemplate=await loadReferenceProp('sport');
- const carModels=Array.from({length:MOBILE?16:32},(_,i)=>['sedan','white','sport','white','sedan'][i%5]);
- const luxuryReady=await loadLuxurySedan().then(()=>true,error=>{console.error('Reference sedan load failed',error);return false;});let luxuryIndex=0;for(let i=0;i<Math.min(carModels.length,parking.length);i++){await new Promise(resolve=>setTimeout(resolve,0));
-  if(i===4||i===12)continue;
-  const [x,z,angle]=parking[i],src=loaded[carModels[i]];
-  const luxury=carModels[i]==='sedan'||carModels[i]==='white';if(luxury&&!luxuryReady||!src&&!luxury)continue;
-  const model=luxury?createLuxurySedan({color:sedanColors[(luxuryIndex++)%sedanColors.length]}):carModels[i]==='sport'?sportTemplate.clone(true):cloneNormalized(src,0,0,1.55,0);
-  if(model){const pivot=new THREE.Group();pivot.name='Drivable passenger car';pivot.position.set(x,0,z);pivot.rotation.y=angle;pivot.add(model);if(luxury||carModels[i]==='sport')pivot.userData.cabinImproved=true;else improveVehicleCabin(pivot);const variantKey=luxury?'luxury-'+model.userData.paint:carModels[i];pivot.userData.vehicleType=luxury?'luxury-sedan':carModels[i];optimizeStaticModel(pivot,'passenger-'+variantKey);addVehicleLOD(pivot,variantKey);await prepareScenery(pivot);scene.add(pivot);cars.push({group:pivot,x,z,angle,speed:0,eyeHeight:luxury?1.22:carModels[i]==='sport'?.95:1.58});}
- }
- // Populate the plaza perimeter with real scanned GLTF street furniture.
- // Unlike primitive placeholder meshes these contain authored textures and normals.
- const decorate=(key,x,z,height,angle=0)=>{
-  const src=loaded[key];if(!src)return;
-  return cloneNormalized(src,x,z,height,angle);
- };
- // Detailed, human-scale furniture replaces the oversized mismatched imported crates and toy flowers.
-
- if(status)status.textContent='Loaded '+Object.keys(loaded).length+'/'+keys.length+' model types · Fountain plaza at (48,48)';
+ if(status)status.textContent='Zerconda · Fountain plaza at (48,48)';
 }
 let resolveScenery;const initialSceneryReady=new Promise(resolve=>{resolveScenery=resolve;});let sceneryStarted=false;function startScenery(){if(sceneryStarted)return;sceneryStarted=true;populate().then(resolveScenery,resolveScenery);}
 addPremiumPlazaFurniture(scene,{cx:48,cz:48});
@@ -924,7 +920,7 @@ function visitDealership(){
  if(dealerInside){dealerInside=false;player.x=dealership.exitPoint.x;player.z=dealership.exitPoint.z;movement.vx=0;movement.vz=0;if(status)status.textContent='Exited Zerconda Motors';return;}
  if(!dealerInside&&dealership.isNear(player.x,player.z,5.5)){dealerInside=true;
   player.x=dealership.insidePoint.x;player.z=dealership.insidePoint.z;movement.vx=0;movement.vz=0;
-  if(status)status.textContent='Welcome to Zerconda Motors · Explore three vehicles on the showroom floor';return;
+  if(status)status.textContent='Welcome to Zerconda Motors · Meet our sales team and explore the display pickups';return;
  }
  const vehicle=dealership.nearestCar(player.x,player.z,5);
  if(vehicle){if(status)status.textContent=vehicle.name+' · Display vehicle · Visit the vehicle shop for purchases';return;}
@@ -1328,7 +1324,7 @@ function animate(){
  observationNeedle.updateCamera(camera);
  carnival.updateCamera(camera);
  courtGames?.updateCamera(camera);
- try{if(!tattooShop?.panelOpen){renderBudget.update(motionDt);ownableHomes?.renderWindows(renderer,camera);updateReferenceLampLights(camera);const renderNow=performance.now(),renderGap=renderNow-lastRenderTime;lastRenderTime=renderNow;if(renderGap>150)slowRenderFrames++;else slowRenderFrames=Math.max(0,slowRenderFrames-1);if(slowRenderFrames>=4&&renderer.getPixelRatio()>(MOBILE?.85:1)){renderer.setPixelRatio(Math.max(MOBILE?.85:1,renderer.getPixelRatio()*.85));slowRenderFrames=0;}renderer.render(scene,camera);if(!paintedFrame){paintedFrame=true;window.dispatchEvent(new Event('zerconda-frame'));}}}
+ try{if(!tattooShop?.panelOpen){renderBudget.update(motionDt);ownableHomes?.renderWindows(renderer,camera);updateReferenceLampLights(camera);const renderNow=performance.now(),renderGap=renderNow-lastRenderTime;lastRenderTime=renderNow;if(renderGap>150)slowRenderFrames++;else slowRenderFrames=Math.max(0,slowRenderFrames-1);if(slowRenderFrames>=4&&renderer.getPixelRatio()>(MOBILE?.85:1)){renderer.setPixelRatio(Math.max(MOBILE?.85:1,renderer.getPixelRatio()*.85));slowRenderFrames=0;}shaderWarmup.render(scene,camera,()=>{renderer.render(scene,camera);if(!paintedFrame){paintedFrame=true;window.dispatchEvent(new Event('zerconda-frame'));}});}}
  catch(err){renderFailure=String(err);console.error('ZERCONDA RENDER ERROR',err);if(!paintedFrame){townEntered=false;window.dispatchEvent(new CustomEvent('zerconda-load-failed',{detail:'The graphics could not start. Please retry.'}));}}
  finally{if(activeCar)activeCar.group.visible=true;}
  const nearHome=!boutique.active&&!bowling.active&&!scooters.riding&&!skate?.riding&&!activeCar?ownableHomes.closest(player.x,player.z,11):null;
