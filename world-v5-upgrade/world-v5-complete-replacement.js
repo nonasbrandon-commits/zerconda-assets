@@ -63,7 +63,7 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261118-wall-mystery-v111';
 import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
-import {createZercondaBeach} from './zerconda-beach.js?v=20261119-beach-v149';
+import {createZercondaBeach} from './zerconda-beach.js?v=20261119-beach-palms-v150';
 import {createCityMap} from './top-city-map.js?v=20261119-fountain-seating-v135';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261119-performance-v147';
@@ -74,7 +74,7 @@ import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-g
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-19-beach-v149';
+const ZERCONDA_BUILD='2026-11-19-beach-palms-v150';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.

@@ -1,9 +1,7 @@
+import {createReferenceBeachPalm} from './reference-beach-palm.js?v=20261119-beach-palms-v150';
 import {createReferenceBeachLounge} from './reference-beach-lounge.js?v=20261119-beach-v149';
-import {optimizeStaticModel} from './static-model-batching.js?v=20261119-performance-v147';
-import {addRealisticBeachPalms} from './realistic-beach-palms.js';
 import * as THREE from 'three';
 import {createRealisticOcean} from './realistic-ocean.js?v=20261118-wall-mystery-v111';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Zerconda South Beach, reachable on foot from the southern city edge at z=168.
 // Tiled sand PBR, animated layered water, foam, dunes, boardwalk, umbrellas and palms.
 export function createZercondaBeach(scene,{base='https://raw.githubusercontent.com/nonasbrandon-commits/zerconda-assets/main/',prepareModel=async()=>{}}={}){
@@ -39,32 +37,14 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
   if(Math.abs(x)<13)continue;
   const lounge=createReferenceBeachLounge(root,{x,y:.085,z});lounges.push(lounge);
  }
- // Detailed coconut palms with individual curved fronds, no low-poly cone foliage.
- // Load an actual CC0 GLB palm model. Geometry fallback only on failed download.
- const palmUrl=base+'realistic-assets/palms/palm-detailed.glb';
- new GLTFLoader().load(palmUrl,async gltf=>{
-   const template=gltf.scene;optimizeStaticModel(template,'beach-palm-source');await prepareModel(template);
-   template.updateMatrixWorld(true);
-   const bounds=new THREE.Box3().setFromObject(template);
-   const size=bounds.getSize(new THREE.Vector3());
-   const center=bounds.getCenter(new THREE.Vector3());
-   const scale=8.9/Math.max(.01,size.y);
-   for(let i=0;i<24;i++){
-     const x=-150+(i*67)%300,z=192+(i*29)%36;
-     if(Math.abs(x)<14)continue;
-     const palm=template.clone(true);
-     palm.position.set(x-center.x*scale,-bounds.min.y*scale,z-center.z*scale);
-     palm.scale.setScalar(scale*(.86+(i%5)*.055));
-     palm.rotation.y=i*2.39996;
-     palm.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
-     root.add(palm);optimizeStaticModel(palm,'beach-palm');
-   }
-   console.info('Zerconda: loaded real CC0 GLB beach palms',palmUrl);
- },undefined,error=>{
-   console.error('Detailed palm GLB missing; using fallback palm geometry',error);
-   addRealisticBeachPalms(root,{count:24});
- });
- return {root,boardwalkBounds,lounges,blocks(x,z){return lounges.some(l=>Math.abs(x-l.x)<1.45&&Math.abs(z-l.z)<.85);},ocean:oceanSystem,heightAt(x,z){
+ // Reference palms replace only the palms owned by this beach module.
+ const palms=[];
+ for(let i=0;i<24;i++){
+  const x=-150+(i*67)%300,z=192+(i*29)%36;
+  if(Math.abs(x)<14)continue;
+  palms.push(createReferenceBeachPalm(root,{x,y:.085,z,height:8.9*(.86+(i%5)*.055)}));
+ }
+ return {root,boardwalkBounds,lounges,palms,blocks(x,z){return lounges.some(l=>Math.abs(x-l.x)<1.45&&Math.abs(z-l.z)<.85)||palms.some(p=>Math.hypot(x-p.x,z-p.z)<.48);},ocean:oceanSystem,heightAt(x,z){
   // Match the visible planks (.19 centre + .025 half thickness), not sea level.
   if(x>=boardwalkBounds.minX&&x<=boardwalkBounds.maxX&&z>=181&&z<=191)return .215;
   if(Math.abs(x)<=9.5&&z>=152&&z<=190)return .14;
