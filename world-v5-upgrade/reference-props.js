@@ -1,0 +1,7 @@
+import * as THREE from 'three';
+import{GLTFLoader}from'three/addons/loaders/GLTFLoader.js';
+const files={scooter:'neon-scooter-v180.glb',bike:'mountain-bike-v180.glb',bench:'illuminated-bench-v180.glb',sport:'reference-supercar-v180.glb'},cache=new Map();
+export function loadReferenceProp(kind){if(!cache.has(kind))cache.set(kind,new GLTFLoader().loadAsync(new URL('./assets/'+files[kind],import.meta.url).href).then(g=>{if(kind==='bench'){const glow=new THREE.MeshStandardMaterial({color:0xffc34d,emissive:0xffa922,emissiveIntensity:1.4,roughness:.4});for(const side of [-1,1]){const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(side*1,.12,.30),new THREE.Vector3(side*.96,.26,.29),new THREE.Vector3(side*.91,.42,.25)]);const strip=new THREE.Mesh(new THREE.TubeGeometry(curve,12,.018,6,false),glow);strip.name='Warm inset leg light';g.scene.add(strip);}}
+if(kind==='scooter'){const lamp=new THREE.Mesh(new THREE.BoxGeometry(.10,.065,.018),new THREE.MeshStandardMaterial({color:0xf6fdff,emissive:0xc5eeff,emissiveIntensity:2}));lamp.name='White scooter headlight';lamp.position.set(0,1.40,.48);g.scene.add(lamp);}
+g.scene.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=true;}});return g.scene;}));return cache.get(kind);}
+export function attachReferenceProp(parent,kind){return loadReferenceProp(kind).then(source=>{parent.clear();const model=source.clone(true);model.name='Reference '+kind;parent.add(model);parent.userData.referenceReady=true;return model;}).catch(error=>{console.error('Reference '+kind+' could not load',error);return null;});}

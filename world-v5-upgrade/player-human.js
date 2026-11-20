@@ -59,7 +59,7 @@ function colorClothes(mesh,shirt,pants,options={}){
  outfitCache.set(cacheKey,mesh.material);if(outfitCache.size>16){const first=outfitCache.keys().next().value,old=outfitCache.get(first);outfitCache.delete(first);old.map?.dispose();if(old.normalMap!==mesh.userData.wardrobeBase.normalMap)old.normalMap?.dispose();old.dispose();}
 }
 
-export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>{},modelFile=null,initialOutfit={}}={}){
+export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>{},modelFile=null,modelUrl=null,initialOutfit={}}={}){
  const root=new THREE.Group();root.name='Textured realistic human';
  let hairRig=null,hairChoice=null;const contacts=[];
  let mixer,actions,bones=[],active=null,ready=false,outfit={shirt,pants,...initialOutfit},wearables=[];
@@ -105,7 +105,7 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
   for(const {foot,mesh}of contacts){mesh.visible=!seated&&!options.driving&&!options.skating&&!options.dancing;if(!mesh.visible)continue;const p=foot.getWorldPosition(new THREE.Vector3()),lift=Math.max(0,p.y-groundY-.09);mesh.material.opacity=.34*THREE.MathUtils.clamp(1-lift/.35,0,1);const target=root.worldToLocal(new THREE.Vector3(p.x,groundY+.012,p.z));mesh.position.copy(target);mesh.scale.set(.36+lift*.2,.5+lift*.2,1);}
  }};
  controller.dispose=()=>{mixer?.stopAllAction();hairRig?.clear();const geos=new Set(),mats=new Set(),textures=new Set();root.traverse(o=>{if(!o.isMesh)return;geos.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material]){mats.add(m);for(const v of Object.values(m))if(v?.isTexture)textures.add(v);}});geos.forEach(g=>g.dispose());mats.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());root.clear();ready=false;};
- controller.readyPromise=Promise.all([source(),modelFile?new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(new URL('../realistic-assets/characters/residents/'+modelFile,import.meta.url).href):Promise.resolve(null)]).then(([bundle,alternate])=>{let [character,idle,walk,run,dance]=bundle;if(alternate){character=alternate;[idle,walk,run,dance]=[idle,walk,run,dance].map(g=>({animations:g.animations.map(c=>{const copy=c.clone();copy.tracks=copy.tracks.filter(t=>t.name.endsWith('.quaternion'));return copy;})}));}
+ controller.readyPromise=Promise.all([source(),(modelFile||modelUrl)?new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(new URL(modelUrl||('../realistic-assets/characters/residents/'+modelFile),import.meta.url).href):Promise.resolve(null)]).then(([bundle,alternate])=>{let [character,idle,walk,run,dance]=bundle;if(alternate){character=alternate;[idle,walk,run,dance]=[idle,walk,run,dance].map(g=>({animations:g.animations.map(c=>{const copy=c.clone();copy.tracks=copy.tracks.filter(t=>t.name.endsWith('.quaternion'));return copy;})}));}
   character.scene.updateMatrixWorld(true);
   const model=cloneSkeleton(character.scene);model.updateMatrixWorld(true);
   const bounds=new THREE.Box3().setFromObject(model,true),size=bounds.getSize(new THREE.Vector3());

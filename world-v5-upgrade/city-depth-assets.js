@@ -1,3 +1,4 @@
+import {attachReferenceProp} from './reference-props.js?v=20261120-reference-props-v180';
 import {addRealisticPlanterFoliage} from './realistic-planter-foliage.js?v=20261118-wall-mystery-v111';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import * as THREE from 'three';
@@ -217,6 +218,7 @@ export function addCityDepth({scene,THREE: T=THREE,asphalt,paving,grass,seed=812
   b(g,0,.57,0,2.2,.15,.66,concrete);
   b(g,0,.94,-.3,2.2,.73,.12,metal);
   for(const xx of [-.85,.85])b(g,xx,.28,0,.13,.55,.56,metal);
+  attachReferenceProp(g,'bench');
  }
  function bollard(x,z){
   pole(root,x,.43,z,.12,.86,metal);

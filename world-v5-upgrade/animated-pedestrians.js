@@ -1,8 +1,8 @@
 import {clearSegment,findPedestrianDetour} from './pedestrian-detour.js?v=20261119-beach-v149';
 import * as THREE from 'three';
-import {createResidentHuman} from './resident-human.js?v=20261118-faster-town-v106';
+import {createResidentHuman} from './resident-human.js?v=20261120-bike-fit-v180';
 import {residentProfiles} from './resident-profiles.js?v=20261118-residents-v97';
-import {createResidentVehicle} from './resident-vehicles.js?v=20261118-residents-v97';
+import {createResidentVehicle} from './resident-vehicles.js?v=20261120-bikes-v180';
 // Articulated human-shaped characters and animated pedestrian NPCs.
 // Adult resident meshes are adapted from the MIT-licensed Microsoft Rocketbox collection.
 export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=()=>true,getPlayer=()=>null}={}){

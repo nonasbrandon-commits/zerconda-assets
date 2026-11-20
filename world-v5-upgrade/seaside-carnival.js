@@ -19,7 +19,7 @@ export function createSeasideCarnival(scene,{getPlayer,canUse=()=>true,onTelepor
  const models=createCarnivalRideModels();root.add(models.root);
  const {carousel,rotor,wheel,wheelRotor,horses,gondolas}=models;
  const carouselEntry={x:207,z:160.5},wheelEntry={x:253,z:158.5};
- sign('MERRY-GO-ROUND',201.8,1.3,160.7,4.5);for(const x of [200.1,203.5])box(.06,1.0,.06,x,.65,160.7,dark);
+ const carouselSignTexture=new THREE.TextureLoader().load(new URL('./assets/merry-go-round-sign-v180.png',import.meta.url).href);carouselSignTexture.colorSpace=THREE.SRGBColorSpace;const carouselSign=new THREE.Mesh(new THREE.PlaneGeometry(5.4,2.02),new THREE.MeshBasicMaterial({map:carouselSignTexture,transparent:true,alphaTest:.15,side:THREE.DoubleSide,toneMapped:false}));carouselSign.name='Ornate blue and gold Merry-Go-Round sign';carouselSign.position.set(201.8,1.16,160.7);root.add(carouselSign);
  sign('FERRIS WHEEL',247.8,1.3,159.5,4.5);for(const x of [246.1,249.5])box(.06,1.0,.06,x,.65,159.5,dark);
  const states={carousel:{mode:'idle',angle:.2,selected:0,elapsed:0},wheel:{mode:'idle',angle:.15,selected:6,elapsed:0}};
  const notice=document.createElement('div');notice.setAttribute('role','status');notice.style.cssText='position:fixed;left:12px;top:75px;z-index:14000;max-width:min(310px,80vw);padding:12px;border-radius:10px;background:#193a42ed;color:#fff3d7;font:14px system-ui;pointer-events:none;display:none';document.body.appendChild(notice);
