@@ -1,5 +1,5 @@
 import {createReferenceBeachPalm} from './reference-beach-palm.js?v=20261119-beach-palms-v150';
-import {createReferenceBeachLounge} from './reference-beach-lounge.js?v=20261119-beach-v149';
+import {createBeachLounge3D} from './beach-lounge-3d.js?v=20261119-beach-seating-v151';
 import * as THREE from 'three';
 import {createRealisticOcean} from './realistic-ocean.js?v=20261118-wall-mystery-v111';
 // Zerconda South Beach, reachable on foot from the southern city edge at z=168.
@@ -29,13 +29,13 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  const oceanSystem=createRealisticOcean(root);
  // Sand ripples and dune clusters.
  const duneMat=new THREE.MeshStandardMaterial({color:0xd7bb88,roughness:1});
- for(let i=0;i<90;i++){const x=((i*73)%317)-158,z=192+((i*31)%39);if(Math.abs(x)<13)continue;const o=mesh(new THREE.SphereGeometry(1,10,6),duneMat,x,.1,z);o.scale.set(1.3+(i%4),.1+(i%3)*.04,.6+(i%5)*.3);}
+ for(let i=0;i<90;i++){const x=((i*73)%317)-158,z=192+((i*31)%39);if(Math.abs(x)<13||[207,224].some(row=>Math.abs(z-row)<3.5))continue;const o=mesh(new THREE.SphereGeometry(1,10,6),duneMat,x,.1,z);o.scale.set(1.3+(i%4),.1+(i%3)*.04,.6+(i%5)*.3);}
  // User reference beach sets: navy parasol, cream chaise, table and plant.
  const lounges=[];
  for(let i=0;i<34;i++){
-  const x=-145+(i%17)*18,z=207+Math.floor(i/17)*17;
+  const x=-145+(i%17)*18+Math.sin(i*2.31)*1.1,z=207+Math.floor(i/17)*17+Math.sin(i*1.71)*1.5;
   if(Math.abs(x)<13)continue;
-  const lounge=createReferenceBeachLounge(root,{x,y:.085,z});lounges.push(lounge);
+  const lounge=createBeachLounge3D(root,{x,y:.085,z,index:i});lounges.push(lounge);
  }
  // Reference palms replace only the palms owned by this beach module.
  const palms=[];
@@ -44,7 +44,7 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
   if(Math.abs(x)<14)continue;
   palms.push(createReferenceBeachPalm(root,{x,y:.085,z,height:8.9*(.86+(i%5)*.055)}));
  }
- return {root,boardwalkBounds,lounges,palms,blocks(x,z){return lounges.some(l=>Math.abs(x-l.x)<1.45&&Math.abs(z-l.z)<.85)||palms.some(p=>Math.hypot(x-p.x,z-p.z)<.48);},ocean:oceanSystem,heightAt(x,z){
+ return {root,boardwalkBounds,lounges,palms,nearestSeat(x,z,max=2.5){let best=null,d=max;for(const l of lounges){const distance=Math.hypot(x-l.seat.x,z-l.seat.z);if(distance<d){best=l.seat;d=distance;}}return best;},blocks(x,z){return lounges.some(l=>l.blocks(x,z))||palms.some(p=>Math.hypot(x-p.x,z-p.z)<.48);},ocean:oceanSystem,heightAt(x,z){
   // Match the visible planks (.19 centre + .025 half thickness), not sea level.
   if(x>=boardwalkBounds.minX&&x<=boardwalkBounds.maxX&&z>=181&&z<=191)return .215;
   if(Math.abs(x)<=9.5&&z>=152&&z<=190)return .14;
