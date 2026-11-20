@@ -1,4 +1,4 @@
-import {createFalBeachHuman} from './fal-beach-human.js?v=20261120-standing-attendant-v167';
+import {createFalBeachHuman} from './fal-beach-human.js?v=20261120-beach-guests-v168';
 import * as THREE from 'three';
 import {createRealisticHuman} from './player-human.js?v=20261119-profile-v136';
 export function addRentalAttendant(kiosk){
