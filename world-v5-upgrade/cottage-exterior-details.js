@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {batchApplianceParts} from './appliance-batching.js?v=20261119-performance-v147';
-import {createPierFernPlanter} from './pier-fern-planter.js?v=20261120-coastal-v166';
+import {createPierFernPlanter} from './pier-fern-planter.js?v=20261120-standing-attendant-v167';
 export const cedarMap=new THREE.TextureLoader().load(new URL('./assets/cedar-siding-v156.png',import.meta.url).href);cedarMap.colorSpace=THREE.SRGBColorSpace;cedarMap.wrapS=cedarMap.wrapT=THREE.RepeatWrapping;cedarMap.anisotropy=8;
 const black=new THREE.MeshStandardMaterial({color:'#20272c',roughness:.6,metalness:.28}),timber=new THREE.MeshStandardMaterial({color:'#d3a56b',map:cedarMap,roughness:.68}),linen=new THREE.MeshStandardMaterial({color:'#ede2cd',roughness:.95}),amber=new THREE.MeshBasicMaterial({color:'#ffdc84'});
 function stoneTexture(){const c=document.createElement('canvas');c.width=c.height=256;const a=c.getContext('2d');a.fillStyle='#6b645c';a.fillRect(0,0,256,256);for(let row=0;row<8;row++)for(let col=-1;col<4;col++){const x=col*86+(row%2)*43,y=row*32;const v=135+((row*37+col*19+320)%60);a.fillStyle=`rgb(${v+12},${v+1},${v-13})`;a.fillRect(x+2,y+2,82,28);a.strokeStyle='#c4baaa';a.lineWidth=1;a.strokeRect(x+3,y+3,80,26);}const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;return t;}const stoneMap=stoneTexture(),stone=new THREE.MeshStandardMaterial({map:stoneMap,roughness:.95,bumpMap:stoneMap,bumpScale:.018});

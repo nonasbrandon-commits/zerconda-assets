@@ -1,13 +1,12 @@
-import {fitAttendantPortrait} from './boat-attendant-portrait.js?v=20261120-coastal-v166';
+import {createFalBeachHuman} from './fal-beach-human.js?v=20261120-standing-attendant-v167';
 import * as THREE from 'three';
-import {fitBeachSwimwear} from './beach-visitors.js?v=20261120-coastal-v166';
 import {createRealisticHuman} from './player-human.js?v=20261119-profile-v136';
 export function addRentalAttendant(kiosk){
- const female=kiosk.kind==='boat',person=createRealisticHuman({modelFile:female?'resident-08.glb':null,shirt:female?'#d42638':'#e3dccf',pants:'#263447',initialOutfit:{shorts:true,tee:female}});
+ const female=kiosk.kind==='boat',person=female?createFalBeachHuman('attendant'):createRealisticHuman({shirt:'#e3dccf',pants:'#263447',initialOutfit:{shorts:true,tee:false}});
  person.root.visible=!female;const anchor=new THREE.Group();anchor.name=female?'Boat rental attendant':'Fishing pole attendant';anchor.position.set(-.25,.13,2.48);kiosk.root.add(anchor);anchor.add(person.root);
  // Both actors use the exact 1.86 m normalization used by the player's model.
  anchor.userData.height=1.86;anchor.userData.gender=female?'female':'male';anchor.userData.controller=person;anchor.userData.time=female?1.7:0;anchor.userData.step=0;anchor.userData.speaking=false;
- person.readyPromise.then(async()=>{if(female){fitBeachSwimwear(person,true,'vec3(.70,.025,.045)');person.setHair({style:'original',color:'#4a3224'});await fitAttendantPortrait(person);}else person.setHair({style:'original',color:'#4a3224'});person.root.updateMatrixWorld(true);person.root.visible=true;anchor.userData.ready=person.ready;});kiosk.attendant=anchor;return anchor;
+ person.readyPromise.then(()=>{if(!female)person.setHair({style:'original',color:'#4a3224'});person.root.updateMatrixWorld(true);person.root.visible=true;anchor.userData.ready=person.ready;});kiosk.attendant=anchor;return anchor;
 }
 const point=new THREE.Vector3();
 export function updateRentalAttendants(kiosks,dt,player,talking=null){for(const kiosk of kiosks){const a=kiosk.attendant;if(!a)continue;const d=Math.hypot(player.x-kiosk.root.position.x,player.z-kiosk.root.position.z);if(d>65)continue;const u=a.userData;u.time+=Math.min(dt,.1);const t=u.time,cycle=t%14;
@@ -16,7 +15,6 @@ export function updateRentalAttendants(kiosks,dt,player,talking=null){for(const 
  let head;const arms=[];a.traverse(o=>{if(!o.isBone)return;const n=o.name.replace(/[^a-z0-9]/gi,'');if(/Head$/.test(n))head=o;if(/Forearm$|UpperArm$/.test(n))arms.push(o);});const engaged=talking===kiosk.kind;u.talkLeft=engaged&&!u.wasEngaged?4:Math.max(0,(u.talkLeft||0)-dt);u.wasEngaged=engaged;const speaking=engaged&&u.talkLeft>0;u.speaking=speaking;
  if(head){head.rotation.y+=Math.sin(t*.61)*.025+turn*.2;head.rotation.z+=Math.sin(t*.83)*.018;head.rotation.x+=speaking?Math.sin(t*3.2)*.035:Math.sin(t*.72)*.012;}
  if(speaking)for(const arm of arms){if(/R.*Forearm/.test(arm.name.replace(/[^a-z0-9]/gi,'')))arm.rotation.x+=Math.sin(t*2.1)*.12;}
- if(u.gender==='female'&&u.controller.root.userData.portrait){const portrait=u.controller.root.userData.portrait;portrait.position.y=1.25+Math.sin(t*1.5)*.004;portrait.rotation.set(Math.sin(t*.72)*.008,Math.sin(t*.61)*.025+turn*.12,Math.sin(t*.83)*.006);}
  a.updateMatrixWorld(true);
  }}
 export function createRentalConversation({getPlayer,canInteract,desks,onYes}){

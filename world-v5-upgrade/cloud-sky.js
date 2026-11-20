@@ -26,7 +26,7 @@ export function createCloudSky(scene,{count=48,seed=1729}={}){
  const clouds=[];
  for(let i=0;i<count;i++){
   const angle=rnd()*Math.PI*2,rad=155+rnd()*390;
-  const cluster=new THREE.Group();cluster.position.set(Math.cos(angle)*rad,125+rnd()*95,Math.sin(angle)*rad);
+  const cluster=new THREE.Group();cluster.position.set(Math.cos(angle)*rad,180+rnd()*95,Math.sin(angle)*rad);
   root.add(cluster);
   const parts=9+Math.floor(rnd()*15),span=40+rnd()*95;
   for(let j=0;j<parts;j++){
@@ -36,7 +36,7 @@ export function createCloudSky(scene,{count=48,seed=1729}={}){
    p.position.set((rnd()-.5)*span,(rnd()-.5)*27,(rnd()-.5)*span*.55);
    cluster.add(p);
   }
-  clouds.push({cluster,speed:.16+rnd()*.28});
+  clouds.push({cluster,speed:.24+rnd()*.20});
  }
  // Pale blue atmosphere, deeper overhead, lighter at the horizon.
  const skyCanvas=document.createElement('canvas');skyCanvas.width=8;skyCanvas.height=512;
@@ -46,6 +46,6 @@ export function createCloudSky(scene,{count=48,seed=1729}={}){
  const skyTexture=new THREE.CanvasTexture(skyCanvas);skyTexture.colorSpace=THREE.SRGBColorSpace;
  const dome=new THREE.Mesh(new THREE.SphereGeometry(550,32,20),new THREE.MeshBasicMaterial({map:skyTexture,side:THREE.BackSide,depthWrite:false,fog:false,toneMapped:false}));
  dome.name='Sky atmosphere dome';scene.add(dome);
- function update(dt){for(const c of clouds){c.cluster.position.x+=c.speed*dt;if(c.cluster.position.x>650)c.cluster.position.x=-650;}}
- return {root,dome,update,dispose(){scene.remove(root,dome);material.dispose();texture.dispose();dome.geometry.dispose();dome.material.dispose();skyTexture.dispose()}};
+ function update(dt){for(const c of clouds){c.cluster.position.x+=c.speed*dt;c.cluster.position.z+=c.speed*.18*dt;if(c.cluster.position.x>650)c.cluster.position.x=-650;}}
+ return {root,dome,clouds,update,dispose(){scene.remove(root,dome);material.dispose();texture.dispose();dome.geometry.dispose();dome.material.dispose();skyTexture.dispose()}};
 }
