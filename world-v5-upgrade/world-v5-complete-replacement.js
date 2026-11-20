@@ -1,4 +1,4 @@
-import {createBeachVisitors} from './beach-visitors.js?v=20261120-beach-guests-v168';
+import {createBeachVisitors} from './beach-visitors.js?v=20261120-head-hair-v170';
 import {positionBeachLoungeCamera} from './beach-lounge-camera.js?v=20261119-coastal-breeze-v154';
 import {applyBeachLoungePose} from './beach-lounge-pose.js?v=20261119-beach-seating-v151';
 import {addVehicleLOD} from './vehicle-lod.js?v=20261119-performance-v147';
@@ -47,7 +47,7 @@ import {createZercondaNews} from './zerconda-news.js?v=20261119-ticker-v140';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261119-performance-v147';
 import {createBowlingAlley} from './bowling-alley.js?v=20261119-entrance-steering-v118';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261120-beach-guests-v168';
-import {createSeasidePier} from './seaside-pier.js?v=20261120-head-fix-v169';
+import {createSeasidePier} from './seaside-pier.js?v=20261120-head-hair-v170';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261119-sand-mountains-v157';
 import {createClubZerconda} from './club-zerconda.js?v=20261119-fountain-seating-v135';

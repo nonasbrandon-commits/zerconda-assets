@@ -1,6 +1,6 @@
 import {createCaughtSalmon} from './caught-salmon.js?v=20261120-coastal-v166';
 import {findWaterCast,poseHeldFishingRod} from './handheld-fishing.js?v=20261119-free-fishing-v160';
-import {addRentalAttendant,updateRentalAttendants,createRentalConversation} from './pier-rental-attendants.js?v=20261120-head-fix-v169';
+import {addRentalAttendant,updateRentalAttendants,createRentalConversation} from './pier-rental-attendants.js?v=20261120-head-hair-v170';
 import {createPierFernPlanter} from './pier-fern-planter.js?v=20261120-standing-attendant-v167';
 import {createPierTikiKiosk} from './pier-tiki-kiosks.js?v=20261120-standing-attendant-v167';
 import * as THREE from 'three';
