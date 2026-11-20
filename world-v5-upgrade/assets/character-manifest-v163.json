@@ -1,0 +1,228 @@
+{
+  "version": 163,
+  "provider": "fal",
+  "description": "Reference-based 3D beach and boardwalk walkers with humanoid rigs and walk/idle animations.",
+  "sources": {
+    "woman": "assets/woman-reference-v163.png",
+    "man": "assets/man-reference-v163.png"
+  },
+  "production": {
+    "woman": "assets/boardwalk-woman-v163.glb",
+    "man": "assets/beach-man-v163.glb",
+    "idle": "assets/beach-idle-v163.glb"
+  },
+  "originalJobs": [
+    {
+      "endpoint_id": "fal-ai/hyper3d/rodin/v2.5",
+      "request_id": "01a1f727-314a-7a82-ae20-d0188bb0b56f",
+      "result": {
+        "model_mesh": {
+          "url": "https://v3b.fal.media/files/b/0ab32db1/z5JNr47i2uVtrdRquSIGV_base_basic_pbr.glb",
+          "content_type": "model/gltf-binary",
+          "file_name": "base_basic_pbr.glb",
+          "file_size": 11539360
+        },
+        "model_meshes": [],
+        "seed": 41492,
+        "textures": [
+          {
+            "url": "https://v3b.fal.media/files/b/0ab32db1/q9XRntCdBKnFi2A00v_nz_preview.webp",
+            "content_type": "application/octet-stream",
+            "file_name": "preview.webp",
+            "file_size": 4706,
+            "width": null,
+            "height": null
+          },
+          {
+            "url": "https://v3b.fal.media/files/b/0ab32db1/Q2ZNVCBgXnZatvVDWXjkO_render.jpg",
+            "content_type": "application/octet-stream",
+            "file_name": "render.jpg",
+            "file_size": 7879,
+            "width": null,
+            "height": null
+          }
+        ]
+      }
+    },
+    {
+      "endpoint_id": "fal-ai/meshy/rigging",
+      "request_id": "01a1f72a-8736-74b0-b5b6-7e16c2445421",
+      "result": {
+        "rigged_character_glb": {
+          "url": "https://v3b.fal.media/files/b/0ab32dc1/fVL7YSMwesGEWogLId5Gq_rigged_character.glb",
+          "content_type": "model/gltf-binary",
+          "file_name": "rigged_character.glb",
+          "file_size": 12538676
+        },
+        "rigged_character_fbx": {
+          "url": "https://v3b.fal.media/files/b/0ab32dc2/4Zcd-HvwiOsPLW5OiyL3l_rigged_character.fbx",
+          "content_type": "application/vnd.autodesk.fbx",
+          "file_name": "rigged_character.fbx",
+          "file_size": 12176956
+        },
+        "basic_animations": {
+          "walking_glb": {
+            "url": "https://v3b.fal.media/files/b/0ab32dc1/btR3oq1jAO0SsGlzBnROG_walking.glb",
+            "content_type": "model/gltf-binary",
+            "file_name": "walking.glb",
+            "file_size": 12595300
+          },
+          "walking_fbx": {
+            "url": "https://v3b.fal.media/files/b/0ab32dc1/y39GLiRYIj22jO6Zp9M1F_walking.fbx",
+            "content_type": "application/vnd.autodesk.fbx",
+            "file_name": "walking.fbx",
+            "file_size": 12192508
+          },
+          "walking_armature_glb": {
+            "url": "https://v3b.fal.media/files/b/0ab32dc0/2M74OtRtI-Vs5SqT8tpRN_walking_armature.glb",
+            "content_type": "model/gltf-binary",
+            "file_name": "walking_armature.glb",
+            "file_size": 64752
+          },
+          "running_glb": {
+            "url": "https://v3b.fal.media/files/b/0ab32dc2/DVHBFQNTev2mPtmH6BSHi_running.glb",
+            "content_type": "model/gltf-binary",
+            "file_name": "running.glb",
+            "file_size": 12583732
+          },
+          "running_fbx": {
+            "url": "https://v3b.fal.media/files/b/0ab32dc2/ctMSlQ5cxVN_kc0gDiTTu_running.fbx",
+            "content_type": "application/vnd.autodesk.fbx",
+            "file_name": "running.fbx",
+            "file_size": 12174780
+          },
+          "running_armature_glb": {
+            "url": "https://v3b.fal.media/files/b/0ab32dc0/DvQONE4TjtIetf0C2YikY_running_armature.glb",
+            "content_type": "model/gltf-binary",
+            "file_name": "running_armature.glb",
+            "file_size": 53168
+          }
+        },
+        "animation_glb": {
+          "url": "https://v3b.fal.media/files/b/0ab32dc5/YQkJPEZQtfDpBcdTFW1es_animation.glb",
+          "content_type": "model/gltf-binary",
+          "file_name": "animation.glb",
+          "file_size": 12647432
+        },
+        "animation_fbx": {
+          "url": "https://v3b.fal.media/files/b/0ab32dc5/bDF7qZvY60GblKpG7DO5O_animation.fbx",
+          "content_type": "application/vnd.autodesk.fbx",
+          "file_name": "animation.fbx",
+          "file_size": 12246268
+        },
+        "rig_task_id": "01a1f72a-8a1e-75d0-a62c-010c8cfd493f"
+      }
+    },
+    {
+      "endpoint_id": "fal-ai/hyper3d/rodin/v2.5",
+      "request_id": "01a1f72b-b50c-70f2-afd0-84ba371dbaab",
+      "result": {
+        "model_mesh": {
+          "url": "https://v3b.fal.media/files/b/0ab32dce/pXULK5kS-6x_TE1ZHqW_q_base_basic_pbr.glb",
+          "content_type": "model/gltf-binary",
+          "file_name": "base_basic_pbr.glb",
+          "file_size": 10601536
+        },
+        "model_meshes": [],
+        "seed": 62191,
+        "textures": [
+          {
+            "url": "https://v3b.fal.media/files/b/0ab32dce/BnHiFOIVqlJwMTHKCS8f7_preview.webp",
+            "content_type": "application/octet-stream",
+            "file_name": "preview.webp",
+            "file_size": 3302,
+            "width": null,
+            "height": null
+          },
+          {
+            "url": "https://v3b.fal.media/files/b/0ab32dce/wD04syYPnVaWptNw2RAlI_render.jpg",
+            "content_type": "application/octet-stream",
+            "file_name": "render.jpg",
+            "file_size": 8794,
+            "width": null,
+            "height": null
+          }
+        ]
+      }
+    },
+    {
+      "endpoint_id": "fal-ai/meshy/rigging",
+      "request_id": "01a1f72e-dde8-7f61-955a-7ad5e04b7dbe",
+      "result": {
+        "rigged_character_glb": {
+          "url": "https://v3b.fal.media/files/b/0ab32de0/SABdYaUW9Nscyq54auavV_rigged_character.glb",
+          "content_type": "model/gltf-binary",
+          "file_name": "rigged_character.glb",
+          "file_size": 11603320
+        },
+        "rigged_character_fbx": {
+          "url": "https://v3b.fal.media/files/b/0ab32ddf/2YV3U1DRMghf7lLA1jPxw_rigged_character.fbx",
+          "content_type": "application/vnd.autodesk.fbx",
+          "file_name": "rigged_character.fbx",
+          "file_size": 11445836
+        },
+        "basic_animations": {
+          "walking_glb": {
+            "url": "https://v3b.fal.media/files/b/0ab32ddf/fDHCXTlYHVBq9GWS0MESJ_walking.glb",
+            "content_type": "model/gltf-binary",
+            "file_name": "walking.glb",
+            "file_size": 11678864
+          },
+          "walking_fbx": {
+            "url": "https://v3b.fal.media/files/b/0ab32ddf/6RWoZANFV5fF1ztnIWRvb_walking.fbx",
+            "content_type": "application/vnd.autodesk.fbx",
+            "file_name": "walking.fbx",
+            "file_size": 11437644
+          },
+          "walking_armature_glb": {
+            "url": "https://v3b.fal.media/files/b/0ab32dde/gsjEq64NahFTzm4LwkNAk_walking_armature.glb",
+            "content_type": "model/gltf-binary",
+            "file_name": "walking_armature.glb",
+            "file_size": 88544
+          },
+          "running_glb": {
+            "url": "https://v3b.fal.media/files/b/0ab32de0/0ne8xB_-L0ttYnEHodYCR_running.glb",
+            "content_type": "model/gltf-binary",
+            "file_name": "running.glb",
+            "file_size": 11663432
+          },
+          "running_fbx": {
+            "url": "https://v3b.fal.media/files/b/0ab32de0/4yWf0VhCIAAQ-chhB_K9N_running.fbx",
+            "content_type": "application/vnd.autodesk.fbx",
+            "file_name": "running.fbx",
+            "file_size": 11414028
+          },
+          "running_armature_glb": {
+            "url": "https://v3b.fal.media/files/b/0ab32dde/_p0noO5ginSsd9noPGnzW_running_armature.glb",
+            "content_type": "model/gltf-binary",
+            "file_name": "running_armature.glb",
+            "file_size": 73096
+          }
+        },
+        "animation_glb": {
+          "url": "https://v3b.fal.media/files/b/0ab32de4/olBDpxYF8LafpL5Z-KvqB_animation.glb",
+          "content_type": "model/gltf-binary",
+          "file_name": "animation.glb",
+          "file_size": 11793236
+        },
+        "animation_fbx": {
+          "url": "https://v3b.fal.media/files/b/0ab32de4/zdwPJft3Yw-K6pNeJu2ud_animation.fbx",
+          "content_type": "application/vnd.autodesk.fbx",
+          "file_name": "animation.fbx",
+          "file_size": 11552412
+        },
+        "rig_task_id": "01a1f72e-e5f4-7066-a569-ee41e03a4b34"
+      }
+    }
+  ],
+  "integration": {
+    "heightMeters": 1.86,
+    "beachRoute": "Man strolls the beach and pauses facing the ocean.",
+    "boardwalkRoute": "Woman follows the boardwalk with obstacle avoidance.",
+    "optimization": "Embedded WebP PBR textures; skeletons and animation retained.",
+    "files": [
+      "fal-beach-human.js",
+      "beach-visitors.js"
+    ]
+  }
+}
