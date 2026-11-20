@@ -1,3 +1,4 @@
+import {createReferenceBeachLounge} from './reference-beach-lounge.js?v=20261119-beach-v149';
 import {optimizeStaticModel} from './static-model-batching.js?v=20261119-performance-v147';
 import {addRealisticBeachPalms} from './realistic-beach-palms.js';
 import * as THREE from 'three';
@@ -16,7 +17,6 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  const sandMap=new THREE.CanvasTexture(canvas);sandMap.colorSpace=THREE.SRGBColorSpace;sandMap.wrapS=sandMap.wrapT=THREE.RepeatWrapping;sandMap.repeat.set(18,8);sandMap.anisotropy=8;
  const sand=new THREE.MeshStandardMaterial({color:0xe5ceaa,roughness:1,map:sandMap});
  const wood=new THREE.MeshStandardMaterial({color:0x927055,roughness:.87});
- const fabric=[0xf5f2e8,0x237aaf,0xe79a60,0xe7d2a2].map(color=>new THREE.MeshStandardMaterial({color,roughness:.82,side:THREE.DoubleSide}));
  function mesh(geo,mat,x,y,z){const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.receiveShadow=true;root.add(o);return o;}
  const land=mesh(new THREE.PlaneGeometry(1014,91),sand,63,.085,199.5);land.rotation.x=-Math.PI/2;
  // Road connection across the former boundary to the promenade.
@@ -32,20 +32,12 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  // Sand ripples and dune clusters.
  const duneMat=new THREE.MeshStandardMaterial({color:0xd7bb88,roughness:1});
  for(let i=0;i<90;i++){const x=((i*73)%317)-158,z=192+((i*31)%39);if(Math.abs(x)<13)continue;const o=mesh(new THREE.SphereGeometry(1,10,6),duneMat,x,.1,z);o.scale.set(1.3+(i%4),.1+(i%3)*.04,.6+(i%5)*.3);}
- // Lounge chairs with real-scale wooden frames and stretched canvas.
+ // User reference beach sets: navy parasol, cream chaise, table and plant.
+ const lounges=[];
  for(let i=0;i<34;i++){
   const x=-145+(i%17)*18,z=207+Math.floor(i/17)*17;
   if(Math.abs(x)<13)continue;
-  const a=(i%3-1)*.22;
-  const chair=new THREE.Group();chair.position.set(x,.2,z);chair.rotation.y=a;root.add(chair);
-  const leg=new THREE.MeshStandardMaterial({color:0x8c745e,roughness:.8});
-  function beam(w,h,d,px,py,pz,material){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);o.position.set(px,py,pz);chair.add(o);return o;}
-  beam(.85,.09,1.8,0,.24,0,leg);beam(.78,.055,1.65,0,.31,0,fabric[i%4]);
-  const back=beam(.79,.06,.88,0,.64,-.65,fabric[i%4]);back.rotation.x=-.68;
-  for(const side of [-.36,.36])for(const zz of [-.62,.62])beam(.075,.32,.075,side,.12,zz,leg);
-  // Fabric beach umbrella, conical canopy and central pole.
-  const pole=mesh(new THREE.CylinderGeometry(.045,.055,2.7,10),leg,x+2,1.45,z);
-  const canopy=mesh(new THREE.ConeGeometry(1.65,.68,12),fabric[(i+1)%4],x+2,2.9,z);
+  const lounge=createReferenceBeachLounge(root,{x,y:.085,z});lounges.push(lounge);
  }
  // Detailed coconut palms with individual curved fronds, no low-poly cone foliage.
  // Load an actual CC0 GLB palm model. Geometry fallback only on failed download.
@@ -72,7 +64,7 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
    console.error('Detailed palm GLB missing; using fallback palm geometry',error);
    addRealisticBeachPalms(root,{count:24});
  });
- return {root,boardwalkBounds,ocean:oceanSystem,heightAt(x,z){
+ return {root,boardwalkBounds,lounges,blocks(x,z){return lounges.some(l=>Math.abs(x-l.x)<1.45&&Math.abs(z-l.z)<.85);},ocean:oceanSystem,heightAt(x,z){
   // Match the visible planks (.19 centre + .025 half thickness), not sea level.
   if(x>=boardwalkBounds.minX&&x<=boardwalkBounds.maxX&&z>=181&&z<=191)return .215;
   if(Math.abs(x)<=9.5&&z>=152&&z<=190)return .14;

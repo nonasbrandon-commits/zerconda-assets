@@ -19,7 +19,7 @@ import {installAvatarTattoos} from './avatar-tattoos.js?v=20261119-profile-v136'
 import {createZTattoo} from './z-tattoo.js?v=20261119-entrance-steering-v118';
 import {treeBoundsOverlapRoad} from './tree-road-clearance.js?v=20261118-clear-roads-v112';
 import {createCourtGames} from './court-games.js?v=20261118-wall-mystery-v111';
-import {createHotDogVendor} from './boardwalk-hotdogs.js?v=20261119-performance-v147';
+import {createHotDogVendor} from './boardwalk-hotdogs.js?v=20261119-beach-v149';
 import {createVehicleControls} from './vehicle-controls.js?v=20261119-entrance-steering-v118';
 import {createDamagedWallPanel,createBlockedWallOpening,WALL_OPENING} from './blocked-wall-opening.js?v=20261118-wall-mystery-v111';
 import {createAreaTravel} from './area-travel.js?v=20261119-z-fortune-v122';
@@ -44,7 +44,7 @@ import {createZercondaNews} from './zerconda-news.js?v=20261119-ticker-v140';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261119-performance-v147';
 import {createBowlingAlley} from './bowling-alley.js?v=20261119-entrance-steering-v118';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261119-reference-trucks-v126';
-import {createSeasidePier} from './seaside-pier.js?v=20261118-realty-v105';
+import {createSeasidePier} from './seaside-pier.js?v=20261119-beach-v149';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261118-clear-roads-v112';
 import {createClubZerconda} from './club-zerconda.js?v=20261119-fountain-seating-v135';
@@ -63,18 +63,18 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261118-wall-mystery-v111';
 import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
-import {createZercondaBeach} from './zerconda-beach.js?v=20261119-performance-v147';
+import {createZercondaBeach} from './zerconda-beach.js?v=20261119-beach-v149';
 import {createCityMap} from './top-city-map.js?v=20261119-fountain-seating-v135';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261119-performance-v147';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261119-performance-v147';
-import {createPedestrians} from './animated-pedestrians.js?v=20261118-faster-town-v106';
+import {createPedestrians} from './animated-pedestrians.js?v=20261119-beach-v149';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118-visible-trails-v100';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-ground-v117';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-19-performance-v147';
+const ZERCONDA_BUILD='2026-11-19-beach-v149';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -180,6 +180,9 @@ const geo=new THREE.BoxGeometry(1,1,1);
 const walkSurfaces=[];
 let signBacks=null,zFortune=null,zStore=null,playerMenu=null,museum=null,tattooShop=null,courtGames=null,hotDogVendor=null,club=null,needleSportsPark=null,ownableHomes=null,marine=null,coastal=null,scooters=null,bowling=null,boutique=null,news=null,apartmentExperience=null,premier=null,camp=null,airfield=null,skate=null,eastsideGolf=null,office=null,barber=null,villas=null,rvPark=null,carnival=null,townObstacles=null,airportLoop=null,northernForest=null,militaryBase=null,mobilePerformance=null,wildlifePlayer=null,southBeach=null,observationNeedle=null;const apartmentExteriors=[];let onObservationDeck=false,insideNeedleLobby=false;let dealerInside=false;
 function authoredGroundHeightAt(x,z){
+ // Elevated pier and gangways take precedence over the underlying beach/ocean.
+ if(marine?.riding)return marine.riderY;
+ const deckY=marine?.heightAt(x,z);if(deckY!==null&&deckY!==undefined)return deckY;
  const museumY=museum?.heightAt(x,z);if(museumY!==null&&museumY!==undefined)return museumY;
  const fortuneY=zFortune?.heightAt(x,z);if(fortuneY!==null&&fortuneY!==undefined)return fortuneY;
  const storeY=zStore?.heightAt(x,z);if(storeY!==null&&storeY!==undefined)return storeY;
@@ -1083,7 +1086,7 @@ function walkable(x,z){
  const museumWalk=museum?.canWalk(x,z,!!activeCar||!!scooters?.riding||!!skate?.riding);if(museumWalk!==null&&museumWalk!==undefined)return museumWalk;
  const storeWalk=zStore?.canWalk(x,z);if(storeWalk!==null&&storeWalk!==undefined)return storeWalk;
  const tattooWalk=tattooShop?.canWalk(x,z);if(tattooWalk!==null&&tattooWalk!==undefined)return tattooWalk;
- if(courtGames?.blocks(x,z)||hotDogVendor?.blocks(x,z))return false;
+ if(southBeach?.blocks(x,z)||courtGames?.blocks(x,z)||hotDogVendor?.blocks(x,z))return false;
  if(airfield?.walkingCabin)return airfield.contains(x,z);
  if(blockedWallOpening?.blocks(x,z))return false;
  if(observationNeedle.riding)return false;
