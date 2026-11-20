@@ -1,7 +1,7 @@
 import {improveVehicleCabin} from './vehicle-cabins.js?v=20261119-cabin-v137';
-import {addShowroomGallery} from './showroom-gallery.js?v=20261119-showroom-gallery-v127';
+import {addShowroomGallery} from './showroom-gallery.js?v=20261120-awards-v183';
 import {createShowroomPickup} from './showroom-pickup.js?v=20261119-reference-trucks-v126';
-import {addShowroomSales} from './showroom-sales.js?v=20261119-reference-trucks-v126';
+import {addShowroomSales} from './showroom-sales.js?v=20261120-sales-v183';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
 import {createDetailedCar} from './detailed-fictional-cars.js?v=20261117-commerce-restore-v69';
@@ -13,7 +13,7 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0,getPlayer=()=>nul
  const world=(px,pz)=>({x:x+px*cosine+pz*sine,z:z-px*sine+pz*cosine});
  const local=(px,pz)=>({x:(px-x)*cosine-(pz-z)*sine,z:(px-x)*sine+(pz-z)*cosine});
  const mat=(color,roughness=.65,metalness=.05)=>new THREE.MeshStandardMaterial({color,roughness,metalness,side:THREE.DoubleSide});
- const steel=mat(0x273746,.34,.62),silver=mat(0xb4c3cd,.28,.6),floor=mat(0x929da3,.33,.14),glass=new THREE.MeshPhysicalMaterial({color:0x8ac5e2,roughness:.075,metalness:.06,transparent:true,opacity:.64,depthWrite:false,side:THREE.DoubleSide,clearcoat:1}),white=mat(0xf1f4f5),dark=mat(0x182733),wood=mat(0x82614b);
+ const steel=mat(0x273746,.34,.62),silver=mat(0xb4c3cd,.28,.6),floor=mat(0x929da3,.33,.14),glass=new THREE.MeshPhysicalMaterial({color:0x8ac5e2,roughness:.035,metalness:0,transparent:true,opacity:.12,depthWrite:false,side:THREE.DoubleSide,clearcoat:1}),white=mat(0xf1f4f5),dark=mat(0x182733),wood=mat(0x82614b);
  const cube=new THREE.BoxGeometry(1,1,1);
  function box(parent,w,h,d,px,py,pz,m){const o=new THREE.Mesh(cube,m);o.position.set(px,py,pz);o.scale.set(w,h,d);o.receiveShadow=true;parent.add(o);return o;}
  // 30m frontage x 23m depth. The front faces EAST toward the cafe and tower.
@@ -74,7 +74,7 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0,getPlayer=()=>nul
  brandPanel.name='Zerconda Motors · clear illuminated sign';brandPanel.rotation.y=Math.PI/2;brandPanel.position.set(13.02,9.8,0);root.add(brandPanel);
  // Vertical glass bays and mullion trim add depth to the transparent frontage.
  for(const zz of [-11,-7.5,-4,4,7.5,11]){
-  box(root,.09,5.7,3.3,12.04,3.05,zz,glass);
+  // One glazing layer per bay; preserve clear sightlines.
   box(root,.17,5.9,.09,12.21,3.05,zz+1.65,silver);
  }
  for(const yy of [1.2,3.4,5.85])box(root,.12,.07,27.5,12.28,yy,0,silver);
@@ -88,14 +88,14 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0,getPlayer=()=>nul
   const plant=createNaturalShrub({width:1.55,height:1.35,seed:300+Math.round(zz*5)});
   plant.position.set(16.1,.8,zz);root.add(plant);
  }
- // Two detailed crew-cab pickup displays; the central entry aisle remains open.
+ // Two road-facing crew-cab pickup displays outside; the central entry aisle remains open.
  const cars=[],displaySolids=[];
  for(const [name,type,color,z]of[['Zerconda Ridge Sandstone','pickup','#c7bb96',-6.5],['Zerconda Ridge Graphite','pickup','#49535c',6.5]]){
- const vehicle=improveVehicleCabin(createShowroomPickup({name,color}));vehicle.position.set(1,.08,z);vehicle.rotation.y=-Math.PI/2;root.add(vehicle);
- const podium=new THREE.Mesh(new THREE.CylinderGeometry(3.25,3.25,.08,64),mat(0xaeb2b1,.32,.2));podium.position.set(1,.04,z);podium.name=name+' display plinth';root.add(podium);
- cars.push({name,position:world(1,z),model:vehicle});displaySolids.push({x:1,z,w:6.0,d:2.7});
- const placard=box(root,.08,.70,1.0,4.1,.66,z,steel);const cv=document.createElement('canvas');cv.width=768;cv.height=320;const c=cv.getContext('2d');c.fillStyle='#1e3541';c.fillRect(0,0,768,320);c.fillStyle='#f2eadc';c.textAlign='center';c.font='bold 50px Arial';c.fillText(name,384,110,710);c.fillStyle='#8ccbd8';c.font='32px Arial';c.fillText('4 × 4 CREW-CAB PICKUP',384,190);c.font='25px Arial';c.fillText('Speak with a sales consultant',384,260);const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;const face=new THREE.Mesh(new THREE.PlaneGeometry(1.45,.60),new THREE.MeshBasicMaterial({map:tex}));face.rotation.y=Math.PI/2;face.position.set(4.15,.70,z);root.add(face);}
- const sales=addShowroomSales(root);const gallery=addShowroomGallery(root,{getPlayer});
+ const vehicle=improveVehicleCabin(createShowroomPickup({name,color}));vehicle.position.set(19,GROUND_LEVEL+.08,z);vehicle.rotation.y=Math.PI/2;root.add(vehicle);
+ const podium=new THREE.Mesh(new THREE.CylinderGeometry(3.25,3.25,.08,64),mat(0xaeb2b1,.32,.2));podium.position.set(19,GROUND_LEVEL+.04,z);podium.name=name+' display plinth';root.add(podium);
+ cars.push({name,position:world(19,z),model:vehicle});displaySolids.push({x:19,z,w:6.0,d:2.7});
+ const placard=box(root,.08,.70,1.0,22.4,GROUND_LEVEL+.66,z,steel);const cv=document.createElement('canvas');cv.width=768;cv.height=320;const c=cv.getContext('2d');c.fillStyle='#1e3541';c.fillRect(0,0,768,320);c.fillStyle='#f2eadc';c.textAlign='center';c.font='bold 50px Arial';c.fillText(name,384,110,710);c.fillStyle='#8ccbd8';c.font='32px Arial';c.fillText('4 × 4 CREW-CAB PICKUP',384,190);c.font='25px Arial';c.fillText('Speak with a sales consultant',384,260);const tex=new THREE.CanvasTexture(cv);tex.colorSpace=THREE.SRGBColorSpace;const face=new THREE.Mesh(new THREE.PlaneGeometry(1.45,.60),new THREE.MeshBasicMaterial({map:tex}));face.rotation.y=Math.PI/2;face.position.set(22.45,GROUND_LEVEL+.70,z);root.add(face);}
+ const sales=addShowroomSales(root,{getPlayer});const gallery=addShowroomGallery(root,{getPlayer});
  // Reception, lounge, illuminated ceiling fixtures, offices and showroom plants.
  for(const zz of [-9,0,9]){const light=new THREE.PointLight(0xf1f6ff,2.1,14);light.position.set(0,7.8,zz);root.add(light);box(root,1.6,.08,5.4,0,8.25,zz,new THREE.MeshBasicMaterial({color:0xe8f5ff}));}
  // Level stone forecourt with painted parking bays and landscape islands.
@@ -111,14 +111,14 @@ export function createDealership(scene,{x=-31,z=-48,rotation=0,getPlayer=()=>nul
   box(root,.2,7,.2,23,3.5,zz,steel);box(root,1.7,.2,.8,23,7.1,zz,new THREE.MeshBasicMaterial({color:0xfff2db}));
  }
  function displayCar(px,pz,color,type='sedan'){const g=improveVehicleCabin(createDetailedCar({color,type}));g.position.set(px,.02,pz);root.add(g);}
- displayCar(19,-7,0x9d2433);displayCar(19,7,0x34597a,'suv');
+ // Exterior display bays are occupied by the two reference pickups.
  // Exterior road-facing banner.
  const banner=box(root,.2,4.5,1.5,15,2.35,12.7,steel);
  const entrance=world(14,0),insidePoint=world(9,0),exitPoint=world(16,0);
  return {root,x,z,cars,sales,gallery,entrance,insidePoint,exitPoint,
  update(dt){const p=getPlayer();const near=!!p&&Math.hypot(p.x-x,p.z-z)<55;sales.update(dt,near);gallery.update(near);},
  isNear(px,pz,r=4.5){return Math.hypot(px-entrance.x,pz-entrance.z)<r;},
- blocks(px,pz){const p=local(px,pz);return Math.abs(p.z)<14.5&&p.x>-12.5&&p.x<12.6;},
+ blocks(px,pz){const p=local(px,pz);return (Math.abs(p.z)<14.5&&p.x>-12.5&&p.x<12.6)||displaySolids.some(s=>Math.abs(p.x-s.x)<s.w/2+.28&&Math.abs(p.z-s.z)<s.d/2+.28);},
  inside(px,pz){const p=local(px,pz);return p.x>-11.4&&p.x<11.7&&Math.abs(p.z)<13.6&&![...displaySolids,...sales.solids,...gallery.solids].some(s=>Math.abs(p.x-s.x)<s.w/2+.28&&Math.abs(p.z-s.z)<s.d/2+.28);},
  nearestCar(px,pz,max=4.5){let best=null,d=max;for(const c of cars){const dist=Math.hypot(px-c.position.x,pz-c.position.z);if(dist<d){d=dist;best=c;}}return best;}};
 }
