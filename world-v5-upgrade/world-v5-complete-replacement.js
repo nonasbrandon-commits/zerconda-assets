@@ -65,7 +65,7 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261118-wall-mystery-v111';
 import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
-import {createZercondaBeach} from './zerconda-beach.js?v=20261119-sand-mountains-v157';
+import {createZercondaBeach} from './zerconda-beach.js?v=20261119-boardwalk-v158';
 import {createCityMap} from './top-city-map.js?v=20261119-fountain-seating-v135';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261119-timber-cottages-v156';
@@ -76,7 +76,7 @@ import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-g
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-19-sand-mountains-v157';
+const ZERCONDA_BUILD='2026-11-19-boardwalk-v158';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -1324,7 +1324,7 @@ function animate(){
  doorButton.textContent=universalSession?(universalSession.home?'Exit Home':'F · EXIT BUILDING'):universalEntry?.garage?'F · ENTER GARAGE':universalEntry?.home?'Enter home':universalEntry?.apartment?'F · ENTER APARTMENTS':'F · ENTER BUILDING';
  const nearSeat=nearestAvailableSeat();
  cafeButton.style.display=(sittingSeat||nearSeat)&&!activeCar?'block':'none';
- cafeButton.textContent=sittingSeat?'C · STAND UP':nearSeat?.kind==='beach lounger'?'Sit on lounger':'C · SIT DOWN';
+ cafeButton.textContent=sittingSeat?'C · STAND UP':nearSeat?.kind==='beach lounger'?'Sit on lounger':nearSeat?.kind==='boardwalk bench'?'Sit on bench':'C · SIT DOWN';
  const otherInterior=carnival.riding||carnival.gameOpen||rvPark.inside||observationNeedle.riding||barber.active||office.active||skate.riding||airfield.boarded||camp.resting||camp.insideCabin||!!premier.at(player.x,player.z)||boutique.active||bowling.active||scooters.riding||marine.riding||club.active||ownableHomes.active||!!universalSession||!!apartmentSession||onObservationDeck||insideNeedleLobby;
  cafeEntryButton.style.display=(cafeInside||!activeCar&&!otherInterior&&!dealerInside&&nearCafeEntrance())?'block':'none';
  cafeEntryButton.textContent=cafeInside?'E · EXIT COFFEE SHOP':'E · ENTER COFFEE SHOP';

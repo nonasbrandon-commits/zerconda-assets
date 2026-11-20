@@ -1,3 +1,4 @@
+import {createBoardwalkFurniture} from './boardwalk-furniture.js?v=20261119-boardwalk-v158';
 import {createBeachSandMaterial} from './beach-sand-material.js?v=20261119-sand-mountains-v157';
 import {advanceCoastalBreeze} from './coastal-breeze.js?v=20261119-coastal-breeze-v154';
 import {createReferenceBeachPalm} from './reference-beach-palm.js?v=20261119-coastal-breeze-v154';
@@ -17,10 +18,7 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  const access=mesh(new THREE.PlaneGeometry(19,38),asphalt,0,.14,171);access.rotation.x=-Math.PI/2;
  // A single instanced deck spans the interior faces of both perimeter walls.
  const boardwalkBounds={minX:-443.1,maxX:569.1,minZ:181,maxZ:191,y:.215};
- const boardwalk=mesh(new THREE.PlaneGeometry(1012.2,10),wood,63,.17,186);boardwalk.name='Wall-to-wall beach boardwalk';boardwalk.rotation.x=-Math.PI/2;
- const planks=new THREE.InstancedMesh(new THREE.BoxGeometry(2.06,.05,9.5),wood,482),plankMatrix=new THREE.Matrix4();
- planks.name='Continuous boardwalk planks';planks.receiveShadow=true;
- for(let i=0;i<482;i++){plankMatrix.makeTranslation(-443.1+(i+.5)*2.1,.19,186);planks.setMatrixAt(i,plankMatrix);}root.add(planks);
+ const boardwalkFurniture=createBoardwalkFurniture(root);
  const oceanSystem=createRealisticOcean(root);
  // Sand relief is shaded continuously; no flat oval dune props.
  // User reference beach sets: navy parasol, cream chaise, table and plant.
@@ -37,7 +35,8 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
   if(Math.abs(x)<14)continue;
   palms.push(createReferenceBeachPalm(root,{x,y:.085,z,height:8.9*(.86+(i%5)*.055)}));
  }
- return {root,sandMaterial:sand,boardwalkBounds,lounges,palms,nearestSeat(x,z,max=2.5){let best=null,d=max;for(const l of lounges){const distance=Math.hypot(x-l.seat.x,z-l.seat.z);if(distance<d){best=l.seat;d=distance;}}return best;},blocks(x,z){return lounges.some(l=>l.blocks(x,z))||palms.some(p=>Math.hypot(x-p.x,z-p.z)<.48);},ocean:oceanSystem,heightAt(x,z){
+ const allBeachSeats=[...lounges.map(l=>l.seat),...boardwalkFurniture.seats];
+ return {root,sandMaterial:sand,boardwalkBounds,lounges,palms,boardwalkFurniture,nearestSeat(x,z,max=2.5){let best=null,d=max;for(const seat of allBeachSeats){const distance=Math.hypot(x-seat.x,z-seat.z);if(distance<d){best=seat;d=distance;}}return best;},blocks(x,z){return boardwalkFurniture.blocks(x,z)||lounges.some(l=>l.blocks(x,z))||palms.some(p=>Math.hypot(x-p.x,z-p.z)<.48);},ocean:oceanSystem,heightAt(x,z){
   // Match the visible planks (.19 centre + .025 half thickness), not sea level.
   if(x>=boardwalkBounds.minX&&x<=boardwalkBounds.maxX&&z>=181&&z<=191)return .215;
   if(Math.abs(x)<=9.5&&z>=152&&z<=190)return .14;
