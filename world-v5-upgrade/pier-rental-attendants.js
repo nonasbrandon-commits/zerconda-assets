@@ -1,19 +1,33 @@
 import * as THREE from 'three';
-const texture=new THREE.TextureLoader().load(new URL('./assets/pier-rental-attendants-v159.png',import.meta.url).href);texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=8;
+import {fitBeachSwimwear} from './beach-visitors.js?v=20261119-lively-attendants-v161';
+import {createRealisticHuman} from './player-human.js?v=20261119-profile-v136';
 export function addRentalAttendant(kiosk){
- // Only the upper body is visible above the counter. Fixed in the hut, never a camera-facing billboard.
- const height=2.25,base=.13,bottom=1.31,top=base+height,width=height*.75;
- const geometry=new THREE.PlaneGeometry(width,top-bottom),uv=geometry.attributes.uv,half=kiosk.kind==='fishing'?0:.5;
- for(let i=0;i<uv.count;i++)uv.setXY(i,half+uv.getX(i)*.5,(bottom-base)/height+uv.getY(i)*(top-bottom)/height);
- const person=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({map:texture,transparent:true,alphaTest:.18,side:THREE.FrontSide,toneMapped:false}));
- person.name=kiosk.kind==='fishing'?'Fishing pole attendant':'Boat rental attendant';person.position.set(-.25,(top+bottom)/2,3.455);person.userData.referenceAsset='assets/pier-rental-attendants-v159.png';kiosk.root.add(person);return person;
+ const female=kiosk.kind==='boat',person=createRealisticHuman({modelFile:female?'resident-08.glb':null,shirt:female?'#d42638':'#e3dccf',pants:'#263447',initialOutfit:{shorts:true,tee:female}});
+ const anchor=new THREE.Group();anchor.name=female?'Boat rental attendant':'Fishing pole attendant';anchor.position.set(-.25,.13,2.48);kiosk.root.add(anchor);anchor.add(person.root);
+ // Both actors use the exact 1.86 m normalization used by the player's model.
+ anchor.userData.height=1.86;anchor.userData.gender=female?'female':'male';anchor.userData.controller=person;anchor.userData.time=female?1.7:0;anchor.userData.step=0;anchor.userData.speaking=false;
+ person.readyPromise.then(()=>{if(female)fitBeachSwimwear(person,true,'vec3(.70,.025,.045)');person.setHair({style:'original',color:'#4a3224'});person.root.updateMatrixWorld(true);anchor.userData.ready=person.ready;});kiosk.attendant=anchor;return anchor;
 }
+const point=new THREE.Vector3();
+export function updateRentalAttendants(kiosks,dt,player,talking=null){for(const kiosk of kiosks){const a=kiosk.attendant;if(!a)continue;const d=Math.hypot(player.x-kiosk.root.position.x,player.z-kiosk.root.position.z);if(d>65)continue;const u=a.userData;u.time+=Math.min(dt,.1);const t=u.time,cycle=t%14;
+ const destination=cycle<5?-.45:cycle<10?.22:-.25,old=a.position.x;a.position.x=THREE.MathUtils.damp(a.position.x,destination,1.5,dt);const speed=Math.abs(a.position.x-old)/Math.max(dt,.001);
+ u.controller.update(dt,speed>.065?.18:0);kiosk.root.updateWorldMatrix(true,false);point.set(player.x,kiosk.root.position.y+1.6,player.z);kiosk.root.worldToLocal(point);const turn=THREE.MathUtils.clamp(Math.atan2(point.x-a.position.x,point.z-a.position.z),-.32,.32);a.rotation.y=THREE.MathUtils.damp(a.rotation.y,turn,3,dt);
+ let head;const arms=[];a.traverse(o=>{if(!o.isBone)return;const n=o.name.replace(/[^a-z0-9]/gi,'');if(/Head$/.test(n))head=o;if(/Forearm$|UpperArm$/.test(n))arms.push(o);});const engaged=talking===kiosk.kind;u.talkLeft=engaged&&!u.wasEngaged?4:Math.max(0,(u.talkLeft||0)-dt);u.wasEngaged=engaged;const speaking=engaged&&u.talkLeft>0;u.speaking=speaking;
+ if(head){head.rotation.y+=Math.sin(t*.61)*.025+turn*.2;head.rotation.z+=Math.sin(t*.83)*.018;head.rotation.x+=speaking?Math.sin(t*3.2)*.035:Math.sin(t*.72)*.012;}
+ if(speaking)for(const arm of arms){if(/R.*Forearm/.test(arm.name.replace(/[^a-z0-9]/gi,'')))arm.rotation.x+=Math.sin(t*2.1)*.12;}
+ a.updateMatrixWorld(true);
+ }}
 export function createRentalConversation({getPlayer,canInteract,desks,onYes}){
  const panel=document.createElement('section');panel.id='pier-rental-conversation';panel.setAttribute('role','region');panel.setAttribute('aria-label','Pier rental attendant');panel.style.cssText='display:none;position:fixed;left:50%;bottom:72px;transform:translateX(-50%);z-index:17000;box-sizing:border-box;width:min(390px,calc(100vw - 28px));padding:18px;background:#17373af5;color:#fff8e6;border:1px solid #c5be91;border-radius:14px;box-shadow:0 6px 24px #0005;font:16px system-ui';
  const title=document.createElement('strong'),message=document.createElement('p'),row=document.createElement('div');message.setAttribute('aria-live','polite');message.style.cssText='line-height:1.45;margin:10px 0 16px';row.style.cssText='display:flex;gap:12px';panel.append(title,message,row);
- let current=null,inside=new Set(),lastSpeech=null;
- function hide(){panel.style.display='none';current=null;if(lastSpeech&&globalThis.speechSynthesis){speechSynthesis.cancel();lastSpeech=null;}}
- function speak(text,kind){if(!globalThis.speechSynthesis||!globalThis.SpeechSynthesisUtterance)return;try{if(speechSynthesis.speaking)return;const utterance=new SpeechSynthesisUtterance(text);utterance.rate=.94;utterance.pitch=kind==='boat'?1.12:.93;const voices=speechSynthesis.getVoices().filter(v=>v.lang.startsWith('en'));const preferred=voices.find(v=>kind==='boat'?/female|samantha|zira|jenny/i.test(v.name):/male|david|daniel|guy/i.test(v.name));if(preferred)utterance.voice=preferred;lastSpeech=utterance;speechSynthesis.speak(utterance);}catch{}}
+ let current=null,inside=new Set(),lastSpeech=null;const boatGreeting=new Audio(new URL('./assets/boat-attendant-greeting-v161.mp3',import.meta.url).href);boatGreeting.preload='auto';
+ function hide(){boatGreeting.pause();boatGreeting.currentTime=0;speechGeneration++;if(voiceTimer)clearTimeout(voiceTimer);panel.style.display='none';current=null;if(lastSpeech&&globalThis.speechSynthesis){speechSynthesis.cancel();lastSpeech=null;}}
+ let voiceTimer=null,speechGeneration=0;
+ function speak(text,kind){if(kind==='boat'){boatGreeting.currentTime=0;const play=boatGreeting.play();play?.catch(()=>{if(current===kind)speakNative(text,kind);});return;}speakNative(text,kind);}
+ function speakNative(text,kind){if(!globalThis.speechSynthesis||!globalThis.SpeechSynthesisUtterance)return;const generation=++speechGeneration;const female=kind==='boat';let tries=0;
+ const say=()=>{if(generation!==speechGeneration||current!==kind)return;const voices=speechSynthesis.getVoices().filter(v=>/^en[-_]/i.test(v.lang));const feminine=/female|samantha|zira|jenny|aria|sonia|libby|michelle|emma|ava|sara|susan|karen|victoria|moira|tessa|hazel|salli|joanna|allison|shelley|catherine/i,masculine=/\bmale\b|david|daniel|guy|george|james|ryan|mark|brian|thomas|arthur/i;
+ const voice=voices.find(v=>female?feminine.test(v.name):masculine.test(v.name)&&!feminine.test(v.name))||voices.find(v=>female?!masculine.test(v.name):!feminine.test(v.name));if(!voice&&tries++<12){voiceTimer=setTimeout(say,125);return;}
+ const parts=female?['Hi, hun!','Would you like to rent a boat?']:[text];for(const[line,index]of parts.map((line,index)=>[line,index])){const u=new SpeechSynthesisUtterance(line);u.lang=voice?.lang||'en-US';if(voice)u.voice=voice;u.rate=female?(index?1.02:1.06):.96;u.pitch=female?(index?1.13:1.22):.94;u.volume=1;lastSpeech=u;speechSynthesis.speak(u);}};say();}
  function show(kind){if(!canInteract())return;current=kind;inside.add(kind);title.textContent=kind==='boat'?'Boat Rental':'Fishing Poles';message.textContent=kind==='boat'?'Hi Hun, Would you like to rent a boat?':'Would you like to rent a fishing pole?';panel.style.display='block';speak(message.textContent,kind);}
  for(const [label,yes]of [['Yes',true],['No',false]]){const button=document.createElement('button');button.textContent=label;button.type='button';button.style.cssText='flex:1;min-height:46px;border:0;border-radius:8px;background:#d8e4c9;color:#183735;font:600 16px system-ui;cursor:pointer';button.onclick=()=>{const kind=current;hide();if(yes&&kind&&canInteract())onYes(kind);};row.appendChild(button);}
  for(const event of ['pointerdown','pointerup','click','keydown','keyup','wheel'])panel.addEventListener(event,e=>{e.stopPropagation();if(event==='keydown'&&e.key==='Escape'){e.preventDefault();hide();}});
