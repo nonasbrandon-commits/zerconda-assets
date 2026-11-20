@@ -1,3 +1,4 @@
+import {createLuxurySedan,sedanColors} from './luxury-sedan.js?v=20261120-luxury-sedan-v174';
 import {createBeachVisitors} from './beach-visitors.js?v=20261120-head-hair-v170';
 import {positionBeachLoungeCamera} from './beach-lounge-camera.js?v=20261119-coastal-breeze-v154';
 import {applyBeachLoungePose} from './beach-lounge-pose.js?v=20261119-beach-seating-v151';
@@ -56,7 +57,7 @@ import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-h
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {installRealisticFountain} from './realistic-fountain.js?v=20261119-fountain-seating-v135';
-import {createObservationNeedle} from './observation-needle.js?v=20261120-standing-attendant-v167';
+import {createObservationNeedle} from './observation-needle.js?v=20261120-needle-base-v173';
 import {createCloudSky} from './cloud-sky.js?v=20261120-standing-attendant-v167';
 import {addCityDepth} from './city-depth-assets.js?v=20261118-wall-mystery-v111';
 import {addBuildingIdentity} from './nine-building-styles.js';
@@ -192,7 +193,7 @@ function authoredGroundHeightAt(x,z){
  const tattooY=tattooShop?.heightAt(x,z);if(tattooY!==null&&tattooY!==undefined)return tattooY;
  if(observationNeedle?.riding)return observationNeedle.riderY;
  if(onObservationDeck)return observationNeedle.deckY;
- if(insideNeedleLobby||observationNeedle?.isInGroundBuilding(x,z))return observationNeedle.lobbyY;
+ if(insideNeedleLobby)return observationNeedle.lobbyY;const needleGround=observationNeedle?.groundHeightAt(x,z);if(needleGround!==null&&needleGround!==undefined)return needleGround;
  const loopY=airportLoop?.heightAt(x,z);if(loopY!==null&&loopY!==undefined)return loopY;
  const baseY=militaryBase?.heightAt(x,z);if(baseY!==null&&baseY!==undefined)return baseY;
  const forestY=northernForest?.heightAt(x,z);if(forestY!==null&&forestY!==undefined)return forestY;
@@ -764,12 +765,12 @@ async function populate(){
     box(.5,.55,.5,x,4.6,z,stone);}
  }
  const carModels=Array.from({length:MOBILE?16:32},(_,i)=>['sedan','white','sport','white','sedan'][i%5]);
- for(let i=0;i<Math.min(carModels.length,parking.length);i++){await new Promise(resolve=>setTimeout(resolve,0));
+ let luxuryIndex=0;for(let i=0;i<Math.min(carModels.length,parking.length);i++){await new Promise(resolve=>setTimeout(resolve,0));
   if(i===4||i===12)continue;
   const [x,z,angle]=parking[i],src=loaded[carModels[i]];
-  if(!src)continue;
-  const model=cloneNormalized(src,0,0,1.55,0);
-  if(model){const pivot=new THREE.Group();pivot.name='Drivable passenger car';pivot.position.set(x,0,z);pivot.rotation.y=angle;pivot.add(model);improveVehicleCabin(pivot);optimizeStaticModel(pivot,'passenger-'+carModels[i]);addVehicleLOD(pivot,carModels[i]);await prepareScenery(pivot);scene.add(pivot);cars.push({group:pivot,x,z,angle,speed:0});}
+  const luxury=carModels[i]==='sedan'||carModels[i]==='white';if(!src&&!luxury)continue;
+  const model=luxury?createLuxurySedan({color:sedanColors[(luxuryIndex++)%sedanColors.length]}):cloneNormalized(src,0,0,1.55,0);
+  if(model){const pivot=new THREE.Group();pivot.name='Drivable passenger car';pivot.position.set(x,0,z);pivot.rotation.y=angle;pivot.add(model);improveVehicleCabin(pivot);const variantKey=luxury?'luxury-'+model.userData.paint:carModels[i];pivot.userData.vehicleType=luxury?'luxury-sedan':carModels[i];optimizeStaticModel(pivot,'passenger-'+variantKey);addVehicleLOD(pivot,variantKey);await prepareScenery(pivot);scene.add(pivot);cars.push({group:pivot,x,z,angle,speed:0});}
  }
  // Populate the plaza perimeter with real scanned GLTF street furniture.
  // Unlike primitive placeholder meshes these contain authored textures and normals.
@@ -1003,7 +1004,7 @@ function toggleObservationDeck(){
   stop();insideNeedleLobby=false;yaw=0;pitch=-.08;observationNeedle.startRide(true,()=>{onObservationDeck=true;player.x=observationNeedle.arrival.x;player.z=observationNeedle.arrival.z;stop();yaw=Math.PI;pitch=0;camera.position.set(player.x,observationNeedle.deckY+2.7,player.z+2);townControls.notify('Z-Needle lounge and outdoor skywalk. Walk through any of the four open portals to enjoy the city views.');});return;
  }
  if(Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)>7)return;
- stop();insideNeedleLobby=true;player.x=observationNeedle.x;player.z=observationNeedle.z+11.3;yaw=Math.PI;pitch=0;camera.position.set(player.x,2.4,player.z+2);townControls.notify('Welcome to Z-Needle. The attendant can let you into the scenic glass elevator.');
+ stop();insideNeedleLobby=true;player.x=observationNeedle.x;player.z=observationNeedle.z+6.0;yaw=Math.PI;pitch=0;camera.position.set(player.x,2.4,player.z+2);townControls.notify('Welcome to Z-Needle. The attendant can let you into the scenic glass elevator.');
 }
 
 function toggleCar(){
