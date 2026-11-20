@@ -48,7 +48,7 @@ import {createBowlingAlley} from './bowling-alley.js?v=20261119-entrance-steerin
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261119-reference-trucks-v126';
 import {createSeasidePier} from './seaside-pier.js?v=20261119-coastal-breeze-v154';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
-import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261118-clear-roads-v112';
+import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261119-alpine-v155';
 import {createClubZerconda} from './club-zerconda.js?v=20261119-fountain-seating-v135';
 import {createRealisticHuman} from './realistic-human.js?v=20261118-faster-town-v106';
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
@@ -76,7 +76,7 @@ import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-g
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-19-coastal-breeze-v154';
+const ZERCONDA_BUILD='2026-11-19-alpine-v155';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
