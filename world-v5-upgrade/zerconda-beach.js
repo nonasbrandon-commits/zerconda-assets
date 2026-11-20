@@ -1,4 +1,4 @@
-import {createBoardwalkFurniture} from './boardwalk-furniture.js?v=20261119-boardwalk-v158';
+import {createBoardwalkFurniture} from './boardwalk-furniture.js?v=20261119-boardwalk-edge-v164';
 import {createBeachSandMaterial} from './beach-sand-material.js?v=20261119-sand-mountains-v157';
 import {advanceCoastalBreeze} from './coastal-breeze.js?v=20261119-coastal-breeze-v154';
 import {createReferenceBeachPalm} from './reference-beach-palm.js?v=20261119-coastal-breeze-v154';
