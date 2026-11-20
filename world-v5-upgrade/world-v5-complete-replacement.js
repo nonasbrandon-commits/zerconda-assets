@@ -48,7 +48,7 @@ import {createBowlingAlley} from './bowling-alley.js?v=20261119-entrance-steerin
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261119-reference-trucks-v126';
 import {createSeasidePier} from './seaside-pier.js?v=20261119-coastal-breeze-v154';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
-import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261119-alpine-v155';
+import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261119-sand-mountains-v157';
 import {createClubZerconda} from './club-zerconda.js?v=20261119-fountain-seating-v135';
 import {createRealisticHuman} from './realistic-human.js?v=20261118-faster-town-v106';
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
@@ -65,7 +65,7 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261118-wall-mystery-v111';
 import {addAirDancers} from './air-dancers.js?v=20261118-visible-trails-v100';
-import {createZercondaBeach} from './zerconda-beach.js?v=20261119-coastal-breeze-v154';
+import {createZercondaBeach} from './zerconda-beach.js?v=20261119-sand-mountains-v157';
 import {createCityMap} from './top-city-map.js?v=20261119-fountain-seating-v135';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261119-timber-cottages-v156';
@@ -76,7 +76,7 @@ import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-g
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-19-timber-cottages-v156';
+const ZERCONDA_BUILD='2026-11-19-sand-mountains-v157';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
