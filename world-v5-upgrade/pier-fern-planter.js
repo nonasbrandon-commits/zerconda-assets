@@ -1,0 +1,6 @@
+import * as THREE from 'three';
+import {addCoastalBreeze} from './coastal-breeze.js?v=20261119-coastal-breeze-v154';
+const texture=new THREE.TextureLoader().load(new URL('./assets/pier-fern-planter-v154.png',import.meta.url).href);texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;
+const material=addCoastalBreeze(new THREE.MeshBasicMaterial({map:texture,transparent:true,alphaTest:.12,side:THREE.DoubleSide,depthWrite:true,toneMapped:false}),{kind:'pier fern crown',baseY:.31,height:.66,amplitude:.014,flutter:.0025});
+const geometry=new THREE.PlaneGeometry(2/3,1,14,30);geometry.translate(0,.5,0);const eye=new THREE.Vector3(),center=new THREE.Vector3();
+export function createPierFernPlanter(parent,{x,z,y=1.595,height=2.45}){const root=new THREE.Group();root.name='Pier fern tree · aged planter and hibiscus';root.position.set(x,y,z);root.userData.referenceAsset='assets/pier-fern-planter-v154.png';parent.add(root);const photo=new THREE.Mesh(geometry,material);photo.scale.setScalar(height);photo.name='Fern planter · fixed pot, breezy foliage';root.add(photo);photo.onBeforeRender=(_r,_s,camera)=>{camera.getWorldPosition(eye);root.getWorldPosition(center);photo.rotation.y=Math.atan2(eye.x-center.x,eye.z-center.z);photo.updateMatrixWorld(true);};return{root,photo,x,z,radius:.57};}

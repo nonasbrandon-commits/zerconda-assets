@@ -1,3 +1,4 @@
+import {addCoastalBreeze} from './coastal-breeze.js?v=20261119-coastal-breeze-v154';
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {batchApplianceParts} from './appliance-batching.js?v=20261119-performance-v147';
@@ -30,5 +31,6 @@ function tableTemplate(){const g=new THREE.Group();g.name='Separate round teak t
  flattenAndBatch(g);return g;
 }
 
+addCoastalBreeze(leaf,{kind:'table palm fronds',baseY:.82,height:.58,amplitude:.022,flutter:.004});
 const chair=chairTemplate(),umbrella=parasolTemplate(),table=tableTemplate();
 export function createBeachLounge3D(parent,{x,y=.085,z,index=0}){const root=new THREE.Group();root.name='Ocean-facing beach seating '+index;root.position.set(x,y,z);root.rotation.y=((index%5)-2)*.023;parent.add(root);root.add(chair.clone(true));const side=index%2?1:-1,tableX=side*(1.02+(index%4)*.13),tableZ=-.14+((index*7)%5)*.15;const tableRoot=table.clone(true);tableRoot.position.set(tableX,0,tableZ);root.add(tableRoot);const parasol=umbrella.clone(true);parasol.position.set(side*.56,0,-.66);root.add(parasol);root.updateWorldMatrix(true,true);const seatPoint=root.localToWorld(new THREE.Vector3(0,.56,-.32)),tablePoint=root.localToWorld(new THREE.Vector3(tableX,0,tableZ));const seat={x:seatPoint.x,z:seatPoint.z,sitHeight:seatPoint.y,facing:root.rotation.y,kind:'beach lounger',reclined:true};return{root,x,z,seat,tableRoot,parasol,tablePoint,blocks(px,pz){const local=root.worldToLocal(new THREE.Vector3(px,y,pz));return Math.abs(local.x)<.57&&local.z>-.98&&local.z<1.25||Math.hypot(px-tablePoint.x,pz-tablePoint.z)<.43||Math.hypot(local.x-side*.56,local.z+.66)<.14;}};}

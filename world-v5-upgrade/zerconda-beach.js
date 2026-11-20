@@ -1,5 +1,6 @@
-import {createReferenceBeachPalm} from './reference-beach-palm.js?v=20261119-beach-palms-v150';
-import {createBeachLounge3D} from './beach-lounge-3d.js?v=20261119-beach-seating-v151';
+import {advanceCoastalBreeze} from './coastal-breeze.js?v=20261119-coastal-breeze-v154';
+import {createReferenceBeachPalm} from './reference-beach-palm.js?v=20261119-coastal-breeze-v154';
+import {createBeachLounge3D} from './beach-lounge-3d.js?v=20261119-coastal-breeze-v154';
 import * as THREE from 'three';
 import {createRealisticOcean} from './realistic-ocean.js?v=20261118-wall-mystery-v111';
 // Zerconda South Beach, reachable on foot from the southern city edge at z=168.
@@ -50,5 +51,5 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
   if(Math.abs(x)<=9.5&&z>=152&&z<=190)return .14;
   if(x>=-444&&x<=570&&z>=154&&z<=245)return .085;
   return null;
- },update(dt){oceanSystem.update(dt);},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
+ },update(dt){advanceCoastalBreeze(dt);oceanSystem.update(dt);},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
 }
