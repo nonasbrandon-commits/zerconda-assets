@@ -4,7 +4,7 @@ import {createBoardwalkFurniture} from './boardwalk-furniture.js?v=20261120-stan
 import {createBeachSandMaterial} from './beach-sand-material.js?v=20261119-sand-mountains-v157';
 import {advanceCoastalBreeze} from './coastal-breeze.js?v=20261119-coastal-breeze-v154';
 import {createReferenceBeachPalm} from './reference-beach-palm.js?v=20261120-standing-attendant-v167';
-import {createBeachLounge3D} from './beach-lounge-3d.js?v=20261119-coastal-breeze-v154';
+import {createBeachLounge3D} from './beach-lounge-3d.js?v=20261120-flat-loungers-v178';
 import * as THREE from 'three';
 import {createRealisticOcean} from './realistic-ocean.js?v=20261118-wall-mystery-v111';
 // Zerconda South Beach, reachable on foot from the southern city edge at z=168.
