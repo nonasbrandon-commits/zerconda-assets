@@ -90,7 +90,7 @@ import {createNeedleSportsPark} from './needle-sports-park.js?v=20261121-city-li
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-21-city-life-v196';
+const ZERCONDA_BUILD='2026-11-21-startup-retry-v197';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
