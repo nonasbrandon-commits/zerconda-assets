@@ -1,6 +1,7 @@
+import {createHouseSunShadows} from './house-sun-shadows.js?v=20261121-house-realism-v212';
 import {createRoadTreeMaintenance} from './road-tree-maintenance.js?v=20261121-forward-slide-v210';
 import {createChessTables} from './chess-tables.js?v=20261121-fast-start-v205';
-import {createRealEstate} from './real-estate.js?v=20261121-lot4-v211';
+import {createRealEstate} from './real-estate.js?v=20261121-house-realism-v212';
 import {loadStreetTree} from './street-tree-assets.js?v=20261121-fast-start-v205';
 import {createAmbientTraffic} from './ambient-traffic.js?v=20261121-forward-slide-v210';
 import {createRoadMapGeometry} from './road-map-geometry.js?v=20261121-fast-start-v205';
@@ -129,13 +130,14 @@ const shaderWarmup=createShaderWarmup(renderer);
 let preferredPixelRatio=Math.min(devicePixelRatio,MOBILE?.85:1),slowRenderFrames=0,lastRenderTime=performance.now();renderer.setPixelRatio(preferredPixelRatio);renderer.setSize(innerWidth,innerHeight);
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
-// Temporarily disable costly shadow maps while diagnosing blank WebGL output.
+// Static house shadows are cached locally; the rest of town keeps its existing render budget.
 renderer.shadowMap.enabled=false;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 document.body.prepend(renderer.domElement);
 const hemisphere=new THREE.HemisphereLight(0xe6f4ff,0x737569,1.3);scene.add(hemisphere);let forestShade=0;const daylightFog=new THREE.Color(0xa9c8dc),forestFog=new THREE.Color(0x74846f);
 const sun=new THREE.DirectionalLight(0xffefdc,2.8);sun.position.set(-70,135,85);sun.castShadow=!MOBILE;
 const shadowSize=matchMedia('(pointer:coarse)').matches?1024:2048;sun.shadow.mapSize.set(shadowSize,shadowSize);sun.shadow.camera.left=-70;sun.shadow.camera.right=70;
 sun.shadow.camera.top=70;sun.shadow.camera.bottom=-70;sun.shadow.normalBias=.025;scene.add(sun);scene.add(sun.target);
+const houseSunShadows=createHouseSunShadows({scene,renderer,sun,getHome:()=>realEstate?.stanwood?.root,getPlayer:()=>player,enabled:!MOBILE});
 const M=(color,roughness=.86,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
 // Existing photographic CC0 PBR textures already in GitHub (no cartoon flat ground).
 const groundLoader=new THREE.TextureLoader();
@@ -1372,7 +1374,7 @@ function animate(){
  courtGames?.updateCamera(camera);
  updateAreaLoading();areaResume.save();
  const restorePlayerVisibility=playerCameraGuard.apply(camera,avatar,!barber?.panelOpen&&!tattooShop?.panelOpen);
- try{if(nearbySceneryReady&&characterPrepared&&!tattooShop?.panelOpen&&!playerMenu?.profileOpen){renderBudget.update(motionDt);ownableHomes?.renderWindows(renderer,camera);updateReferenceLampLights(camera);const renderNow=performance.now(),renderGap=renderNow-lastRenderTime;lastRenderTime=renderNow;if(renderGap>150)slowRenderFrames++;else slowRenderFrames=Math.max(0,slowRenderFrames-1);if(slowRenderFrames>=4&&renderer.getPixelRatio()>(MOBILE?.85:1)){renderer.setPixelRatio(Math.max(MOBILE?.85:1,renderer.getPixelRatio()*.85));slowRenderFrames=0;}shaderWarmup.render(scene,camera,()=>{renderer.render(scene,camera);if(!paintedFrame){paintedFrame=true;window.dispatchEvent(new Event('zerconda-frame'));}if(!playable&&nearbySceneryReady&&characterPrepared&&++settledFrames>=3){playable=true;keys.clear();window.dispatchEvent(new Event('zerconda-playable'));setTimeout(()=>{ambientTraffic=createAmbientTraffic(scene,{getPlayer:()=>player,getHeight:groundHeightAt,getVehicles:()=>[...cars,...(zCabs?.collisionVehicles||[])],getPedestrians:()=>[...pedestrianSystem.agents.map(a=>a.group.position),...cityResidents.collisionPeople],prepareModels:()=>loadLuxurySedan(),createModel:i=>i%2?createShowroomPickup({name:'Resident pickup',color:i===1?'#637e91':'#935746'}):createLuxurySedan()});},2000);}});}}
+ try{if(nearbySceneryReady&&characterPrepared&&!tattooShop?.panelOpen&&!playerMenu?.profileOpen){renderBudget.update(motionDt);ownableHomes?.renderWindows(renderer,camera);updateReferenceLampLights(camera);const renderNow=performance.now(),renderGap=renderNow-lastRenderTime;lastRenderTime=renderNow;if(renderGap>150)slowRenderFrames++;else slowRenderFrames=Math.max(0,slowRenderFrames-1);if(slowRenderFrames>=4&&renderer.getPixelRatio()>(MOBILE?.85:1)){renderer.setPixelRatio(Math.max(MOBILE?.85:1,renderer.getPixelRatio()*.85));slowRenderFrames=0;}shaderWarmup.render(scene,camera,()=>{houseSunShadows.render(camera);if(!paintedFrame){paintedFrame=true;window.dispatchEvent(new Event('zerconda-frame'));}if(!playable&&nearbySceneryReady&&characterPrepared&&++settledFrames>=3){playable=true;keys.clear();window.dispatchEvent(new Event('zerconda-playable'));setTimeout(()=>{ambientTraffic=createAmbientTraffic(scene,{getPlayer:()=>player,getHeight:groundHeightAt,getVehicles:()=>[...cars,...(zCabs?.collisionVehicles||[])],getPedestrians:()=>[...pedestrianSystem.agents.map(a=>a.group.position),...cityResidents.collisionPeople],prepareModels:()=>loadLuxurySedan(),createModel:i=>i%2?createShowroomPickup({name:'Resident pickup',color:i===1?'#637e91':'#935746'}):createLuxurySedan()});},2000);}});}}
  catch(err){renderFailure=String(err);console.error('ZERCONDA RENDER ERROR',err);if(!paintedFrame){townEntered=false;window.dispatchEvent(new CustomEvent('zerconda-load-failed',{detail:'The graphics could not start. Please retry.'}));}}
  finally{restorePlayerVisibility();if(activeCar)activeCar.group.visible=true;}
  const nearHome=!boutique.active&&!bowling.active&&!scooters.riding&&!skate?.riding&&!activeCar?ownableHomes.closest(player.x,player.z,11):null;
