@@ -38,7 +38,7 @@ import {createMobilePerformance} from './mobile-performance.js?v=20261120-player
 import {createTownObstacles} from './town-obstacles.js?v=20261118-visible-trails-v100';
 import {createSeasideCarnival} from './seaside-carnival.js?v=20261120-sign-v180-20261119-reference-trucks-v126';
 import {createRVPark} from './rv-park.js?v=20261119-rv-junction-v128';
-import {createModernPickup} from './modern-pickup.js?v=20261118-visible-trails-v100';
+import {createShowroomPickup} from './showroom-pickup.js?v=20261119-reference-trucks-v126';
 import {createLuxuryVillas} from './luxury-villas.js?v=20261119-performance-v147';
 import {createStyleCuts} from './style-cuts.js?v=20261119-clear-mirrors-v133';
 import {createBusinessCentre} from './business-centre.js?v=20261119-entrance-steering-v118';
@@ -54,7 +54,7 @@ import {createScooterRentals} from './electric-scooter-rentals.js?v=20261120-sco
 import {createSeasidePier} from './seaside-pier.js?v=20261120-still-seated-v176';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261119-sand-mountains-v157';
-import {createClubZerconda} from './club-zerconda.js?v=20261119-fountain-seating-v135';
+import {createClubZerconda} from './club-zerconda.js?v=20261120-street-fleet-v186';
 import {createRealisticHuman} from './realistic-human.js?v=20261118-faster-town-v106';
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
@@ -81,7 +81,7 @@ import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-g
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-20-restore-silver-v185';
+const ZERCONDA_BUILD='2026-11-20-street-fleet-v186';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -727,7 +727,7 @@ for(const center of roadLines){
  }
 }
 parking.sort((a,b)=>Math.hypot(a[0]-48,a[1]-48)-Math.hypot(b[0]-48,b[1]-48));
-for(const index of [4,12]){const p=parking[index];if(!p)continue;const [x,z,angle]=p,g=createModernPickup({color:index===4?0x7b9fa9:0x535f68});g.position.set(x,.02,z);g.rotation.y=angle;improveVehicleCabin(g);scene.add(g);cars.push({group:g,x,z,angle,speed:0,eyeHeight:1.9,type:'pickup'});}
+for(const index of [4,12]){const p=parking[index];if(!p)continue;const [x,z,angle]=p,g=createShowroomPickup({name:index===4?'Zerconda Ridge Sandstone':'Zerconda Ridge Graphite',color:index===4?'#c7bb96':'#49535c'});g.position.set(x,.02,z);g.rotation.y=angle;improveVehicleCabin(g);scene.add(g);cars.push({group:g,x,z,angle,speed:0,eyeHeight:1.9,type:'pickup'});}
 
 const loader=new GLTFLoader();
 function load(key){
@@ -757,10 +757,13 @@ function cloneNormalized(source,x,z,targetHeight,angle=0){
 async function populate(){
  await waitForScenerySlot();const sportTemplate=await loadReferenceProp('sport');
  const carModels=Array.from({length:MOBILE?16:32},(_,i)=>['sedan','white','sport','white','sedan'][i%5]);
- const luxuryReady=await loadLuxurySedan().then(()=>true,error=>{console.error('Reference sedan load failed',error);return false;});let luxuryIndex=0;for(let i=0;i<Math.min(carModels.length,parking.length);i++){await waitForScenerySlot();
+ const luxuryReady=await loadLuxurySedan().then(()=>true,error=>{console.error('Reference sedan load failed',error);return false;});let luxuryIndex=0,luxurySlot=0;for(let i=0;i<Math.min(carModels.length,parking.length);i++){await waitForScenerySlot();
   if(i===4||i===12)continue;
   const [x,z,angle]=parking[i],src=loaded[carModels[i]];
-  const luxury=carModels[i]==='sedan'||carModels[i]==='white';if(luxury&&!luxuryReady||!luxury&&carModels[i]==='sport'&&!sportTemplate||!luxury&&carModels[i]!=='sport'&&!src)continue;
+  const luxury=carModels[i]==='sedan'||carModels[i]==='white';
+  // Keep alternating silver-car spaces open; retain sports cars and both truck slots.
+  if(luxury&&(luxurySlot++%2===1))continue;
+  if(luxury&&!luxuryReady||!luxury&&carModels[i]==='sport'&&!sportTemplate||!luxury&&carModels[i]!=='sport'&&!src)continue;
   const model=luxury?createLuxurySedan({color:sedanColors[(luxuryIndex++)%sedanColors.length]}):carModels[i]==='sport'?sportTemplate.clone(true):cloneNormalized(src,0,0,1.55,0);
   if(model){const pivot=new THREE.Group();pivot.name='Drivable passenger car';pivot.position.set(x,0,z);pivot.rotation.y=angle;pivot.add(model);if(luxury||carModels[i]==='sport')pivot.userData.cabinImproved=true;else improveVehicleCabin(pivot);const variantKey=luxury?'luxury-'+model.userData.paint:carModels[i];pivot.userData.vehicleType=luxury?'luxury-sedan':carModels[i];optimizeStaticModel(pivot,'passenger-'+variantKey);addVehicleLOD(pivot,variantKey);await prepareScenery(pivot);scene.add(pivot);cars.push({group:pivot,x,z,angle,speed:0,eyeHeight:luxury?1.22:carModels[i]==='sport'?.95:1.58});}
  }
