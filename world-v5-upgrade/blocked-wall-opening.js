@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
-export const WALL_OPENING={x:-186,z:-1362,width:1.46,height:1.20,blocked:true};
+export const WALL_OPENING={x:-186,z:-1398,width:1.46,height:1.20,blocked:true};
 const edge=[[-.68,.025],[.66,.025],[.72,.28],[.59,.47],[.67,.69],[.43,.84],[.38,1.03],[.16,1.12],[-.04,1.20],[-.28,1.06],[-.51,1.02],[-.48,.81],[-.69,.62],[-.60,.42],[-.74,.28]];
 export function createDamagedWallPanel(width,height,depth,material){
  const shape=new THREE.Shape();shape.moveTo(-width/2,0);shape.lineTo(width/2,0);shape.lineTo(width/2,height);shape.lineTo(-width/2,height);shape.closePath();const hole=new THREE.Path();edge.forEach(([x,y],i)=>i?hole.lineTo(x,y):hole.moveTo(x,y));hole.closePath();shape.holes.push(hole);
