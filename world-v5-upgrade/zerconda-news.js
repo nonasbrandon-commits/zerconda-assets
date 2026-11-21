@@ -1,5 +1,5 @@
 import {createNewsroom} from './newsroom-interior.js?v=20261120-newsroom-v181';
-import {addNewsSatelliteDishes} from './news-satellite-dishes.js?v=20261120-news-dishes-v181';
+import {addNewsSatelliteDishes} from './news-satellite-dishes.js?v=20261121-fast-start-v205';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
 import {createRealisticHuman} from './realistic-human.js?v=20261118-faster-town-v106';

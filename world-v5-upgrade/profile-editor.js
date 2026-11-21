@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {CLOTHING_CATALOG} from './clothing-boutique.js?v=20261119-entrance-steering-v118';
 import {HAIR_STYLES,HAIR_COLORS} from './hair-styles.js?v=20261117-style-cuts-v88';
 import {residentProfiles} from './resident-profiles.js?v=20261118-residents-v97';
-import {createRealisticHuman} from './player-human.js?v=20261121-profile-studio-v203';
+import {createRealisticHuman} from './player-human.js?v=20261121-fast-start-v205';
 export const PROFILE_WARDROBE={allUnlocked:true,starterOutfits:2};
 const palette=['#151515','#ffffff','#9a9d9b','#a88e6d','#2b4566','#0069c5','#b51820'];
 function icon(kind,color='#253d50',accent='#e4e6e1'){

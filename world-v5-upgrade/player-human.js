@@ -1,3 +1,4 @@
+import {fitHeroClothing} from './hero-clothing-fit.js?v=20261121-fast-start-v205';
 const skinComponent=(a,i,c)=>c===0?a.getX(i):c===1?a.getY(i):c===2?a.getZ(i):a.getW(i);
 import {avatarHeadFrame} from './avatar-fit.js?v=20261120-head-fit-v181';
 import {createHairCustomizer} from './player-hair-styles.js?v=20261121-profile-studio-v203';
@@ -38,7 +39,7 @@ function colorClothes(mesh,shirt,pants,options={}){
    for(const id of ids)center.add(mesh.getVertexPosition(id,point).applyMatrix4(mesh.matrixWorld));center.multiplyScalar(1/3);
    const y=(center.y-bounds.min.y)/height,x=Math.abs(center.x-(bounds.min.x+bounds.max.x)/2)/height;
    const armWeight=mesh.isSkinnedMesh&&part==='sleeves'?ids.reduce((sum,id)=>{let weight=0;for(let k=0;k<4;k++){const bi=skinComponent(mesh.geometry.attributes.skinIndex,id,k),bw=skinComponent(mesh.geometry.attributes.skinWeight,id,k);if(/Forearm|Hand/i.test(mesh.skeleton.bones[bi]?.name||''))weight+=bw;}return sum+weight;},0)/3:0;
-   const match=hero?(part==='shirt'?y>.55&&y<.83:part==='pants'?y>.25&&y<.55&&x<.23:part==='shoes'?y<.10:false):part==='shirt'?y>.56:part==='pants'?y>.075&&y<.65&&x<.18:part==='shoes'?y<.085:part==='shorts'||part==='sleeves'?true:false;
+   const match=hero?(part==='shirt'?y>.52&&y<.83:part==='pants'?y>.25&&y<.52&&x<.23:part==='shoes'?y<.10:false):part==='shirt'?y>.56:part==='pants'?y>.075&&y<.65&&x<.18:part==='shoes'?y<.085:part==='shorts'||part==='sleeves'?true:false;
    if(!match)continue;
    let poly=ids.map(id=>{const p=mesh.getVertexPosition(id,new THREE.Vector3()).applyMatrix4(mesh.matrixWorld);let arm=0;if(mesh.isSkinnedMesh)for(let k=0;k<4;k++){const bi=skinComponent(mesh.geometry.attributes.skinIndex,id,k);if(/Forearm|Hand/i.test(mesh.skeleton.bones[bi]?.name||''))arm+=skinComponent(mesh.geometry.attributes.skinWeight,id,k);}return {u:uv.getX(id)*w,v:(mesh.material.map.flipY?1-uv.getY(id):uv.getY(id))*h,y:(p.y-bounds.min.y)/height,arm};});
    function clip(key,value,greater){const out=[];for(let j=0;j<poly.length;j++){const a=poly[j],b=poly[(j+1)%poly.length],inside=v=>greater?v[key]>=value:v[key]<=value,ai=inside(a),bi=inside(b);if(ai)out.push(a);if(ai!==bi){const t=(value-a[key])/(b[key]-a[key]);out.push(Object.fromEntries(['u','v','y','arm'].map(k=>[k,a[k]+(b[k]-a[k])*t])));}}poly=out;}
@@ -75,7 +76,7 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
  if(hairChoice)hairRig?.apply(hairChoice);
  }
  const soles=[],vertex=new THREE.Vector3(),parentPoint=new THREE.Vector3();
- const controller={root,setHair(value={}){hairChoice={style:value.style||'original',color:value.color||'#4a3224'};if(ready){hairRig?.apply(hairChoice);root.traverse(o=>{if(o.isMesh&&/opacity/i.test(o.material?.name||''))o.visible=hairChoice.style==='original';});}return {...hairChoice};},get hair(){return hairChoice?{...hairChoice}:{style:'original',color:'#4a3224'};},setOutfit(value={}){outfit={shirt,pants,...value};applyOutfit();return {...outfit};},get outfit(){return {...outfit};},get ready(){return ready;},update(dt,speed,options={}){
+ const controller={root,poseBasketball(targets={}){if(!ready)return;root.updateMatrixWorld(true);for(const side of ['L','R']){const target=targets[side];if(!target)continue;const find=part=>bones.find(b=>b.name.endsWith(side+'_'+part)||b.name.endsWith(side+' '+part)),upper=find('UpperArm'),fore=find('Forearm'),hand=find('Hand');if(!upper||!fore||!hand)continue;for(let pass=0;pass<6;pass++)for(const joint of [fore,upper]){const origin=joint.getWorldPosition(new THREE.Vector3()),from=hand.getWorldPosition(new THREE.Vector3()).sub(origin).normalize(),to=target.clone().sub(origin).normalize();if(!from.lengthSq()||!to.lengthSq())continue;const delta=new THREE.Quaternion().setFromUnitVectors(from,to),parentQ=joint.parent.getWorldQuaternion(new THREE.Quaternion());joint.quaternion.premultiply(parentQ.clone().invert().multiply(delta).multiply(parentQ));joint.updateWorldMatrix(false,true);}}},handPosition(side='R'){const b=bones.find(b=>b.name.endsWith(side+'_Hand')||b.name.endsWith(side+' Hand'));return b?.getWorldPosition(new THREE.Vector3());},setHair(value={}){hairChoice={style:value.style||'original',color:value.color||'#4a3224'};if(ready){hairRig?.apply(hairChoice);root.traverse(o=>{if(o.isMesh&&/opacity/i.test(o.material?.name||''))o.visible=hairChoice.style==='original';});}return {...hairChoice};},get hair(){return hairChoice?{...hairChoice}:{style:'original',color:'#4a3224'};},setOutfit(value={}){outfit={shirt,pants,...value};applyOutfit();return {...outfit};},get outfit(){return {...outfit};},get ready(){return ready;},update(dt,speed,options={}){
   if(!ready)return;
   const {seated=false,backwards=false}=options;
   const running=speed>(active==='run'?4.1:4.5);
@@ -114,7 +115,7 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
   const placed=new THREE.Box3().setFromObject(model,true),center=placed.getCenter(new THREE.Vector3());model.position.set(-center.x,-placed.min.y,-center.z);root.add(model);root.updateWorldMatrix(true,false);root.updateMatrixWorld(true);
   const floor=root.getWorldPosition(parentPoint).y;
   model.traverse(mesh=>{if(mesh.isBone){mesh.userData.restX=mesh.position.x;mesh.userData.restZ=mesh.position.z;bones.push(mesh);}if(mesh.isMesh){
-   mesh.castShadow=true;mesh.receiveShadow=true;mesh.userData.wardrobeBase=mesh.material;if(!outfit.native)colorClothes(mesh,shirt,pants,outfit);
+   if(modelUrl&&/hero-rigged/.test(modelUrl))fitHeroClothing(mesh,root);mesh.castShadow=true;mesh.receiveShadow=true;mesh.userData.wardrobeBase=mesh.material;if(!outfit.native)colorClothes(mesh,shirt,pants,outfit);
    if(mesh.isSkinnedMesh){const ids=[];for(let id=0;id<mesh.geometry.attributes.position.count;id++)if(mesh.getVertexPosition(id,vertex).applyMatrix4(mesh.matrixWorld).y<floor+.16)ids.push(id);if(ids.length)soles.push({mesh,ids});}
   }});
   mixer=new THREE.AnimationMixer(model);actions={idle:mixer.clipAction(idle.animations[0]),walk:mixer.clipAction(walk.animations[0]),run:mixer.clipAction(run.animations[0]),dance:mixer.clipAction(dance.animations[0])};

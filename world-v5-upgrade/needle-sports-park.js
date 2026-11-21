@@ -1,3 +1,4 @@
+import {addBasketballHoop} from './basketball-hoop.js?v=20261121-fast-start-v205';
 import {addParkBench} from './park-benches.js?v=20261121-entry-fix-v198';
 import {createTownSidewalkMaterial} from './town-sidewalks.js?v=20261121-forest-airfield-v193';
 import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
@@ -30,9 +31,10 @@ export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}
  }
  const tennisSurface=courtSurface(0x245b85,3),basketSurface=courtSurface(0xb44f42,7);
  turf.polygonOffset=true;turf.polygonOffsetFactor=1;turf.polygonOffsetUnits=2;for(const m of[tennisSurface,basketSurface]){m.polygonOffset=true;m.polygonOffsetFactor=-1;m.polygonOffsetUnits=-2;}const walkSurfaces=[];
- function box(w,h,d,px,py,pz,m,parent=root){if(parent===root&&h<=.3&&w*d>2){py=GROUND_LEVEL-h/2;walkSurfaces.push({x:px,z:pz,w,d,y:GROUND_LEVEL,kind:m===turf?'lawn':m===asphalt||h<.05?'court':'path'});}const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(px,py,pz);o.receiveShadow=true;o.castShadow=h>.5;parent.add(o);return o;}
+ const pavedRects=[];
+ function box(w,h,d,px,py,pz,m,parent=root,clipped=false){if(!clipped&&parent===root&&m.userData?.townSidewalk&&h<=.3){let pieces=[{a:px-w/2,b:px+w/2,c:pz-d/2,e:pz+d/2}];for(const q of pavedRects){pieces=pieces.flatMap(r=>{const a=Math.max(r.a,q.a),b=Math.min(r.b,q.b),c=Math.max(r.c,q.c),e=Math.min(r.e,q.e);if(a>=b||c>=e)return[r];return[{a:r.a,b:a,c:r.c,e:r.e},{a:b,b:r.b,c:r.c,e:r.e},{a,b,c:r.c,e:c},{a,b,c:e,e:r.e}].filter(v=>v.b-v.a>.0001&&v.e-v.c>.0001);});}pavedRects.push({a:px-w/2,b:px+w/2,c:pz-d/2,e:pz+d/2});for(const r of pieces)box(r.b-r.a,h,r.e-r.c,(r.a+r.b)/2,py,(r.c+r.e)/2,m,parent,true);return;}if(parent===root&&h<=.3&&w*d>2){py=GROUND_LEVEL-h/2;walkSurfaces.push({x:px,z:pz,w,d,y:GROUND_LEVEL,kind:m===turf?'lawn':m===asphalt||h<.05?'court':'path'});}const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(px,py,pz);if(parent===root&&h<=.3&&w*d>2){if(m===tennisSurface||m===basketSurface)o.position.y+=.002;else if(m!==turf&&m!==asphalt)o.position.y+=.001;}o.receiveShadow=true;o.castShadow=h>.5;parent.add(o);return o;}
  function cyl(rt,rb,h,px,py,pz,m,n=10){const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,n),m);o.position.set(px,py,pz);o.castShadow=true;root.add(o);return o;}
- box(66,.14,108,0,-.15,0,turf);
+ // The city lawn owns the ground here; no duplicate coplanar turf slab.
  // Walkway links the park to the city's northern boulevard.
  // A continuous promenade now reaches the boulevard sidewalk.
  
@@ -58,16 +60,7 @@ export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}
    for(const sz of [-1,1]){
     const pz=cz+sz*(end-2.5);
     line(cx-5.5,pz,cx+5.5,pz);line(cx-5.5,pz,cx-5.5,pz-sz*5.5);line(cx+5.5,pz,cx+5.5,pz-sz*5.5);
-    cyl(.11,.12,3.7,cx,1.95,cz+sz*(end+1),metal);
-    box(1.8,1.15,.09,cx,3.6,cz+sz*(end-.55),white);
-    const rim=new THREE.Mesh(new THREE.TorusGeometry(.46,.035,7,24),mat(0xd56b31));rim.rotation.x=Math.PI/2;rim.position.set(cx,3.12,cz+sz*(end-1.1));root.add(rim);
-    // Hanging hoop net: tapered vertical cords and circumferential bands.
-    for(let j=0;j<12;j++){
-     const a=j*Math.PI/6,top=new THREE.Vector3(cx+Math.cos(a)*.45,3.1,cz+sz*(end-1.1)+Math.sin(a)*.45);
-     const bottom=new THREE.Vector3(cx+Math.cos(a+.16)*.23,2.54,cz+sz*(end-1.1)+Math.sin(a+.16)*.23);
-     const delta=bottom.clone().sub(top),cord=new THREE.Mesh(new THREE.CylinderGeometry(.009,.009,delta.length(),5),white);
-     cord.position.copy(top).add(bottom).multiplyScalar(.5);cord.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.normalize());root.add(cord);
-    }
+    addBasketballHoop(root,{x:cx,z:cz+sz*(end-1.1),side:sz});
    }
   }
   // Perimeter fence, with an open pedestrian gate at the south side.
@@ -78,7 +71,7 @@ export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}
  }
  court(-18,15,true);court(18,15,false);
  // Continuous stone-paver pedestrian spine between the two courts.
- const paver=mat(0xbab5aa),joint=mat(0x827f78),edge=mat(0x8e8b83);
+ const paver=createTownSidewalkMaterial();paver.userData.townSidewalk=true;const joint=mat(0x827f78),edge=mat(0x8e8b83);
  const stoneMap=new THREE.TextureLoader().load(new URL('../realistic-assets/pbr/PavingStones070/PavingStones070_1K-JPG_Color.jpg',import.meta.url).href);stoneMap.colorSpace=THREE.SRGBColorSpace;stoneMap.wrapS=stoneMap.wrapT=THREE.RepeatWrapping;stoneMap.repeat.set(2,12);paver.map=stoneMap;
  box(6,.10,96,0,.055,33.5,paver); // -14.5..81.5, ending on the city sidewalk
  for(const side of [-1,1])box(3,.10,83,side*31,.055,2.5,paver);

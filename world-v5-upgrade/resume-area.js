@@ -1,7 +1,7 @@
 export const RESUME_KEY='zerconda-last-safe-area-v1';
 function browserStorage(){try{return globalThis.localStorage;}catch{return null;}}
 const defaults={x:34,z:34,yaw:0,pitch:0};
-export function readSavedArea(storage=browserStorage()){try{const p=JSON.parse(storage?.getItem(RESUME_KEY));if(!p||p.version!==1||![p.x,p.z,p.yaw,p.pitch].every(Number.isFinite)||p.x< -491||p.x>617||p.z< -1397||p.z>1200)return null;return{x:p.x,z:p.z,yaw:Math.atan2(Math.sin(p.yaw),Math.cos(p.yaw)),pitch:Math.max(-1.25,Math.min(1.25,p.pitch))};}catch{return null;}}
+export function readSavedArea(storage=browserStorage()){try{const p=JSON.parse(storage?.getItem(RESUME_KEY));if(!p||p.version!==1||![p.x,p.z,p.yaw,p.pitch].every(Number.isFinite)||p.x< -719||p.x>617||p.z< -1397||p.z>1200)return null;return{x:p.x,z:p.z,yaw:Math.atan2(Math.sin(p.yaw),Math.cos(p.yaw)),pitch:Math.max(-1.25,Math.min(1.25,p.pitch))};}catch{return null;}}
 export function findResumePoint(saved,isSafe,fallback=defaults){if(saved){if(isSafe(saved.x,saved.z))return{...saved};for(const radius of[.6,1.2,2.4,4,7,12,20])for(let i=0;i<16;i++){const a=i*Math.PI/8,x=saved.x+Math.cos(a)*radius,z=saved.z+Math.sin(a)*radius;if(isSafe(x,z))return{...saved,x,z};}}return{...fallback};}
 export function createAreaResume({getPose,isSafe,canSave=()=>true,applyPose,storage=browserStorage(),now=()=>performance.now(),events=globalThis}={}){
  let last=readSavedArea(storage),lastWrite=-Infinity,lastCheck=-Infinity;

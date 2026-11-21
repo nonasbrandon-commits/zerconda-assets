@@ -1,3 +1,4 @@
+import {scheduleNpcSetup} from './npc-startup-queue.js?v=20261121-fast-start-v205';
 import {createHairCustomizer} from './hair-styles.js?v=20261117-style-cuts-v88';
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -103,7 +104,7 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
   root.updateWorldMatrix(true,true);const groundY=root.parent?.getWorldPosition(parentPoint).y||0;
   for(const {foot,mesh}of contacts){mesh.visible=!seated&&!options.driving&&!options.skating&&!options.dancing;if(!mesh.visible)continue;const p=foot.getWorldPosition(new THREE.Vector3()),lift=Math.max(0,p.y-groundY-.09);mesh.material.opacity=.34*THREE.MathUtils.clamp(1-lift/.35,0,1);const target=root.worldToLocal(new THREE.Vector3(p.x,groundY+.012,p.z));mesh.position.copy(target);mesh.scale.set(.36+lift*.2,.5+lift*.2,1);}
  }};
- controller.readyPromise=source().then(([character,idle,walk,run,dance])=>{
+ controller.readyPromise=source().then(bundle=>scheduleNpcSetup(()=>{const [character,idle,walk,run,dance]=bundle;
   character.scene.updateMatrixWorld(true);
   const model=cloneSkeleton(character.scene);model.updateMatrixWorld(true);
   const bounds=new THREE.Box3().setFromObject(model,true),size=bounds.getSize(new THREE.Vector3());
@@ -117,7 +118,7 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
   mixer=new THREE.AnimationMixer(model);actions={idle:mixer.clipAction(idle.animations[0]),walk:mixer.clipAction(walk.animations[0]),run:mixer.clipAction(run.animations[0]),dance:mixer.clipAction(dance.animations[0])};
   for(const side of ['L','R']){const foot=bones.find(b=>b.name.replace(/[^a-z0-9]/gi,'').endsWith(side+'Foot'));if(!foot)continue;const material=new THREE.MeshBasicMaterial({map:contactTexture(),transparent:true,depthWrite:false,opacity:.3,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),material);mesh.name=side+' shoe contact';mesh.rotation.x=-Math.PI/2;mesh.renderOrder=1;root.add(mesh);contacts.push({foot,mesh});}
   ready=true;controller.update(0,0);hairRig=createHairCustomizer(root,bones);applyOutfit();onReady();return controller;
- }).catch(error=>{console.error('Realistic character load failed',error);return controller;});
+ })).catch(error=>{console.error('Realistic character load failed',error);return controller;});
  return controller;
 }
 
