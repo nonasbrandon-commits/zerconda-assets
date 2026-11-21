@@ -1,4 +1,4 @@
-import {addGolfGroves} from './golf-landscaping.js?v=20261118-pedestrian-footing-v94';
+import {addGolfGroves} from './golf-landscaping.js?v=20261121-pines-v190';
 import * as THREE from 'three';
 import {trimGolfGround} from './golf-road-clearance.js?v=20261117-ground-golf-v86';
 import {createNineHoleGolf} from './nine-hole-golf.js?v=20261118-pedestrian-footing-v94';

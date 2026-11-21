@@ -35,11 +35,11 @@ import {createAreaTravel} from './area-travel.js?v=20261121-cab-v188';
 import {createMilitaryBase} from './military-base.js?v=20261120-z-cabs-v178';
 import {upgradeMobileControls} from './mobile-controls.js?v=20261118-z-needle-v107';
 import {createAirportLoop} from './airport-loop.js?v=20261119-level-ground-v117';
-import {createNorthernForest} from './northern-forest.js?v=20261118-wall-mystery-v111';
+import {createNorthernForest} from './northern-forest.js?v=20261121-pines-v190';
 import {createMobilePerformance} from './mobile-performance.js?v=20261120-player-detail-v181-20261119-rv-junction-v128';
 import {createTownObstacles} from './town-obstacles.js?v=20261118-visible-trails-v100';
 import {createSeasideCarnival} from './seaside-carnival.js?v=20261121-cab-v188';
-import {createRVPark} from './rv-park.js?v=20261119-rv-junction-v128';
+import {createRVPark} from './rv-park.js?v=20261121-pines-v190';
 import {createShowroomPickup} from './showroom-pickup.js?v=20261119-reference-trucks-v126';
 import {createLuxuryVillas} from './luxury-villas.js?v=20261119-performance-v147';
 import {createStyleCuts} from './style-cuts.js?v=20261119-clear-mirrors-v133';
@@ -47,7 +47,7 @@ import {createBusinessCentre} from './business-centre.js?v=20261119-entrance-ste
 import {createSkatePark} from './skate-park.js?v=20261119-entrance-steering-v118';
 import {createAirfield} from './airfield.js?v=20261118-wall-mystery-v111';
 import * as THREE from 'three';
-import {createForestCampground} from './forest-campground.js?v=20261120-perf-v180-20261119-rv-junction-v128';
+import {createForestCampground} from './forest-campground.js?v=20261121-pines-v190';
 import {createPremierHomes} from './premier-homes.js?v=20261119-performance-v147';
 import {createZercondaNews} from './zerconda-news.js?v=20261120-earth-globes-v181-20261120-news-voice-v172';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261119-performance-v147';
@@ -55,7 +55,7 @@ import {createBowlingAlley} from './bowling-alley.js?v=20261119-entrance-steerin
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261120-scooter-shop-v180';
 import {createSeasidePier} from './seaside-pier.js?v=20261120-still-seated-v176';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
-import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261119-sand-mountains-v157';
+import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261121-pines-v190';
 import {createClubZerconda} from './club-zerconda.js?v=20261120-street-fleet-v186';
 import {createRealisticHuman} from './realistic-human.js?v=20261118-faster-town-v106';
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
@@ -78,12 +78,12 @@ import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=202
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261120-collision-v187';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261119-performance-v147';
 import {createPedestrians} from './animated-pedestrians.js?v=20261120-bikes-v180-20261119-beach-v149';
-import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261118-visible-trails-v100';
+import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261121-pines-v190';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-ground-v117';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-21-cab-branding-v189';
+const ZERCONDA_BUILD='2026-11-21-pines-v190';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
