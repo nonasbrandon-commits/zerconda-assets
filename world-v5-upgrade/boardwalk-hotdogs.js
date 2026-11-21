@@ -1,6 +1,6 @@
 import {createBennyVoice} from './benny-voice.js?v=20261120-zdog-voice-v171';
-import {createZDogzCart3D} from './zdogz-cart-3d.js?v=20261119-beach-v149';
-import {createCookingVendor} from './cooking-vendor.js?v=20261119-beach-v149';
+import {createZDogzCart3D} from './zdogz-cart-3d.js?v=20261121-forward-slide-v210';
+import {createCookingVendor} from './cooking-vendor.js?v=20261121-forward-slide-v210';
 import * as THREE from 'three';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 export const BENNY_FAREWELL="Enjoy that dog, friend. You make sure you don't go outside the Wall now, alright?";

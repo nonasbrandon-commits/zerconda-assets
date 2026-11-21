@@ -19,7 +19,22 @@ export function createTownObstacles({scene,getFloor=()=>0,ignore=()=>false,getDy
  function hit(x,z){const y=getFloor(x,z),allowed=getDynamic(),list=[...(cells.get(Math.floor(x/cell)+','+Math.floor(z/cell))||[]),...dynamic.filter(r=>allowed.includes(r.object))];for(const r of list){if(!r.object.parent||!r.object.visible||(!r.dynamic&&ignore(r.object))||r.maxY<=y+.22||r.minY>=y+1.72)continue;if(colliderContains(r,x,z,radius))return r;}return null;}
  function clearExitPath(x,z,p,canWalk){const steps=Math.max(1,Math.ceil(Math.hypot(p.x-x,p.z-z)/.07));let clear=false;for(let i=1;i<=steps;i++){const t=i/steps,open=canWalk(x+(p.x-x)*t,z+(p.z-z)*t);if(clear&&!open)return false;if(open)clear=true;}return clear;}
  function recover(x,z,canWalk){if(canWalk(x,z)){lastSafe={x,z};return{x,z};}const current=hit(x,z),candidates=current?colliderExitCandidates(current,x,z,radius):[];if(lastSafe&&Math.hypot(lastSafe.x-x,lastSafe.z-z)<3)candidates.push(lastSafe);const floor=getFloor(x,z);for(let ring=.15;ring<=2.1;ring+=.15)for(let i=0;i<24;i++){const a=i*Math.PI/12;candidates.push({x:x+Math.cos(a)*ring,z:z+Math.sin(a)*ring});}candidates.sort((a,b)=>Math.hypot(a.x-x,a.z-z)-Math.hypot(b.x-x,b.z-z));for(const p of candidates)if(Math.abs(getFloor(p.x,p.z)-floor)<.30&&canWalk(p.x,p.z)&&clearExitPath(x,z,p,canWalk)){lastSafe=p;return p;}return{x,z};}
- let slideSide=0;function step(x,z,dx,dz,canWalk,autoSlide=false){if(canWalk(x+dx,z+dz))return{x:x+dx,z:z+dz};let xx=x,zz=z;if(canWalk(x+dx,z))xx+=dx;if(canWalk(xx,z+dz))zz+=dz;if(autoSlide&&Math.hypot(xx-x,zz-z)<Math.hypot(dx,dz)*.35){const length=Math.hypot(dx,dz);if(length>1e-6){const ux=dx/length,uz=dz/length,score=sign=>{let s=sign===slideSide?.25:0;for(const distance of[.4,.9,1.6,2.8])if(canWalk(x-uz*sign*distance+ux*.5,z+ux*sign*distance+uz*.5))s+=1/distance;return s;},sides=[-1,1].sort((a,b)=>score(b)-score(a));for(const sign of sides)for(const angle of[Math.PI/6,Math.PI/3,Math.PI/2]){const c=Math.cos(angle),s=Math.sin(angle)*sign,nx=(ux*c-uz*s)*length,nz=(ux*s+uz*c)*length;if(canWalk(x+nx,z+nz)&&canWalk(x+nx*.5,z+nz*.5)){slideSide=sign;return{x:x+nx,z:z+nz};}}}}return{x:xx,z:zz};}
+ let slideSide=0;
+ function step(x,z,dx,dz,canWalk,autoSlide=false){
+  const clear=(nx,nz)=>{const samples=Math.max(3,Math.ceil(Math.hypot(nx,nz)/.01));for(let i=1;i<=samples;i++)if(!canWalk(x+nx*i/samples,z+nz*i/samples))return false;return true;};
+  if(clear(dx,dz)){slideSide=0;return{x:x+dx,z:z+dz};}
+  let xx=x,zz=z;if(clear(dx,0))xx+=dx;if(canWalk(xx,z+dz))zz+=dz;if(!clear(xx-x,zz-z)){xx=x;zz=clear(0,dz)?z+dz:z;}
+  if(autoSlide&&Math.hypot(xx-x,zz-z)<Math.hypot(dx,dz)*.35){
+   const length=Math.hypot(dx,dz);if(length>1e-6){const ux=dx/length,uz=dz/length;
+    const score=sign=>{for(const distance of [.4,.9,1.6,2.8,4.5,7,11]){const sx=x-uz*sign*distance,sz=z+ux*sign*distance;if(!canWalk(sx,sz))break;if(canWalk(sx+ux*.6,sz+uz*.6))return 1/distance;}return 0;};
+    // Keep a chosen side until the forward path clears; changing sides every
+    // frame can pin the player to a cab bumper or a flat wall.
+    const sides=slideSide?[slideSide,-slideSide]:[-1,1].sort((a,b)=>score(b)-score(a));
+    for(const sign of sides)for(const angle of [Math.PI/6,Math.PI/3,Math.PI/2]){const c=Math.cos(angle),s=Math.sin(angle)*sign,nx=(ux*c-uz*s)*length,nz=(ux*s+uz*c)*length;if(clear(nx,nz)){slideSide=sign;return{x:x+nx,z:z+nz};}}
+   }
+  }return{x:xx,z:zz};
+ }
+
  function slide(x,z,dx,dz,canWalk,{recover:allowRecovery=true,autoSlide=false}={}){
   const p=allowRecovery?recover(x,z,canWalk):{x,z};x=p.x;z=p.z;
   // Sweep every input source, including scroll and long frame steps, rather

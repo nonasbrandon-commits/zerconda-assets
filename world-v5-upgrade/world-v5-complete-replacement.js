@@ -1,7 +1,8 @@
+import {createRoadTreeMaintenance} from './road-tree-maintenance.js?v=20261121-forward-slide-v210';
 import {createChessTables} from './chess-tables.js?v=20261121-fast-start-v205';
 import {createRealEstate} from './real-estate.js?v=20261121-fast-start-v205';
 import {loadStreetTree} from './street-tree-assets.js?v=20261121-fast-start-v205';
-import {createAmbientTraffic} from './ambient-traffic.js?v=20261121-fast-start-v205';
+import {createAmbientTraffic} from './ambient-traffic.js?v=20261121-forward-slide-v210';
 import {createRoadMapGeometry} from './road-map-geometry.js?v=20261121-fast-start-v205';
 import {createAreaResume,createSceneryYield} from './resume-area.js?v=20261121-fast-start-v205';
 import {createCityResidents} from './city-residents.js?v=20261121-city-life-v196';
@@ -15,9 +16,9 @@ import {createVehicleHorns} from './vehicle-horns.js?v=20261121-town-v191';
 import {measureVehicleFootprint,vehicleDescriptor,vehiclePoseBlocked,sweepVehiclePose} from './vehicle-collision.js?v=20261121-town-v191';
 import {createShaderWarmup} from './shader-warmup.js?v=20261121-loading-screen-v201';
 import {loadReferenceProp} from './reference-props.js?v=20261120-reference-props-v180';
-import {createZCabs}from './z-cabs.js?v=20261121-fast-start-v205';
+import {createZCabs}from './z-cabs.js?v=20261121-forward-slide-v210';
 import {createLuxurySedan,loadLuxurySedan,sedanColors} from './luxury-sedan.js?v=20261120-restore-silver-v185';
-import {createBeachVisitors} from './beach-visitors.js?v=20261120-natural-arms-v182';
+import {createBeachVisitors} from './beach-visitors.js?v=20261121-forward-slide-v210';
 import {positionBeachLoungeCamera} from './beach-lounge-camera.js?v=20261119-coastal-breeze-v154';
 import {applyBeachLoungePose} from './beach-lounge-pose.js?v=20261119-beach-seating-v151';
 import {addVehicleLOD} from './vehicle-lod.js?v=20261120-z-cabs-v178';
@@ -41,7 +42,7 @@ import {installAvatarTattoos} from './avatar-tattoos.js?v=20261120-attribute-com
 import {createZTattoo} from './z-tattoo.js?v=20261119-entrance-steering-v118';
 import {treeBoundsOverlapRoad} from './tree-road-clearance.js?v=20261118-clear-roads-v112';
 import {createCourtGames} from './court-games.js?v=20261121-natural-basketball-v208';
-import {createHotDogVendor} from './boardwalk-hotdogs.js?v=20261120-zdog-voice-v171';
+import {createHotDogVendor} from './boardwalk-hotdogs.js?v=20261121-forward-slide-v210';
 import {createVehicleControls} from './vehicle-controls.js?v=20261119-entrance-steering-v118';
 import {createDamagedWallPanel,createBlockedWallOpening,WALL_OPENING} from './blocked-wall-opening.js?v=20261121-forest-buffer-v204';
 import {createAreaTravel} from './area-travel.js?v=20261121-town-v191';
@@ -50,7 +51,7 @@ import {upgradeMobileControls} from './mobile-controls.js?v=20261118-z-needle-v1
 import {createAirportLoop} from './airport-loop.js?v=20261121-forest-airfield-v193';
 import {createNorthernForest} from './northern-forest.js?v=20261121-fast-start-v205';
 import {createMobilePerformance} from './mobile-performance.js?v=20261120-player-detail-v181-20261119-rv-junction-v128';
-import {createTownObstacles} from './town-obstacles.js?v=20261121-fast-start-v205';
+import {createTownObstacles} from './town-obstacles.js?v=20261121-forward-slide-v210';
 import {createSeasideCarnival} from './seaside-carnival.js?v=20261121-cab-v188';
 import {createRVPark} from './rv-park.js?v=20261121-forest-airfield-v193';
 import {createShowroomPickup} from './showroom-pickup.js?v=20261119-reference-trucks-v126';
@@ -433,7 +434,7 @@ async function populateOuterForest(){
   if(side===1&&Math.abs(z)<24)continue;
   const tree=cloneNormalized(loaded[i%2?'tree2':'tree']||source,x,z,24+rand()*15,rand()*Math.PI*2);
   if(tree&&treeBoundsOverlapRoad(new THREE.Box3().setFromObject(tree))){scene.remove(tree);continue;}
-  if(tree){tree.name='Road-cleared outer tree';tree.userData.roadCleared=true;tree.position.y+=wildernessHeight(x,z);tree.traverse(o=>{if(o.isMesh)o.castShadow=false;});optimizeStaticModel(tree,'outer-tree-'+(i%2));await prepareScenery(tree);}
+  if(tree){tree.name='Road-cleared outer tree';tree.userData.roadCleared=true;tree.position.y+=wildernessHeight(x,z);tree.traverse(o=>{if(o.isMesh)o.castShadow=false;});optimizeStaticModel(tree,'outer-tree-'+(i%2));treeRoadMaintenance.checkRoot(tree);await prepareScenery(tree);}
  }
 }
 // Facade texture generator: architectural materials, varied stonework,
@@ -796,7 +797,7 @@ async function populate(){
     if(x> -82&&x< -15&&z> -84&&z< -34)continue;
     if(x> -82&&x< -14&&z> -153&&z< -109)continue; // Clear the relocated cafe, its entrance and the future building lot.
     if(z>72&&z<172&&Math.abs(x)<185)continue; // Protect entire beachside residential blocks, including full tree canopies
-  if(src&&!doors.some(d=>Math.hypot(x-d.x,z-d.z)<13)&&!(Math.abs(x+34)<24&&Math.abs(z+48)<24)){const tree=cloneNormalized(src,x,z,7+rand()*2.5,rand()*6.28);if(tree){tree.name='Road-cleared street tree';tree.userData.roadCleared=true;if(treeBoundsOverlapRoad(new THREE.Box3().setFromObject(tree)))scene.remove(tree);else {optimizeStaticModel(tree,'street-tree-'+(i%2));await prepareScenery(tree);}}}
+  if(src&&!doors.some(d=>Math.hypot(x-d.x,z-d.z)<13)&&!(Math.abs(x+34)<24&&Math.abs(z+48)<24)){const tree=cloneNormalized(src,x,z,7+rand()*2.5,rand()*6.28);if(tree){tree.name='Road-cleared street tree';tree.userData.roadCleared=true;if(treeBoundsOverlapRoad(new THREE.Box3().setFromObject(tree)))scene.remove(tree);else {optimizeStaticModel(tree,'street-tree-'+(i%2));treeRoadMaintenance.checkRoot(tree);await prepareScenery(tree);}}}
  }
  nearbySceneryReady=true;
  await populateOuterForest();try{loaded.lamp=await load('lamp');}catch{loaded.lamp=null;}
@@ -813,6 +814,7 @@ const START_X=34,START_Z=34; // Open southwest edge of fountain plaza, clear of 
 const keys=new Set(),player={x:START_X,z:START_Z},clock=new THREE.Clock();wildlifePlayer=player;
 const realEstate=createRealEstate(scene,{asphalt,paving,getPlayer:()=>player,onStop:()=>{keys.clear();townControls.stop();movement.vx=0;movement.vz=0;},onMessage:m=>townControls.notify(m),canUse:()=>!activeCar&&!zCabs?.riding&&!airfield?.boarded});
 const chessTables=createChessTables(scene,{getPlayer:()=>player,onStop:()=>{keys.clear();townControls.stop();movement.vx=0;movement.vz=0;},canUse:()=>!activeCar&&!zCabs?.riding});
+const treeRoadMaintenance=createRoadTreeMaintenance(scene,{asphalt,paving});
 const roadMap=createRoadMapGeometry(scene,asphalt);roadMap.scan();const cityMap=createCityMap({player,getRoadPolygons:()=>roadMap.polygons,getLots:()=>realEstate.mapLots()});
 // Third-person walking avatar: forward-facing, visible from the default camera.
 // Kept lightweight so mobile devices do not need an additional model download.
@@ -1194,7 +1196,7 @@ function animate(){
  forestShade=THREE.MathUtils.damp(forestShade,northernForest?.atmosphereAt(player.x,player.z)??0,1.4,motionDt);hemisphere.intensity=THREE.MathUtils.lerp(1.3,.72,forestShade);sun.intensity=THREE.MathUtils.lerp(2.8,1.35,forestShade);scene.fog.color.copy(daylightFog).lerp(forestFog,forestShade);scene.fog.density=THREE.MathUtils.lerp(.00055,.0020,forestShade);
  militaryBase?.update(motionDt);
  observationNeedle.update(dt);zCabs?.update(motionDt);ambientTraffic?.update(motionDt);
- southBeach.update(motionDt);beachVisitors.update(motionDt);
+ treeRoadMaintenance.update(motionDt);southBeach.update(motionDt);beachVisitors.update(motionDt);
  marine.update(motionDt,southBeach.ocean.time);
  scooters.update(dt);
  bowling.update(dt);
@@ -1275,7 +1277,7 @@ function animate(){
   const walkStartX=player.x,walkStartZ=player.z;
   const count=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.12));
   for(let n=0;n<count;n++){
-   const next=townObstacles.slide(player.x,player.z,dx/count,dz/count,walkable,{recover:!inputLocked,autoSlide:!inputLocked&&f>0&&Math.abs(side)<.1});
+   const next=townObstacles.slide(player.x,player.z,dx/count,dz/count,walkable,{recover:!inputLocked,autoSlide:!inputLocked&&(f>0||wheelDistance>0)&&Math.abs(side)<.1});
    player.x=next.x;player.z=next.z;
   }
   walkingDistance=Math.hypot(player.x-walkStartX,player.z-walkStartZ);
@@ -1416,7 +1418,7 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;
 
 // Keep the screenshot screen up until scenery and the available character are prepared.
 export const initialReady=Promise.race([realisticPlayer.readyPromise,new Promise(resolve=>setTimeout(resolve,12000))]).then(()=>undefined).catch(error=>{console.warn('Using the available player while character details load',error);}).finally(()=>{characterPrepared=true;});
-export function startWorld(){if(townEntered)return;townEntered=true;clock.getDelta();signBacks?.scan();renderBudget.scan();roadMap.scan();setTimeout(startScenery,200);}
+export function startWorld(){if(townEntered)return;townEntered=true;clock.getDelta();signBacks?.scan();renderBudget.scan();roadMap.scan();treeRoadMaintenance.scanRoads();treeRoadMaintenance.update(2);setTimeout(startScenery,200);}
 
 addEventListener('zerconda-enter',startWorld);
 areaResume.restore();window.dispatchEvent(new Event('zerconda-core-ready'));startWorld();
