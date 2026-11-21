@@ -11,48 +11,40 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:
 #mobile button,#enter{touch-action:none;background:rgba(9,26,38,.85);border:1px solid #8ca5af;color:#fff;border-radius:8px;min-height:48px;font-weight:700}
 #mobile button:active,#enter:active{background:#47738b}#enter{position:fixed;right:14px;bottom:185px;z-index:20;padding:0 14px}
 @media(pointer:fine){#mobile{display:none}}@media(max-width:600px){#help{font-size:11px;bottom:8px;max-width:43vw}}
-#loading-screen{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#122c32;color:#eef3e8;text-align:center}#loading-screen section{padding:28px;max-width:340px}#loading-screen h1{letter-spacing:.12em;font-size:25px}#loading-screen p{color:#bdcec8;line-height:1.6}.loading-spinner{width:38px;height:38px;margin:24px auto;border:3px solid #395458;border-top-color:#d6e4c8;border-radius:50%;animation:loading-turn .9s linear infinite}#start-world{font:600 16px system-ui;background:#d6e4c8;color:#173238;border:0;border-radius:9px;padding:14px 26px;cursor:pointer}#start-world[hidden]{display:none}@keyframes loading-turn{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.loading-spinner{animation:none;border-color:#d6e4c8}}
+#boot-status{position:fixed;left:50%;top:47%;transform:translate(-50%,-100%);z-index:2147483647;background:#142c35ed;color:#eef3e8;padding:10px 15px;border-radius:9px;text-align:center;max-width:min(420px,85vw)}#boot-status[hidden]{display:none}#boot-message{margin:0;font:14px system-ui}#retry-world{margin-top:12px;font:600 15px system-ui;background:#d6e4c8;color:#173238;border:0;border-radius:7px;padding:10px 18px;cursor:pointer}#retry-world[hidden]{display:none}#startup-error-details{white-space:pre-wrap;overflow-wrap:anywhere;font:12px system-ui;text-align:left;max-height:180px;overflow:auto}
+
 </style>
 <script type="importmap">{"imports":{"three":"https://esm.sh/three@0.160.1","three/addons/":"https://esm.sh/three@0.160.1/examples/jsm/"}}</script>
 </head><body>
-<div id="loading-screen" role="dialog" aria-modal="true" aria-label="Loading Zerconda"><section><h1>ZERCONDA</h1><div class="loading-spinner" aria-hidden="true"></div><p id="loading-message" role="status" aria-live="polite">Preparing your town…</p><button id="start-world" hidden>Enter Zerconda</button></section></div>
+<div id="boot-status" role="status" aria-live="polite"><p id="boot-message">Loading last saved area…</p><button id="retry-world" hidden>Retry loading</button><details id="boot-details" hidden><summary>Loading details</summary><pre id="startup-error-details"></pre></details></div>
 <div id="hud"><strong>ZERCONDA</strong><div id="status">Loading realistic 3D world…</div></div>
 
 <button id="enter">ENTER / EXIT CAR</button>
 
 <script>
 (function(){
- const status=document.getElementById('status');
- let loaded=false,failed=false;
- const screen=document.getElementById('loading-screen'),message=document.getElementById('loading-message'),start=document.getElementById('start-world'),spinner=screen.querySelector('.loading-spinner');
- document.addEventListener('keydown',e=>{if(screen.isConnected&&e.target!==start){e.preventDefault();e.stopImmediatePropagation();}},true);
- function retryConnection(){const url=new URL(location.href);url.searchParams.set('reconnect',Date.now().toString());location.replace(url.href);}
- const errorDetails=document.createElement('details');errorDetails.hidden=true;const errorSummary=document.createElement('summary');errorSummary.textContent='Loading details';const errorText=document.createElement('pre');errorText.id='startup-error-details';errorText.style.cssText='white-space:pre-wrap;overflow-wrap:anywhere;font:12px system-ui;text-align:left;max-height:180px;overflow:auto';errorDetails.append(errorSummary,errorText);screen.querySelector('section').append(errorDetails);
- function enterTown(){start.disabled=true;spinner.hidden=false;message.textContent='Opening your town…';window.dispatchEvent(new Event('zerconda-enter'));}
- start.onclick=enterTown;
- window.addEventListener('zerconda-frame',()=>requestAnimationFrame(()=>screen.remove()),{once:true});
- function report(msg){status.textContent=msg;status.style.color='#ffdfb2';console.error('ZERCONDA LOAD:',msg);}
- window.addEventListener('error',e=>{report('3D loading error: '+(e.message||e.filename||'unknown script error'));});
- window.addEventListener('unhandledrejection',e=>{report('3D module error: '+(e.reason?.message||String(e.reason)));});
- window.addEventListener('zerconda-load-failed',e=>{failed=true;spinner.hidden=true;errorDetails.hidden=false;errorText.textContent='Version 198 · '+e.detail;message.textContent=/fetch|network|module.*load|loading.*module/i.test(e.detail)?'The connection was interrupted. Please try again.':'Zerconda could not finish loading. Please try again.';start.hidden=false;start.disabled=false;start.textContent='Try again';start.onclick=retryConnection;});
- window.addEventListener('zerconda-ready',()=>{loaded=true;spinner.hidden=true;message.textContent='Your town is ready.';start.hidden=false;start.disabled=false;start.textContent='Enter Zerconda';start.onclick=enterTown;start.focus();});
- setTimeout(()=>{if(!loaded&&!failed){message.textContent='Loading is taking longer than expected. You can retry the connection.';start.hidden=false;start.textContent='Retry loading';start.onclick=retryConnection;}},45000);
+ const panel=document.getElementById('boot-status'),message=document.getElementById('boot-message'),retry=document.getElementById('retry-world');let painted=false,failed=false;
+ retry.onclick=()=>{const url=new URL(location.href);url.searchParams.set('reconnect',Date.now().toString());location.replace(url.href);};
+ addEventListener('zerconda-core-ready',()=>{panel.hidden=true;});
+ addEventListener('zerconda-frame',()=>{painted=true;panel.hidden=true;});
+ addEventListener('zerconda-load-failed',e=>{failed=true;panel.hidden=false;message.textContent=/fetch|network|module.*load|loading.*module/i.test(e.detail)?'The connection was interrupted. Please try again.':'Zerconda could not finish loading. Please try again.';retry.hidden=false;document.getElementById('boot-details').hidden=false;document.getElementById('startup-error-details').textContent='Version 199 · '+e.detail;});
+ setTimeout(()=>{if(!painted&&!failed){panel.hidden=false;message.textContent='Still loading your saved area…';retry.hidden=false;}},45000);
 })();
 </script>
 <script type="module">
-const entryURL=new URL('./world-v5-complete-replacement.js?v=20261121-entry-fix-v198',import.meta.url);
+const entryURL=new URL('./world-v5-complete-replacement.js?v=20261121-resume-area-v199',import.meta.url);
 const isNetworkError=e=>e instanceof TypeError&&/fetch|network|module.*load|loading.*module/i.test(e.message);
 async function loadTown(){
  for(let attempt=0;attempt<3;attempt++){
   const url=new URL(entryURL);if(attempt)url.searchParams.set('loadRetry',attempt+'-'+Date.now());
   try{return await import(url.href);}catch(error){
    if(!isNetworkError(error)||attempt===2)throw error;
-   document.getElementById('loading-message').textContent='Reconnecting to your town…';
+   document.getElementById('boot-message').textContent='Reconnecting to your town…';
    await new Promise(resolve=>setTimeout(resolve,attempt?1500:500));
   }
  }
 }
-loadTown().then(async world=>{await world.initialReady;window.dispatchEvent(new Event('zerconda-ready'));})
+loadTown().then(async world=>{world.startWorld();await world.initialReady;window.dispatchEvent(new Event('zerconda-ready'));})
  .catch(e=>{console.error('Zerconda startup failed',e);window.dispatchEvent(new CustomEvent('zerconda-load-failed',{detail:e.message||String(e)}));});
 
 </script>
