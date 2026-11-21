@@ -30,26 +30,23 @@ export const AREA_DESTINATIONS=[
  {id:'forest',name:'North Woods Trails',group:'Forest & airfield',x:-220,z:-580,yaw:Math.PI},
  {id:'military',name:'Military Checkpoint',group:'Forest & airfield',x:465,z:-1048,yaw:Math.PI}
 ];
-export function createAreaTravel({onTravel,onStop=()=>{}}){
+export function createAreaTravel({onCall,onStop=()=>{}}){
  document.getElementById('town-area-travel')?.remove();
  const style=document.createElement('style');style.textContent=`
  #town-area-travel{position:fixed;top:66px;right:max(12px,env(safe-area-inset-right));z-index:13000;box-sizing:border-box;width:240px;max-width:calc(100vw - 24px);padding:10px 12px;border:1px solid #91adb9;border-radius:12px;background:#102b3bec;box-shadow:0 4px 20px #0004;color:#f3f0e5;font:13px system-ui}
  #town-area-travel label{display:block;font-weight:600;margin:0 0 6px;letter-spacing:.3px}
- #town-area-travel select{display:block;box-sizing:border-box;width:100%;min-height:44px;padding:9px 28px 9px 10px;border:1px solid #9cb6b3;border-radius:7px;background:#e7eee7;color:#153442;font:14px system-ui;touch-action:manipulation;cursor:pointer}
- #town-area-travel select:focus-visible{outline:3px solid #79d7ed;outline-offset:2px}
+ #town-area-travel select,#town-area-travel button{display:block;box-sizing:border-box;width:100%;min-height:44px;padding:9px 28px 9px 10px;border:1px solid #9cb6b3;border-radius:7px;background:#e7eee7;color:#153442;font:14px system-ui;touch-action:manipulation;cursor:pointer}
+ #town-area-travel select:focus-visible,#town-area-travel button:focus-visible{outline:3px solid #79d7ed;outline-offset:2px}
  #golf-score{top:auto!important;bottom:54px!important;left:12px!important;max-width:calc(100vw - 48px)!important}
  #zerconda-v5-map.zerconda-left-map{box-sizing:border-box;width:372px;top:max(12px,env(safe-area-inset-top))!important;left:max(12px,env(safe-area-inset-left))!important;right:auto!important;max-width:calc(100vw - 24px)!important}
  #zerconda-v5-map.zerconda-left-map canvas{width:350px!important;max-width:100%!important}
  @media(max-width:700px){#town-toast{top:auto!important;bottom:104px!important}#town-area-travel{top:64px;width:190px;padding:8px 10px}#town-area-travel label{font-size:12px;margin-bottom:4px}#golf-score{top:auto!important;bottom:54px!important;left:12px!important;max-width:calc(100vw - 48px)!important}
  #zerconda-v5-map.zerconda-left-map{box-sizing:border-box;width:372px;top:155px!important}#zerconda-v5-map.zerconda-left-map canvas{width:100%!important}}
  `;document.head.appendChild(style);
- const panel=document.createElement('nav');panel.id='town-area-travel';panel.setAttribute('aria-label','Area travel');
- const label=document.createElement('label');label.htmlFor='town-area-select';label.textContent='Go to an area';panel.appendChild(label);
- const select=document.createElement('select');select.id='town-area-select';select.setAttribute('aria-label','Choose an area to travel to');const prompt=new Option('Choose an area…','');select.add(prompt);
- for(const group of [...new Set(AREA_DESTINATIONS.map(d=>d.group))]){const optgroup=document.createElement('optgroup');optgroup.label=group;for(const d of AREA_DESTINATIONS.filter(d=>d.group===group))optgroup.appendChild(new Option(d.name,d.id));select.appendChild(optgroup);}
- panel.appendChild(select);document.body.appendChild(panel);
+ const panel=document.createElement('nav');panel.id='town-area-travel';panel.setAttribute('aria-label','Call a Z Cab');
+ const label=document.createElement('label');label.htmlFor='town-cab-call';label.textContent='Call a Z Cab';panel.appendChild(label);
+ const callButton=document.createElement('button');callButton.type='button';callButton.id='town-cab-call';callButton.textContent='Request pickup';callButton.setAttribute('aria-label','Call a Z Cab to the nearest road');panel.appendChild(callButton);document.body.appendChild(panel);
+ callButton.onclick=()=>{onStop();onCall();callButton.blur();};
  for(const event of ['pointerdown','pointerup','click','keydown','keyup'])panel.addEventListener(event,e=>{e.stopPropagation();if(event==='pointerdown')onStop();});
- select.addEventListener('focus',onStop);
- select.addEventListener('change',()=>{const destination=AREA_DESTINATIONS.find(d=>d.id===select.value);if(!destination)return;onStop();try{onTravel(destination);}finally{select.value='';select.blur();}});
- return {element:panel,select,destinations:AREA_DESTINATIONS};
+ return {element:panel,callButton,destinations:AREA_DESTINATIONS};
 }
