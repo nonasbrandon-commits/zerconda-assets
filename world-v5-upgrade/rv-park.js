@@ -1,3 +1,4 @@
+import {createRealisticFirePit,createFirePitBench} from './realistic-fire-pits.js?v=20261121-town-v191';
 import {upgradePineMeshes} from './realistic-forest-pines.js?v=20261121-pines-v190';
 import {makeReadableSign} from './readable-signs.js?v=20261119-rv-junction-v128';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
@@ -63,13 +64,12 @@ export function createRVPark(scene,{getPlayer,canUse=()=>true,onTeleport=()=>{},
   box(.6,.75,1.7,1.86,1.03,-1.3,wood,g);box(.65,.06,1.76,1.86,1.45,-1.3,linen,g);r.obstacles.push({x:1.86,z:-1.3,w:.75,d:1.8});
   chair(x+.9,z+4.6,Math.PI,'RV lounge chair',.66);r.obstacles.push({x:.9,z:4.6,w:1.0,d:1});
   const fx=x+9.1,fz=z-1;mesh(new THREE.CylinderGeometry(4.3,4.3,.04,40),gravel,[fx,GROUND_LEVEL-.02,fz]);const f={id:r.id,x:fx,z:fz,lit:false};fires.push(f);
-  for(let j=0;j<14;j++){const a=j*Math.PI/7;mesh(new THREE.DodecahedronGeometry(.23,0),stone,[fx+Math.sin(a)*.85,.23,fz+Math.cos(a)*.85]);}for(const a of [-.5,.5])mesh(new THREE.CylinderGeometry(.1,.13,1.2,8),wood,[fx,.2,fz],[Math.PI/2,0,a]);
-  f.flames=new THREE.Group();f.flames.position.set(fx,.25,fz);root.add(f.flames);for(let j=0;j<4;j++)mesh(new THREE.ConeGeometry(.18,.8,8),new THREE.MeshBasicMaterial({color:j%2?0xffc461:0xed8b3e,transparent:true,opacity:.8,depthWrite:false}),[Math.sin(j*2)*.2,.35,Math.cos(j*2)*.2],[0,0,0],f.flames);f.flames.visible=false;
-  for(let j=0;j<4;j++){const a=j*Math.PI/2;chair(fx+Math.sin(a)*2.6,fz+Math.cos(a)*2.6,a+Math.PI);}
-  sign('RV '+r.id+'',x+2.5,3.35,z+1.8,3,Math.PI/2);
+  f.visual=createRealisticFirePit(root,{x:fx,z:fz,y:GROUND_LEVEL});f.flames=f.visual.flames;
+ for(let j=0;j<4;j++){const a=j*Math.PI/2,xx=fx+Math.sin(a)*2.6,zz=fz+Math.cos(a)*2.6;createFirePitBench(root,{x:xx,z:zz,y:GROUND_LEVEL,angle:a+Math.PI,width:2.1,seatHeight:.59});seats.push({x:xx,z:zz,facing:a+Math.PI,sitHeight:.59,kind:'RV fire-pit bench'});}
+ sign('RV '+r.id+'',x+2.5,3.35,z+1.8,3,Math.PI/2);
   const door={x:x+3.8,z:z+1.8};action('enter-'+r.id,'Enter RV '+r.id+'',door,()=>canUse()&&!insideAt(getPlayer().x,getPlayer().z)&&near(door,3.1),()=>enter(r),150);
   action('exit-'+r.id,'Exit RV '+r.id,{x:x+1,z:z+1.8},()=>insideAt(getPlayer().x,getPlayer().z)===r,()=>exit(r),145);
-  action('fire-'+r.id,()=>`${f.lit?'Extinguish':'Light'} RV site ${r.id} fire pit`,{x:fx,z:fz},()=>canUse()&&!insideAt(getPlayer().x,getPlayer().z)&&near(f,4.4),()=>{f.lit=!f.lit;f.flames.visible=f.lit;onMessage(f.lit?'Fire pit lit. Take a chair and relax.':'Fire extinguished.');});
+  action('fire-'+r.id,()=>`${f.lit?'Extinguish':'Light'} RV site ${r.id} fire pit`,{x:fx,z:fz},()=>canUse()&&!insideAt(getPlayer().x,getPlayer().z)&&near(f,4.4),()=>{f.lit=!f.lit;f.visual.setLit(f.lit);onMessage(f.lit?'Fire pit lit. Take a chair and relax.':'Fire extinguished.');});
  }
  sign('TALL PINES · RV RETREAT',-79,2.4,-163,8,-Math.PI/2);box(.14,2.3,.14,-78.86,1.15,-167,wood);box(.14,2.3,.14,-78.86,1.15,-159,wood);
  const segmentDistance=(x,z,s)=>{const dx=s.bx-s.ax,dz=s.bz-s.az,t=THREE.MathUtils.clamp(((x-s.ax)*dx+(z-s.az)*dz)/(dx*dx+dz*dz),0,1);return Math.hypot(x-s.ax-dx*t,z-s.az-dz*t);};
@@ -82,9 +82,9 @@ export function createRVPark(scene,{getPlayer,canUse=()=>true,onTeleport=()=>{},
 
  for(const [m,list]of staticParts){const o=new THREE.Mesh(mergeGeometries(list),m);o.receiveShadow=true;root.add(o);list.forEach(g=>g.dispose());}
  const inArea=(x,z)=>x>RV_BOUNDS.x0&&x<RV_BOUNDS.x1&&z>RV_BOUNDS.z0&&z<RV_BOUNDS.z1;
- function blocks(x,z,vehicle=false){if(!inArea(x,z))return false;for(const r of rvs){const xx=x-r.x,zz=z-r.z;if(Math.abs(xx)<2.65&&Math.abs(zz)<6.3){if(vehicle)return true;if(Math.abs(zz)>5.65||xx< -1.98)return true;if(xx>1.98&&(!r.open||zz<1.32||zz>2.28))return true;if(r.obstacles.some(o=>Math.abs(xx-o.x)<o.w/2+.2&&Math.abs(zz-o.z)<o.d/2+.2))return true;}}if(fires.some(f=>Math.hypot(x-f.x,z-f.z)<1.25))return true;if(trees.some(t=>Math.hypot(x-t.x,z-t.z)<t.height*.013+.28))return true;return seats.some(s=>Math.hypot(x-s.x,z-s.z)<.4);}
+ function blocks(x,z,vehicle=false){if(!inArea(x,z))return false;for(const r of rvs){const xx=x-r.x,zz=z-r.z;if(Math.abs(xx)<2.65&&Math.abs(zz)<6.3){if(vehicle)return true;if(Math.abs(zz)>5.65||xx< -1.98)return true;if(xx>1.98&&(!r.open||zz<1.32||zz>2.28))return true;if(r.obstacles.some(o=>Math.abs(xx-o.x)<o.w/2+.2&&Math.abs(zz-o.z)<o.d/2+.2))return true;}}if(fires.some(f=>Math.hypot(x-f.x,z-f.z)<1.50))return true;if(trees.some(t=>Math.hypot(x-t.x,z-t.z)<t.height*.013+.28))return true;return seats.some(s=>Math.hypot(x-s.x,z-s.z)<.4);}
  function heightAt(x,z){if(!inArea(x,z))return null;for(const r of rvs){if(Math.abs(x-r.x)<2.35&&Math.abs(z-r.z)<5.95)return .66;if(z>r.z+.9&&z<r.z+2.7&&x>r.x+2.3&&x<r.x+4.3)return x<r.x+3.1?.66:x<r.x+3.7?.44:.22;if(Math.abs(x-r.x)<4.5&&Math.abs(z-r.z)<9.5)return GROUND_LEVEL;}if(paths.some(p=>segmentDistance(x,z,p)<p.w/2)||Math.hypot(x+48,z+258)<9||fires.some(f=>Math.hypot(x-f.x,z-f.z)<4.3))return GROUND_LEVEL;return GROUND_LEVEL;}
- function update(dt){time+=dt;for(const r of rvs)r.hinge.rotation.y=THREE.MathUtils.damp(r.hinge.rotation.y,r.open?1.65:0,8,dt);for(const f of fires)if(f.lit)f.flames.children.forEach((o,j)=>o.scale.y=1+Math.sin(time*5+j)*.2);for(const s of sources)s.b.style.display=s.when()?'block':'none';}
+ function update(dt){time+=dt;for(const r of rvs)r.hinge.rotation.y=THREE.MathUtils.damp(r.hinge.rotation.y,r.open?1.65:0,8,dt);for(const f of fires)f.visual.update(dt,f.lit);for(const s of sources)s.b.style.display=s.when()?'block':'none';}
  function clampCamera(v){const r=insideAt(getPlayer().x,getPlayer().z);if(!r)return;v.x=THREE.MathUtils.clamp(v.x,r.x-1.95,r.x+1.95);v.z=THREE.MathUtils.clamp(v.z,r.z-5.55,r.z+5.55);v.y=THREE.MathUtils.clamp(v.y,2.1,3.5);}
  return{root,routePolygons,rvs,fires,trees,seats,paths,inArea,blocks,heightAt,update,clampCamera,entry:{x:-82,z:-154},get inside(){return !!insideAt(getPlayer().x,getPlayer().z);},nearestSeat(x,z,max=2.3){let best=null;const current=insideAt(x,z);for(const s of seats){if(!!insideAt(s.x,s.z)!==!!current)continue;const d=Math.hypot(x-s.x,z-s.z);if(d<max){max=d;best=s;}}return best;}};
 }

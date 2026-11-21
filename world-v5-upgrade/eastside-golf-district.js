@@ -1,7 +1,8 @@
+import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
 import {addGolfGroves} from './golf-landscaping.js?v=20261121-pines-v190';
 import * as THREE from 'three';
 import {trimGolfGround} from './golf-road-clearance.js?v=20261117-ground-golf-v86';
-import {createNineHoleGolf} from './nine-hole-golf.js?v=20261118-pedestrian-footing-v94';
+import {createNineHoleGolf} from './nine-hole-golf.js?v=20261121-town-v191';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Zerconda Eastside: residential approach and compact nine-hole public golf course.
 // Located about three 96m blocks east of the Needle at (48,-48).
@@ -15,7 +16,7 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48,getPlayer}={}){
   function load(suffix,srgb=false){const t=textureLoader.load(prefix+suffix+'.jpg',undefined,undefined,()=>{});t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(repeat,repeat);t.anisotropy=8;if(srgb)t.colorSpace=THREE.SRGBColorSpace;return t;}
   return new THREE.MeshStandardMaterial({color:tint,map:load('Color',true),normalMap:load('NormalGL'),roughnessMap:load('Roughness'),roughness:1});
  }
- const grass=pbrGround('Ground037',18,0x83a876),fairway=pbrGround('Ground037',16,0x91b77d),rough=pbrGround('Ground037',19,0x68865d),green=pbrGround('Ground037',12,0xa3c78b),sand=pbrGround('Ground037',12,0xe3d1a7);
+ const grass=createRealisticGrass(),fairway=createRealisticGrass('fairway'),rough=createRealisticGrass('rough'),green=createRealisticGrass('green'),sand=pbrGround('Ground037',12,0xe3d1a7);
  const road=mat(0x41484b),walk=mat(0xb8b5a7),brick=mat(0x9c6452),brick2=mat(0xb48a70);
  const glass=new THREE.MeshPhysicalMaterial({color:0x6b9db2,roughness:.19,metalness:.24,transparent:true,opacity:.83});
  const trim=mat(0xd9d0bf),roof=mat(0x39464b),wood=mat(0x80664d),bark=mat(0x70503a);

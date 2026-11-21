@@ -1,0 +1,42 @@
+import * as THREE from 'three';
+import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
+import {FontLoader} from 'three/addons/loaders/FontLoader.js';
+import {TextGeometry} from 'three/addons/geometries/TextGeometry.js';
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+import {createNaturalShrub} from './realistic-landscape-assets.js';
+export function createBoutiqueExterior(parent){
+ const root=new THREE.Group();root.name='Thread & Coast · charcoal stone and illuminated 3D storefront';root.position.set(188,.02,74);parent.add(root);
+ const M=(color,roughness=.8,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness}),charcoal=M(0x242928,.88),frame=M(0x282c2a,.34,.75),gold=M(0xc89b4c,.3,.75),silver=M(0xe4e2d6,.28,.65),wood=M(0x775235),floor=M(0xb2afa1),soil=M(0x27251e),warm=new THREE.MeshBasicMaterial({color:0xffbf64,toneMapped:false});
+ const rock=new THREE.TextureLoader().load(new URL('../realistic-assets/wilderness/rock-face.webp',import.meta.url).href);rock.colorSpace=THREE.SRGBColorSpace;rock.wrapS=rock.wrapT=THREE.RepeatWrapping;const stone=new THREE.MeshStandardMaterial({map:rock,bumpMap:rock,bumpScale:.04,color:0x8d9493,roughness:1});stone.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\ndiffuseColor.rgb=mix(diffuseColor.rgb,vec3(dot(diffuseColor.rgb,vec3(.2126,.7152,.0722))),.95);');};
+ const glass=new THREE.MeshPhysicalMaterial({color:0xc6d9d5,transparent:true,opacity:.16,roughness:.08,metalness:0,depthWrite:false,clearcoat:1});
+ const box=(w,h,d,x,y,z,m,rounded=false)=>{const o=new THREE.Mesh(rounded?new RoundedBoxGeometry(w,h,d,2,.035):new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=o.receiveShadow=true;root.add(o);return o;};
+ function tube(points,r,m){const vs=points.map(p=>new THREE.Vector3(...p));let curve;if(points.length>40){curve=new THREE.CurvePath();for(let i=1;i<vs.length;i++)curve.add(new THREE.LineCurve3(vs[i-1],vs[i]));}else curve=new THREE.CatmullRomCurve3(vs);const o=new THREE.Mesh(new THREE.TubeGeometry(curve,Math.max(24,points.length*4),r,6,false),m);root.add(o);return o;}
+ // A shell with real display-window openings, instead of glazing over a solid wall.
+ box(30,.18,26,0,-.09,-13,floor);box(30,6.8,.20,0,3.4,-25.9,charcoal);for(const x of[-14.9,14.9]){box(.20,2.25,26,x,5.675,-13,charcoal);box(.22,.45,26,x,.225,-13,stone);for(let j=0;j<5;j++){const z=-3.7-j*4.8;box(.04,4.0,4.55,x,2.48,z,glass);box(.15,4.25,.12,x,2.48,z-2.33,frame);}box(.22,.10,25.5,x,.48,-13,frame);box(.22,.10,25.5,x,4.51,-13,frame);box(.05,.035,26,x+(x>0?.13:-.13),6.52,-13,warm);}
+ // Side and rear detailing continues the front architecture in full 3D.
+ box(30.2,.10,.10,0,6.53,-26.06,warm);box(30,.75,.25,0,.375,-26.06,stone);for(const side of[-1,1]){box(1.1,6.5,.32,side*14.45,3.25,-26.02,stone);box(.32,6.5,1.2,side*14.93,3.25,-25.4,stone);}for(const x of[-9,0,9]){box(.28,.16,.34,x,4.6,-26.18,frame,true);box(.20,.035,.20,x,4.50,-26.22,warm);const l=new THREE.PointLight(0xffbd6c,1.7,5,2);l.position.set(x,4.25,-26.5);root.add(l);}box(2.2,3.45,.12,0,1.725,-26.2,frame);box(.06,.25,.12,.78,1.65,-26.31,gold);for(const x of[-1.18,1.18])box(.12,3.6,.14,x,1.8,-26.22,stone);
+ box(30.6,.28,26.6,0,6.8,-13,frame);box(30,.22,1,0,.1,.1,floor);
+ box(30,1.8,.25,0,5.65,0,charcoal);box(8,.16,8,0,-.08,4,floor);
+ const shape=new THREE.Shape();shape.moveTo(-15,4.72);shape.lineTo(15,4.72);shape.lineTo(15,7.0);shape.lineTo(4.4,7);shape.bezierCurveTo(2.5,7,2.7,8.45,0,8.65);shape.bezierCurveTo(-2.7,8.45,-2.5,7,-4.4,7);shape.lineTo(-15,7);shape.closePath();const panel=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:.23,bevelEnabled:true,bevelSize:.025,bevelThickness:.025,bevelSegments:2,curveSegments:28}),charcoal);root.add(panel);
+ const outline=shape.getPoints(80);tube(outline.map(p=>[p.x,p.y,.285]),.022,warm);
+ for(const side of[-1,1]){
+  const cx=side*13.7;for(let row=0;row<20;row++)for(let k=0;k<3;k++){const w=.79,xx=cx+(k-1)*.82;const o=box(w,.30,.28,xx,.18+row*.32,.14,stone,true);o.rotation.z=Math.sin(row*19+k)*.008;}
+  box(.20,2.1,.16,cx,2.9,.43,frame,true);box(.075,1.86,.04,cx,2.9,.53,warm);
+  box(3.0,.72,1.25,side*13.5,.36,1.1,frame,true);box(2.8,.06,1.1,side*13.5,.74,1.1,soil);box(3.02,.035,1.27,side*13.5,.10,1.1,warm);
+  const shrub=createNaturalShrub({width:2.5,height:1.3,seed:side===1?180:129});shrub.position.set(side*13.5,.73,1.1);root.add(shrub);
+  for(let k=0;k<9;k++){const o=new THREE.Mesh(new THREE.SphereGeometry(.065,6,4),new THREE.MeshStandardMaterial({color:k%2?0xb7472e:0xcb8c2c,roughness:.9}));o.position.set(side*13.5+Math.sin(k*2.4)*1.1,.95+Math.cos(k)*.1,1.1+Math.cos(k*2.4)*.4);root.add(o);}
+ }
+ for(const side of[-1,1]){
+  const cx=side*7.55;box(9.5,.18,.24,cx,.35,.12,frame);box(9.5,.16,.24,cx,4.47,.12,frame);
+  for(let k=0;k<3;k++){const x=cx+(k-1)*3.15;box(2.98,3.92,.035,x,2.4,.12,glass);for(const dx of[-1.55,1.55])box(.085,4,.14,x+dx,2.4,.18,frame);}
+  box(9.3,3.8,.12,cx,2.4,-2.6,charcoal);box(9.3,.12,2.7,cx,.25,-1.25,wood);box(9.3,.035,.05,cx,4.16,-2.45,warm);
+  // Actual 3D clothing display silhouettes inside each window.
+  for(let k=0;k<3;k++){const x=cx+(k-1)*2.5,cloth=M([0xb6a58f,0x526b65,0xb78374][(k+(side>0?1:0))%3]);const torso=new THREE.Mesh(new THREE.SphereGeometry(1,16,12),cloth);torso.position.set(x,1.7,-1.1);torso.scale.set(.31,.48,.20);root.add(torso);for(const s of[-1,1]){const sleeve=new THREE.Mesh(new THREE.CapsuleGeometry(.10,.40,4,10),cloth);sleeve.position.set(x+s*.34,1.67,-1.1);sleeve.rotation.z=s*.12;root.add(sleeve);const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.10,.64,4,10),frame);leg.position.set(x+s*.15,.87,-1.1);root.add(leg);}const head=new THREE.Mesh(new THREE.SphereGeometry(.18,12,10),silver);head.position.set(x,2.29,-1.1);head.scale.y=1.25;root.add(head);box(.9,.10,.75,x,.36,-1.1,stone,true);}
+ }
+ for(const x of[-3.0,3.0]){box(.30,4.7,.45,x,2.35,.16,frame);box(.035,2.8,.04,x,2.8,.41,warm);}for(const x of[-2.8,-1.4,1.4,2.8])box(.10,4.45,.17,x,2.25,.20,frame);for(const x of[-2.1,-.7,.7,2.1])box(1.30,4.35,.04,x,2.25,.18,glass);for(const x of[-.16,.16])box(.055,1.05,.12,x,2.15,.37,gold,true);for(const yy of[.1,4.5])box(5.7,.10,.20,0,yy,.24,frame);
+ box(14.3,.24,3.6,0,4.95,1.6,frame);box(14.0,.055,3.45,0,4.795,1.6,wood);for(let i=-6;i<=6;i++)box(.025,.01,3.45,i,4.76,1.6,charcoal);box(14.35,.035,.04,0,4.87,3.42,warm);
+ for(const x of[-5.5,-1.8,1.8,5.5]){const disc=new THREE.Mesh(new THREE.CylinderGeometry(.11,.11,.025,16),warm);disc.position.set(x,4.75,1.7);root.add(disc);}for(const x of[-7,0,7]){const l=new THREE.PointLight(0xffc477,3,9,2);l.position.set(x,4.1,.8);root.add(l);}
+ tube([[-1.1,7.45,.32],[0,8.04,.32],[1.1,7.45,.32],[-1.1,7.45,.32]],.035,gold);tube([[0,8.04,.32],[0,8.13,.32],[.16,8.23,.32],[.10,8.35,.32],[-.08,8.35,.32],[-.17,8.26,.32]],.028,gold);
+ root.updateMatrixWorld(true);const inverse=root.matrixWorld.clone().invert(),bins=new Map(),remove=[];root.traverse(o=>{if(!o.isMesh)return;const g=o.geometry.clone().applyMatrix4(new THREE.Matrix4().multiplyMatrices(inverse,o.matrixWorld)),list=bins.get(o.material)||[];list.push(g.index?g.toNonIndexed():g);bins.set(o.material,list);remove.push(o);});for(const o of remove){o.removeFromParent();o.geometry.dispose();}for(const[m,list]of bins){const o=new THREE.Mesh(mergeGeometries(list),m);o.castShadow=!m.transparent;o.receiveShadow=true;root.add(o);list.forEach(g=>g.dispose());}
+ const ready=new FontLoader().loadAsync(new URL('./assets/helvetiker-bold-v188.typeface.json',import.meta.url).href).then(font=>{for(const[text,size,yy,maxWidth]of[['THREAD & COAST',.94,5.98,18.4],['CLOTHING · ACCESSORIES',.30,5.42,12.5]]){const g=new TextGeometry(text,{font,size,height:.07,depth:.07,curveSegments:8,bevelEnabled:true,bevelSize:.008,bevelThickness:.009,bevelSegments:2});g.computeBoundingBox();const b=g.boundingBox,scale=Math.min(1,maxWidth/(b.max.x-b.min.x)),o=new THREE.Mesh(g,[silver,gold]);o.scale.setScalar(scale);o.position.set(-(b.max.x+b.min.x)*scale/2,yy,.30);o.name='Raised '+text;root.add(o);}});root.userData.ready=ready;return{root,ready};
+}

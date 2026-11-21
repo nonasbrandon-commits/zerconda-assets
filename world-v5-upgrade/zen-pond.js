@@ -1,3 +1,4 @@
+import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import {createGardenWildlife} from './garden-wildlife.js?v=20261118-wildlife-v96';
 import * as THREE from 'three';
@@ -25,7 +26,7 @@ export function createZenPond(parent,{x=0,z=-35,getPlayer=()=>null,externalPaths
  function shapeFor(points){return new THREE.Shape(points.map(p=>new THREE.Vector2(p.x,-p.y)));}
  const shoreline=Array.from({length:128},(_,i)=>boundary(i*TAU/128));
  // Textured garden turf replaces the flat green park overlay in this northern section.
- const turf=new THREE.Mesh(new THREE.PlaneGeometry(65,39),new THREE.MeshStandardMaterial({map:grassMap,color:0xb3b99b,roughness:1}));turf.rotation.x=-Math.PI/2;turf.material.polygonOffset=true;turf.material.polygonOffsetFactor=.5;turf.material.polygonOffsetUnits=1;turf.position.set(0,GROUND_LEVEL,-.5);turf.receiveShadow=true;root.add(turf);
+ const turf=new THREE.Mesh(new THREE.PlaneGeometry(65,39),new THREE.MeshStandardMaterial({map:grassMap,color:0xb3b99b,roughness:1}));applyRealisticGrass(turf.material);turf.rotation.x=-Math.PI/2;turf.material.polygonOffset=true;turf.material.polygonOffsetFactor=.5;turf.material.polygonOffsetUnits=1;turf.position.set(0,GROUND_LEVEL,-.5);turf.receiveShadow=true;root.add(turf);
  // A dark, variegated pebble bed gives depth through the gently transparent surface.
  const bedCanvas=document.createElement('canvas');bedCanvas.width=bedCanvas.height=512;const bc=bedCanvas.getContext('2d');bc.fillStyle='#1c3831';bc.fillRect(0,0,512,512);
  for(let i=0;i<19000;i++){const px=rnd()*512,py=rnd()*512,s=1+rnd()*3;bc.fillStyle=['#2b4940','#3b5145','#263d38','#526053'][Math.floor(rnd()*4)];bc.beginPath();bc.ellipse(px,py,s,s*.65,rnd()*TAU,0,TAU);bc.fill();}

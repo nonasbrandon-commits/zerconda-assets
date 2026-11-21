@@ -1,11 +1,13 @@
+import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
-import {createZenPond} from './zen-pond.js?v=20261119-level-ground-v117';
+import {createZenPond} from './zen-pond.js?v=20261121-town-v191';
 // Public park north of the Observation Needle. All features are traversable scenery.
 export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}){
  const root=new THREE.Group();root.name='Needle Park - tennis basketball fish pond';root.position.set(x,0,z);scene.add(root);
  const mat=(c,r=.85)=>new THREE.MeshStandardMaterial({color:c,roughness:r});
  const turf=mat(0x537b3c),path=mat(0xc9c2ad),asphalt=mat(0x4b555b),blue=mat(0x245b85),red=mat(0xb44f42),white=mat(0xf1eee4),metal=mat(0x424e50),wood=mat(0x795337),water=new THREE.MeshPhysicalMaterial({color:0x3c9f9d,roughness:.17,metalness:.06,transparent:true,opacity:.78,depthWrite:false});
+ applyRealisticGrass(turf);
  // Rough, painted sports surfaces instead of untextured blue/red rectangles.
  function courtSurface(hex,seed){
   const c=document.createElement('canvas');c.width=256;c.height=256;const ctx=c.getContext('2d');

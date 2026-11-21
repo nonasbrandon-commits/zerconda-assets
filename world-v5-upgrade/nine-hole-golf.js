@@ -1,3 +1,4 @@
+import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
 import * as THREE from 'three';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {trimGolfGround} from './golf-road-clearance.js?v=20261117-ground-golf-v86';
@@ -30,7 +31,7 @@ export function createNineHoleGolf(course,{origin,materials,tree,getPlayer}){
   }
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.setIndex(indices);geo.computeVertexNormals();
   let surface=material;
-  if(material===fairway){surface=material.clone();for(const name of ['map','normalMap','roughnessMap'])if(surface[name]){surface[name]=surface[name].clone();surface[name].repeat.set(2,1);}}
+  if(material===fairway){surface=applyRealisticGrass(material.clone(),{variant:'fairway'});for(const name of ['map','normalMap','roughnessMap'])if(surface[name]){surface[name]=surface[name].clone();surface[name].repeat.set(2,1);}}
   const mesh=new THREE.Mesh(geo,surface);mesh.receiveShadow=true;course.add(mesh);turf.push(mesh);if(material!==fairway){mesh.userData.golfPath=true;pathCurves.push({curve,width});}return curve;
  }
  // The entire marked eastern reserve becomes golf land; city streets remain separate.
@@ -48,8 +49,8 @@ export function createNineHoleGolf(course,{origin,materials,tree,getPlayer}){
  const flagMat=new THREE.MeshStandardMaterial({color:0xf2eee3,roughness:.75,side:THREE.DoubleSide});
  const poleMat=new THREE.MeshStandardMaterial({color:0xd4d4ca,metalness:.55,roughness:.32});
  const cupMat=new THREE.MeshStandardMaterial({color:0x17251b,roughness:1});
- const fringe=green.clone();fringe.color.multiplyScalar(.78);
- const teeMat=fairway.clone();teeMat.color.multiplyScalar(.88);
+ const fringe=applyRealisticGrass(green.clone(),{variant:'green'});fringe.color.multiplyScalar(.78);
+ const teeMat=applyRealisticGrass(fairway.clone(),{variant:'fairway'});teeMat.color.multiplyScalar(.88);
  function label(text,x,z){
   const cv=document.createElement('canvas');cv.width=256;cv.height=128;const ctx=cv.getContext('2d');
   ctx.fillStyle='#203e30';ctx.fillRect(0,0,256,128);ctx.strokeStyle='#c6b37e';ctx.lineWidth=7;ctx.strokeRect(4,4,248,120);

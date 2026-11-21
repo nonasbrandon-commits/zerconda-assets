@@ -43,9 +43,9 @@ export function createAreaTravel({onCall,onStop=()=>{}}){
  @media(max-width:700px){#town-toast{top:auto!important;bottom:104px!important}#town-area-travel{top:64px;width:190px;padding:8px 10px}#town-area-travel label{font-size:12px;margin-bottom:4px}#golf-score{top:auto!important;bottom:54px!important;left:12px!important;max-width:calc(100vw - 48px)!important}
  #zerconda-v5-map.zerconda-left-map{box-sizing:border-box;width:372px;top:155px!important}#zerconda-v5-map.zerconda-left-map canvas{width:100%!important}}
  `;document.head.appendChild(style);
- const panel=document.createElement('nav');panel.id='town-area-travel';panel.setAttribute('aria-label','Call a Z Cab');
- const label=document.createElement('label');label.htmlFor='town-cab-call';label.textContent='Call a Z Cab';panel.appendChild(label);
- const callButton=document.createElement('button');callButton.type='button';callButton.id='town-cab-call';callButton.textContent='Request pickup';callButton.setAttribute('aria-label','Call a Z Cab to the nearest road');panel.appendChild(callButton);document.body.appendChild(panel);
+ const panel=document.createElement('nav');panel.id='town-area-travel';panel.setAttribute('aria-label','Request Z Cab');
+ const label=document.createElement('label');label.htmlFor='town-cab-call';label.textContent='Request Z Cab';panel.appendChild(label);
+ const callButton=document.createElement('button');callButton.type='button';callButton.id='town-cab-call';callButton.textContent='Request pickup';callButton.setAttribute('aria-label','Request Z Cab to the nearest road');panel.appendChild(callButton);document.body.appendChild(panel);
  callButton.onclick=()=>{onStop();onCall();callButton.blur();};
  for(const event of ['pointerdown','pointerup','click','keydown','keyup'])panel.addEventListener(event,e=>{e.stopPropagation();if(event==='pointerdown')onStop();});
  return {element:panel,callButton,destinations:AREA_DESTINATIONS};
