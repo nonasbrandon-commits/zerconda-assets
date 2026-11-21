@@ -2,7 +2,7 @@ import {createVehicleHorns} from './vehicle-horns.js?v=20261121-cab-v188';
 import {measureVehicleFootprint,vehicleDescriptor,vehiclePoseBlocked,sweepVehiclePose} from './vehicle-collision.js?v=20261120-collision-v187';
 import {createShaderWarmup} from './shader-warmup.js?v=20261120-responsive-v184';
 import {loadReferenceProp} from './reference-props.js?v=20261120-reference-props-v180';
-import {createZCabs}from './z-cabs.js?v=20261121-cab-v188';
+import {createZCabs}from './z-cabs.js?v=20261121-cab-signs-v189';
 import {createLuxurySedan,loadLuxurySedan,sedanColors} from './luxury-sedan.js?v=20261120-restore-silver-v185';
 import {createBeachVisitors} from './beach-visitors.js?v=20261120-natural-arms-v182';
 import {positionBeachLoungeCamera} from './beach-lounge-camera.js?v=20261119-coastal-breeze-v154';
@@ -83,7 +83,7 @@ import {createNeedleSportsPark} from './needle-sports-park.js?v=20261119-level-g
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-21-cab-v188';
+const ZERCONDA_BUILD='2026-11-21-cab-branding-v189';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
