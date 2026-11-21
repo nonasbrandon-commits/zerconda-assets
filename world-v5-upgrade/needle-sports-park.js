@@ -1,3 +1,4 @@
+import {addBasketballCourt} from './basketball-court.js?v=20261121-court-v206';
 import {addBasketballHoop} from './basketball-hoop.js?v=20261121-fast-start-v205';
 import {addParkBench} from './park-benches.js?v=20261121-entry-fix-v198';
 import {createTownSidewalkMaterial} from './town-sidewalks.js?v=20261121-forest-airfield-v193';
@@ -44,13 +45,13 @@ export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}
  function court(cx,cz,tennis){
   const w=tennis?24:17,d=tennis?43:29;
   box(w+.8,.09,d+.8,cx,.03,cz,asphalt);
-  box(w,.03,d,cx,.092,cz,tennis?tennisSurface:basketSurface);
+  if(tennis)box(w,.03,d,cx,.092,cz,tennisSurface);else addBasketballCourt(root,{x:cx,z:cz,width:w,depth:d,paving:path});
   const half=w/2-.85,end=d/2-.9;
-  for(const sx of [-1,1])line(cx+sx*half,cz-end,cx+sx*half,cz+end);
-  for(const sz of [-1,1])line(cx-half,cz+sz*end,cx+half,cz+sz*end);
-  line(cx-half,cz,cx+half,cz);
+  if(tennis)for(const sx of [-1,1])line(cx+sx*half,cz-end,cx+sx*half,cz+end);
+  if(tennis)for(const sz of [-1,1])line(cx-half,cz+sz*end,cx+half,cz+sz*end);
+  if(tennis)line(cx-half,cz,cx+half,cz);
   if(tennis){
-   for(const sz of [-1,1])line(cx-half,cz+sz*7,cx+half,cz+sz*7);
+   if(tennis)for(const sz of [-1,1])line(cx-half,cz+sz*7,cx+half,cz+sz*7);
    line(cx,cz-end,cx,cz+end);
    for(const sx of [-1,1])cyl(.07,.07,1.15,cx+sx*(half+.45),.6,cz,metal);
    // Fine mesh net made from spaced horizontal and vertical threads.
@@ -59,12 +60,12 @@ export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}
   }else{
    for(const sz of [-1,1]){
     const pz=cz+sz*(end-2.5);
-    line(cx-5.5,pz,cx+5.5,pz);line(cx-5.5,pz,cx-5.5,pz-sz*5.5);line(cx+5.5,pz,cx+5.5,pz-sz*5.5);
+
     addBasketballHoop(root,{x:cx,z:cz+sz*(end-1.1),side:sz});
    }
   }
   // Perimeter fence, with an open pedestrian gate at the south side.
-  for(const side of [-1,1]){
+  if(tennis)for(const side of [-1,1]){
    for(let i=0;i<7;i++){const zz=cz-end+i*(2*end/6);cyl(.055,.055,3,cx+side*(half+1.1),1.5,zz,metal);}
    for(let h of [.8,2.6])box(.035,.025,2*end,cx+side*(half+1.1),h,cz,metal);
   }
@@ -72,7 +73,6 @@ export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}
  court(-18,15,true);court(18,15,false);
  // Continuous stone-paver pedestrian spine between the two courts.
  const paver=createTownSidewalkMaterial();paver.userData.townSidewalk=true;const joint=mat(0x827f78),edge=mat(0x8e8b83);
- const stoneMap=new THREE.TextureLoader().load(new URL('../realistic-assets/pbr/PavingStones070/PavingStones070_1K-JPG_Color.jpg',import.meta.url).href);stoneMap.colorSpace=THREE.SRGBColorSpace;stoneMap.wrapS=stoneMap.wrapT=THREE.RepeatWrapping;stoneMap.repeat.set(2,12);paver.map=stoneMap;
  box(6,.10,96,0,.055,33.5,paver); // -14.5..81.5, ending on the city sidewalk
  for(const side of [-1,1])box(3,.10,83,side*31,.055,2.5,paver);
  for(const pz of [-11,44])box(65,.10,3,0,.055,pz,paver);
@@ -88,8 +88,8 @@ export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}
  // Add a basketball center circle and key arcs with low-profile white painted lines.
  const paint=mat(0xf3f0e6,.95);
  function paintArc(cx,cz,r,start,end){const pos=[],idx=[];for(let k=0;k<=48;k++){const a=start+(end-start)*k/48;for(const rr of[r-.052,r+.052])pos.push(cx+Math.cos(a)*rr,GROUND_LEVEL+.003,cz+Math.sin(a)*rr);if(k<48){const j=k*2;idx.push(j,j+2,j+1,j+1,j+2,j+3);}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();root.add(new THREE.Mesh(g,paint));}
- paintArc(18,15,1.8,0,Math.PI*2);
- for(const dz of [-1,1])paintArc(18,15+dz*9,3.1,dz===1?0:Math.PI,dz===1?Math.PI:Math.PI*2);
+
+
  // Tennis service boxes and distinct singles sidelines.
  for(const side of [-1,1]){
   line(-18+side*8.15,15-12,-18+side*8.15,15+12,white,.09,.137);

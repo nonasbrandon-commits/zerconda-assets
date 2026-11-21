@@ -93,7 +93,7 @@ import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261120-co
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261121-town-v191';
 import {createPedestrians} from './animated-pedestrians.js?v=20261120-bikes-v180-20261119-beach-v149';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261121-forest-airfield-v193';
-import {createNeedleSportsPark} from './needle-sports-park.js?v=20261121-fast-start-v205';
+import {createNeedleSportsPark} from './needle-sports-park.js?v=20261121-court-v206';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
