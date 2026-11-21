@@ -1,6 +1,7 @@
+import {addNaturalFerns,scatterNaturalBoulders} from './forest-natural-details.js?v=20261121-forest-airfield-v193';
 import {applyRealisticGravel} from './realistic-gravel.js?v=20261121-collision-v192';
 import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
-import {upgradePineMeshes} from './realistic-forest-pines.js?v=20261121-pines-v190';
+import {upgradePineMeshes} from './realistic-forest-pines.js?v=20261121-forest-airfield-v193';
 import {createForestDetails} from './forest-details.js?v=20261118-wall-mystery-v111';
 import {joinTrailSurfaces} from './trail-surfaces.js?v=20261118-area-travel-v110';
 import {militaryReserved} from './military-base.js?v=20261121-collision-v192';
@@ -42,6 +43,8 @@ export function createNorthernForest(scene,{mobile=false}={}){const root=new THR
  instances(crown,leaves,trees,'North Woods evergreen crowns',(d,t)=>{d.position.set(t.x,.02,t.z);d.rotation.set(0,t.angle,0);d.scale.set(t.h*t.width,t.h,t.h*t.width)});instances(new THREE.LatheGeometry([new THREE.Vector2(.023,0),new THREE.Vector2(.018,.016),new THREE.Vector2(.013,.055),new THREE.Vector2(.010,.25),new THREE.Vector2(.006,.80),new THREE.Vector2(.003,1)],10).translate(0,-.5,0),wood,trees,'North Woods trunks',(d,t)=>{d.position.set(t.x,t.h*.5,t.z);d.rotation.set(0,t.angle,0);d.scale.set(t.h,t.h,t.h)});
  for(let i=0;i<(mobile?1100:2600);i++){const x=-437+rnd()*998,z=-1340+rnd()*764;if(clear(x,z,1.35))continue;bushes.push({x,z,s:.65+rnd()*.9,a:rnd()*6.28});}
  const shrub=createNaturalShrub({width:1.7,height:1.3,seed:98}),byMat=new Map();shrub.updateMatrixWorld(true);shrub.traverse(o=>{if(o.isMesh){const g=o.geometry.clone().applyMatrix4(o.matrixWorld),a=byMat.get(o.material)||[];a.push(g.index?g.toNonIndexed():g);byMat.set(o.material,a);}});for(const [m,list]of byMat){const geo=mergeGeometries(list);instances(geo,m,bushes,'North Woods leafy undergrowth',(d,p)=>{d.position.set(p.x,.02,p.z);d.rotation.set(0,p.a,0);d.scale.setScalar(p.s)});}
+ const fernsForWoodland=[];for(let i=0;i<180;i++){const x=-432+(i*137.17%985),z=-1330+(i*97.31%740);if(!clear(x,z,1.2)&&!trees.some(t=>Math.hypot(t.x-x,t.z-z)<t.h*.024+.65))fernsForWoodland.push({x,z,y:.02,angle:i*2.399,scale:.7+(i%4)*.12});}addNaturalFerns(root,fernsForWoodland);
+ scatterNaturalBoulders(root,{bounds:{x0:-432,x1:555,z0:-1334,z1:-580},count:mobile?80:160,canPlace:(x,z,r)=>!clear(x,z,r+.8)&&!trees.some(t=>Math.hypot(t.x-x,t.z-z)<t.h*.024+r+.45)});
  const grid=new Map();for(const p of [...trees.map(t=>({...t,r:t.h*.023+.20})),...bushes.map(t=>({...t,r:.7*t.s}))]){const key=Math.floor(p.x/8)+','+Math.floor(p.z/8),a=grid.get(key)||[];a.push(p);grid.set(key,a);}
  function box(w,h,d,x,y,z,m){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);root.add(o);return o;}
  for(const [x,z]of [[-30,-870],[340,-620]]){box(3,.16,.8,x+5,.5,z+5,wood);box(3,.7,.1,x+5,.85,z+5.35,wood);for(const dx of [-1,1])box(.13,.4,.65,x+5+dx,.24,z+5,stone);for(const dx of [-.8,.8])seats.push({x:x+5+dx,z:z+5,facing:Math.PI,sitHeight:.6,kind:'forest trail bench'});}

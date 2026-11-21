@@ -1,3 +1,4 @@
+import {installTreeBreeze} from './tree-breeze.js?v=20261121-forest-airfield-v193';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 // Original volumetric pine geometry, normalized to the existing forest transforms.
@@ -35,7 +36,7 @@ function createPine(low=false){
  // Root flares stay inside the prior pine collision footprint.
  for(let j=0;j<6;j++){const a=j*Math.PI/3;branch(new THREE.Vector3(Math.cos(a)*.020,0,Math.sin(a)*.020),new THREE.Vector3(0,.045,0),.002,.006);}
  const timber=mergeGeometries(woodParts.map(g=>g.index?g.toNonIndexed():g));timber.translate(0,-.5,0);woodParts.forEach(g=>g.dispose());
- crown.computeBoundingSphere();timber.computeBoundingSphere();return{crown,timber,leaves,wood};
+ installTreeBreeze(leaves,{offset:0,strength:low?.005:.006});installTreeBreeze(wood,{offset:.5,strength:low?.005:.006});crown.computeBoundingSphere();timber.computeBoundingSphere();return{crown,timber,leaves,wood};
 }
 function detailChunks(source,high,low,material){
  const bins=new Map(),m=new THREE.Matrix4(),v=new THREE.Vector3();

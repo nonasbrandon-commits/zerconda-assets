@@ -1,4 +1,4 @@
-import {upgradePineMeshes} from './realistic-forest-pines.js?v=20261121-pines-v190';
+import {upgradePineMeshes} from './realistic-forest-pines.js?v=20261121-forest-airfield-v193';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Shared original GLB geometry is instanced across the grove, keeping draw calls low.

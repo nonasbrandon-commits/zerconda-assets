@@ -1,6 +1,6 @@
 import {applyRealisticGravel} from './realistic-gravel.js?v=20261121-collision-v192';
 import {createRealisticFirePit,createFirePitBench} from './realistic-fire-pits.js?v=20261121-collision-v192';
-import {upgradePineMeshes} from './realistic-forest-pines.js?v=20261121-pines-v190';
+import {upgradePineMeshes} from './realistic-forest-pines.js?v=20261121-forest-airfield-v193';
 import {makeReadableSign} from './readable-signs.js?v=20261119-rv-junction-v128';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import {treeOverlapsRoad} from './tree-road-clearance.js?v=20261118-clear-roads-v112';

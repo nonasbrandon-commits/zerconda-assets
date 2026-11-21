@@ -1,3 +1,5 @@
+import {updateTreeBreeze} from './tree-breeze.js?v=20261121-forest-airfield-v193';
+import {createTownSidewalkMaterial} from './town-sidewalks.js?v=20261121-forest-airfield-v193';
 import {createPlayerCameraGuard} from './player-camera-guard.js?v=20261121-town-v191';
 import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
 import {createCabPassengerCamera} from './cab-passenger-camera.js?v=20261121-town-v191';
@@ -37,20 +39,20 @@ import {createDamagedWallPanel,createBlockedWallOpening,WALL_OPENING} from './bl
 import {createAreaTravel} from './area-travel.js?v=20261121-town-v191';
 import {createMilitaryBase} from './military-base.js?v=20261121-collision-v192';
 import {upgradeMobileControls} from './mobile-controls.js?v=20261118-z-needle-v107';
-import {createAirportLoop} from './airport-loop.js?v=20261119-level-ground-v117';
-import {createNorthernForest} from './northern-forest.js?v=20261121-collision-v192';
+import {createAirportLoop} from './airport-loop.js?v=20261121-forest-airfield-v193';
+import {createNorthernForest} from './northern-forest.js?v=20261121-forest-airfield-v193';
 import {createMobilePerformance} from './mobile-performance.js?v=20261120-player-detail-v181-20261119-rv-junction-v128';
 import {createTownObstacles} from './town-obstacles.js?v=20261121-collision-v192';
 import {createSeasideCarnival} from './seaside-carnival.js?v=20261121-cab-v188';
-import {createRVPark} from './rv-park.js?v=20261121-collision-v192';
+import {createRVPark} from './rv-park.js?v=20261121-forest-airfield-v193';
 import {createShowroomPickup} from './showroom-pickup.js?v=20261119-reference-trucks-v126';
 import {createLuxuryVillas} from './luxury-villas.js?v=20261121-town-v191';
 import {createStyleCuts} from './style-cuts.js?v=20261119-clear-mirrors-v133';
 import {createBusinessCentre} from './business-centre.js?v=20261119-entrance-steering-v118';
 import {createSkatePark} from './skate-park.js?v=20261119-entrance-steering-v118';
-import {createAirfield} from './airfield.js?v=20261118-wall-mystery-v111';
+import {createAirfield} from './airfield.js?v=20261121-forest-airfield-v193';
 import * as THREE from 'three';
-import {createForestCampground} from './forest-campground.js?v=20261121-collision-v192';
+import {createForestCampground} from './forest-campground.js?v=20261121-forest-airfield-v193';
 import {createPremierHomes} from './premier-homes.js?v=20261119-performance-v147';
 import {createZercondaNews} from './zerconda-news.js?v=20261120-earth-globes-v181-20261120-news-voice-v172';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261121-town-v191';
@@ -58,7 +60,7 @@ import {createBowlingAlley} from './bowling-alley.js?v=20261119-entrance-steerin
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261120-scooter-shop-v180';
 import {createSeasidePier} from './seaside-pier.js?v=20261120-still-seated-v176';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
-import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261121-town-v191';
+import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261121-forest-airfield-v193';
 import {createClubZerconda} from './club-zerconda.js?v=20261120-street-fleet-v186';
 import {createRealisticHuman} from './realistic-human.js?v=20261118-faster-town-v106';
 import {createEastForestGate} from './east-forest-gate.js?v=20261117-realistic-human-v68';
@@ -81,12 +83,12 @@ import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=202
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261120-collision-v187';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261121-town-v191';
 import {createPedestrians} from './animated-pedestrians.js?v=20261120-bikes-v180-20261119-beach-v149';
-import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261121-town-v191';
-import {createNeedleSportsPark} from './needle-sports-park.js?v=20261121-collision-v192';
+import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261121-forest-airfield-v193';
+import {createNeedleSportsPark} from './needle-sports-park.js?v=20261121-forest-airfield-v193';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-21-collision-v192';
+const ZERCONDA_BUILD='2026-11-21-forest-airfield-v193';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -155,7 +157,7 @@ const asphalt=new THREE.MeshStandardMaterial({color:0x333638,roughness:0.98,meta
  ac.fillStyle='#a0a0a0';ac.fillRect(0,0,256,256);
  for(let i=0;i<17000;i++){aggregateSeed=(Math.imul(aggregateSeed,1664525)+1013904223)>>>0;const x=(aggregateSeed>>>16)&255;aggregateSeed=(Math.imul(aggregateSeed,1664525)+1013904223)>>>0;const z=(aggregateSeed>>>16)&255,v=140+((aggregateSeed>>>8)%31);ac.fillStyle='rgb('+v+','+v+','+v+')';ac.fillRect(x,z,1,1);}
  const aggregate=new THREE.CanvasTexture(asphaltCanvas);aggregate.wrapS=aggregate.wrapT=THREE.RepeatWrapping;aggregate.repeat.set(12,12);aggregate.anisotropy=4;asphalt.map=aggregate;asphalt.bumpMap=aggregate;asphalt.bumpScale=.012;
-const paving=groundPBR('PavingStones070','PavingStones070',18,0xe4ddd0);
+const paving=createTownSidewalkMaterial();
 const curb=M(0xd7d2c8);
 const grass=createRealisticGrass();grass.polygonOffset=true;grass.polygonOffsetFactor=2;grass.polygonOffsetUnits=4;
 const lane=M(0xeae5d7),yellow=M(0xc4ad62),dark=M(0x252a2d),stone=M(0xc4bcae);
@@ -1056,7 +1058,7 @@ boutique=createClothingBoutique(scene,{getPlayer:()=>player,canEnter:()=>!barber
 news=createZercondaNews(scene,{getPlayer:()=>player,canInteract:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});
 premier=createPremierHomes(scene,{onPassage:passHomeDoor,getPlayer:()=>player,canInteract:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});
 camp=createForestCampground(scene,{getPlayer:()=>player,canUse:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x,y+1.7,z-2);}});
-airfield=createAirfield(scene,{groundMaterial:grass,getPlayer:()=>player,canUse:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x,y+1.6,z);}});
+airfield=createAirfield(scene,{groundMaterial:grass,roadMaterial:asphalt,getPlayer:()=>player,canUse:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x,y+1.6,z);}});
 skate=createSkatePark(scene,{getPlayer:()=>player,getYaw:()=>yaw,getHeight:groundHeightAt,canUse:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,canMove:(x,z)=>walkable(x,z)&&!southBeach.blocksVehicle(x,z),onMessage:m=>townControls.notify(m),onStop:()=>{cabPassengerCamera.reset();sittingSeat=null;seatReturn=null;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();}});
 addEventListener('keydown',e=>{if(zCabs?.riding||zCabs?.panelOpen||hotDogVendor?.panelOpen||zStore?.panelOpen||playerMenu?.panelOpen)return;if(e.code==='Space'&&!e.repeat&&skate.riding&&!['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)){e.preventDefault();e.stopImmediatePropagation();skate.ollie();}},true);
 office=createBusinessCentre(scene,{getPlayer:()=>player,canEnter:()=>!barber?.active&&!activeCar&&!skate.riding&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x-Math.sin(yaw)*2.4,y+2.1,z-Math.cos(yaw)*2.4);}});
@@ -1070,7 +1072,7 @@ carnival=createSeasideCarnival(scene,{getPlayer:()=>player,getCamera:()=>camera,
 const vehicleHorns=createVehicleHorns({getListener:()=>player,getVehicle:()=>activeCar?.group||null});
 zCabs=createZCabs(scene,{getPlayer:()=>player,canRequest:()=>!scooters?.inside&&!universalSession&&!insideHouse()&&!museum?.contains(player.x,player.z)&&!tattooShop?.active&&!dealerInside&&!cafeInside,onHonk:(source,options)=>vehicleHorns.honk(source,options),onPickupState:state=>{const b=document.getElementById('town-cab-call');if(b)b.textContent=state==='enroute'?'Cab on its way…':state==='arrived'?'Cab has arrived':'Request pickup';},getHeight:groundHeightAt,getVehicles:()=>[...cars,...dealership.cars.map(o=>vehicleDescriptor(THREE,o.model))],getPedestrians:()=>pedestrianSystem.agents.map(a=>a.group.position),canUse:()=>!activeCar&&!marine.riding&&!scooters.riding&&!skate.riding&&!onObservationDeck&&!insideNeedleLobby&&!barber.active&&!office.active&&!airfield.boarded&&!carnival.riding&&!camp.resting&&!rvPark.inside&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!ownableHomes.active,onStop:()=>{cabPassengerCamera.reset();sittingSeat=null;seatReturn=null;keys.clear();movement.vx=movement.vz=movement.wheelImpulse=0;townControls.stop();},onMessage:m=>townControls.notify(m),onAlight:p=>{cabPassengerCamera.reset();let point=null;for(const[dx,dz]of[[0,0],[1,0],[-1,0],[0,1],[0,-1],[2,0],[-2,0]])if(walkable(p.x+dx,p.z+dz)){point={x:p.x+dx,z:p.z+dz};break;}player.x=point?.x??p.x;player.z=point?.z??p.z;yaw=p.yaw;pitch=0;keys.clear();movement.vx=movement.vz=movement.wheelImpulse=0;camera.position.set(player.x-Math.sin(yaw)*3.65,standingHeightAt(player.x,player.z)+1.75,player.z-Math.cos(yaw)*3.65);}});
  townObstacles=createTownObstacles({scene,getFloor:standingHeightAt,getDynamic:()=>cars.filter(c=>c!==activeCar).map(c=>c.group).concat(zCabs?.vehicles.map(v=>v.root)||[]),ignore:o=>o===avatar||o===realisticPlayer.root||o.name==='Cloud sky'||o.name==='Zerconda South Beach'||cars.some(c=>c.group===o)||zCabs?.vehicles.some(v=>v.root===o)});townObstacles.scan();
-airportLoop=createAirportLoop(scene);northernForest=createNorthernForest(scene,{mobile:MOBILE});militaryBase=createMilitaryBase(scene,{getPlayer:()=>player,hasClearance:()=>window.zercondaAccess?.hasClearance?.('military-base')===true,onMessage:m=>townControls.notify(m),onReject:(x,z)=>{player.x=x;player.z=z;movement.vx=0;movement.vz=0;keys.clear();townControls.stop();}});signBacks=createSignBackMaintenance(scene);signBacks.scan();mobilePerformance=createMobilePerformance({scene,renderer,getPlayer:()=>player,mobile:MOBILE});mobilePerformance.scan();
+airportLoop=createAirportLoop(scene,{roadMaterial:asphalt,walkMaterial:paving});northernForest=createNorthernForest(scene,{mobile:MOBILE});militaryBase=createMilitaryBase(scene,{getPlayer:()=>player,hasClearance:()=>window.zercondaAccess?.hasClearance?.('military-base')===true,onMessage:m=>townControls.notify(m),onReject:(x,z)=>{player.x=x;player.z=z;movement.vx=0;movement.vz=0;keys.clear();townControls.stop();}});signBacks=createSignBackMaintenance(scene);signBacks.scan();mobilePerformance=createMobilePerformance({scene,renderer,getPlayer:()=>player,mobile:MOBILE});mobilePerformance.scan();
 // Fast travel always arrives outdoors, after leaving any current activity or interior.
 function travelToArea(destination){
  scooters?.leave();
@@ -1165,7 +1167,7 @@ function animate(){
  requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;vehicleHorns.update();let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
  if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
- airDancers.update(elapsed);dealership.update?.(motionDt);coffeeShop.update(motionDt);zFortune?.update(motionDt);
+ updateTreeBreeze(elapsed);airDancers.update(elapsed);dealership.update?.(motionDt);coffeeShop.update(motionDt);zFortune?.update(motionDt);
  forestShade=THREE.MathUtils.damp(forestShade,northernForest?.atmosphereAt(player.x,player.z)??0,1.4,motionDt);hemisphere.intensity=THREE.MathUtils.lerp(1.3,.72,forestShade);sun.intensity=THREE.MathUtils.lerp(2.8,1.35,forestShade);scene.fog.color.copy(daylightFog).lerp(forestFog,forestShade);scene.fog.density=THREE.MathUtils.lerp(.00055,.0020,forestShade);
  militaryBase?.update(motionDt);
  observationNeedle.update(dt);zCabs?.update(motionDt);
