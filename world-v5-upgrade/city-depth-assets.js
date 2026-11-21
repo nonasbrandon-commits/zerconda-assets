@@ -1,4 +1,4 @@
-import {addParkBench} from './park-benches.js?v=20261121-city-life-v196';
+import {addParkBench} from './park-benches.js?v=20261121-entry-fix-v198';
 import {attachReferenceProp} from './reference-props.js?v=20261120-reference-props-v180';
 import {addRealisticPlanterFoliage} from './realistic-planter-foliage.js?v=20261118-wall-mystery-v111';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';

@@ -1,4 +1,4 @@
-import {addParkBench} from './park-benches.js?v=20261121-city-life-v196';
+import {addParkBench} from './park-benches.js?v=20261121-entry-fix-v198';
 import {createTownSidewalkMaterial} from './town-sidewalks.js?v=20261121-forest-airfield-v193';
 import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
