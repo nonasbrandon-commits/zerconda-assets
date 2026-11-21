@@ -54,7 +54,7 @@ import {createAirfield} from './airfield.js?v=20261121-forest-airfield-v193';
 import * as THREE from 'three';
 import {createForestCampground} from './forest-campground.js?v=20261121-forest-airfield-v193';
 import {createPremierHomes} from './premier-homes.js?v=20261119-performance-v147';
-import {createZercondaNews} from './zerconda-news.js?v=20261120-earth-globes-v181-20261120-news-voice-v172';
+import {createZercondaNews} from './zerconda-news.js?v=20261121-virus-wording-v195';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261121-town-v191';
 import {createBowlingAlley} from './bowling-alley.js?v=20261119-entrance-steering-v118';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261120-scooter-shop-v180';
@@ -88,7 +88,7 @@ import {createNeedleSportsPark} from './needle-sports-park.js?v=20261121-forest-
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-21-cab-turns-v194';
+const ZERCONDA_BUILD='2026-11-21-virus-wording-v195';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
