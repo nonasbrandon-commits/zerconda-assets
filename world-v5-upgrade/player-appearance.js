@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {createRealisticHuman} from './player-human.js?v=20261120-reference-hero-v181';
+import {createRealisticHuman} from './player-human.js?v=20261121-profile-studio-v203';
 import {residentProfiles} from './resident-profiles.js?v=20261118-residents-v97';
 export {residentProfiles};
 export function createPlayerAppearance(){

@@ -20,12 +20,12 @@ import {optimizeStaticModel} from './static-model-batching.js?v=20261119-perform
 import {beginHomePassage,updateHomePassage,homePassageActive,cancelHomePassage} from './home-passage.js?v=20261119-performance-v147';
 import {updateReferenceLampLights} from './reference-lamp.js?v=20261119-performance-v147';
 import {improveVehicleCabin} from './vehicle-cabins.js?v=20261119-cabin-v137';
-import {createPlayerAppearance} from './player-appearance.js?v=20261121-entry-fix-v198';
+import {createPlayerAppearance} from './player-appearance.js?v=20261121-profile-studio-v203';
 import {createCameraClearance} from './camera-clearance.js?v=20261119-performance-v147';
 import {createSignBackMaintenance} from './readable-signs.js?v=20261119-rv-junction-v128';
 import {createZFortune} from './z-fortune.js?v=20261119-performance-v147';
 import {createZStore} from './z-store.js?v=20261119-profile-v136';
-import {createPlayerMenu} from './player-menu.js?v=20261120-reference-hero-v180';
+import {createPlayerMenu} from './player-menu.js?v=20261121-profile-studio-v203';
 import {createMouseSkateControls} from './mouse-skate-controls.js?v=20261119-entrance-steering-v118';
 import {createMouseVehicleSteering} from './mouse-vehicle-steering.js?v=20261119-entrance-steering-v118';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
@@ -53,7 +53,7 @@ import {createLuxuryVillas} from './luxury-villas.js?v=20261121-town-v191';
 import {createStyleCuts} from './style-cuts.js?v=20261119-clear-mirrors-v133';
 import {createBusinessCentre} from './business-centre.js?v=20261119-entrance-steering-v118';
 import {createSkatePark} from './skate-park.js?v=20261119-entrance-steering-v118';
-import {createAirfield} from './airfield.js?v=20261121-forest-airfield-v193';
+import {createAirfield} from './airfield.js?v=20261121-profile-studio-v203';
 import * as THREE from 'three';
 import {createForestCampground} from './forest-campground.js?v=20261121-forest-airfield-v193';
 import {createPremierHomes} from './premier-homes.js?v=20261119-performance-v147';
@@ -91,7 +91,7 @@ import {createNeedleSportsPark} from './needle-sports-park.js?v=20261121-entry-f
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-21-news-choice-v202';
+const ZERCONDA_BUILD='2026-11-21-profile-studio-v203';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -1356,7 +1356,7 @@ function animate(){
  courtGames?.updateCamera(camera);
  updateAreaLoading();areaResume.save();
  const restorePlayerVisibility=playerCameraGuard.apply(camera,avatar,!barber?.panelOpen&&!tattooShop?.panelOpen);
- try{if(sceneryFinished&&characterPrepared&&!tattooShop?.panelOpen){renderBudget.update(motionDt);ownableHomes?.renderWindows(renderer,camera);updateReferenceLampLights(camera);const renderNow=performance.now(),renderGap=renderNow-lastRenderTime;lastRenderTime=renderNow;if(renderGap>150)slowRenderFrames++;else slowRenderFrames=Math.max(0,slowRenderFrames-1);if(slowRenderFrames>=4&&renderer.getPixelRatio()>(MOBILE?.85:1)){renderer.setPixelRatio(Math.max(MOBILE?.85:1,renderer.getPixelRatio()*.85));slowRenderFrames=0;}shaderWarmup.render(scene,camera,()=>{renderer.render(scene,camera);if(!paintedFrame){paintedFrame=true;window.dispatchEvent(new Event('zerconda-frame'));}if(!playable&&sceneryFinished&&characterPrepared&&++settledFrames>=3){playable=true;keys.clear();window.dispatchEvent(new Event('zerconda-playable'));}});}}
+ try{if(sceneryFinished&&characterPrepared&&!tattooShop?.panelOpen&&!playerMenu?.profileOpen){renderBudget.update(motionDt);ownableHomes?.renderWindows(renderer,camera);updateReferenceLampLights(camera);const renderNow=performance.now(),renderGap=renderNow-lastRenderTime;lastRenderTime=renderNow;if(renderGap>150)slowRenderFrames++;else slowRenderFrames=Math.max(0,slowRenderFrames-1);if(slowRenderFrames>=4&&renderer.getPixelRatio()>(MOBILE?.85:1)){renderer.setPixelRatio(Math.max(MOBILE?.85:1,renderer.getPixelRatio()*.85));slowRenderFrames=0;}shaderWarmup.render(scene,camera,()=>{renderer.render(scene,camera);if(!paintedFrame){paintedFrame=true;window.dispatchEvent(new Event('zerconda-frame'));}if(!playable&&sceneryFinished&&characterPrepared&&++settledFrames>=3){playable=true;keys.clear();window.dispatchEvent(new Event('zerconda-playable'));}});}}
  catch(err){renderFailure=String(err);console.error('ZERCONDA RENDER ERROR',err);if(!paintedFrame){townEntered=false;window.dispatchEvent(new CustomEvent('zerconda-load-failed',{detail:'The graphics could not start. Please retry.'}));}}
  finally{restorePlayerVisibility();if(activeCar)activeCar.group.visible=true;}
  const nearHome=!boutique.active&&!bowling.active&&!scooters.riding&&!skate?.riding&&!activeCar?ownableHomes.closest(player.x,player.z,11):null;

@@ -1,6 +1,6 @@
 const skinComponent=(a,i,c)=>c===0?a.getX(i):c===1?a.getY(i):c===2?a.getZ(i):a.getW(i);
 import {avatarHeadFrame} from './avatar-fit.js?v=20261120-head-fit-v181';
-import {createHairCustomizer} from './player-hair-styles.js?v=20261120-head-fit-v181';
+import {createHairCustomizer} from './player-hair-styles.js?v=20261121-profile-studio-v203';
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -22,7 +22,7 @@ function source(){
 }
 function colorClothes(mesh,shirt,pants,options={}){
  if(mesh.userData.wardrobeBase)mesh.material=mesh.userData.wardrobeBase;else mesh.userData.wardrobeBase=mesh.material;
- if(!/body/i.test(mesh.material.name)||!mesh.material.map?.image)return;
+ const hero=/Main character original clothing/i.test(mesh.material.name);if(!/body|Main character original clothing/i.test(mesh.material.name)||!mesh.material.map?.image)return;
  const cacheKey=mesh.material.name+':'+shirt+':'+pants+':'+(options.shoes||'#303b40')+':'+!!options.shorts+':'+!!options.tee;
  if(outfitCache.has(cacheKey)){mesh.material=outfitCache.get(cacheKey);return;}
  const image=mesh.material.map.image,w=Math.min(1024,image.width),h=Math.round(image.height*w/image.width);
@@ -38,7 +38,7 @@ function colorClothes(mesh,shirt,pants,options={}){
    for(const id of ids)center.add(mesh.getVertexPosition(id,point).applyMatrix4(mesh.matrixWorld));center.multiplyScalar(1/3);
    const y=(center.y-bounds.min.y)/height,x=Math.abs(center.x-(bounds.min.x+bounds.max.x)/2)/height;
    const armWeight=mesh.isSkinnedMesh&&part==='sleeves'?ids.reduce((sum,id)=>{let weight=0;for(let k=0;k<4;k++){const bi=skinComponent(mesh.geometry.attributes.skinIndex,id,k),bw=skinComponent(mesh.geometry.attributes.skinWeight,id,k);if(/Forearm|Hand/i.test(mesh.skeleton.bones[bi]?.name||''))weight+=bw;}return sum+weight;},0)/3:0;
-   const match=part==='shirt'?y>.56:part==='pants'?y>.075&&y<.65&&x<.18:part==='shoes'?y<.085:part==='shorts'||part==='sleeves'?true:false;
+   const match=hero?(part==='shirt'?y>.55&&y<.83:part==='pants'?y>.25&&y<.55&&x<.23:part==='shoes'?y<.10:false):part==='shirt'?y>.56:part==='pants'?y>.075&&y<.65&&x<.18:part==='shoes'?y<.085:part==='shorts'||part==='sleeves'?true:false;
    if(!match)continue;
    let poly=ids.map(id=>{const p=mesh.getVertexPosition(id,new THREE.Vector3()).applyMatrix4(mesh.matrixWorld);let arm=0;if(mesh.isSkinnedMesh)for(let k=0;k<4;k++){const bi=skinComponent(mesh.geometry.attributes.skinIndex,id,k);if(/Forearm|Hand/i.test(mesh.skeleton.bones[bi]?.name||''))arm+=skinComponent(mesh.geometry.attributes.skinWeight,id,k);}return {u:uv.getX(id)*w,v:(mesh.material.map.flipY?1-uv.getY(id):uv.getY(id))*h,y:(p.y-bounds.min.y)/height,arm};});
    function clip(key,value,greater){const out=[];for(let j=0;j<poly.length;j++){const a=poly[j],b=poly[(j+1)%poly.length],inside=v=>greater?v[key]>=value:v[key]<=value,ai=inside(a),bi=inside(b);if(ai)out.push(a);if(ai!==bi){const t=(value-a[key])/(b[key]-a[key]);out.push(Object.fromEntries(['u','v','y','arm'].map(k=>[k,a[k]+(b[k]-a[k])*t])));}}poly=out;}
@@ -46,12 +46,12 @@ function colorClothes(mesh,shirt,pants,options={}){
   }
   return mc.getImageData(0,0,w,h).data;
  }
- for(const [part,color] of [['shirt',shirt],['pants',pants],['shoes',options.shoes||'#303b40'],...(options.shorts?[['shorts','#c3997e']]:[]),...(options.tee?[['sleeves','#c3997e']]:[])]){
+ for(const [part,color] of [['shirt',shirt],['pants',pants],['shoes',options.shoes||'#303b40'],...(!hero&&options.shorts?[['shorts','#c3997e']]:[]),...(!hero&&options.tee?[['sleeves','#c3997e']]:[])]){
   const coverage=region(part),rgb=new THREE.Color(color);rgb.convertLinearToSRGB();
   for(let i=0;i<pixels.data.length;i+=4){if(coverage[i+3]<128)continue;
    const r=pixels.data[i]/255,g=pixels.data[i+1]/255,b=pixels.data[i+2]/255,l=.2126*r+.7152*g+.0722*b;
-   if(part==='shirt'&&r>g*1.18&&r>b*1.25)continue;
-   const shade=part==='shorts'||part==='sleeves'?.91+l*.055:part==='shirt'?Math.max(.15,l):Math.min(1,.48+Math.sqrt(l)*.95);
+   if((hero?r>.3&&r>g*1.18&&r>b*1.25:part==='shirt'&&r>g*1.18&&r>b*1.25))continue;
+   const shade=part==='shorts'||part==='sleeves'?.91+l*.055:part==='shirt'?(hero?Math.min(1,.60+l*1.4):Math.max(.15,l)):Math.min(1,.48+Math.sqrt(l)*.95);
    pixels.data[i]=Math.round(rgb.r*255*shade);pixels.data[i+1]=Math.round(rgb.g*255*shade);pixels.data[i+2]=Math.round(rgb.b*255*shade);
   }
  }
