@@ -36,7 +36,7 @@ export function createCloudSky(scene,{count=48,seed=1729}={}){
    p.position.set((rnd()-.5)*span,(rnd()-.5)*27,(rnd()-.5)*span*.55);
    cluster.add(p);
   }
-  clouds.push({cluster,speed:.24+rnd()*.20});
+  clouds.push({cluster,speed:(.24+rnd()*.20)*1.6});
  }
  // Pale blue atmosphere, deeper overhead, lighter at the horizon.
  const skyCanvas=document.createElement('canvas');skyCanvas.width=8;skyCanvas.height=512;

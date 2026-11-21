@@ -77,7 +77,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {installRealisticFountain} from './realistic-fountain.js?v=20261119-fountain-seating-v135';
 import {createObservationNeedle} from './observation-needle.js?v=20261120-date-palms-v184';
-import {createCloudSky} from './cloud-sky.js?v=20261120-standing-attendant-v167';
+import {createCloudSky} from './cloud-sky.js?v=20261121-cloud-drift-v207';
 import {addCityDepth} from './city-depth-assets.js?v=20261121-entry-fix-v198';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js?v=20261119-coffee-stone-v123';
