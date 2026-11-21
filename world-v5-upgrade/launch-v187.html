@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zerconda | Walkable 3D World</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#a9c6d8;font:14px system-ui,Arial,sans-serif}
+canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:none}
+#hud{position:fixed;top:12px;left:12px;z-index:10;color:#fff;background:rgba(8,18,25,.8);padding:12px 16px;border:1px solid #71848e;border-radius:10px;max-width:calc(100vw - 135px);pointer-events:none}
+#hud strong{font-size:17px;letter-spacing:.05em}#status{font-size:12px;line-height:1.5;margin-top:5px;color:#e6eef1}
+#help{position:fixed;bottom:12px;left:12px;color:#fff;background:rgba(8,18,25,.75);padding:10px;border-radius:9px;z-index:10}
+#mobile{position:fixed;bottom:22px;right:14px;display:grid;grid-template-columns:repeat(3,48px);gap:5px;z-index:20}
+#mobile button,#enter{touch-action:none;background:rgba(9,26,38,.85);border:1px solid #8ca5af;color:#fff;border-radius:8px;min-height:48px;font-weight:700}
+#mobile button:active,#enter:active{background:#47738b}#enter{position:fixed;right:14px;bottom:185px;z-index:20;padding:0 14px}
+@media(pointer:fine){#mobile{display:none}}@media(max-width:600px){#help{font-size:11px;bottom:8px;max-width:43vw}}
+#loading-screen{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#122c32;color:#eef3e8;text-align:center}#loading-screen section{padding:28px;max-width:340px}#loading-screen h1{letter-spacing:.12em;font-size:25px}#loading-screen p{color:#bdcec8;line-height:1.6}.loading-spinner{width:38px;height:38px;margin:24px auto;border:3px solid #395458;border-top-color:#d6e4c8;border-radius:50%;animation:loading-turn .9s linear infinite}#start-world{font:600 16px system-ui;background:#d6e4c8;color:#173238;border:0;border-radius:9px;padding:14px 26px;cursor:pointer}#start-world[hidden]{display:none}@keyframes loading-turn{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.loading-spinner{animation:none;border-color:#d6e4c8}}
+</style>
+<script type="importmap">{"imports":{"three":"https://esm.sh/three@0.160.1","three/addons/":"https://esm.sh/three@0.160.1/examples/jsm/"}}</script>
+</head><body>
+<div id="loading-screen" role="dialog" aria-modal="true" aria-label="Loading Zerconda"><section><h1>ZERCONDA</h1><div class="loading-spinner" aria-hidden="true"></div><p id="loading-message" role="status" aria-live="polite">Preparing your town…</p><button id="start-world" hidden>Enter Zerconda</button></section></div>
+<div id="hud"><strong>ZERCONDA</strong><div id="status">Loading realistic 3D world…</div></div>
+
+<button id="enter">ENTER / EXIT CAR</button>
+
+<script>
+(function(){
+ const status=document.getElementById('status');
+ let loaded=false,failed=false;
+ const screen=document.getElementById('loading-screen'),message=document.getElementById('loading-message'),start=document.getElementById('start-world'),spinner=screen.querySelector('.loading-spinner');
+ document.addEventListener('keydown',e=>{if(screen.isConnected&&e.target!==start){e.preventDefault();e.stopImmediatePropagation();}},true);
+ function enterTown(){start.disabled=true;spinner.hidden=false;message.textContent='Opening your town…';window.dispatchEvent(new Event('zerconda-enter'));}
+ start.onclick=enterTown;
+ window.addEventListener('zerconda-frame',()=>requestAnimationFrame(()=>screen.remove()),{once:true});
+ function report(msg){status.textContent=msg;status.style.color='#ffdfb2';console.error('ZERCONDA LOAD:',msg);}
+ window.addEventListener('error',e=>{report('3D loading error: '+(e.message||e.filename||'unknown script error'));});
+ window.addEventListener('unhandledrejection',e=>{report('3D module error: '+(e.reason?.message||String(e.reason)));});
+ window.addEventListener('zerconda-load-failed',e=>{failed=true;spinner.hidden=true;message.textContent='Could not load Zerconda: '+e.detail;start.hidden=false;start.disabled=false;start.textContent='Try again';start.onclick=()=>location.reload();});
+ window.addEventListener('zerconda-ready',()=>{loaded=true;spinner.hidden=true;message.textContent='Your town is ready.';start.hidden=false;start.disabled=false;start.textContent='Enter Zerconda';start.onclick=enterTown;start.focus();});
+ setTimeout(()=>{if(!loaded&&!failed){message.textContent='Loading is taking longer than expected. You can retry the connection.';start.hidden=false;start.textContent='Retry loading';start.onclick=()=>location.reload();}},45000);
+})();
+</script>
+<script type="module">
+import('./world-v5-complete-replacement.js?v=20261120-collision-v187')
+ .then(async world=>{await world.initialReady;window.dispatchEvent(new Event('zerconda-ready'));})
+ .catch(e=>{console.error('Zerconda startup failed',e);window.dispatchEvent(new CustomEvent('zerconda-load-failed',{detail:e.message||String(e)}));});
+
+</script>
+</body></html>

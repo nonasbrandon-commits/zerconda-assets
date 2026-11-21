@@ -2,7 +2,7 @@ import {cedarMap,addCottageExteriorDetails,createCottagePorchChair} from './cott
 import {beginHomePassage} from './home-passage.js?v=20261119-performance-v147';
 import {createReferenceRange,createShakerCabinet} from './reference-range.js?v=20261119-performance-v147';
 import {createFrenchDoorFridge} from './french-door-fridge.js?v=20261119-performance-v147';
-import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-performance-v147';
+import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261120-collision-v187';
 import {createRealtySign} from './property-signs.js?v=20261119-residential-v130';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -64,7 +64,7 @@ export function addWaterfrontHomes(scene,{count=12,getPlayer=()=>({x:0,z:0}),can
   function obstacle(x,z,w,d){h.colliders.push({x,z,w,d});}function furniture(w,hh,d,x,y,z,m){box(g,w,hh,d,x,y,z,m);obstacle(x,z,w,d);}
   // Headboard rests against the west wall, leaving the bedroom window unobstructed.
   createDetailedBed(g,{x:-3,y:.2,z:2.6,angle:Math.PI/2,width:1.8,length:3.0,compact:true});obstacle(-3,2.6,3.3,2);
-  const bath=createDetailedBathroom(g,{x:-2.8,y:.2,z:-3.0,width:4.35,depth:4.65,tub:false,wallWindows:{back:[{x:-1.1,y:1.6,w:1.8,h:1.8}]}});h.colliders.push(...bath.solids);
+  const bath=createDetailedBathroom(g,{x:-2.8,y:.2,z:-3.05,width:4.35,depth:4.85,tub:false,cottageLayout:true,wallWindows:{back:[{x:-.2,y:1.875,w:2.2,h:1.65}]}});h.colliders.push(...bath.solids);
   // Identical starter kitchen, dining and lounge furniture in every cottage.
   createFrenchDoorFridge(g,{x:4.1,y:.2,z:-4.6,width:1.1,height:1.9,depth:.95,angle:-Math.PI/2});obstacle(4.1,-4.6,1.1,.95);createShakerCabinet(g,{x:4.4,y:.2,z:-3.35,width:1.5,height:.95,depth:.80,angle:-Math.PI/2});createReferenceRange(g,{x:4.4,y:.2,z:-1.95,width:1.3,height:.95,depth:.80,angle:-Math.PI/2});obstacle(4.4,-2.7,.80,2.85);box(g,.55,.04,.8,4.4,1.15,-3.45,iron);
   // Compact dining nook against the kitchen-side wall, outside the entry route.
