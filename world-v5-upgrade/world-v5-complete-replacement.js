@@ -1,4 +1,4 @@
-import {createAreaResume,createSceneryYield} from './resume-area.js?v=20261121-loading-speed-v200';
+import {createAreaResume,createSceneryYield} from './resume-area.js?v=20261121-loading-screen-v201';
 import {createCityResidents} from './city-residents.js?v=20261121-city-life-v196';
 import {createPerimeterForest} from './perimeter-forest.js?v=20261121-city-life-v196';
 import {updateTreeBreeze} from './tree-breeze.js?v=20261121-forest-airfield-v193';
@@ -8,7 +8,7 @@ import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=2
 import {createCabPassengerCamera} from './cab-passenger-camera.js?v=20261121-town-v191';
 import {createVehicleHorns} from './vehicle-horns.js?v=20261121-town-v191';
 import {measureVehicleFootprint,vehicleDescriptor,vehiclePoseBlocked,sweepVehiclePose} from './vehicle-collision.js?v=20261121-town-v191';
-import {createShaderWarmup} from './shader-warmup.js?v=20261121-loading-speed-v200';
+import {createShaderWarmup} from './shader-warmup.js?v=20261121-loading-screen-v201';
 import {loadReferenceProp} from './reference-props.js?v=20261120-reference-props-v180';
 import {createZCabs}from './z-cabs.js?v=20261121-cab-turns-v194';
 import {createLuxurySedan,loadLuxurySedan,sedanColors} from './luxury-sedan.js?v=20261120-restore-silver-v185';
@@ -91,7 +91,7 @@ import {createNeedleSportsPark} from './needle-sports-park.js?v=20261121-entry-f
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-21-loading-speed-v200';
+const ZERCONDA_BUILD='2026-11-21-loading-screen-v201';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -1171,8 +1171,8 @@ function walkable(x,z){
 function safeResumePoint(x,z){if(!walkable(x,z))return false;const h=standingHeightAt(x,z);if(!Number.isFinite(h)||h>25)return false;return [[.32,0],[-.32,0],[0,.32],[0,-.32]].every(([dx,dz])=>walkable(x+dx,z+dz)&&Math.abs(standingHeightAt(x+dx,z+dz)-h)<.12);}
 function canSaveArea(){return !activeCar&&!zCabs?.riding&&!sittingSeat&&!insideHouse()&&!marine?.riding&&!scooters?.riding&&!scooters?.inside&&!skate?.riding&&!airfield?.boarded&&!camp?.insideCabin&&!camp?.resting&&!rvPark?.inside&&!onObservationDeck&&!insideNeedleLobby&&!observationNeedle?.riding&&!carnival?.riding&&!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!club?.active&&!ownableHomes?.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!coffeeShop.isInside(player.x,player.z)&&!museum?.contains(player.x,player.z)&&!premier?.at(player.x,player.z);}
 const areaResume=createAreaResume({getPose:()=>({x:player.x,z:player.z,yaw,pitch}),isSafe:safeResumePoint,canSave:canSaveArea,applyPose:p=>{player.x=p.x;player.z=p.z;yaw=p.yaw;pitch=p.pitch;avatar.position.set(p.x,standingHeightAt(p.x,p.z),p.z);avatar.rotation.y=p.yaw;camera.position.set(p.x-Math.sin(yaw)*3.65,standingHeightAt(p.x,p.z)+2.2,p.z-Math.cos(yaw)*3.65);camera.lookAt(p.x,standingHeightAt(p.x,p.z)+1.2,p.z);}});
-const areaLoading=document.createElement('div');areaLoading.id='area-loading-label';areaLoading.setAttribute('role','status');areaLoading.setAttribute('aria-live','polite');areaLoading.textContent='Loading last saved area…';areaLoading.style.cssText='position:fixed;left:50%;top:47%;transform:translate(-50%,-100%);z-index:21000;pointer-events:none;padding:9px 14px;border-radius:9px;background:#142c35ed;color:#eef3e8;font:14px system-ui;white-space:nowrap;box-shadow:0 2px 10px #0003';document.body.append(areaLoading);const labelPoint=new THREE.Vector3();
-function updateAreaLoading(){if(areaLoading.hidden)return;if(paintedFrame&&(realisticPlayer.ready||elapsed>12)&&shaderWarmup.areaReady(avatar.position,35)){areaLoading.hidden=true;return;}labelPoint.set(player.x,standingHeightAt(player.x,player.z)+2.35,player.z).project(camera);areaLoading.style.left=Math.max(125,Math.min(innerWidth-125,(labelPoint.x+1)*innerWidth/2))+'px';areaLoading.style.top=Math.max(65,Math.min(innerHeight-60,(1-labelPoint.y)*innerHeight/2))+'px';}
+let playable=false,characterPrepared=false,settledFrames=0;
+function updateAreaLoading(){} // Startup is covered by the screenshot loading screen.
 let elapsed=0,townEntered=false,paintedFrame=false;const renderBudget=createRenderBudget(scene,{getPlayer:()=>player,mobile:MOBILE});
 function animate(){
  requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;vehicleHorns.update();let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
@@ -1217,7 +1217,7 @@ function animate(){
  cloudSky.update(motionDt);
  // Keep detailed sunlight shadows around the player throughout the expanded city.
  sun.position.set(player.x-70,135,player.z+85);sun.target.position.set(player.x,0,player.z);sun.target.updateMatrixWorld();
- const inputLocked=!paintedFrame||zCabs?.riding||zCabs?.panelOpen||homePassageActive()||cityMap.expanded||hotDogVendor?.panelOpen||zStore?.panelOpen||playerMenu?.panelOpen||tattooShop?.panelOpen||courtGames?.tennisActive||airfield?.controlsLocked||office?.riding||carnival?.riding||carnival?.gameOpen||observationNeedle.riding||villas?.panelOpen||barber?.panelOpen||club.gameOpen||(ownableHomes.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.controlsLocked)))))||marine.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);
+ const inputLocked=!playable||zCabs?.riding||zCabs?.panelOpen||homePassageActive()||cityMap.expanded||hotDogVendor?.panelOpen||zStore?.panelOpen||playerMenu?.panelOpen||tattooShop?.panelOpen||courtGames?.tennisActive||airfield?.controlsLocked||office?.riding||carnival?.riding||carnival?.gameOpen||observationNeedle.riding||villas?.panelOpen||barber?.panelOpen||club.gameOpen||(ownableHomes.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.controlsLocked)))))||marine.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);
  const f=inputLocked?0:townControls.backward?-1:Math.max(Number(keys.has('KeyW')||keys.has('ArrowUp')),Number(townControls.walking))-Number(keys.has('KeyS')||keys.has('ArrowDown'));
  const side=inputLocked?0:Number(keys.has('KeyD')||keys.has('ArrowRight'))-Number(keys.has('KeyA')||keys.has('ArrowLeft'));
  if(zCabs?.riding){movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
@@ -1356,7 +1356,7 @@ function animate(){
  courtGames?.updateCamera(camera);
  updateAreaLoading();areaResume.save();
  const restorePlayerVisibility=playerCameraGuard.apply(camera,avatar,!barber?.panelOpen&&!tattooShop?.panelOpen);
- try{if(!tattooShop?.panelOpen){renderBudget.update(motionDt);ownableHomes?.renderWindows(renderer,camera);updateReferenceLampLights(camera);const renderNow=performance.now(),renderGap=renderNow-lastRenderTime;lastRenderTime=renderNow;if(renderGap>150)slowRenderFrames++;else slowRenderFrames=Math.max(0,slowRenderFrames-1);if(slowRenderFrames>=4&&renderer.getPixelRatio()>(MOBILE?.85:1)){renderer.setPixelRatio(Math.max(MOBILE?.85:1,renderer.getPixelRatio()*.85));slowRenderFrames=0;}shaderWarmup.render(scene,camera,()=>{renderer.render(scene,camera);if(!paintedFrame){paintedFrame=true;window.dispatchEvent(new Event('zerconda-frame'));}});}}
+ try{if(sceneryFinished&&characterPrepared&&!tattooShop?.panelOpen){renderBudget.update(motionDt);ownableHomes?.renderWindows(renderer,camera);updateReferenceLampLights(camera);const renderNow=performance.now(),renderGap=renderNow-lastRenderTime;lastRenderTime=renderNow;if(renderGap>150)slowRenderFrames++;else slowRenderFrames=Math.max(0,slowRenderFrames-1);if(slowRenderFrames>=4&&renderer.getPixelRatio()>(MOBILE?.85:1)){renderer.setPixelRatio(Math.max(MOBILE?.85:1,renderer.getPixelRatio()*.85));slowRenderFrames=0;}shaderWarmup.render(scene,camera,()=>{renderer.render(scene,camera);if(!paintedFrame){paintedFrame=true;window.dispatchEvent(new Event('zerconda-frame'));}if(!playable&&sceneryFinished&&characterPrepared&&++settledFrames>=3){playable=true;keys.clear();window.dispatchEvent(new Event('zerconda-playable'));}});}}
  catch(err){renderFailure=String(err);console.error('ZERCONDA RENDER ERROR',err);if(!paintedFrame){townEntered=false;window.dispatchEvent(new CustomEvent('zerconda-load-failed',{detail:'The graphics could not start. Please retry.'}));}}
  finally{restorePlayerVisibility();if(activeCar)activeCar.group.visible=true;}
  const nearHome=!boutique.active&&!bowling.active&&!scooters.riding&&!skate?.riding&&!activeCar?ownableHomes.closest(player.x,player.z,11):null;
@@ -1401,11 +1401,11 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;
 
 
 
-// Optional scenery never blocks entry; a usable local avatar is always available.
-export const initialReady=Promise.race([realisticPlayer.readyPromise,new Promise(resolve=>setTimeout(resolve,12000))]).then(()=>undefined).catch(error=>{console.warn('Using the available player while character details load',error);});
+// Keep the screenshot screen up until scenery and the available character are prepared.
+export const initialReady=Promise.race([realisticPlayer.readyPromise,new Promise(resolve=>setTimeout(resolve,12000))]).then(()=>undefined).catch(error=>{console.warn('Using the available player while character details load',error);}).finally(()=>{characterPrepared=true;});
 export function startWorld(){if(townEntered)return;townEntered=true;clock.getDelta();signBacks?.scan();renderBudget.scan();setTimeout(startScenery,200);}
 
 addEventListener('zerconda-enter',startWorld);
 areaResume.restore();window.dispatchEvent(new Event('zerconda-core-ready'));startWorld();
 
-export function startupStatus(){return{entered:townEntered,painted:paintedFrame,characterReady:realisticPlayer.ready,fallbackVisible:fallbackPlayer.root.visible,loadingArea:!areaLoading.hidden,player:{x:player.x,z:player.z,yaw,pitch},sceneryStarted,sceneryComplete:sceneryFinished,...shaderWarmup.stats(),...renderBudget.stats()};}
+export function startupStatus(){return{entered:townEntered,painted:paintedFrame,characterReady:realisticPlayer.ready,fallbackVisible:fallbackPlayer.root.visible,loadingArea:!playable,playable,player:{x:player.x,z:player.z,yaw,pitch},sceneryStarted,sceneryComplete:sceneryFinished,...shaderWarmup.stats(),...renderBudget.stats()};}
