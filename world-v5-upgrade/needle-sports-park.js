@@ -1,3 +1,4 @@
+import {addParkBench} from './park-benches.js?v=20261121-city-life-v196';
 import {createTownSidewalkMaterial} from './town-sidewalks.js?v=20261121-forest-airfield-v193';
 import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
@@ -87,17 +88,7 @@ export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}
  // Park benches on the pedestrian spine, facing the courts; never inside play areas.
  function courtBench(px,pz,face){
   const g=new THREE.Group();g.position.set(px,.06,pz);g.rotation.y=face;root.add(g);
-  const frame=mat(0x343b3b,.45),slats=mat(0x8a6040,.72);
-  for(const side of [-1,1]){
-   box(.11,.58,.58,side*1.04,.32,0,frame,g);
-   box(.12,.87,.11,side*1.04,.82,.36,frame,g);
-   box(.13,.08,.6,side*1.04,.71,0,frame,g);
-  }
-  for(let j=0;j<5;j++){
-   box(2.38,.075,.095,0,.61,-.23+j*.12,slats,g);
-   box(2.38,.10,.085,0,.77+j*.14,.35,slats,g);
-  }
-  box(2.4,.09,.12,0,.1,-.19,frame,g);
+  addParkBench(g,{width:2.38,seatHeight:.6475}).rotation.y=Math.PI;
  }
  for(const z of [-8,12,34])courtBench(0,z,Math.PI/2);
  // Courts need recognisable equipment and contrasting painted regulation markings.

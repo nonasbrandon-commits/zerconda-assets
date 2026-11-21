@@ -1,6 +1,6 @@
 import {createVarusExhibit} from './museum-varus.js?v=20261119-museum-barrier-v132';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
-import {createMuseumFountain} from './museum-fountain.js?v=20261119-level-ground-v117';
+import {createMuseumFountain} from './museum-fountain.js?v=20261121-city-life-v196';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 export const MUSEUM_SITE={x:-346,z:-204,width:100,depth:92,floorY:1.44,frontZ:-158,entry:{x:-346,z:-130},plot:{x0:-401,x1:-291,z0:-257,z1:-110}};
@@ -71,7 +71,7 @@ export function createZercondaMuseum(scene,{getPlayer=()=>({x:0,z:0})}={}){
  // Remove the solid interior of cornice blocks: only perimeter strips are authored below.
  // (The courses above are hollowed into edges before batching.)
  for(const[m,geos]of batches){if(m!==trim)continue;for(let i=geos.length-1;i>=0;i--){const g=geos[i];g.computeBoundingBox();const b=g.boundingBox,s=b.getSize(new THREE.Vector3());if(s.x>=30&&s.x<=31.1&&s.z>=93.9){const center=b.getCenter(new THREE.Vector3());geos.splice(i,1);g.dispose();box(s.x,s.y,.55,center.x,center.y,center.z+s.z/2-.275,m);box(s.x,s.y,.55,center.x,center.y,center.z-s.z/2+.275,m);for(const edgeX of[center.x-s.x/2+.275,center.x+s.x/2-.275]){if(Math.abs(edgeX)<22){for(const [a,b]of[[-(s.z-.9)/2,-30.3],[-17.7,17.7],[30.3,(s.z-.9)/2]])box(.55,s.y,b-a,edgeX,center.y,(a+b)/2,m);}else box(.55,s.y,s.z-.9,edgeX,center.y,center.z,m);}}}}
- for(const side of[-1,1])for(let z=-42;z<=42;z+=7){box(.30,8.8,1.05,side*50.48,6.2,z,trim);box(.48,.32,1.6,side*50.48,10.25,z,trim);}
+ for(const side of[-1,1])for(const z of[-44,-22,0,22,44]){box(.30,8.8,1.05,side*50.48,6.2,z,trim);box(.48,.32,1.6,side*50.48,10.25,z,trim);}
  for(let x=-49;x<50;x+=1.1)for(const z of[-46.75,46.75])box(.38,.36,.32,x,10.60,z,trim);
  // Solid gray-stone landing, enclosed stair foundation, and one nonoverlapping forecourt.
  box(46,1.34,18.09,0,.67,55.045,stone);box(45.7,.10,18.09,0,1.39,55.045,paving);

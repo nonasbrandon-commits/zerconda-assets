@@ -8,13 +8,13 @@ export function createEastForestGate(scene,{createAvatar,getPlayer}){
  function box(w,h,d,x,y,z,material=iron){const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;root.add(mesh);return mesh;}
  // Closed double-leaf iron gate, with fine bars and pointed finials.
  for(const side of [-1,1]){
-  for(const z of [side*.15,side*17.2])box(.25,4.8,.18,570,2.5,z);
-  for(const y of [.6,1.4,3.8,4.65])box(.16,.12,17.1,570,y,side*8.7);
+  for(const z of [side*.15,side*17.2])box(.25,4.8,.18,582,2.5,z);
+  for(const y of [.6,1.4,3.8,4.65])box(.16,.12,17.1,582,y,side*8.7);
   for(let i=0;i<24;i++){
-   const z=side*(.35+i*.72);box(.065,4.35,.065,570,2.45,z);
-   const tip=new THREE.Mesh(new THREE.ConeGeometry(.095,.25,4),iron);tip.position.set(570,4.73,z);root.add(tip);
+   const z=side*(.35+i*.72);box(.065,4.35,.065,582,2.45,z);
+   const tip=new THREE.Mesh(new THREE.ConeGeometry(.095,.25,4),iron);tip.position.set(582,4.73,z);root.add(tip);
   }
-  const handle=new THREE.Mesh(new THREE.TorusGeometry(.13,.035,8,16),gold);handle.rotation.y=Math.PI/2;handle.position.set(569.84,1.7,side*.35);root.add(handle);
+  const handle=new THREE.Mesh(new THREE.TorusGeometry(.13,.035,8,16),gold);handle.rotation.y=Math.PI/2;handle.position.set(581.84,1.7,side*.35);root.add(handle);
  }
  const police=[];
  const uniforms=new Map([[0x2879a4,0x17232d],[0x21668e,0x101a23],[0x417d9c,0x465663],[0x9a7854,0x202a31],[0x806347,0x151e26]]);
@@ -44,11 +44,12 @@ export function createEastForestGate(scene,{createAvatar,getPlayer}){
  for(const x of [72,177]){ctx.fillStyle='#493f3060';ctx.fillRect(x,0,18,256);}
  const texture=new THREE.CanvasTexture(canvas);texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(1,30);texture.colorSpace=THREE.SRGBColorSpace;
  const dirt=new THREE.MeshStandardMaterial({map:texture,color:0xc1ad89,roughness:1});
- const curve=new THREE.CatmullRomCurve3([[570,0],[604,0],[645,7],[697,-5],[752,-15],[820,-8],[930,-35]].map(([x,z])=>new THREE.Vector3(x,.015,z)));
+ const curve=new THREE.CatmullRomCurve3([[582,0],[604,0],[645,7],[697,-5],[752,-15],[820,-8],[930,-35]].map(([x,z])=>new THREE.Vector3(x,.015,z)));
  const vertices=[],uv=[],indices=[];
  for(let i=0;i<=160;i++){const t=i/160,p=curve.getPoint(t),d=curve.getTangent(t),side=new THREE.Vector3(-d.z,0,d.x).normalize();for(const sign of [-1,1]){const v=p.clone().addScaledVector(side,sign*(3.5-t*.9));vertices.push(v.x,v.y,v.z);uv.push(sign<0?0:1,t);}if(i<160){const k=i*2;indices.push(k,k+1,k+2,k+1,k+3,k+2);}}
  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.setIndex(indices);geo.computeVertexNormals();const track=new THREE.Mesh(geo,dirt);track.receiveShadow=true;root.add(track);
  const floor=new THREE.Mesh(new THREE.PlaneGeometry(600,500),new THREE.MeshStandardMaterial({color:0x435b32,roughness:1}));floor.rotation.x=-Math.PI/2;floor.position.set(860,-.21,-60);root.add(floor);
  const notice=document.createElement('div');notice.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);max-width:85vw;padding:14px 20px;border:1px solid #c4ad70;border-radius:8px;background:#13212bea;color:#fff1cf;font:15px sans-serif;z-index:9999;display:none;text-align:center';notice.textContent='POLICE: The gate is closed. The forest outside is dangerous. No one may leave for now.';document.body.appendChild(notice);
- return {root,update(dt=.016){for(const human of police)human.update(dt,0);const p=getPlayer();notice.style.display=p.x>545&&Math.abs(p.z)<24?'block':'none';}};
+ return {root,update(dt=.016){for(const human of police)human.update(dt,0);const p=getPlayer();notice.style.display=p.x>557&&Math.abs(p.z)<24?'block':'none';}};
 }
+

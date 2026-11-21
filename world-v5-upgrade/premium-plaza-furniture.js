@@ -1,3 +1,4 @@
+import {addParkBench} from './park-benches.js?v=20261121-city-life-v196';
 import {addRealisticPlanterFoliage} from './realistic-planter-foliage.js?v=20261118-wall-mystery-v111';
 import * as THREE from 'three';
 // Original detailed plaza furnishings, scaled in meters. No oversized wooden crates or candy-ball flowers.
@@ -11,13 +12,7 @@ export function addPremiumPlazaFurniture(scene,{cx=48,cz=48}={}){
  function sphere(parent,r,x,y,z,m){const o=new THREE.Mesh(new THREE.IcosahedronGeometry(r,1),m);o.position.set(x,y,z);o.castShadow=true;parent.add(o);return o}
  function bench(x,z,a){
   const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=a;root.add(g);
-  for(let side of [-1,1]){
-   box(g,.09,.76,.09,side*.87,.4,-.22,metal);
-   box(g,.09,.76,.09,side*.87,.4,.27,metal);
-   box(g,.08,.12,.62,side*.87,.76,0,metal);
-  }
-  for(let j=0;j<5;j++)box(g,1.9,.075,.105,0,.48,-.3+j*.115,timber);
-  for(let j=0;j<5;j++)box(g,1.9,.105,.075,0,.76+j*.13,.27+j*.035,timber);
+  addParkBench(g,{width:1.9,seatHeight:.52});
   return g;
  }
  function planter(x,z,a,idx){
