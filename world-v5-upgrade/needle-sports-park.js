@@ -1,5 +1,5 @@
 import {addBasketballCourt} from './basketball-court.js?v=20261121-court-v206';
-import {addBasketballHoop} from './basketball-hoop.js?v=20261121-fast-start-v205';
+import {addBasketballHoop} from './basketball-hoop.js?v=20261121-natural-basketball-v208';
 import {addParkBench} from './park-benches.js?v=20261121-entry-fix-v198';
 import {createTownSidewalkMaterial} from './town-sidewalks.js?v=20261121-forest-airfield-v193';
 import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
