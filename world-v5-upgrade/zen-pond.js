@@ -1,3 +1,4 @@
+import {applyRealisticGravel} from './realistic-gravel.js?v=20261121-collision-v192';
 import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import {createGardenWildlife} from './garden-wildlife.js?v=20261118-wildlife-v96';
@@ -17,7 +18,7 @@ export function createZenPond(parent,{x=0,z=-35,getPlayer=()=>null,externalPaths
  const paving=new THREE.MeshStandardMaterial({map:rockMap,color:0xdbd7cc,roughness:.98}),connectorPaving=new THREE.MeshStandardMaterial({map:paverMap,color:0xd4cfc3,roughness:.98});
  for(const m of [stone,paving])m.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\ndiffuseColor.rgb=mix(diffuseColor.rgb,vec3(dot(diffuseColor.rgb,vec3(.2126,.7152,.0722))),.84);');};
  for(const m of[paving,connectorPaving]){m.polygonOffset=true;m.polygonOffsetFactor=-2;m.polygonOffsetUnits=-4;}const gravel=mat(0x8f8c79),moss=mat(0x687254),wood=mat(0x705d43,.82),iron=mat(0x35423d,.58);
- gravel.polygonOffset=true;gravel.polygonOffsetFactor=-1;gravel.polygonOffsetUnits=-2;const pieces={stone:[],paving:[],gravel:[],moss:[],wood:[],iron:[]};
+ applyRealisticGravel(gravel);gravel.polygonOffset=true;gravel.polygonOffsetFactor=-1;gravel.polygonOffsetUnits=-2;const pieces={stone:[],paving:[],gravel:[],moss:[],wood:[],iron:[]};
  function add(geometry,material,position=[0,0,0],scale=[1,1,1],rotation=[0,0,0],batch=null){const mesh=new THREE.Mesh(geometry,material);mesh.position.set(...position);mesh.scale.set(...scale);mesh.rotation.set(...rotation);if(batch){mesh.updateMatrix();const g=geometry.clone();g.applyMatrix4(mesh.matrix);pieces[batch].push(g.index?g.toNonIndexed():g);geometry.dispose();}else{root.add(mesh);mesh.receiveShadow=true;}return mesh;}
  function box(w,h,d,px,py,pz,material,batch=null,ry=0){return add(new THREE.BoxGeometry(w,h,d),material,[px,py,pz],[1,1,1],[0,ry,0],batch);}
  function boundary(a){const r=1+.055*Math.sin(a*3+.7)+.035*Math.sin(a*5+1.4);return new THREE.Vector2(Math.cos(a)*13*r,Math.sin(a)*8.3*r);}

@@ -35,14 +35,14 @@ import {createHotDogVendor} from './boardwalk-hotdogs.js?v=20261120-zdog-voice-v
 import {createVehicleControls} from './vehicle-controls.js?v=20261119-entrance-steering-v118';
 import {createDamagedWallPanel,createBlockedWallOpening,WALL_OPENING} from './blocked-wall-opening.js?v=20261118-wall-mystery-v111';
 import {createAreaTravel} from './area-travel.js?v=20261121-town-v191';
-import {createMilitaryBase} from './military-base.js?v=20261120-z-cabs-v178';
+import {createMilitaryBase} from './military-base.js?v=20261121-collision-v192';
 import {upgradeMobileControls} from './mobile-controls.js?v=20261118-z-needle-v107';
 import {createAirportLoop} from './airport-loop.js?v=20261119-level-ground-v117';
-import {createNorthernForest} from './northern-forest.js?v=20261121-town-v191';
+import {createNorthernForest} from './northern-forest.js?v=20261121-collision-v192';
 import {createMobilePerformance} from './mobile-performance.js?v=20261120-player-detail-v181-20261119-rv-junction-v128';
-import {createTownObstacles} from './town-obstacles.js?v=20261118-visible-trails-v100';
+import {createTownObstacles} from './town-obstacles.js?v=20261121-collision-v192';
 import {createSeasideCarnival} from './seaside-carnival.js?v=20261121-cab-v188';
-import {createRVPark} from './rv-park.js?v=20261121-town-v191';
+import {createRVPark} from './rv-park.js?v=20261121-collision-v192';
 import {createShowroomPickup} from './showroom-pickup.js?v=20261119-reference-trucks-v126';
 import {createLuxuryVillas} from './luxury-villas.js?v=20261121-town-v191';
 import {createStyleCuts} from './style-cuts.js?v=20261119-clear-mirrors-v133';
@@ -50,7 +50,7 @@ import {createBusinessCentre} from './business-centre.js?v=20261119-entrance-ste
 import {createSkatePark} from './skate-park.js?v=20261119-entrance-steering-v118';
 import {createAirfield} from './airfield.js?v=20261118-wall-mystery-v111';
 import * as THREE from 'three';
-import {createForestCampground} from './forest-campground.js?v=20261121-town-v191';
+import {createForestCampground} from './forest-campground.js?v=20261121-collision-v192';
 import {createPremierHomes} from './premier-homes.js?v=20261119-performance-v147';
 import {createZercondaNews} from './zerconda-news.js?v=20261120-earth-globes-v181-20261120-news-voice-v172';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261121-town-v191';
@@ -82,11 +82,11 @@ import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261120-co
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261121-town-v191';
 import {createPedestrians} from './animated-pedestrians.js?v=20261120-bikes-v180-20261119-beach-v149';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261121-town-v191';
-import {createNeedleSportsPark} from './needle-sports-park.js?v=20261121-town-v191';
+import {createNeedleSportsPark} from './needle-sports-park.js?v=20261121-collision-v192';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-21-cab-motion-v191';
+const ZERCONDA_BUILD='2026-11-21-collision-v192';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
@@ -1249,7 +1249,7 @@ function animate(){
   const walkStartX=player.x,walkStartZ=player.z;
   const count=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.12));
   for(let n=0;n<count;n++){
-   const next=townObstacles.slide(player.x,player.z,dx/count,dz/count,walkable);
+   const next=townObstacles.slide(player.x,player.z,dx/count,dz/count,walkable,{recover:!inputLocked});
    player.x=next.x;player.z=next.z;
   }
   walkingDistance=Math.hypot(player.x-walkStartX,player.z-walkStartZ);

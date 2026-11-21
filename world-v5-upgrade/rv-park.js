@@ -1,4 +1,5 @@
-import {createRealisticFirePit,createFirePitBench} from './realistic-fire-pits.js?v=20261121-town-v191';
+import {applyRealisticGravel} from './realistic-gravel.js?v=20261121-collision-v192';
+import {createRealisticFirePit,createFirePitBench} from './realistic-fire-pits.js?v=20261121-collision-v192';
 import {upgradePineMeshes} from './realistic-forest-pines.js?v=20261121-pines-v190';
 import {makeReadableSign} from './readable-signs.js?v=20261119-rv-junction-v128';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
@@ -17,9 +18,9 @@ export function createRVPark(scene,{getPlayer,canUse=()=>true,onTeleport=()=>{},
  function sign(text,x,y,z,w=4,ry=0){const sign=makeReadableSign(text,w,w*.15625);sign.position.set(x,y,z);sign.rotation.y=ry;root.add(sign);}
 
  function action(id,label,target,when,fn,priority=130){const b=document.createElement('button');b.style.display='none';b.onclick=fn;document.body.appendChild(b);registerTownAction(b,{id:'rv-'+id,label,priority,target:()=>({...target,y:1.5})});sources.push({b,when});}
- const canvas=document.createElement('canvas');canvas.width=canvas.height=256;const gravelCtx=canvas.getContext('2d');gravelCtx.fillStyle='#a8a295';gravelCtx.fillRect(0,0,256,256);for(let i=0;i<9000;i++){const v=115+rnd()*80;gravelCtx.fillStyle=`rgb(${v},${v-3},${v-12})`;gravelCtx.beginPath();gravelCtx.ellipse(rnd()*256,rnd()*256,1+rnd()*2,.7+rnd()*1.5,rnd()*6.3,0,6.3);gravelCtx.fill();}const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(2,18);tex.anisotropy=4;const gravel=M(0xffffff);gravel.map=tex;gravel.polygonOffset=true;gravel.polygonOffsetFactor=-1;gravel.polygonOffsetUnits=-2;
+ const canvas=document.createElement('canvas');canvas.width=canvas.height=256;const gravelCtx=canvas.getContext('2d');gravelCtx.fillStyle='#a8a295';gravelCtx.fillRect(0,0,256,256);for(let i=0;i<9000;i++){const v=115+rnd()*80;gravelCtx.fillStyle=`rgb(${v},${v-3},${v-12})`;gravelCtx.beginPath();gravelCtx.ellipse(rnd()*256,rnd()*256,1+rnd()*2,.7+rnd()*1.5,rnd()*6.3,0,6.3);gravelCtx.fill();}const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(2,18);tex.anisotropy=4;const gravel=M(0xffffff);gravel.map=tex;applyRealisticGravel(gravel);gravel.polygonOffset=true;gravel.polygonOffsetFactor=-1;gravel.polygonOffsetUnits=-2;
  // One continuous surface fills the entrance corner, spine and circular turnaround.
- const routeTexture=tex.clone();routeTexture.repeat.set(1,1);routeTexture.needsUpdate=true;const routeMaterial=gravel.clone();routeMaterial.map=routeTexture;
+ const routeTexture=tex.clone();routeTexture.repeat.set(1,1);routeTexture.needsUpdate=true;const routeMaterial=gravel.clone();routeMaterial.map=routeTexture;applyRealisticGravel(routeMaterial);
  const routePolygons=[];
  function surface(points){const shape=new THREE.Shape();points.forEach(([x,z],i)=>i?shape.lineTo(x,-z):shape.moveTo(x,-z));shape.closePath();const geo=new THREE.ShapeGeometry(shape),pos=geo.attributes.position,uv=geo.attributes.uv;for(let i=0;i<pos.count;i++)uv.setXY(i,pos.getX(i)/3.2,-pos.getY(i)/3.2);geo.rotateX(-Math.PI/2);mesh(geo,routeMaterial,[0,GROUND_LEVEL,0]);routePolygons.push(points);}
  function clipX(points,bound,keepGreater){const out=[];for(let i=0;i<points.length;i++){const a=points[i],b=points[(i+1)%points.length],inside=p=>keepGreater?p[0]>=bound-1e-9:p[0]<=bound+1e-9,ia=inside(a),ib=inside(b);if(ia)out.push(a);if(ia!==ib){const t=(bound-a[0])/(b[0]-a[0]);out.push([bound,a[1]+(b[1]-a[1])*t]);}}return out;}

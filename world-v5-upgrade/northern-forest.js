@@ -1,8 +1,9 @@
+import {applyRealisticGravel} from './realistic-gravel.js?v=20261121-collision-v192';
 import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
 import {upgradePineMeshes} from './realistic-forest-pines.js?v=20261121-pines-v190';
 import {createForestDetails} from './forest-details.js?v=20261118-wall-mystery-v111';
 import {joinTrailSurfaces} from './trail-surfaces.js?v=20261118-area-travel-v110';
-import {militaryReserved} from './military-base.js?v=20261118-fort-v102';
+import {militaryReserved} from './military-base.js?v=20261121-collision-v192';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createNaturalShrub} from './realistic-landscape-assets.js';
@@ -24,7 +25,7 @@ export function createNorthernForest(scene,{mobile=false}={}){const root=new THR
  const xs=[-443,315,459,471,545,569],zs=[-1350,-1270,-1060,-568];for(let ix=0;ix<xs.length-1;ix++)for(let iz=0;iz<zs.length-1;iz++){const x=(xs[ix]+xs[ix+1])/2,z=(zs[iz]+zs[iz+1])/2;if(x>315&&x<545&&z> -1270&&z< -1060||x>459&&x<471&&z>=-1060)continue;const w=xs[ix+1]-xs[ix],d=zs[iz+1]-zs[iz],g=new THREE.BoxGeometry(w,.04,d),p=g.attributes.position,u=g.attributes.uv;for(let i=0;i<u.count;i++)u.setXY(i,(p.getX(i)+x+443)/1012,.5-(p.getZ(i)+z+959)/782);const floor=new THREE.Mesh(g,soil);floor.position.set(x,0,z);floor.receiveShadow=true;root.add(floor);}
  const surfaceSpecs=[];
  const pathMat=M(0xffffff);pathMat.map=groundTexture('#b1aa96');
- const gravelCanvas=pathMat.map.image,gc=gravelCanvas.getContext('2d');for(let i=0;i<3400;i++){const px=rnd()*256,py=rnd()*256,r=.6+rnd()*2.1;gc.fillStyle=['#c4beac','#8c887c','#d3cebd','#a49e8d','#79766c'][i%5];gc.beginPath();gc.ellipse(px,py,r,r*(.45+rnd()*.5),rnd()*6.28,0,Math.PI*2);gc.fill();}pathMat.map.needsUpdate=true;const track=M(0xffffff);track.map=groundTexture('#73735b');
+ const gravelCanvas=pathMat.map.image,gc=gravelCanvas.getContext('2d');for(let i=0;i<3400;i++){const px=rnd()*256,py=rnd()*256,r=.6+rnd()*2.1;gc.fillStyle=['#c4beac','#8c887c','#d3cebd','#a49e8d','#79766c'][i%5];gc.beginPath();gc.ellipse(px,py,r,r*(.45+rnd()*.5),rnd()*6.28,0,Math.PI*2);gc.fill();}pathMat.map.needsUpdate=true;applyRealisticGravel(pathMat);const track=M(0xffffff);track.map=groundTexture('#73735b');
  for(const spec of FOREST_ROUTES){const width=spec.kind==='easy'?3.8:1.35,curve=new THREE.CatmullRomCurve3(spec.points.map(([x,z])=>new THREE.Vector3(x,.055,z))),n=Math.ceil(curve.getLength()/1.5),pos=[],uv=[],ids=[];let prev=null;for(let i=0;i<=n;i++){const p=curve.getPoint(i/n),v=curve.getTangent(i/n);if(prev)segments.push({ax:prev.x,az:prev.z,bx:p.x,bz:p.z,width,kind:spec.kind});prev=p;for(const side of [-1,1]){const soft=spec.kind==='narrow'?.92+Math.sin(i*.7)*.08:1;pos.push(p.x-v.z*width/2*side*soft,p.y,p.z+v.x*width/2*side*soft);uv.push((side+1)/2,i/3);}if(i<n){const k=i*2;ids.push(k,k+1,k+2,k+1,k+3,k+2);}}function half(poly,axis,value,sign){const out=[];for(let j=0;j<poly.length;j++){const a=poly[j],b=poly[(j+1)%poly.length],da=(a[axis]-value)*sign,db=(b[axis]-value)*sign;if(da>=0)out.push(a);if((da>=0)!==(db>=0)){const t=da/(da-db);out.push(a.map((v,k)=>v+(b[k]-v)*t));}}return out;}
  const verts=[],tex=[];for(let j=0;j<ids.length;j+=3){let remain=ids.slice(j,j+3).map(i=>[...pos.slice(i*3,i*3+3),...uv.slice(i*2,i*2+2)]),pieces=[];for(const [axis,value,sign]of [[0,459,1],[0,471,-1],[2,-1060,1],[2,-554,-1]]){if(remain.length<3)break;const outside=half(remain,axis,value,-sign);if(outside.length>=3)pieces.push(outside);remain=half(remain,axis,value,sign);}for(const poly of pieces)for(let k=1;k<poly.length-1;k++)for(const p of [poly[0],poly[k],poly[k+1]]){verts.push(...p.slice(0,3));tex.push(...p.slice(3));}}
  surfaceSpecs.push({name:spec.name+' · '+spec.kind,kind:spec.kind,vertices:verts});}

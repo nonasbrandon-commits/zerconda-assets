@@ -1,7 +1,7 @@
 import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
-import {createZenPond} from './zen-pond.js?v=20261121-town-v191';
+import {createZenPond} from './zen-pond.js?v=20261121-collision-v192';
 // Public park north of the Observation Needle. All features are traversable scenery.
 export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}){
  const root=new THREE.Group();root.name='Needle Park - tennis basketball fish pond';root.position.set(x,0,z);scene.add(root);

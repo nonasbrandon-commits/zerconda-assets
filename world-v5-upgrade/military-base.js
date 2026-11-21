@@ -1,3 +1,4 @@
+import {applyRealisticGravel} from './realistic-gravel.js?v=20261121-collision-v192';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createRealisticHuman} from './realistic-human.js?v=20261118-faster-town-v106';
@@ -13,7 +14,7 @@ export function createMilitaryBase(scene,{getPlayer=()=>null,hasClearance=()=>fa
  function rect(x,z,w,d){solid.push({x,z,w,d});}
  function sign(text,x,y,z,w=12,h=1.5){const c=document.createElement('canvas');c.width=1536;c.height=256;const a=c.getContext('2d');a.fillStyle='#263b35';a.fillRect(0,0,1536,256);a.strokeStyle='#bcba9b';a.lineWidth=12;a.strokeRect(6,6,1524,244);a.fillStyle='#eee9cc';a.font='bold 74px system-ui';a.textAlign='center';a.textBaseline='middle';a.fillText(text,768,128,1480);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}),x,y,z);}
  // A world-scale gravel driveway reaches the airport perimeter road.
- const c=document.createElement('canvas');c.width=c.height=256;const a=c.getContext('2d');a.fillStyle='#9d9785';a.fillRect(0,0,256,256);let seed=121;const rnd=()=>((seed=(Math.imul(seed,1664525)+1013904223)>>>0)/4294967296);for(let i=0;i<4200;i++){a.fillStyle=['#b8b19d','#78776b','#c4bda7','#96907e'][i%4];a.beginPath();a.ellipse(rnd()*256,rnd()*256,.6+rnd()*2,.5+rnd(),rnd()*6.28,0,Math.PI*2);a.fill();}const gravelMap=new THREE.CanvasTexture(c);gravelMap.colorSpace=THREE.SRGBColorSpace;gravelMap.wrapS=gravelMap.wrapT=THREE.RepeatWrapping;const gravel=M(0xffffff);gravel.map=gravelMap;
+ const c=document.createElement('canvas');c.width=c.height=256;const a=c.getContext('2d');a.fillStyle='#9d9785';a.fillRect(0,0,256,256);let seed=121;const rnd=()=>((seed=(Math.imul(seed,1664525)+1013904223)>>>0)/4294967296);for(let i=0;i<4200;i++){a.fillStyle=['#b8b19d','#78776b','#c4bda7','#96907e'][i%4];a.beginPath();a.ellipse(rnd()*256,rnd()*256,.6+rnd()*2,.5+rnd(),rnd()*6.28,0,Math.PI*2);a.fill();}const gravelMap=new THREE.CanvasTexture(c);gravelMap.colorSpace=THREE.SRGBColorSpace;gravelMap.wrapS=gravelMap.wrapT=THREE.RepeatWrapping;const gravel=M(0xffffff);gravel.map=gravelMap;applyRealisticGravel(gravel);
  function ground(w,d,x,z,y,m=gravel){const g=new THREE.PlaneGeometry(w,d);g.rotateX(-Math.PI/2);const p=g.attributes.position,uv=g.attributes.uv;for(let i=0;i<uv.count;i++)uv.setXY(i,(p.getX(i)+x)/3,(p.getZ(i)+z)/3);mesh(g,m,x,y,z);}
  ground(12,B.roadSouth-B.south,B.gateX,(B.south+B.roadSouth)/2,.07);ground(B.east-B.west,B.south-B.north,430,-1165,.08);rect(453,-1052,4,4);rect(477,-1052,4,4);
  // Chain-link perimeter, topped by angled security arms.
