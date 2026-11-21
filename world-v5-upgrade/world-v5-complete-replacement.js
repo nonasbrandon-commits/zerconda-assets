@@ -1,4 +1,4 @@
-import {createAreaResume,createSceneryYield} from './resume-area.js?v=20261121-resume-area-v199';
+import {createAreaResume,createSceneryYield} from './resume-area.js?v=20261121-loading-speed-v200';
 import {createCityResidents} from './city-residents.js?v=20261121-city-life-v196';
 import {createPerimeterForest} from './perimeter-forest.js?v=20261121-city-life-v196';
 import {updateTreeBreeze} from './tree-breeze.js?v=20261121-forest-airfield-v193';
@@ -8,7 +8,7 @@ import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=2
 import {createCabPassengerCamera} from './cab-passenger-camera.js?v=20261121-town-v191';
 import {createVehicleHorns} from './vehicle-horns.js?v=20261121-town-v191';
 import {measureVehicleFootprint,vehicleDescriptor,vehiclePoseBlocked,sweepVehiclePose} from './vehicle-collision.js?v=20261121-town-v191';
-import {createShaderWarmup} from './shader-warmup.js?v=20261121-resume-area-v199';
+import {createShaderWarmup} from './shader-warmup.js?v=20261121-loading-speed-v200';
 import {loadReferenceProp} from './reference-props.js?v=20261120-reference-props-v180';
 import {createZCabs}from './z-cabs.js?v=20261121-cab-turns-v194';
 import {createLuxurySedan,loadLuxurySedan,sedanColors} from './luxury-sedan.js?v=20261120-restore-silver-v185';
@@ -91,7 +91,7 @@ import {createNeedleSportsPark} from './needle-sports-park.js?v=20261121-entry-f
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
-const ZERCONDA_BUILD='2026-11-21-resume-area-v199';
+const ZERCONDA_BUILD='2026-11-21-loading-speed-v200';
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
 console.info('ZERCONDA BUILD',ZERCONDA_BUILD);
 // Keep existing index.html importmap and <script type="module" src="./world.js">.
