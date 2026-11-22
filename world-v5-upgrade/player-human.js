@@ -1,4 +1,4 @@
-import {fitHeroClothing} from './hero-clothing-fit.js?v=20261121-fast-start-v205';
+import {fitHeroClothing} from './hero-clothing-fit.js?v=20261122-clean-hem-v213';
 const skinComponent=(a,i,c)=>c===0?a.getX(i):c===1?a.getY(i):c===2?a.getZ(i):a.getW(i);
 import {avatarHeadFrame} from './avatar-fit.js?v=20261120-head-fit-v181';
 import {createHairCustomizer} from './player-hair-styles.js?v=20261121-profile-studio-v203';
@@ -39,7 +39,7 @@ function colorClothes(mesh,shirt,pants,options={}){
    for(const id of ids)center.add(mesh.getVertexPosition(id,point).applyMatrix4(mesh.matrixWorld));center.multiplyScalar(1/3);
    const y=(center.y-bounds.min.y)/height,x=Math.abs(center.x-(bounds.min.x+bounds.max.x)/2)/height;
    const armWeight=mesh.isSkinnedMesh&&part==='sleeves'?ids.reduce((sum,id)=>{let weight=0;for(let k=0;k<4;k++){const bi=skinComponent(mesh.geometry.attributes.skinIndex,id,k),bw=skinComponent(mesh.geometry.attributes.skinWeight,id,k);if(/Forearm|Hand/i.test(mesh.skeleton.bones[bi]?.name||''))weight+=bw;}return sum+weight;},0)/3:0;
-   const match=hero?(part==='shirt'?y>.52&&y<.83:part==='pants'?y>.25&&y<.52&&x<.23:part==='shoes'?y<.10:false):part==='shirt'?y>.56:part==='pants'?y>.075&&y<.65&&x<.18:part==='shoes'?y<.085:part==='shorts'||part==='sleeves'?true:false;
+   const match=hero?(part==='shirt'?y>.518&&y<.83:part==='pants'?y>.25&&y<.518&&x<.23:part==='shoes'?y<.10:false):part==='shirt'?y>.56:part==='pants'?y>.075&&y<.65&&x<.18:part==='shoes'?y<.085:part==='shorts'||part==='sleeves'?true:false;
    if(!match)continue;
    let poly=ids.map(id=>{const p=mesh.getVertexPosition(id,new THREE.Vector3()).applyMatrix4(mesh.matrixWorld);let arm=0;if(mesh.isSkinnedMesh)for(let k=0;k<4;k++){const bi=skinComponent(mesh.geometry.attributes.skinIndex,id,k);if(/Forearm|Hand/i.test(mesh.skeleton.bones[bi]?.name||''))arm+=skinComponent(mesh.geometry.attributes.skinWeight,id,k);}return {u:uv.getX(id)*w,v:(mesh.material.map.flipY?1-uv.getY(id):uv.getY(id))*h,y:(p.y-bounds.min.y)/height,arm};});
    function clip(key,value,greater){const out=[];for(let j=0;j<poly.length;j++){const a=poly[j],b=poly[(j+1)%poly.length],inside=v=>greater?v[key]>=value:v[key]<=value,ai=inside(a),bi=inside(b);if(ai)out.push(a);if(ai!==bi){const t=(value-a[key])/(b[key]-a[key]);out.push(Object.fromEntries(['u','v','y','arm'].map(k=>[k,a[k]+(b[k]-a[k])*t])));}}poly=out;}
