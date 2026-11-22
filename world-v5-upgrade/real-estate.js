@@ -1,8 +1,8 @@
-import {createRealEstateOffice} from './real-estate-office.js?v=20261122-office-v233';
+import {createRealEstateOffice} from './real-estate-office.js?v=20261122-interior-v236';
 import {buildWesthavenRoads} from './westhaven-roads.js?v=20261122-drive-cut-v235';
 import {registerPrivateHome,homeKeypadOpen} from './private-home-locks.js?v=20261122-private-homes-v214';
 import {makeReadableSign} from './readable-signs.js?v=20261122-private-homes-v214';
-import {createStanwoodHouse} from './stanwood-house.js?v=20261122-drive-cut-v235';
+import {createStanwoodHouse} from './stanwood-house.js?v=20261122-interior-v236';
 import * as THREE from 'three';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 export const LAND_LOTS=Array.from({length:10},(_,i)=>({id:i+1,x:i%2?-520:-604,z:[-237.5,-144,-48,48,135.5][Math.floor(i/2)],width:56,depth:Math.floor(i/2)===4?48:62,price:80000+Math.floor(i/2)*7500+(i%2)*5000}));
