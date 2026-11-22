@@ -73,18 +73,27 @@ export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=(
  function update(dt,time){const player=getPlayer();if(mobile&&player){const near=[...agents].sort((a,b)=>Math.hypot(a.group.position.x-player.x,a.group.position.z-player.z)-Math.hypot(b.group.position.x-player.x,b.group.position.z-player.z)).filter(a=>Math.hypot(a.group.position.x-player.x,a.group.position.z-player.z)<210).slice(0,6);for(const a of agents){if(!near.includes(a)&&a.human.ready){a.human.dispose();a.group.visible=false;}}if(!loading){const a=near.find(a=>!a.human.ready);if(a){loading=true;a.human.load().then(()=>{a.group.visible=true}).catch(console.warn).finally(()=>loading=false);}}}for(const a of agents){if(!a.human.ready)continue;const old=a.group.position.clone(),advance=Math.min(dt,.15)*a.speed;a.waiting=false;
   if(a.route.kind==='sidewalk'&&(a.position>=79.99&&a.direction>0||a.position<=-79.99&&a.direction<0))a.direction*=-1;
   const radius=a.vehicle?.48:.28;
-  const clear=(x,z)=>canWalk(x,z)&&!(player&&Math.hypot(x-player.x,z-player.z)<(a.vehicle?1.5:.6))&&!agents.some(other=>other!==a&&other.human.ready&&Math.hypot(x-other.group.position.x,z-other.group.position.z)<.55);
+  // An overlapping spawn must be able to separate before normal clearance applies.
+  const obstacles=agents.filter(other=>other!==a&&other.human.ready).map(other=>({x:other.group.position.x,z:other.group.position.z,r:.55}));
+  if(player)obstacles.push({x:player.x,z:player.z,r:a.vehicle?1.5:.6});
+  const escapeClear=(x,z)=>obstacles.every(o=>{const before=Math.hypot(old.x-o.x,old.z-o.z),after=Math.hypot(x-o.x,z-o.z);return after>=o.r||before<o.r+radius&&after>before+.00001;});
+  const clear=(x,z)=>canWalk(x,z)&&escapeClear(x,z);
+  // Check body clearance against scenery, but center separation against people.
+  const segment=(from,to)=>clearSegment(from,to,canWalk,radius)&&clearSegment(from,to,escapeClear,0);
+
   let next=routePoint(a,advance);a.retry=Math.max(0,(a.retry||0)-dt);
-  if(!a.detour&&(Math.hypot(next.x-old.x,next.z-old.z)>advance+.02||!clearSegment(old,next,clear,radius))&&!a.retry){
+  if(!a.detour&&(Math.hypot(next.x-old.x,next.z-old.z)>advance+.02||!segment(old,next))&&!a.retry){
    for(const distance of[7,12,18]){const goal=routePoint(a,distance),path=findPedestrianDetour(old,goal,clear,{radius});if(path){a.detour={path,position:goal.position};break;}}
    a.retry=.65;
   }
   if(a.detour){const waypoint=a.detour.path[0],d=Math.hypot(waypoint.x-old.x,waypoint.z-old.z),step=Math.min(advance,d);next={x:old.x+(waypoint.x-old.x)*step/(d||1),z:old.z+(waypoint.z-old.z)*step/(d||1)};
-   if(clearSegment(old,next,clear,radius)){a.group.position.set(next.x,groundHeightAt(next.x,next.z),next.z);if(d<=advance+.001){a.detour.path.shift();if(!a.detour.path.length){a.position=a.detour.position;a.detour=null;}}}
+   if(segment(old,next)){a.group.position.set(next.x,groundHeightAt(next.x,next.z),next.z);if(d<=advance+.001){a.detour.path.shift();if(!a.detour.path.length){a.position=a.detour.position;a.detour=null;}}}
    else{a.detour=null;a.retry=0;a.waiting=true;}
-  }else if(clearSegment(old,next,clear,radius)){a.group.position.set(next.x,groundHeightAt(next.x,next.z),next.z);a.position=next.position;}
+  }else if(segment(old,next)){a.group.position.set(next.x,groundHeightAt(next.x,next.z),next.z);a.position=next.position;}
   else a.waiting=true;
-  const moved=a.group.position.distanceTo(old);a.waiting=moved<.0001;if(!a.waiting){a.group.rotation.y=Math.atan2(a.group.position.x-old.x,a.group.position.z-old.z);a.distance+=moved;}
+  const moved=a.group.position.distanceTo(old);a.waiting=moved<.0001;
+  a.blockedFor=a.waiting?(a.blockedFor||0)+dt:0;
+  if(a.blockedFor>6&&a.route.kind==='sidewalk'){a.direction*=-1;a.detour=null;a.retry=0;a.blockedFor=0;}if(!a.waiting){a.group.rotation.y=Math.atan2(a.group.position.x-old.x,a.group.position.z-old.z);a.distance+=moved;}
   const moving=!a.waiting;a.phase+=moving?dt*(a.profile.activity==='bike'?7.4:1):0;a.human.update(dt,moving?a.speed:0,{vehicle:a.vehicle?a.profile.activity:null,phase:a.phase});a.vehicle?.update(a.distance,a.phase);
  }}
  return{root,createHuman,update,agents,count:20,profiles:residentProfiles,readyPromise:Promise.all(agents.map(a=>a.human.readyPromise))};

@@ -1,0 +1,38 @@
+import * as THREE from 'three';
+import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
+const homes=new Map(),KEY='zerconda-private-home-pins-v1';let panel=null;let stored={};try{stored=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch{}
+export const validHomePIN=value=>typeof value==='string'&&/^\d{5}$/.test(value);
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(stored));}catch{}};
+const newPIN=()=>String(crypto.getRandomValues(new Uint32Array(1))[0]%100000).padStart(5,'0');
+export const homeKeypadOpen=()=>!!panel;
+function closePanel(){if(!panel)return;const previous=panel.previous;panel.element.remove();panel=null;previous?.focus?.();}
+function showPanel(lock,grant,manage=false){lock.stop?.();closePanel();const previous=document.activeElement,el=document.createElement('form');el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label',manage?'Private home lock settings':'Private home keypad');el.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(340px,85vw);padding:24px;background:#12313b;color:#f2f1df;border:1px solid #afc8bd;border-radius:14px;box-shadow:0 0 0 100vmax #071920b8;z-index:27000;font:15px system-ui';
+ const heading=document.createElement('h2');heading.textContent=lock.label;heading.style.margin='0 0 8px';const hint=document.createElement('p');hint.textContent=manage?'Choose a code with exactly five digits.':'Enter the five-digit door code.';
+ const input=document.createElement('input');input.type='password';input.inputMode='numeric';input.autocomplete='off';input.maxLength=5;input.pattern='[0-9]{5}';input.required=true;input.setAttribute('aria-label','Five-digit door code');input.style.cssText='box-sizing:border-box;width:100%;padding:14px;text-align:center;font:24px monospace;letter-spacing:.25em;border:1px solid #b3c7c2;border-radius:7px';input.oninput=()=>{input.value=input.value.replace(/\D/g,'').slice(0,5);};
+ const feedback=document.createElement('p');feedback.setAttribute('role','status');feedback.style.minHeight='20px';const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:7px';
+ function button(label,fn){const b=document.createElement('button');b.type='button';b.textContent=label;b.style.cssText='min-height:44px;padding:9px;background:#d9e4d4;color:#17333b;border:0;border-radius:6px;font:600 16px system-ui;cursor:pointer';b.onclick=fn;return b;}
+ for(const d of ['1','2','3','4','5','6','7','8','9','Clear','0','⌫'])grid.append(button(d,()=>{input.value=d==='Clear'?'':d==='⌫'?input.value.slice(0,-1):(input.value+d).slice(0,5);input.focus();}));
+ const submit=button(manage?'Save code':'Unlock',()=>el.requestSubmit());submit.type='submit';submit.onclick=null;const close=button('Cancel',closePanel);el.append(heading,hint,input,feedback,grid,submit,close);submit.style.margin='14px 9px 0 0';
+ if(manage){input.value=lock.code;const show=button('Show / hide code',()=>{input.type=input.type==='password'?'text':'password';});show.style.marginTop='10px';el.append(show);}
+ el.noValidate=true;el.onsubmit=e=>{e.preventDefault();if(!validHomePIN(input.value)){feedback.textContent='Enter exactly five digits.';return;}if(manage){lock.setCode(input.value);closePanel();return;}if(!lock.tryCode(input.value)){feedback.textContent='Incorrect code. The home is still locked.';input.value='';input.focus();return;}closePanel();grant?.();};
+ for(const type of ['pointerdown','pointerup','click','wheel','keydown','keyup'])el.addEventListener(type,e=>{e.stopPropagation();if(type==='keydown'&&e.key==='Escape'){e.preventDefault();closePanel();}});document.body.append(el);panel={element:el,previous};input.focus();
+}
+export function registerPrivateHome({id,label='Private home',code,isPrivate=()=>true,canManage=()=>false,contains,getPlayer,isInside,onRelock=()=>{},canRelock=()=>true,onMessage=()=>{},target,parent,mount,onStop=()=>{}}={}){
+ homes.get(id)?.dispose();let authorized=false,entered=false,pending=false,grantUntil=0,wasInside=false,lastPrivate=false,disposed=false;const inside=()=>isInside?isInside():contains(getPlayer().x,getPlayer().z);if(!validHomePIN(stored[id])){stored[id]=validHomePIN(code)?code:newPIN();save();}
+ let keypad=null,ctx=null,canvas=null,lastState='';const buttons=[];
+ const api={id,label,contains,isPrivate,stop:onStop,get code(){return stored[id]},get authorized(){return authorized},get locked(){return isPrivate()&&!authorized},get inside(){return inside()},
+ tryCode(value){if(!validHomePIN(value)||value!==stored[id])return false;authorized=true;pending=false;entered=inside();grantUntil=performance.now()+60000;return true;},
+ setCode(value){if(!validHomePIN(value))return false;stored[id]=value;save();authorized=false;pending=true;onMessage(label+' code saved.');return true;},
+ request(grant){if(!isPrivate()||authorized||inside()){grant?.();return true;}showPanel(api,grant);return false;},
+ manage(){if(canManage())showPanel(api,null,true);},
+ relock(){pending=true;},
+ update(){const p=getPlayer(),nowInside=inside(),privateNow=isPrivate();if(privateNow&&!lastPrivate)pending=true;if(wasInside&&!nowInside)pending=true;wasInside=nowInside;lastPrivate=privateNow;if(authorized&&nowInside)entered=true;if(authorized&&(entered||performance.now()>grantUntil||target&&Math.hypot(p.x-target().x,p.z-target().z)>12))pending=true;if(pending&&canRelock()){authorized=false;pending=false;entered=false;onRelock();}const state=!isPrivate()?'public':authorized?'unlocked':'locked';if(keypad){keypad.visible=isPrivate();if(state!==lastState){lastState=state;ctx.fillStyle='#121a20';ctx.fillRect(0,0,128,256);ctx.fillStyle=state==='unlocked'?'#8ad9a5':'#e9b76e';ctx.fillRect(13,15,102,31);ctx.fillStyle='#10242d';ctx.font='bold 15px sans-serif';ctx.textAlign='center';ctx.fillText(state==='unlocked'?'OPEN':'LOCKED',64,36);ctx.fillStyle='#d8e0dd';ctx.font='18px sans-serif';for(let i=0;i<12;i++)ctx.fillText('123456789*0#'[i],28+(i%3)*36,85+Math.floor(i/3)*44);keypad.material.map.needsUpdate=true;}}},
+ dispose(){disposed=true;homes.delete(id);buttons.forEach(b=>b.remove());keypad?.removeFromParent();}};
+ if(parent&&mount){canvas=document.createElement('canvas');canvas.width=128;canvas.height=256;ctx=canvas.getContext('2d');const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;keypad=new THREE.Mesh(new THREE.PlaneGeometry(.14,.28),new THREE.MeshStandardMaterial({map:tex,roughness:.55,metalness:.18}));keypad.name='Five-digit digital home lock';keypad.position.set(mount.x,mount.y,mount.z);keypad.rotation.y=mount.rotation||0;parent.add(keypad);}
+ if(target){for(const manage of[false,true]){const b=document.createElement('button');b.textContent=manage?'My home · Lock code':'Private home · Keypad';b.onclick=()=>manage?api.manage():api.request();document.body.append(b);registerTownAction(b,{id:id+(manage?'-lock-settings':'-keypad'),priority:manage?108:139,when:()=>!disposed&&isPrivate()&&(manage?canManage():!inside())&&Math.hypot(getPlayer().x-target().x,getPlayer().z-target().z)<3,target});buttons.push(b);}}
+ homes.set(id,api);api.update();return api;
+}
+export function allowPrivateHome(id,retry){const lock=homes.get(id);if(!lock||!lock.isPrivate()||lock.authorized||lock.inside)return true;lock.request(retry);return false;}
+export function allowPrivateHomeAt(x,z,retry){for(const [id,h]of homes)if(h.contains(x,z)&&!allowPrivateHome(id,retry))return false;return true;}
+export function privateHomeBlocks(x,z){for(const h of homes.values())if(h.isPrivate()&&!h.authorized&&!h.inside&&h.contains(x,z))return true;return false;}
+export function updatePrivateHomes(){for(const h of homes.values())h.update();}

@@ -1,8 +1,9 @@
+import {allowPrivateHome} from './private-home-locks.js?v=20261122-private-homes-v214';
 import {cedarMap,addCottageExteriorDetails,createCottagePorchChair} from './cottage-exterior-details.js?v=20261120-standing-attendant-v167';
 import {beginHomePassage} from './home-passage.js?v=20261119-performance-v147';
 import {createReferenceRange,createShakerCabinet} from './reference-range.js?v=20261119-performance-v147';
 import {createFrenchDoorFridge} from './french-door-fridge.js?v=20261119-performance-v147';
-import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261120-collision-v187';
+import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261119-performance-v147';
 import {createRealtySign} from './property-signs.js?v=20261119-residential-v130';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -48,7 +49,7 @@ export function addWaterfrontHomes(scene,{count=12,getPlayer=()=>({x:0,z:0}),can
    const base=axis==='x'?Math.PI/2:0;pivot.rotation.y=base;
    // Stationary jambs overlap the wall opening so there are no daylight gaps.
    const frame=new THREE.Group();frame.position.set(x,.2,z);frame.rotation.y=base;g.add(frame);for(const side of[-1,1])box(frame,.075,height+.08,.20,side*(width/2+.025),height/2,0,trim);box(frame,width+.15,.075,.20,0,height+.015,0,trim);
-   const d={id,x,z,width,axis,pivot,base,sliding,closedZ:pivot.position.z,progress:0,open:false};h.doors.push(d);addAction(h,id,()=>id==='front'?(getPlayer().z-h.z>d.z?'Exit Home':'Enter home'):`${d.open?'Close':'Open'} ${id==='bedroom'?'bedroom sliding door':'bathroom sliding door'}`,{x,z},()=>{if(id==='front'){const inside=getPlayer().z-h.z>d.z;beginHomePassage({open:()=>{d.open=true;d.passageHold=1.1;},move:()=>onPassage({x:h.x+d.x,z:h.z+d.z+(inside?-1.4:1.4),heading:inside?Math.PI:0}),close:()=>{d.open=false;}});return;}d.open=!d.open;const player=getPlayer();d.openedSide=Math.sign(d.axis==='x'?player.x-h.x-d.x:player.z-h.z-d.z);});return d;
+   const d={id,x,z,width,axis,pivot,base,sliding,closedZ:pivot.position.z,progress:0,open:false};h.doors.push(d);addAction(h,id,()=>id==='front'?(getPlayer().z-h.z>d.z?'Exit Home':'Enter home'):`${d.open?'Close':'Open'} ${id==='bedroom'?'bedroom sliding door':'bathroom sliding door'}`,{x,z},function useDoor(){if(!d.open&&!allowPrivateHome('coastal-'+h.id,useDoor))return;if(id==='front'){const inside=getPlayer().z-h.z>d.z;beginHomePassage({open:()=>{d.open=true;d.passageHold=1.1;},move:()=>onPassage({x:h.x+d.x,z:h.z+d.z+(inside?-1.4:1.4),heading:inside?Math.PI:0}),close:()=>{d.open=false;}});return;}d.open=!d.open;const player=getPlayer();d.openedSide=Math.sign(d.axis==='x'?player.x-h.x-d.x:player.z-h.z-d.z);});return d;
   }
   door('front',1.8,-5.5,1.04);
   // Full-height glazed beach slider: one fixed panel and one overlapping sliding leaf.
@@ -56,7 +57,7 @@ export function addWaterfrontHomes(scene,{count=12,getPlayer=()=>({x:0,z:0}),can
   for(const side of[-1,1])box(deckFrame,.08,2.83,.19,side*1.3,1.375,0,trim);for(const y of[.025,2.745])box(deckFrame,2.68,.065,.19,0,y,0,trim);
   function deckLeaf(cx,z,sliding){const leaf=new THREE.Group();leaf.name=sliding?'Beach sliding glass door':'Beach fixed glass panel';leaf.position.set(cx,.2,z);g.add(leaf);box(leaf,1.34,2.75,.045,0,1.375,0,glass);for(const side of[-1,1])box(leaf,.045,2.75,.08,side*.65,1.375,0,trim);for(const y of[.025,2.725])box(leaf,1.34,.045,.08,0,y,0,trim);return leaf;}
   deckLeaf(3.15,5.54,false);const deckPivot=deckLeaf(1.85,5.44,true);box(deckPivot,.035,.30,.06,-.48,1.10,-.07,iron);
-  const deck={id:'deck',x:1.85,z:5.5,width:1.3,axis:'z',pivot:deckPivot,base:0,sliding:true,closedX:1.85,progress:0,open:false};h.doors.push(deck);addAction(h,'deck',()=>`${deck.open?'Close':'Open'} beach sliding door`,{x:1.85,z:5.5},()=>{deck.open=!deck.open;deck.openedSide=Math.sign(getPlayer().z-h.z-deck.z);});
+  const deck={id:'deck',x:1.85,z:5.5,width:1.3,axis:'z',pivot:deckPivot,base:0,sliding:true,closedX:1.85,progress:0,open:false};h.doors.push(deck);addAction(h,'deck',()=>`${deck.open?'Close':'Open'} beach sliding door`,{x:1.85,z:5.5},function useDeck(){if(!deck.open&&!allowPrivateHome('coastal-'+h.id,useDeck))return;deck.open=!deck.open;deck.openedSide=Math.sign(getPlayer().z-h.z-deck.z);});
   // Smaller openings and pocket doors preserve living-room space.
   function partition(z0,z1){box(g,.15,3.15,z1-z0,-.6,1.775,(z0+z1)/2,wall);}
   partition(-5.5,-3.13);partition(-2.07,.97);partition(2.03,5.5);for(const z of[-2.6,1.5])box(g,.15,.95,1.06,-.6,2.875,z,wall);
@@ -64,7 +65,7 @@ export function addWaterfrontHomes(scene,{count=12,getPlayer=()=>({x:0,z:0}),can
   function obstacle(x,z,w,d){h.colliders.push({x,z,w,d});}function furniture(w,hh,d,x,y,z,m){box(g,w,hh,d,x,y,z,m);obstacle(x,z,w,d);}
   // Headboard rests against the west wall, leaving the bedroom window unobstructed.
   createDetailedBed(g,{x:-3,y:.2,z:2.6,angle:Math.PI/2,width:1.8,length:3.0,compact:true});obstacle(-3,2.6,3.3,2);
-  const bath=createDetailedBathroom(g,{x:-2.8,y:.2,z:-3.05,width:4.35,depth:4.85,tub:false,cottageLayout:true,wallWindows:{back:[{x:-.2,y:1.875,w:2.2,h:1.65}]}});h.colliders.push(...bath.solids);
+  const bath=createDetailedBathroom(g,{x:-2.8,y:.2,z:-3.0,width:4.35,depth:4.65,tub:false,wallWindows:{back:[{x:-1.1,y:1.6,w:1.8,h:1.8}]}});h.colliders.push(...bath.solids);
   // Identical starter kitchen, dining and lounge furniture in every cottage.
   createFrenchDoorFridge(g,{x:4.1,y:.2,z:-4.6,width:1.1,height:1.9,depth:.95,angle:-Math.PI/2});obstacle(4.1,-4.6,1.1,.95);createShakerCabinet(g,{x:4.4,y:.2,z:-3.35,width:1.5,height:.95,depth:.80,angle:-Math.PI/2});createReferenceRange(g,{x:4.4,y:.2,z:-1.95,width:1.3,height:.95,depth:.80,angle:-Math.PI/2});obstacle(4.4,-2.7,.80,2.85);box(g,.55,.04,.8,4.4,1.15,-3.45,iron);
   // Compact dining nook against the kitchen-side wall, outside the entry route.
