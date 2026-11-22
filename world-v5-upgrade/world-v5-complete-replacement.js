@@ -67,7 +67,7 @@ import {createSkatePark} from './skate-park.js?v=20261119-entrance-steering-v118
 import {createAirfield} from './airfield.js?v=20261121-profile-studio-v203';
 import * as THREE from 'three';
 import {createForestCampground} from './forest-campground.js?v=20261121-forest-airfield-v193';
-import {createPremierHomes} from './premier-homes.js?v=20261122-step-final-v220';
+import {createPremierHomes} from './premier-homes.js?v=20261122-walnut-v221';
 import {createZercondaNews} from './zerconda-news.js?v=20261121-fast-start-v205';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261121-town-v191';
 import {createBowlingAlley} from './bowling-alley.js?v=20261119-entrance-steering-v118';
@@ -95,7 +95,7 @@ import {addAirDancers} from './air-dancers.js?v=20261120-facing-v184';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261121-cab-v188';
 import {createCityMap} from './top-city-map.js?v=20261121-tree-geometry-v209';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
-import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261122-doorways-v215';
+import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261122-walnut-v221';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261122-floor-seams-v216';
 import {createPedestrians} from './animated-pedestrians.js?v=20261122-private-homes-v214';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261121-forest-airfield-v193';
