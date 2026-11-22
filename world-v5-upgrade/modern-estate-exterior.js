@@ -1,3 +1,4 @@
+import {addRoundedHedge} from './rounded-hedge.js?v=20261122-hedge-v251';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {addNaturalFerns} from './forest-natural-details.js?v=20261121-forest-airfield-v193';
@@ -22,7 +23,7 @@ export function upgradeModernEstate(home){const {stone,black,timber,warm,hedge}=
  for(const x of[-33,33]){box(.22,.35,102,x,.175,-20,stone);for(const y of[.55,.78,1.01,1.24,1.47])box(.16,.10,102,x,y,-20,black);for(let j=1;j<=10;j++){const z=31-j*10.2;box(.8,1.95,.75,x,.975,z,stone);box(1.02,.12,.95,x,2.01,z,black);}}
  box(66,.35,.22,0,.175,-71,stone);for(const y of[.55,.78,1.01,1.24,1.47])box(66,.10,.16,0,y,-71,black);for(let j=1;j<6;j++){const x=-33+j*11;box(.8,1.95,.75,x,.975,-71,stone);box(1.02,.12,.95,x,2.01,-71,black);}
  // Low planting strips stay out of both the four-metre entry and driveway gates.
- const ferns=[];for(const[lo,hi]of[[-32,-23],[-10,-4],[4,32]])for(let x=lo;x<hi;x+=1.25){const o=new THREE.Mesh(new THREE.SphereGeometry(1,7,5),hedge);o.scale.set(.75,.40,.55);o.position.set(x,.40,30.3);root.add(o);}for(const x of[-8.5,8.5,21,31]){box(1.7,.55,1.5,x,.45,16,black);ferns.push({x,z:16,y:.73,scale:1.9,angle:x});}addNaturalFerns(root,ferns);
+ const ferns=[],shrubs=[];for(const[lo,hi]of[[-32,-23],[-10,-4],[4,32]])for(let x=lo;x<hi;x+=1.25)shrubs.push({x,z:30.3});addRoundedHedge(root,shrubs);for(const x of[-8.5,8.5,21,31]){box(1.7,.55,1.5,x,.45,16,black);ferns.push({x,z:16,y:.73,scale:1.9,angle:x});}addNaturalFerns(root,ferns);
  for(const x of[-22,22]){const light=new THREE.PointLight(0xffc37b,5,7,2);light.position.set(x,2.6,-13.8);root.add(light);}
  for(const x of[-2.5,2.5,22]){const light=new THREE.PointLight(0xffc37b,7,9,2);light.position.set(x,3,14.1);root.add(light);}
  for(const[m,list]of bins){const mesh=new THREE.Mesh(mergeGeometries(list),m);mesh.castShadow=mesh.receiveShadow=true;root.add(mesh);list.forEach(g=>g.dispose());}home.modernExterior=root;return root;}
