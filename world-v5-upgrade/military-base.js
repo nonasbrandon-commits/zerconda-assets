@@ -1,3 +1,4 @@
+import {createGateControlBooth} from './gate-control-booth.js?v=20261122-booth-v242';
 import {createGuardWatchtowers} from './guard-watchtowers.js?v=20261122-barrier-v239';
 import {createBaseSecurityFence} from './security-fence.js?v=20261122-listings-v238';
 import {createFortEntrance} from './fort-entrance.js?v=20261122-listings-v238';
@@ -25,7 +26,7 @@ export function createMilitaryBase(scene,{getPlayer=()=>null,hasClearance=()=>fa
 
  // Guardhouse and a broad internal circulation loop.
  function building(x,z,w,d,h,label){box(w,h,d,x,h/2+.08,z,concrete);box(w+.7,.35,d+.7,x,h+.25,z,roof);for(const side of [-1,1])for(let j=-w/2+2;j<w/2-1;j+=3.8)box(2.5,1.2,.08,x+j,2.3,z+side*(d/2+.05),dark);box(2.2,3,.12,x,1.58,z+d/2+.07,dark);rect(x,z,w+.8,d+.8);if(label)sign(label,x,h-.4,z+d/2+.12,w*.8,1.1);}
- building(485,-1072,10,9,4,'GATE CONTROL');building(427,-1165,43,29,8,'ZERCONDA COMMAND');for(const x of [415,425,435])box(1.1,3,1.1,x,9.5,-1168,iron);beam([438,8.5,-1170],[438,21,-1170],.12);for(const y of [14,18]){beam([435,y,-1170],[441,y,-1170],.08);}
+ createGateControlBooth(root);rect(485,-1072,10.8,9.8);building(427,-1165,43,29,8,'ZERCONDA COMMAND');for(const x of [415,425,435])box(1.1,3,1.1,x,9.5,-1168,iron);beam([438,8.5,-1170],[438,21,-1170],.12);for(const y of [14,18]){beam([435,y,-1170],[441,y,-1170],.08);}
  function hut(x,z,w,d){const r=w/2;mesh(new THREE.CylinderGeometry(r,r,d,28,1,true,Math.PI/2,Math.PI),roof,x,.08,z,[Math.PI/2,0,0]);const shape=new THREE.Shape();shape.moveTo(-r,0);for(let i=0;i<=28;i++){const t=Math.PI-i*Math.PI/28;shape.lineTo(Math.cos(t)*r,Math.sin(t)*r);}shape.closePath();for(const side of [-1,1])mesh(new THREE.ShapeGeometry(shape),olive,x,.08,z+side*d/2,[0,side<0?Math.PI:0,0]);box(2.4,3,.12,x,1.58,z+d/2+.1,dark);box(2.7,.12,.4,x,3.15,z+d/2+.1,iron);for(const dx of [-r*.65,r*.65])box(1.5,1.2,.15,x+dx,2,z+d/2+.1,dark);for(let j=-d/2+1;j<d/2;j+=2)mesh(new THREE.TorusGeometry(r+.02,.035,4,28,Math.PI),iron,x,.08,z+j,[0,0,0]);rect(x,z,w+1,d+1);}
  for(const [x,z,w,d]of [[348,-1225,20,34],[383,-1225,20,34],[348,-1168,20,32],[353,-1095,30,36],[400,-1095,30,36]])hut(x,z,w,d);
  const watchtowers=createGuardWatchtowers(root,{getPlayer,hasClearance,canUse:canUseTower,onMove:onTeleport,onStop,onMessage});
