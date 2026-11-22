@@ -1,6 +1,6 @@
-import {clearSegment,findPedestrianDetour} from './pedestrian-detour.js?v=20261119-beach-v149';
+import {clearSegment,createPedestrianDetourSearch} from './pedestrian-detour.js?v=20261122-hitch-v252';
 import * as THREE from 'three';
-import {createResidentHuman} from './resident-human.js?v=20261120-bike-fit-v180';
+import {createResidentHuman} from './resident-human.js?v=20261122-hitch-v252';
 import {residentProfiles} from './resident-profiles.js?v=20261118-residents-v97';
 import {createResidentVehicle} from './resident-vehicles.js?v=20261120-bikes-v180';
 // Articulated human-shaped characters and animated pedestrian NPCs.
@@ -57,7 +57,7 @@ export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=(
   }};
  }
  const mobile=matchMedia('(pointer:coarse)').matches;let loading=false;
- const agents=[];let runIndex=0,walkIndex=0,bikeIndex=0,scooterIndex=0;
+ const agents=[];let searchCursor=0,agentCursor=0,simulationTime=0;let runIndex=0,walkIndex=0,bikeIndex=0,scooterIndex=0;
  function ellipse(cx,cz,rx,rz){return new THREE.CatmullRomCurve3(Array.from({length:64},(_,i)=>{const a=i*Math.PI/32;return new THREE.Vector3(cx+Math.cos(a)*rx,0,cz+Math.sin(a)*rz)}),true,'centripetal');}
  for(const profile of residentProfiles){const group=new THREE.Group();group.name=profile.name+' · '+profile.activity;group.userData.dynamicScenery=true;group.visible=false;root.add(group);const human=createResidentHuman(profile,{defer:mobile});group.add(human.root);let vehicle=null,route=null,position=0,direction=1,speed=2.15+(profile.id%4)*.10;
   if(profile.activity==='run'){position=runIndex*190;route={kind:'boardwalk',z:183+runIndex*2};runIndex++;speed=5.1+(profile.id%3)*.16;}
@@ -70,7 +70,7 @@ export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=(
   if(a.route.kind==='sidewalk')return{x:a.route.x,z:THREE.MathUtils.clamp(a.position+a.direction*advance,-80,80),position:THREE.MathUtils.clamp(a.position+a.direction*advance,-80,80)};
   const length=a.route.getLength(),position=(a.position+advance)%length,p=a.route.getPointAt(position/length);return{x:p.x,z:p.z,position};
  }
- function update(dt,time){const player=getPlayer();if(mobile&&player){const near=[...agents].sort((a,b)=>Math.hypot(a.group.position.x-player.x,a.group.position.z-player.z)-Math.hypot(b.group.position.x-player.x,b.group.position.z-player.z)).filter(a=>Math.hypot(a.group.position.x-player.x,a.group.position.z-player.z)<210).slice(0,6);for(const a of agents){if(!near.includes(a)&&a.human.ready){a.human.dispose();a.group.visible=false;}}if(!loading){const a=near.find(a=>!a.human.ready);if(a){loading=true;a.human.load().then(()=>{a.group.visible=true}).catch(console.warn).finally(()=>loading=false);}}}for(const a of agents){if(!a.human.ready)continue;const old=a.group.position.clone(),advance=Math.min(dt,.15)*a.speed;a.waiting=false;
+ function update(dt,time){simulationTime+=dt;const player=getPlayer();if(mobile&&player){const near=[...agents].sort((a,b)=>Math.hypot(a.group.position.x-player.x,a.group.position.z-player.z)-Math.hypot(b.group.position.x-player.x,b.group.position.z-player.z)).filter(a=>Math.hypot(a.group.position.x-player.x,a.group.position.z-player.z)<210).slice(0,6);for(const a of agents){if(!near.includes(a)&&a.human.ready){a.human.dispose();a.group.visible=false;}}if(!loading){const a=near.find(a=>!a.human.ready);if(a){loading=true;a.human.load().then(()=>{a.group.visible=true}).catch(console.warn).finally(()=>loading=false);}}}const actorDeadline=performance.now()+4;let actorVisits=0;while(actorVisits++<agents.length&&performance.now()<actorDeadline){const a=agents[agentCursor++%agents.length];if(!a.human.ready)continue;const stepDt=Math.min(.15,simulationTime-(a.lastSimulationTime??simulationTime-dt));a.lastSimulationTime=simulationTime;const distance2=player?(a.group.position.x-player.x)**2+(a.group.position.z-player.z)**2:0;a.group.visible=distance2<180*180;if(!a.group.visible)continue;const old=a.group.position.clone(),advance=Math.min(stepDt,.15)*a.speed;a.waiting=false;
   if(a.route.kind==='sidewalk'&&(a.position>=79.99&&a.direction>0||a.position<=-79.99&&a.direction<0))a.direction*=-1;
   const radius=a.vehicle?.48:.28;
   // An overlapping spawn must be able to separate before normal clearance applies.
@@ -81,20 +81,22 @@ export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=(
   // Check body clearance against scenery, but center separation against people.
   const segment=(from,to)=>clearSegment(from,to,canWalk,radius)&&clearSegment(from,to,escapeClear,0);
 
-  let next=routePoint(a,advance);a.retry=Math.max(0,(a.retry||0)-dt);
-  if(!a.detour&&(Math.hypot(next.x-old.x,next.z-old.z)>advance+.02||!segment(old,next))&&!a.retry){
-   for(const distance of[7,12,18]){const goal=routePoint(a,distance),path=findPedestrianDetour(old,goal,clear,{radius});if(path){a.detour={path,position:goal.position};break;}}
+  let next=routePoint(a,advance);const directClear=!a.detour&&Math.hypot(next.x-old.x,next.z-old.z)<=advance+.02&&segment(old,next);a.retry=Math.max(0,(a.retry||0)-stepDt);
+  if(!a.detour&&!directClear&&!a.retry){
+   if(!a.search){const goal=routePoint(a,12);a.search={goal,work:createPedestrianDetourSearch({x:old.x,z:old.z},goal,clear,{radius})};}
    a.retry=.65;
   }
   if(a.detour){const waypoint=a.detour.path[0],d=Math.hypot(waypoint.x-old.x,waypoint.z-old.z),step=Math.min(advance,d);next={x:old.x+(waypoint.x-old.x)*step/(d||1),z:old.z+(waypoint.z-old.z)*step/(d||1)};
    if(segment(old,next)){a.group.position.set(next.x,groundHeightAt(next.x,next.z),next.z);if(d<=advance+.001){a.detour.path.shift();if(!a.detour.path.length){a.position=a.detour.position;a.detour=null;}}}
    else{a.detour=null;a.retry=0;a.waiting=true;}
-  }else if(segment(old,next)){a.group.position.set(next.x,groundHeightAt(next.x,next.z),next.z);a.position=next.position;}
+  }else if(directClear){a.search=null;a.group.position.set(next.x,groundHeightAt(next.x,next.z),next.z);a.position=next.position;}
   else a.waiting=true;
   const moved=a.group.position.distanceTo(old);a.waiting=moved<.0001;
-  a.blockedFor=a.waiting?(a.blockedFor||0)+dt:0;
-  if(a.blockedFor>6&&a.route.kind==='sidewalk'){a.direction*=-1;a.detour=null;a.retry=0;a.blockedFor=0;}if(!a.waiting){a.group.rotation.y=Math.atan2(a.group.position.x-old.x,a.group.position.z-old.z);a.distance+=moved;}
-  const moving=!a.waiting;a.phase+=moving?dt*(a.profile.activity==='bike'?7.4:1):0;a.human.update(dt,moving?a.speed:0,{vehicle:a.vehicle?a.profile.activity:null,phase:a.phase});a.vehicle?.update(a.distance,a.phase);
- }}
+  a.blockedFor=a.waiting?(a.blockedFor||0)+stepDt:0;
+  if(a.blockedFor>6&&a.route.kind==='sidewalk'){a.direction*=-1;a.detour=null;a.search=null;a.retry=0;a.blockedFor=0;}if(!a.waiting){a.group.rotation.y=Math.atan2(a.group.position.x-old.x,a.group.position.z-old.z);a.distance+=moved;}
+  const moving=!a.waiting;a.phase+=moving?stepDt*(a.profile.activity==='bike'?7.4:1):0;a.human.update(stepDt,moving?a.speed:0,{vehicle:a.vehicle?a.profile.activity:null,phase:a.phase,detailed:distance2<70*70});a.vehicle?.update(a.distance,a.phase);
+ }
+ const deadline=performance.now()+2;let visited=0;while(visited++<agents.length&&performance.now()<deadline){const a=agents[searchCursor++%agents.length],job=a.search;if(!job)continue;job.work.step(deadline);if(job.work.done){if(job.work.path)a.detour={path:job.work.path,position:job.goal.position};a.search=null;a.retry=job.work.path?0:1.5;}}
+ }
  return{root,createHuman,update,agents,count:20,profiles:residentProfiles,readyPromise:Promise.all(agents.map(a=>a.human.readyPromise))};
 }

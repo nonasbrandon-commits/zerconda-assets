@@ -105,7 +105,7 @@ import {createCityMap} from './top-city-map.js?v=20261122-map-v250';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261122-listings-v238';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261122-controls-v246';
-import {createPedestrians} from './animated-pedestrians.js?v=20261122-private-homes-v214';
+import {createPedestrians} from './animated-pedestrians.js?v=20261122-hitch-v252';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261121-forest-airfield-v193';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261121-natural-basketball-v208';
 
@@ -439,7 +439,7 @@ const wilderness=createWildernessLandscape(scene);
 const perimeterForest=createPerimeterForest(scene,{grass});forestGravelRoads=createForestGravelRoads(scene);
 const sceneryYield=createSceneryYield({moving:()=>townControls.walking||townControls.backward||Math.hypot(movement.vx,movement.vz)>.15||['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].some(k=>keys.has(k))});
 globalThis.zercondaIsMoving=()=>townControls.walking||townControls.backward||Math.hypot(movement.vx,movement.vz)>.15||['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].some(k=>keys.has(k));
-async function waitForScenerySlot(){await sceneryYield();}
+async function waitForScenerySlot(){while(globalThis.zercondaIsMoving?.())await new Promise(resolve=>setTimeout(resolve,150));await sceneryYield();}
 async function prepareScenery(object){if(object)await sceneryYield();}
 async function populateOuterForest(){
  const source=loaded.tree||loaded.tree2;if(!source)return;
@@ -834,7 +834,7 @@ const treeRoadMaintenance=createRoadTreeMaintenance(scene,{asphalt,paving});
 const roadMap=createRoadMapGeometry(scene,asphalt);roadMap.scan();const cityMap=createCityMap({player,getRoadPolygons:()=>roadMap.polygons,getLots:()=>realEstate.mapLots()});
 // Third-person walking avatar: forward-facing, visible from the default camera.
 // Kept lightweight so mobile devices do not need an additional model download.
-const pedestrianSystem=createPedestrians(scene,{count:20,getPlayer:()=>player,groundHeightAt:standingHeightAt,canWalk:(x,z)=>ambientResidentsAllowed(x,z)&&walkable(x,z)});
+const pedestrianSystem=createPedestrians(scene,{count:20,getPlayer:()=>player,groundHeightAt:(x,z)=>groundHeightAt(x,z)+.004,canWalk:(x,z)=>ambientResidentsAllowed(x,z)&&walkable(x,z)});
 const playerRig=pedestrianSystem.createHuman(0);
 const avatar=playerRig.root;avatar.name='Zerconda player avatar';avatar.userData.startupEssential=true;scene.add(avatar);
 let realAvatar=null,realAvatarMixer=null,realAvatarWalk=null,realAvatarIdle=null;
