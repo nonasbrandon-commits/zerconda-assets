@@ -1,3 +1,4 @@
+import {createModernPrivacyFence} from './modern-privacy-fence.js?v=20261122-fence-v226';
 import {applyGrayWoodFloor} from './gray-wood-floor.js?v=20261122-gray-oak-v225';
 import {createCraftedDiningSet,createCraftedCounter} from './crafted-dining.js?v=20261122-dining-v224';
 import {createCraftedSofa} from './crafted-sofa.js?v=20261122-walnut-v221';
@@ -60,7 +61,7 @@ export function createPremierHomes(scene,{getPlayer,canInteract=()=>true,onMessa
   // A level threshold step, with the lower path meeting the sidewalk exactly.
   box(g,4,.14,1.0,0,.09,9.6,stone);h.parking={...world(h,{x:13,z:8}),w:3.8,d:6};
   // Timber boundaries divide the neighboring premium lots and the older houses behind.
-  for(const px of [-16,16]){box(g,.10,1.5,33,px,.65,1.5,wood);for(let z=-15;z<=18;z+=2.5)box(g,.16,1.7,.16,px,.75,z,wood);}box(g,32,1.5,.10,0,.65,-15,wood);
+  createModernPrivacyFence(g);
   for(const px of [-8,8])createSolidPlanter(g,{x:px,y:.02,z:10.2,width:1.7});h.sale=createRealtySign(g,{x:-5.8,z:14.5});
   action(h,'claim',()=>owned?.id===h.id?'My premier residence':'Premier residence '+h.id+' · Claim / visit',{x:-5.8,z:14.5},()=>{if(owned&&owned.id!==h.id){onMessage('You already have Premier Residence '+owned.id+'. You can visit this home.');return;}owned={id:h.id};try{localStorage.setItem(key,JSON.stringify(owned));}catch{}h.sale.visible=false;onMessage('Premier Residence '+h.id+' claimed in this browser.');},95);
 
