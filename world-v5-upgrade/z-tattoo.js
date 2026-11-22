@@ -1,3 +1,4 @@
+import {createTattooTreatmentChair,createTattooWaitingSofa,createTattooReceptionCounter} from './tattoo-studio-furniture.js?v=20261122-tattoo-v255';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -14,19 +15,43 @@ export function createZTattoo(scene,{getPlayer,controller,state,onStop=()=>{},on
  box(24.5,.28,20.5,0,.04,0,cream);box(4,.12,1.75,0,GROUND_LEVEL-.06,11.125,cream);box(24,6.2,.24,0,3.28,-10,brick);box(.24,6.2,20,12,3.28,0,brick);box(.24,1.1,20,-12,.73,0,brick);box(24.7,.30,20.7,0,6.55,0,black);
  // South and west street faces are mostly glazing, with warm illuminated display windows.
  for(const side of [-1,1]){box(10.5,3.7,.12,side*6.55,2.25,10,glass);box(10.8,.65,.25,side*6.55,.5,10,brick);}box(.10,4.8,19.6,-12,3.3,0,glass);
- for(const x of [-12,-8,-4,-1.2,1.2,4,8,12])box(.12,5.9,.16,x,3.20,10.06,black);for(const z of [-10,-6,-2,2,6,10])box(.16,5.9,.12,-12.06,3.2,z,black);
- box(24,.16,.20,0,4.24,10.07,black);box(24,1.65,.10,0,5.20,10,glass);box(.16,.16,20,-12.07,4.24,0,black);box(.10,1.65,20,-12,5.20,0,glass);
+ for(const x of [-12,-8,-4,-1.2,1.2,4,8,12])box(.12,6.22,.16,x,3.29,10.06,black);for(const z of [-10,-6,-2,2,6,10])box(.16,6.22,.12,-12.06,3.29,z,black);
+ box(24,.16,.20,0,4.24,10.07,black);box(24,2.08,.10,0,5.28,10,glass);box(.16,.16,20,-12.07,4.24,0,black);box(.10,2.08,20,-12,5.28,0,glass);
  for(const x of [-11.72,-1.44,1.44,11.72])box(.035,3.45,.06,x,2.30,10.16,neon);for(const side of [-1,1])for(const y of [.64,4.02])box(10.3,.035,.06,side*6.55,y,10.16,neon);
  for(const y of [1.32,4.08])box(.06,.035,19.4,-12.17,y,0,neon);
  const doors=[];for(const side of [-1,1]){const door=new THREE.Group();door.position.set(side*.56,0,10.11);root.add(door);box(1.08,2.75,.09,0,1.56,0,glass,door);box(.055,2.80,.12,side*.52,1.56,.015,steel,door);box(.03,.48,.04,-side*.30,1.46,.08,steel,door);doors.push({door,side});}box(2.4,1.0,.14,0,3.78,10.10,glass);
  function sign(canvas,w,h,x,y,z,ry=0){const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;const plane=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,side:THREE.DoubleSide}));plane.position.set(x,y,z);plane.rotation.y=ry;root.add(plane);return plane;}
  const logo=document.createElement('canvas');logo.width=1536;logo.height=256;const lc=logo.getContext('2d');lc.textAlign='center';lc.textBaseline='middle';lc.shadowColor='#ffad65';lc.shadowBlur=12;lc.fillStyle='#fff6dd';lc.font='bold 174px Georgia';lc.fillText('Z TATTOO',768,138);sign(logo,18,1.35,0,5.15,10.15);sign(logo,14,1.15,-12.15,5.15,0,-Math.PI/2);
- // Original flash art is displayed in real wall frames behind the shop windows.
- for(let row=0;row<2;row++)for(let col=0;col<8;col++){const x=-9.2+col*2.62,y=2.15+row*2.04,art=drawTattoo(TATTOO_DESIGNS[row*8+col].id,'#24333b',256),paper=document.createElement('canvas');paper.width=paper.height=300;const c=paper.getContext('2d');c.fillStyle='#e7d6b4';c.fillRect(0,0,300,300);c.drawImage(art,14,14,272,272);box(1.38,1.58,.06,x,y,-9.81,black);sign(paper,1.25,1.45,x,y,-9.77);}
- // Reception, two treatment chairs and a clean work surface keep the central aisle open.
- box(6.8,1.0,1.35,3.5,.70,-6.7,wood);box(7.1,.09,1.55,3.5,1.25,-6.7,cream);solids.push({x:3.5,z:-6.7,w:7.2,d:1.65});
- for(const [x,z]of [[-7,-1],[5,-.5]]){box(1.0,.30,1.1,x,.34,z,steel);rounded(.92,.18,1.22,x,.69,z);rounded(.92,1.15,.20,x,1.26,z-.45,leather,-.33);rounded(.50,.28,.18,x,1.94,z-.65);for(const side of [-1,1])rounded(.13,.12,.75,x+side*.56,.94,z);solids.push({x,z,w:1.45,d:2.0});box(1.05,.08,.70,x+1.55,1.05,z,steel);box(.12,.95,.12,x+1.55,.55,z,steel);solids.push({x:x+1.55,z,w:1.2,d:.8});}
- rounded(3.2,.45,.90,-6,.60,6,leather);rounded(3.2,.75,.15,-6,1.06,5.60,leather);solids.push({x:-6,z:6,w:3.4,d:1.2});
+ // Sealed perimeter headers overlap the roof soffit and cap both glazed faces.
+ box(24.25,.18,.26,0,6.35,10,black);box(.26,.18,20.25,-12,6.35,0,black);
+ const display=new THREE.Group();display.name='18 framed tattoo flash illustrations';root.add(display);
+ const atlas=document.createElement('canvas');atlas.width=2304;atlas.height=768;const ac=atlas.getContext('2d');ac.fillStyle='#e9d9ba';ac.fillRect(0,0,2304,768);
+ const atlasMap=new THREE.CanvasTexture(atlas);atlasMap.colorSpace=THREE.SRGBColorSpace;atlasMap.anisotropy=8;
+ const artMaterial=new THREE.MeshBasicMaterial({map:atlasMap,toneMapped:false});
+ const flashIds=['wolf','skull','dragon','compass','rose','wolf','wings','koi','moon','skull','anchor','lotus','feather','skull','phoenix','snake','sun','dagger'];
+ for(let i=0;i<18;i++){const col=i%9,row=Math.floor(i/9);ac.drawImage(drawTattoo(flashIds[i],'#161616',256),col*256+20,row*384+36,216,312);}
+ new THREE.TextureLoader().load(new URL('./assets/tattoo-flash-atlas-v255.webp',import.meta.url).href,texture=>{
+  const image=texture.image,edges=[[0,177,353,510,685,850,1010,1208,1360,1536],[0,176,354,505,680,844,1037,1200,1360,1536]];
+  ac.fillStyle='#e9d9ba';ac.fillRect(0,0,2304,768);
+  for(let row=0;row<2;row++)for(let col=0;col<9;col++){const sx=edges[row][col]+2,sw=edges[row][col+1]-sx-2,sy=row?540:80,sh=row?420:405,scale=Math.min(220/sw,342/sh),w=sw*scale,h=sh*scale;ac.drawImage(image,sx,sy,sw,sh,col*256+(256-w)/2,row*384+(384-h)/2,w,h);}
+  atlasMap.needsUpdate=true;root.userData.flashAtlasLoaded=true;texture.dispose();
+ });
+ for(let row=0;row<2;row++)for(let col=0;col<9;col++){
+  const x=-10.3+col*2.575,y=4.65-row*2.25;
+  box(1.91,2.13,.10,x,y,-9.79,black,display);box(1.82,2.04,.035,x,y,-9.725,steel,display);
+  const geo=new THREE.PlaneGeometry(1.74,1.96),uv=geo.attributes.uv;for(let i=0;i<uv.count;i++)uv.setXY(i,(col+uv.getX(i))/9,(1-row+uv.getY(i))/2);
+  const art=new THREE.Mesh(geo,artMaterial);art.name='Framed tattoo flash '+(row*9+col+1);art.position.set(x,y,-9.699);display.add(art);
+ }
+ // Sculpted leather furniture stays inside the existing collision footprints.
+ const counter=createTattooReceptionCounter(root);solids.push({x:3.5,z:-6.7,w:7.2,d:1.65});
+ for(const [x,z]of [[-7,-1],[5,-.5]]){
+  createTattooTreatmentChair(root,{x,z});solids.push({x,z,w:1.65,d:2.0});
+  const tray=new THREE.Group();tray.name='Brushed steel instrument tray';tray.position.set(x+1.55,.18,z);root.add(tray);
+  box(.88,.07,.62,0,.90,0,steel,tray);box(.09,.82,.11,0,.45,0,steel,tray);box(.63,.065,.49,0,.035,0,steel,tray);
+  for(const side of[-1,1]){box(.025,.045,.64,side*.44,.95,0,steel,tray);box(.88,.045,.025,0,.95,side*.31,steel,tray);}solids.push({x:x+1.55,z,w:1.2,d:.8});
+ }
+ createTattooWaitingSofa(root,{x:-6,z:6,width:3.2});solids.push({x:-6,z:6,w:3.4,d:1.4});
+ root.userData.tattooUpgrade={chairs:2,sofas:1,flashFrames:18,sealedGlazing:true,counter:true};
  for(const x of [-8,0,8]){const light=new THREE.PointLight(0xffc78c,5,12);light.position.set(x,4.6,3);root.add(light);box(3.5,.04,.65,x,5.88,2,new THREE.MeshBasicMaterial({color:0xffead0}));}
  const editor=createTattooEditor({controller,state,onClose:onStop,onMessage});const browse=document.createElement('button');browse.style.display='none';browse.onclick=()=>{onStop();editor.open();};document.body.appendChild(browse);registerTownAction(browse,{id:'z-tattoo-designs',label:'Z Tattoo · Browse designs',priority:125,target:()=>({x:cfg.x,y:1.5,z:cfg.z+7.8})});
  function inBuilding(x,z){return Math.abs(x-cfg.x)<12.35&&Math.abs(z-cfg.z)<10.35;}
