@@ -1,4 +1,4 @@
-import {createPhotoPlanter} from './photo-planter.js?v=20261119-performance-v147';
+import {createSolidPlanter} from './solid-planter.js?v=20261121-planters-v202';
 import * as THREE from 'three';
 import {GROUND_LEVEL as G} from './ground-level.js?v=20261119-level-ground-v117';
 export const Z_FORTUNE={x:-56,z:-132,width:18,depth:20};
@@ -24,7 +24,7 @@ export function createZFortune(scene,{getPlayer=()=>null}={}){
  const eye=document.createElement('canvas');eye.width=768;eye.height=384;const e=eye.getContext('2d');e.fillStyle='#173f51';e.fillRect(0,0,768,384);e.strokeStyle='#e5c077';e.lineWidth=16;e.strokeRect(12,12,744,360);e.beginPath();e.moveTo(110,192);e.quadraticCurveTo(384,-20,658,192);e.quadraticCurveTo(384,404,110,192);e.fillStyle='#e5c077';e.fill();e.beginPath();e.arc(384,192,78,0,Math.PI*2);e.fillStyle='#4f9bb0';e.fill();e.beginPath();e.ellipse(384,192,19,65,0,0,Math.PI*2);e.fillStyle='#14232e';e.fill();sign(eye,4,2,0,8.3,6.64).name='Z Fortune eye emblem';
  // Level stone entry and planted corners leave a wide unobstructed approach.
  const pathMat=lightStone.clone();pathMat.polygonOffset=true;pathMat.polygonOffsetFactor=-1;pathMat.polygonOffsetUnits=-2;box(4,.1,12,0,-.05,16,pathMat);
- const solids=[];for(const side of[-1,1]){const x=side*6.8;createPhotoPlanter(root,{x,y:0,z:12.4,width:1.5});solids.push({x,z:12.4,r:.85});}
+ const solids=[];for(const side of[-1,1]){const x=side*6.8;createSolidPlanter(root,{x,y:0,z:12.4,width:1.5});solids.push({x,z:12.4,r:.85});}
  for(const side of[-1,1]){box(.10,4.3,.10,side*8.5,2.4,10.29,bronze);box(.04,3.9,.05,side*8.5,2.5,10.36,glow);}for(const x of[-5,0,5]){box(2,.04,.4,x,5.65,0,new THREE.MeshBasicMaterial({color:'#fff0d0'}));const light=new THREE.PointLight('#ffdda0',3,12);light.position.set(x,4.8,1);root.add(light);}
  return{root,cfg,doors,solids,canWalk(x,z){const px=x-cfg.x,pz=z-cfg.z;if(solids.some(s=>Math.hypot(px-s.x,pz-s.z)<s.r+.28))return false;if(Math.abs(px)>9.4||Math.abs(pz)>10.4)return null;if(Math.abs(px)>8.6||pz< -9.6)return false;if(pz>9.6&&Math.abs(px)>.65)return false;return true;},heightAt(x,z){return Math.abs(x-cfg.x)<9&&Math.abs(z-cfg.z)<10||Math.abs(x-cfg.x)<2&&z>cfg.z+10&&z<=cfg.z+22?G:null;},update(dt){const p=getPlayer();gap=THREE.MathUtils.damp(gap,p&&Math.hypot(p.x-cfg.x,p.z-cfg.z-10)<3.8?1:0,10,dt);for(const{door,side}of doors)door.position.x=side*(.46+gap*.94);}};
 }

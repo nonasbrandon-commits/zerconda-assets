@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import {createZenPond} from './zen-pond.js?v=20261121-forest-airfield-v193';
 // Public park north of the Observation Needle. All features are traversable scenery.
 export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}){
- const root=new THREE.Group();root.name='Needle Park - tennis basketball fish pond';root.position.set(x,0,z);scene.add(root);
+ const root=new THREE.Group();root.name='Needle Park - twin basketball courts and fish pond';root.position.set(x,0,z);scene.add(root);
  const mat=(c,r=.85)=>new THREE.MeshStandardMaterial({color:c,roughness:r});
  const turf=mat(0x537b3c),path=createTownSidewalkMaterial(),asphalt=mat(0x4b555b),blue=mat(0x245b85),red=mat(0xb44f42),white=mat(0xf1eee4),metal=mat(0x424e50),wood=mat(0x795337),water=new THREE.MeshPhysicalMaterial({color:0x3c9f9d,roughness:.17,metalness:.06,transparent:true,opacity:.78,depthWrite:false});
  applyRealisticGrass(turf);
@@ -70,14 +70,14 @@ export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}
    for(let h of [.8,2.6])box(.035,.025,2*end,cx+side*(half+1.1),h,cz,metal);
   }
  }
- court(-18,15,true);court(18,15,false);
+ court(-18,15,false);court(18,15,false);
  // Continuous stone-paver pedestrian spine between the two courts.
  const paver=createTownSidewalkMaterial();paver.userData.townSidewalk=true;const joint=mat(0x827f78),edge=mat(0x8e8b83);
  box(6,.10,96,0,.055,33.5,paver); // -14.5..81.5, ending on the city sidewalk
  for(const side of [-1,1])box(3,.10,83,side*31,.055,2.5,paver);
  for(const pz of [-11,44])box(65,.10,3,0,.055,pz,paver);
  // Branches meet the open ends of both courts, keeping their side fences clear.
- for(const [cx,lo,hi]of [[-18,-11,-6.5],[18,-11,.5],[-18,36.5,44],[18,29.5,44]])box(3,.10,hi-lo,cx,.055,(lo+hi)/2,paver);
+ for(const [cx,lo,hi]of [[-18,-11,.5],[18,-11,.5],[-18,29.5,44],[18,29.5,44]])box(3,.10,hi-lo,cx,.055,(lo+hi)/2,paver);
  // Park benches on the pedestrian spine, facing the courts; never inside play areas.
  function courtBench(px,pz,face){
   const g=new THREE.Group();g.position.set(px,.06,pz);g.rotation.y=face;root.add(g);
@@ -88,13 +88,6 @@ export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}
  // Add a basketball center circle and key arcs with low-profile white painted lines.
  const paint=mat(0xf3f0e6,.95);
  function paintArc(cx,cz,r,start,end){const pos=[],idx=[];for(let k=0;k<=48;k++){const a=start+(end-start)*k/48;for(const rr of[r-.052,r+.052])pos.push(cx+Math.cos(a)*rr,GROUND_LEVEL+.003,cz+Math.sin(a)*rr);if(k<48){const j=k*2;idx.push(j,j+2,j+1,j+1,j+2,j+3);}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();root.add(new THREE.Mesh(g,paint));}
-
-
- // Tennis service boxes and distinct singles sidelines.
- for(const side of [-1,1]){
-  line(-18+side*8.15,15-12,-18+side*8.15,15+12,white,.09,.137);
- }
- line(-18,15-7,-18,15+7,white,.09,.137);
 
 
  const garden=createZenPond(root,{x:0,z:-35,getPlayer,externalPaths:walkSurfaces.filter(p=>p.kind==='path')});
