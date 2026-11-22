@@ -1,4 +1,4 @@
-import {createResidentialGravelTrail} from './gravel-trail.js?v=20261122-trail-v228';
+import {createResidentialGravelTrail} from './gravel-trail.js?v=20261122-controls-v246';
 import {createModernPrivacyFence} from './modern-privacy-fence.js?v=20261122-fence-v226';
 import {applyGrayWoodFloor} from './gray-wood-floor.js?v=20261122-gray-oak-v225';
 import {createCraftedDiningSet,createCraftedCounter} from './crafted-dining.js?v=20261122-dining-v224';
@@ -58,13 +58,13 @@ export function createPremierHomes(scene,{getPlayer,canInteract=()=>true,onMessa
   // Leave an actual opening in the suite partition rather than drawing a door over a wall.
   for(const o of [...g.children])if(o.isMesh&&o.material===white&&o.geometry.parameters.width===.16&&o.geometry.parameters.height===3.32&&o.position.x===-1&&o.position.z===-5){g.remove(o);o.geometry.dispose();}
   box(g,.16,3.32,9.5,-1,5.26,-4.25,white);box(g,.16,3.32,6.3,-1,5.26,5.85,white);box(g,.16,.26,2.2,-1,6.79,1.6,white);
-  box(g,4,.16,8.9,0,-.06,13.55,stone);box(g,3.8,.16,19,13,-.06,8.5,stone);
+  box(g,4,.16,8.9,0,-.054,13.55,stone);box(g,3.8,.16,19,13,-.054,8.5,stone);
   // A level threshold step, with the lower path meeting the sidewalk exactly.
   box(g,4,.14,1.0,0,.09,9.6,stone);h.parking={...world(h,{x:13,z:8}),w:3.8,d:6};
   // Timber boundaries divide the neighboring premium lots and the older houses behind.
   createModernPrivacyFence(g);
-  for(const px of [-8,8])createSolidPlanter(g,{x:px,y:.02,z:10.2,width:1.7});h.sale=createRealtySign(g,{x:-5.8,z:14.5});
-  action(h,'claim',()=>owned?.id===h.id?'My premier residence':'Premier residence '+h.id+' · Purchase / visit',{x:-5.8,z:14.5},()=>{if(owned&&owned.id!==h.id){onMessage('You already have Premier Residence '+owned.id+'. You can visit this home.');return;}owned={id:h.id};try{localStorage.setItem(key,JSON.stringify(owned));}catch{}h.sale.visible=false;onMessage('Premier Residence '+h.id+' claimed in this browser.');},95);
+  for(const px of [-8,8])createSolidPlanter(g,{x:px,y:.02,z:10.2,width:1.7});h.sale=createRealtySign(g,{x:-5.8,z:17.0});
+  action(h,'claim',()=>owned?.id===h.id?'My premier residence':'Premier residence '+h.id+' · Purchase / visit',{x:-5.8,z:17.0},()=>{if(owned&&owned.id!==h.id){onMessage('You already have Premier Residence '+owned.id+'. You can visit this home.');return;}owned={id:h.id};try{localStorage.setItem(key,JSON.stringify(owned));}catch{}h.sale.visible=false;onMessage('Premier Residence '+h.id+' claimed in this browser.');},95);
 
   const batches=new Map();for(const o of [...g.children])if(o.isMesh&&!Array.isArray(o.material)&&!o.material.isMeshBasicMaterial){o.updateMatrix();const q=o.geometry.clone().applyMatrix4(o.matrix),list=batches.get(o.material)||[];list.push(q.index?q.toNonIndexed():q);batches.set(o.material,list);g.remove(o);o.geometry.dispose();}for(const [m,list]of batches){const o=new THREE.Mesh(mergeGeometries(list),m);o.castShadow=true;o.receiveShadow=true;g.add(o);list.forEach(g=>g.dispose());}h.sale.visible=owned?.id!==h.id;
  }

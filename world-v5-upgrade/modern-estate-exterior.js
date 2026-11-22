@@ -11,9 +11,9 @@ export function upgradeModernEstate(home){const {stone,black,timber,warm,hedge}=
  for(const side of[-1,1]){box(15.5,.09,29,side*15.75,4.61,0,timber);box(15.5,.045,.035,side*15.75,4.65,14.52,warm);for(let x=side<0?-22:-7;x<(side<0?-8:23);x+=2.8)box(.20,.035,.20,x,4.55,13.8,warm);}
  box(16,.09,28,0,5.56,1,timber);box(16,.05,.05,0,5.61,15.02,warm);box(16,.2,.18,0,5.45,13.17,black);for(const x of[-8,8])box(.12,.85,26,x,5.12,0,black);
  // Central glazed transom and black frames keep every window bay clear of stone piers.
- const transom=new THREE.MeshPhysicalMaterial({color:0x26383c,roughness:.12,metalness:.1,transparent:true,opacity:.65,side:THREE.DoubleSide});box(15.7,.74,.05,0,5.08,13.17,transom);for(const x of[-8,-2.0,2.0,8])box(.10,.85,.16,x,5.12,13.2,black);
+ const transom=new THREE.MeshPhysicalMaterial({color:0x26383c,roughness:.12,metalness:.1,transparent:true,opacity:.65,side:THREE.DoubleSide});box(15.96,.90,.05,0,5.0,13.17,transom);for(const x of[-8,-2.0,2.0,8])box(.10,.95,.16,x,5.0,13.2,black);
  for(const x of[-9.45,-3.05,3.05,9.45,10.6,21.4])box(.10,3.95,.13,x,2.25,13.10,black);for(const x of[-6.25,6.25,16])box(x===16?10.8:6.5,.12,.13,x,.32,13.10,black);
- for(const x of[-1.82,1.82])box(.10,3.9,.14,x,2.25,13.08,black);for(const side of[-1,1])box(.045,.7,.06,side*.13,2.0,13.21,warm);
+ 
  // Layered covered carport, inside the existing lot, with a clear route underneath.
  box(11,.26,15,27.5,4.45,6.5,black);box(10.7,.08,14.7,27.5,4.27,6.5,timber);box(11,.04,.04,27.5,4.29,14.03,warm);for(const z of[-.5,13.5]){box(.8,4.0,.8,32.2,2.22,z,stone);lamp(32.2,2.55,z+.45);}for(const x of[24,27.5,31])box(.16,.03,.16,x,4.20,12.5,warm);
  if(home.garagePivot){box(8.45,3.31,.05,0,-1.675,.12,black,home.garagePivot);for(const y of[-.55,-1.50,-2.45])box(7.8,.04,.035,0,y,.165,warm,home.garagePivot);}
