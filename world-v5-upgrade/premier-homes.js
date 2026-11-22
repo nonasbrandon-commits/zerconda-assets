@@ -64,7 +64,7 @@ export function createPremierHomes(scene,{getPlayer,canInteract=()=>true,onMessa
   // Timber boundaries divide the neighboring premium lots and the older houses behind.
   createModernPrivacyFence(g);
   for(const px of [-8,8])createSolidPlanter(g,{x:px,y:.02,z:10.2,width:1.7});h.sale=createRealtySign(g,{x:-5.8,z:14.5});
-  action(h,'claim',()=>owned?.id===h.id?'My premier residence':'Premier residence '+h.id+' · Claim / visit',{x:-5.8,z:14.5},()=>{if(owned&&owned.id!==h.id){onMessage('You already have Premier Residence '+owned.id+'. You can visit this home.');return;}owned={id:h.id};try{localStorage.setItem(key,JSON.stringify(owned));}catch{}h.sale.visible=false;onMessage('Premier Residence '+h.id+' claimed in this browser.');},95);
+  action(h,'claim',()=>owned?.id===h.id?'My premier residence':'Premier residence '+h.id+' · Purchase / visit',{x:-5.8,z:14.5},()=>{if(owned&&owned.id!==h.id){onMessage('You already have Premier Residence '+owned.id+'. You can visit this home.');return;}owned={id:h.id};try{localStorage.setItem(key,JSON.stringify(owned));}catch{}h.sale.visible=false;onMessage('Premier Residence '+h.id+' claimed in this browser.');},95);
 
   const batches=new Map();for(const o of [...g.children])if(o.isMesh&&!Array.isArray(o.material)&&!o.material.isMeshBasicMaterial){o.updateMatrix();const q=o.geometry.clone().applyMatrix4(o.matrix),list=batches.get(o.material)||[];list.push(q.index?q.toNonIndexed():q);batches.set(o.material,list);g.remove(o);o.geometry.dispose();}for(const [m,list]of batches){const o=new THREE.Mesh(mergeGeometries(list),m);o.castShadow=true;o.receiveShadow=true;g.add(o);list.forEach(g=>g.dispose());}h.sale.visible=owned?.id!==h.id;
  }

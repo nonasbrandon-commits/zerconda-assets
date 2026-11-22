@@ -26,17 +26,17 @@ export function createCloudSky(scene,{count=48,seed=1729}={}){
  const clouds=[];
  for(let i=0;i<count;i++){
   const angle=rnd()*Math.PI*2,rad=155+rnd()*390;
-  const cluster=new THREE.Group();cluster.position.set(Math.cos(angle)*rad,180+rnd()*95,Math.sin(angle)*rad);
+  const cluster=new THREE.Group();cluster.position.set(-645+i/Math.max(1,count-1)*1290,180+rnd()*95,(rnd()-.5)*1100);const cloudMaterial=material.clone();
   root.add(cluster);
   const parts=9+Math.floor(rnd()*15),span=40+rnd()*95;
   for(let j=0;j<parts;j++){
-   const p=new THREE.Sprite(material);
+   const p=new THREE.Sprite(cloudMaterial);
    const w=32+rnd()*47,h=24+rnd()*38;
    p.scale.set(w,h,1);
    p.position.set((rnd()-.5)*span,(rnd()-.5)*27,(rnd()-.5)*span*.55);
    cluster.add(p);
   }
-  clouds.push({cluster,speed:(.24+rnd()*.20)*1.6});
+  clouds.push({cluster,material:cloudMaterial,speed:.85+rnd()*.45,generation:0});
  }
  // Pale blue atmosphere, deeper overhead, lighter at the horizon.
  const skyCanvas=document.createElement('canvas');skyCanvas.width=8;skyCanvas.height=512;
@@ -46,6 +46,7 @@ export function createCloudSky(scene,{count=48,seed=1729}={}){
  const skyTexture=new THREE.CanvasTexture(skyCanvas);skyTexture.colorSpace=THREE.SRGBColorSpace;
  const dome=new THREE.Mesh(new THREE.SphereGeometry(550,32,20),new THREE.MeshBasicMaterial({map:skyTexture,side:THREE.BackSide,depthWrite:false,fog:false,toneMapped:false}));
  dome.name='Sky atmosphere dome';scene.add(dome);
- function update(dt){for(const c of clouds){c.cluster.position.x+=c.speed*dt;c.cluster.position.z+=c.speed*.18*dt;if(c.cluster.position.x>650)c.cluster.position.x=-650;}}
- return {root,dome,clouds,update,dispose(){scene.remove(root,dome);material.dispose();texture.dispose();dome.geometry.dispose();dome.material.dispose();skyTexture.dispose()}};
+ function update(dt,anchor=null){dt=Math.max(0,Math.min(Number(dt)||0,.25));if(anchor){root.position.set(anchor.x,0,anchor.z);dome.position.set(anchor.x,0,anchor.z);}for(const c of clouds){c.cluster.position.x+=c.speed*dt;c.cluster.position.z+=c.speed*.18*dt;if(c.cluster.position.x>650){c.cluster.position.set(-650,180+rnd()*95,(rnd()-.5)*1100);c.speed=.85+rnd()*.45;c.generation++;const span=45+rnd()*85;for(const p of c.cluster.children){p.position.set((rnd()-.5)*span,(rnd()-.5)*27,(rnd()-.5)*span*.55);p.scale.set(32+rnd()*47,24+rnd()*38,1);}}const fade=Math.min(1,Math.max(0,(650-Math.abs(c.cluster.position.x))/100));c.material.opacity=.8*fade;}}
+
+ return {root,dome,clouds,update,dispose(){scene.remove(root,dome);for(const c of clouds)c.material.dispose();material.dispose();texture.dispose();dome.geometry.dispose();dome.material.dispose();skyTexture.dispose()}};
 }
