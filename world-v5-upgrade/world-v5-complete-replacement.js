@@ -1,6 +1,6 @@
 import {createBedRest} from './bed-rest.js?v=20261122-private-homes-v214';
 import {allowPrivateHomeAt,allowPrivateHome,privateHomeBlocks,updatePrivateHomes} from './private-home-locks.js?v=20261122-private-homes-v214';
-import {installOwnedHomeLocks} from './property-lock-setup.js?v=20261122-private-homes-v214';
+import {installOwnedHomeLocks} from './property-lock-setup.js?v=20261122-balcony-v220';
 import {createMuseumGardenTrees} from './museum-garden-trees.js?v=20261122-private-homes-v214';
 import {createHouseSunShadows} from './house-sun-shadows.js?v=20261121-house-realism-v212';
 import {createRoadTreeMaintenance} from './road-tree-maintenance.js?v=20261121-forward-slide-v210';
@@ -67,7 +67,7 @@ import {createSkatePark} from './skate-park.js?v=20261119-entrance-steering-v118
 import {createAirfield} from './airfield.js?v=20261121-profile-studio-v203';
 import * as THREE from 'three';
 import {createForestCampground} from './forest-campground.js?v=20261121-forest-airfield-v193';
-import {createPremierHomes} from './premier-homes.js?v=20261122-entry-step-v220';
+import {createPremierHomes} from './premier-homes.js?v=20261122-step-final-v220';
 import {createZercondaNews} from './zerconda-news.js?v=20261121-fast-start-v205';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261121-town-v191';
 import {createBowlingAlley} from './bowling-alley.js?v=20261119-entrance-steering-v118';
