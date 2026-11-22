@@ -1,3 +1,5 @@
+import {createPoolChaise} from './pool-chaise.js?v=20261122-garage-v249';
+import {createAshlarPaving} from './ashlar-paving.js?v=20261122-garage-v249';
 import {createCurvedAreaRug} from './curved-area-rug.js?v=20261122-rug-v248';
 import {createPocketRoomDoor} from './pocket-room-door.js?v=20261122-left-slide-v220';
 import {applyGrayWoodFloor} from './gray-wood-floor.js?v=20261122-gray-oak-v225';
@@ -6,7 +8,7 @@ import {createCraftedCoffeeTable} from './crafted-coffee-table.js?v=20261122-wal
 import {createCraftedDiningSet,createCraftedCounter} from './crafted-dining.js?v=20261122-dining-v224';
 import {createKitchenSink} from './kitchen-sink.js?v=20261122-private-homes-v214';
 import {allowPrivateHome} from './private-home-locks.js?v=20261122-private-homes-v214';
-import {upgradeModernEstate} from './modern-estate-exterior.js?v=20261122-controls-v246';
+import {upgradeModernEstate} from './modern-estate-exterior.js?v=20261122-garage-v249';
 import {loadStreetTree} from './street-tree-assets.js?v=20261121-fast-start-v205';
 import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
 import {beginHomePassage} from './home-passage.js?v=20261119-performance-v147';
@@ -26,6 +28,7 @@ export function createLuxuryVillas(scene,{getPlayer,canInteract=()=>true,onMessa
  const mat=(color,r=.8)=>new THREE.MeshStandardMaterial({color,roughness:r}),dark=mat(0x161c20,.45),metal=mat(0x879993,.35),stone=mat(0xbeb9a9),wood=mat(0x9d8061),linen=mat(0xf0e9dc),bark=mat(0x60734e),grass=mat(0x778963),glass=new THREE.MeshPhysicalMaterial({color:0x29383d,roughness:.12,metalness:.15,transparent:true,opacity:.42,depthWrite:false,side:THREE.DoubleSide});
  function tileTexture(base,grout='#778b8a'){const c=document.createElement('canvas');c.width=c.height=256;const a=c.getContext('2d');a.fillStyle=base;a.fillRect(0,0,256,256);a.strokeStyle=grout;a.lineWidth=2;for(let i=0;i<=256;i+=32){a.beginPath();a.moveTo(i,0);a.lineTo(i,256);a.moveTo(0,i);a.lineTo(256,i);a.stroke();}const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;return t;}
  grass.map=new THREE.TextureLoader().load(new URL('../realistic-assets/pbr/Ground037/Ground037_1K-JPG_Color.jpg',import.meta.url).href);grass.map.colorSpace=THREE.SRGBColorSpace;grass.map.wrapS=grass.map.wrapT=THREE.RepeatWrapping;grass.map.repeat.set(8,8);applyRealisticGrass(grass);grass.polygonOffset=true;grass.polygonOffsetFactor=1;grass.polygonOffsetUnits=2;
+ const paving=createAshlarPaving();
  const poolTile=mat(0xffffff);poolTile.map=tileTexture('#79a9ad','#b7d4cc');poolTile.map.repeat.set(3,2);const normalCanvas=document.createElement('canvas');normalCanvas.width=normalCanvas.height=128;const ctx=normalCanvas.getContext('2d'),im=ctx.createImageData(128,128);for(let z=0;z<128;z++)for(let x=0;x<128;x++){const i=(z*128+x)*4;im.data[i]=128+Math.sin(x*.17+z*.09)*30;im.data[i+1]=128+Math.cos(z*.19-x*.07)*30;im.data[i+2]=246;im.data[i+3]=255;}ctx.putImageData(im,0,0);const normal=new THREE.CanvasTexture(normalCanvas);normal.wrapS=normal.wrapT=THREE.RepeatWrapping;normal.repeat.set(7,5);
  const water=new THREE.MeshPhysicalMaterial({color:0x4babb4,transparent:true,opacity:.68,roughness:.12,metalness:.08,clearcoat:1,normalMap:normal,normalScale:new THREE.Vector2(.25,.25),side:THREE.DoubleSide,depthWrite:false});
  const world=(h,x,z,y)=>({x:h.x-z,z:h.z+x,y}),local=(h,x,z)=>({x:z-h.z,z:h.x-x});
@@ -34,14 +37,14 @@ export function createLuxuryVillas(scene,{getPlayer,canInteract=()=>true,onMessa
  for(const [i,z]of [-232,-155].entries()){
   const h={id:i+1,x:145,z,doors:[],furniture:[],gate:false,garage:false,group:new THREE.Group(),wall:mat(i?0xd9d5c9:0xe7e2d7),fabric:mat(i?0xa9bcb2:0xc1b69e)},g=h.group;g.name='Garden Estate Villa '+h.id;g.position.set(h.x,0,h.z);g.rotation.y=-Math.PI/2;root.add(g);homes.push(h);const batches=new Map();
   function mesh(geo,m,x=0,y=0,z=0,parent=null,rot=[0,0,0]){const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.rotation.set(...rot);o.castShadow=true;o.receiveShadow=true;if(parent){parent.add(o);return o;}o.updateMatrix();const q=geo.clone().applyMatrix4(o.matrix),list=batches.get(m)||[];list.push(q.index?q.toNonIndexed():q);batches.set(m,list);geo.dispose();return o;}
-  const box=(w,hh,d,x,y,z,m=stone,p=null)=>mesh(new THREE.BoxGeometry(w,hh,d),m,x,m===grass?GROUND_LEVEL-hh/2:m===stone&&hh<=.2&&z>13?GROUND_LEVEL+.006-hh/2:y,z,p);
+  const box=(w,hh,d,x,y,z,m=stone,p=null)=>mesh(new THREE.BoxGeometry(w,hh,d),m,x,m===grass?GROUND_LEVEL-hh/2:(m===stone||m===paving)&&hh<=.2&&z>13?GROUND_LEVEL+.006-hh/2:y,z,p);
   const solid=(x,z,w,d)=>h.furniture.push({x,z,w,d});
   // The continuous city lawn already includes the real pool openings.
   // Do not overlay coplanar lawn boxes: their edges make dark seams in the grass.
-  box(44.6,.40,26.6,0,0,0,stone);const floor=new THREE.Mesh(new THREE.BoxGeometry(44,.16,26),wood);floor.name='Villa gray oak floor above separated foundation';floor.position.set(0,.16,0);applyGrayWoodFloor(floor);g.add(floor);for(const side of[-1,1])box(15.5,.28,29,side*15.75,4.8,0,dark);box(16,.28,28,0,5.75,1,dark);box(15.6,.14,27.6,0,5.55,1,wood);
+  box(44,.40,26,0,0,0,stone);const floor=new THREE.Mesh(new THREE.BoxGeometry(44,.16,26),wood);floor.name='Villa gray oak floor above separated foundation';floor.position.set(0,.16,0);applyGrayWoodFloor(floor);g.add(floor);for(const side of[-1,1])box(15.5,.28,29,side*15.75,4.8,0,dark);box(16,.28,28,0,5.75,1,dark);box(15.6,.14,27.6,0,5.55,1,wood);
   // Side glazing and real openings look directly onto Zerconda.
-  for(const side of[-1,1]){for(const zz of[-13,0,13])box(.30,4.4,.35,side*22,2.44,zz,h.wall);box(.25,.55,26,side*22,.515,0,h.wall);box(.25,.35,26,side*22,4.425,0,h.wall);for(const zz of[-6.5,6.5])box(.045,3.64,12.74,side*22,2.46,zz,glass);}
-  for(const zz of[-13,13]){box(44,.35,.25,0,4.425,zz,h.wall);for(const xx of[-22,-10,-2,2,10,22])box(.28,4.4,.28,xx,2.44,zz,h.wall);if(zz===13){for(const [x,w]of[[-6.25,6.3],[6.25,6.3],[16,10.6]])box(w+.08,4.04,.045,x,2.25,zz,glass);box(1,.7,.22,-21.5,.59,zz,h.wall);box(2,.7,.22,-11.1,.59,zz,h.wall);box(12,.8,.22,-16,3.85,zz,h.wall);}else{for(const [x,w]of[[-12,18],[12,18]])box(w+.08,4.04,.045,x,2.25,zz,glass);}}
+  for(const side of[-1,1]){for(const zz of[-13,0,13])box(.30,4.4,.35,side*22,2.44,zz,h.wall);box(.25,.55,26,side*22,.515,0,h.wall);box(.25,.35,26,side*22,4.425,0,h.wall);for(const zz of[-6.5,6.5]){if(side===-1&&zz===-6.5){box(.25,4.04,6.05,-22,2.25,-10,h.wall);box(.045,3.64,6.74,-22,2.46,-3.5,glass);}else box(.045,3.64,12.74,side*22,2.46,zz,glass);}}
+  for(const zz of[-13,13]){box(44,.35,.25,0,4.425,zz,h.wall);for(const xx of[-22,-10,-2,2,10,22])box(.28,4.4,.28,xx,2.44,zz,h.wall);if(zz===13){for(const [x,w]of[[-6.25,6.3],[6.25,6.3],[16,10.6]])box(w+.08,4.04,.045,x,2.25,zz,glass);box(1.35,3.4,.26,-21.375,1.94,zz,h.wall);box(2.35,3.4,.26,-11.125,1.94,zz,h.wall);box(12,.8,.22,-16,3.85,zz,h.wall);}else{for(const [x,w]of[[-12,18],[12,18]]){if(x<0){box(14.08,4.04,.045,-10,2.25,zz,glass);box(.55,4.04,.25,-21.75,2.25,zz,h.wall);box(3.45,4.04,.25,-18.675,2.25,zz,h.wall);box(1.12,2.96,.25,-20.95,1.71,zz,h.wall);box(1.12,.30,.25,-20.95,4.13,zz,h.wall);box(1.1,.80,.045,-20.95,3.59,zz,glass);}else box(w+.08,4.04,.045,x,2.25,zz,glass);}}}
   // One large bedroom/ensuite, open living/dining/kitchen, and a full two-car garage.
   for(const [lo,hi]of[[-13,-6],[ -4,5],[7,13]])box(.20,4.3,hi-lo,-10,2.39,(lo+hi)/2,h.wall);box(.2,.5,2,-10,4.29,-5,h.wall);box(.2,.5,2,-10,4.29,6,h.wall);box(12,4.3,.18,-16,2.39,0,h.wall);
   box(.18,4.2,1.5,-17,2.34,-12.25,h.wall);box(.18,4.2,2.5,-17,2.34,-8.25,h.wall);box(.18,.5,2,-17,4.19,-10.5,h.wall);box(5,4.2,.18,-19.5,2.34,-7,h.wall);
@@ -51,8 +54,8 @@ export function createLuxuryVillas(scene,{getPlayer,canInteract=()=>true,onMessa
   doubleDoor('front',0,13,2.0);doubleDoor('terrace',0,-13,2.0);door('bedroom',-10,-5,2,'x');door('garage access',-10,6,2,'x');door('ensuite',-17,-10.5,2,'x');
   const garagePivot=new THREE.Group();garagePivot.position.set(-16.5,3.6,13.1);g.add(garagePivot);box(8.5,3.35,.14,0,-1.675,0,wood,garagePivot);for(let y=-3.0;y<0;y+=.4)box(8.5,.04,.16,0,y,0,dark,garagePivot);h.garagePivot=garagePivot;action(h,'garage',()=>`${h.garage?'Close':'Open'} villa ${h.id} garage`,{x:-16.5,z:16},()=>h.garage=!h.garage,135);
   // Garage driveway, front walk, covered garden terrace and connected pool surround.
-  box(9,.14,22,-16.5,.01,24,stone);box(4,.18,22,0,.05,24,stone);box(44,.16,12,0,.10,-19,stone);box(6,.16,10,0,.10,-28,stone);
-  for(const side of[-1,1])box(5,.16,22,side*13.5,.10,-42,stone);for(const zz of[-33.5,-50.5])box(32,.16,5,0,.10,zz,stone);
+  box(9,.14,22,-16.5,.01,24,paving);box(4,.18,22,0,.05,24,paving);box(44,.16,12,0,.10,-19,paving);box(6,.16,10,0,.10,-28,paving);
+  for(const side of[-1,1])box(5,.16,22,side*13.5,.10,-42,paving);for(const zz of[-33.5,-50.5])box(32,.16,5,0,.10,zz,paving);
   box(22,.12,12,0,-.94,-42,poolTile);for(const side of[-1,1])box(.18,1.0,12,side*11,-.44,-42,poolTile);for(const zz of[-48,-36])box(22,1.0,.18,0,-.44,zz,poolTile);
   const surface=new THREE.Mesh(new THREE.PlaneGeometry(21.8,11.8),water);surface.rotation.x=-Math.PI/2;surface.position.set(0,.08,-42);g.add(surface);h.water=surface;
   // Shallow entry steps and a submerged relaxation ledge.
@@ -71,9 +74,9 @@ export function createLuxuryVillas(scene,{getPlayer,canInteract=()=>true,onMessa
   createDetailedBed(g,{x:-14.2,y:.24,z:-10.5,width:2.7,length:3.3});solid(-14.2,-10.5,3.0,3.5);for(const xx of[-15.95,-12.45])solid(xx,-11.8,1.0,1.0);const bath=createDetailedBathroom(g,{x:-19.5,y:.24,z:-10,width:4.8,depth:5.8,tub:true,wallHeight:4.2,wallWindows:{back:[{x:-1.45,y:3.35,w:1.1,h:.8}]}});for(const o of bath.solids)solid(o.x,o.z,o.w,o.d);
   sofa(-8,-17,3.6,0);sofa(8,-17,2.5,0);box(2.5,.12,1.2,0,.7,-18,wood);for(const x of[-1,1])box(.08,.46,.08,x,.41,-18,dark);solid(0,-18,2.7,1.4);
   // Two poolside loungers, with adjustable-looking backrests and grounded frames.
-  for(const x of[-14,14]){box(1.4,.14,3.2,x,.5,-43,wood);const back=box(1.3,.12,1.5,x,.85,-44,h.fabric,new THREE.Group());back.rotation.x=-.55;g.add(back.parent);box(1.3,.10,1.7,x,.61,-42.5,h.fabric);for(const dx of[-.5,.5])for(const zz of[-44.2,-41.8])box(.1,.25,.1,x+dx,.305,zz,dark);seats.push({...world(h,x,-42.4),facing:Math.PI/2,sitHeight:.68,kind:'pool lounger',home:h});solid(x,-43,1.6,3.5);}
+  for(const x of[-14,14]){createPoolChaise(g,{x,y:.18,z:-43});seats.push({...world(h,x,-42.4),facing:Math.PI/2,sitHeight:.71,kind:'pool lounger',home:h});solid(x,-43,1.4,2.9);}
   // Full private yards and separate wide pedestrian / garage gates face the road.
-  for(const x of[-33,33])box(.14,1.8,102,x,.8,-20,wood);box(66,1.8,.14,0,.8,-71,wood);for(const[lo,hi]of[[-33,-21],[-12,-2],[2,33]]){box(hi-lo,.35,.22,(lo+hi)/2,.175,31,stone);for(const y of[.55,.78,1.01,1.24,1.47])box(hi-lo,.10,.16,(lo+hi)/2,y,31,dark);}
+  for(const[lo,hi]of[[-33,-21],[-12,-2],[2,33]]){box(hi-lo,.35,.22,(lo+hi)/2,.175,31,stone);for(const y of[.55,.78,1.01,1.24,1.47])box(hi-lo,.10,.16,(lo+hi)/2,y,31,dark);}
   const sale=h.sale=createRealtySign(g,{x:6,z:33.25,y:-.02});action(h,'listing',()=>`Luxury villa ${h.id} · For sale · Details`,{x:6,z:33.25},()=>openPanel(h),110);
   upgradeModernEstate(h);
   if(owned?.id===h.id){h.wall.color.set(owned.paint||'#e7e2d7');h.fabric.color.set(owned.cushion||'#a9bcb2');h.sale.visible=false;}
