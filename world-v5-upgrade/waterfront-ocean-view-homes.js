@@ -1,3 +1,4 @@
+import {addCottageCoastalFurniture} from './cottage-coastal-furniture.js?v=20261122-cottage-v257';
 import {createPocketRoomDoor} from './pocket-room-door.js?v=20261122-doorways-v215';
 import {allowPrivateHome} from './private-home-locks.js?v=20261122-private-homes-v214';
 import {cedarMap,addCottageExteriorDetails,createCottagePorchChair} from './cottage-exterior-details.js?v=20261120-standing-attendant-v167';
@@ -66,14 +67,8 @@ export function addWaterfrontHomes(scene,{count=12,getPlayer=()=>({x:0,z:0}),can
   const bath=createDetailedBathroom(g,{x:-2.8,y:.2,z:-3.0,width:4.35,depth:4.65,tub:false,wallHeight:3.135,floorFront:.05,vanityWall:'right',vanityZ:-1.35,windowRevealDepth:.245,wallWindows:{back:[{x:-.2,y:1.875,w:2.2,h:1.65}]}});h.colliders.push(...bath.solids);
   // Identical starter kitchen, dining and lounge furniture in every cottage.
   createFrenchDoorFridge(g,{x:4.1,y:.2,z:-4.6,width:1.1,height:1.9,depth:.95,angle:-Math.PI/2});obstacle(4.1,-4.6,1.1,.95);createShakerCabinet(g,{x:4.4,y:.2,z:-3.35,width:1.5,height:.95,depth:.80,angle:-Math.PI/2});createReferenceRange(g,{x:4.4,y:.2,z:-1.95,width:1.3,height:.95,depth:.80,angle:-Math.PI/2});obstacle(4.4,-2.7,.80,2.85);box(g,.55,.04,.8,4.4,1.15,-3.45,iron);
-  // Compact dining nook against the kitchen-side wall, outside the entry route.
-  furniture(1.15,.09,.85,3.95,.99,-.05,wood);for(const x of[3.5,4.4])for(const z of[-.35,.25])box(g,.065,.75,.065,x,.58,z,wood);
-  furniture(.56,.12,.58,2.85,.64,-.05,fabric);box(g,.08,.62,.58,2.61,.96,-.05,wood);for(const x of[2.65,3.05])for(const z of[-.26,.16])box(g,.055,.38,.055,x,.4,z,wood);
-  // Sofa back rests against the east wall instead of dividing the living room.
-  const sofa=new THREE.Group();sofa.name='Cottage '+h.id+' wall sofa';sofa.position.set(4.3,0,2.30);sofa.rotation.y=-Math.PI/2;g.add(sofa);
-  box(sofa,2.8,.38,.9,0,.52,0,wood);box(sofa,2.5,.20,.80,0,.82,0,fabric);box(sofa,2.8,.65,.18,0,1.02,-.39,fabric);for(const x of[-1.35,1.35])box(sofa,.22,.42,.9,x,.96,0,fabric);obstacle(4.3,2.3,.9,2.8);
-  // A small side table replaces the coffee table that obstructed the beach exit.
-  furniture(.65,.10,.65,4.25,.74,4.35,wood);for(const x of[4.01,4.49])for(const z of[4.11,4.59])box(g,.055,.5,.055,x,.44,z,wood);
+  // Beach-cottage-only furniture, kept against the wall and outside both exit routes.
+  addCottageCoastalFurniture(g);obstacle(3.95,-.05,1.15,.85);obstacle(2.85,-.05,.58,.56);obstacle(4.3,2.3,1.04,2.8);obstacle(4.25,4.35,.65,.65);
   for(const x of[-3.1,3.1]){createCottagePorchChair(g,{x,z:8});obstacle(x,8,1.15,1.12);seats.push({x:h.x+x,z:h.z+8,kind:'ocean deck chair',facing:0,sitHeight:.89});}
   const details=addCottageExteriorDetails(g,{wallMaterial:exterior});h.exteriorDetails=details;for(const p of details.pots)obstacle(p.x,p.z,.65,.65);
   // Side parking is separated from the pedestrian porch and connects to the city sidewalk.

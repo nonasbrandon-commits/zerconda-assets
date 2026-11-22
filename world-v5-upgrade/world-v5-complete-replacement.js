@@ -1,3 +1,4 @@
+import {loadConceptSUV,createConceptSUV} from './concept-suv.js?v=20261122-concept-suv-v256';
 import {yieldStartup} from './startup-yield.js?v=20261122-startup-v253';
 import {createControlGuide} from './control-guide.js?v=20261122-controls-v246';
 import {createAdminTransport} from './admin-transport.js?v=20261122-admin-transport-v245';
@@ -32,7 +33,7 @@ import {createShaderWarmup} from './shader-warmup.js?v=20261122-startup-v253';
 import {loadReferenceProp} from './reference-props.js?v=20261120-reference-props-v180';
 import {createZCabs}from './z-cabs.js?v=20261122-listings-v238';
 import {createLuxurySedan,loadLuxurySedan,sedanColors} from './luxury-sedan.js?v=20261120-restore-silver-v185';
-import {createBeachVisitors} from './beach-visitors.js?v=20261122-private-homes-v214';
+import {createBeachVisitors} from './beach-visitors.js?v=20261122-coastal-v257';
 import {positionBeachLoungeCamera} from './beach-lounge-camera.js?v=20261119-coastal-breeze-v154';
 import {applyBeachLoungePose} from './beach-lounge-pose.js?v=20261119-beach-seating-v151';
 import {addVehicleLOD} from './vehicle-lod.js?v=20261120-z-cabs-v178';
@@ -104,7 +105,7 @@ import {addAirDancers} from './air-dancers.js?v=20261120-facing-v184';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261121-cab-v188';
 import {createCityMap} from './top-city-map.js?v=20261122-map-v250';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
-import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261122-listings-v238';
+import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261122-coastal-v257';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261122-controls-v246';
 import {createPedestrians} from './animated-pedestrians.js?v=20261122-hitch-v252';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261121-forest-airfield-v193';
@@ -1250,10 +1251,16 @@ function cloneNormalized(source,x,z,targetHeight,angle=0){
  scene.add(g);return g;
 }
 async function populate(){
- await waitForScenerySlot();const assets=await Promise.allSettled([loadReferenceProp('sport'),loadLuxurySedan(),load('tree'),load('tree2')]);const sportTemplate=assets[0].status==='fulfilled'?assets[0].value:null;for(const [i,key]of[[2,'tree'],[3,'tree2']])if(assets[i].status==='fulfilled')loaded[key]=assets[i].value;
+ await waitForScenerySlot();const assets=await Promise.allSettled([loadReferenceProp('sport'),loadLuxurySedan(),load('tree'),load('tree2'),loadConceptSUV()]);const sportTemplate=assets[0].status==='fulfilled'?assets[0].value:null;for(const [i,key]of[[2,'tree'],[3,'tree2']])if(assets[i].status==='fulfilled')loaded[key]=assets[i].value;
+ // Two Concept SUVs use existing curbside spaces nearest Zerconda Motors.
+ const suvSlots=new Set();
+ if(assets[4].status==='fulfilled'){
+  const candidates=parking.map((slot,i)=>({slot,i})).filter(o=>o.i!==4&&o.i!==12&&Math.hypot(o.slot[0]-player.x,o.slot[1]-player.z)>=6).sort((a,b)=>Math.hypot(a.slot[0]+31,a.slot[1]+48)-Math.hypot(b.slot[0]+31,b.slot[1]+48));
+  for(const{slot,i}of candidates){if(suvSlots.size===2)break;await waitForScenerySlot();const[x,z,angle]=slot,model=createConceptSUV(),pivot=new THREE.Group();pivot.name='Drivable Zerconda Concept SUV';pivot.userData.vehicleType='concept-suv';pivot.userData.cabinImproved=true;pivot.add(model);pivot.position.set(x,0,z);pivot.rotation.y=angle;addVehicleLOD(pivot,'concept-suv-graphite');const footprint=measureVehicleFootprint(THREE,pivot);if(vehiclePoseBlocked({group:pivot,x,z,angle,footprint},x,z,angle,cars.map(c=>({...c,footprint:measureVehicleFootprint(THREE,c.group)}))))continue;await prepareScenery(pivot);scene.add(pivot);cars.push({group:pivot,x,z,angle,speed:0,eyeHeight:1.48,type:'concept-suv'});suvSlots.add(i);}
+ }
  const carModels=Array.from({length:MOBILE?16:32},(_,i)=>['sedan','white','sport','white','sedan'][i%5]);
  const luxuryReady=assets[1].status==='fulfilled';let luxuryIndex=0,luxurySlot=0;const nearbyParking=parking.map((slot,i)=>({slot,i})).slice(0,carModels.length).sort((a,b)=>Math.hypot(a.slot[0]-player.x,a.slot[1]-player.z)-Math.hypot(b.slot[0]-player.x,b.slot[1]-player.z));for(const {slot,i}of nearbyParking){await waitForScenerySlot();
-  if(i===4||i===12)continue;
+  if(i===4||i===12||suvSlots.has(i))continue;
   const [x,z,angle]=slot,src=loaded[carModels[i]];if(Math.hypot(x-player.x,z-player.z)<6)continue;
   const luxury=carModels[i]==='sedan'||carModels[i]==='white';
   // Keep alternating silver-car spaces open; retain sports cars and both truck slots.

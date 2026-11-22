@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zerconda | Walkable 3D World</title>
+<link rel="preload" as="image" href="./assets/loading-zerconda-v223.webp" fetchpriority="high">
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#a9c6d8;font:14px system-ui,Arial,sans-serif}
+canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:none}
+#hud{position:fixed;top:12px;left:12px;z-index:10;color:#fff;background:rgba(8,18,25,.8);padding:12px 16px;border:1px solid #71848e;border-radius:10px;max-width:calc(100vw - 135px);pointer-events:none}
+#hud strong{font-size:17px;letter-spacing:.05em}#status{font-size:12px;line-height:1.5;margin-top:5px;color:#e6eef1}
+#help{position:fixed;bottom:12px;left:12px;color:#fff;background:rgba(8,18,25,.75);padding:10px;border-radius:9px;z-index:10}
+#mobile{position:fixed;bottom:22px;right:14px;display:grid;grid-template-columns:repeat(3,48px);gap:5px;z-index:20}
+#mobile button,#enter{touch-action:none;background:rgba(9,26,38,.85);border:1px solid #8ca5af;color:#fff;border-radius:8px;min-height:48px;font-weight:700}
+#mobile button:active,#enter:active{background:#47738b}#enter{position:fixed;right:14px;bottom:185px;z-index:20;padding:0 14px}
+@media(pointer:fine){#mobile{display:none}}@media(max-width:600px){#help{font-size:11px;bottom:8px;max-width:43vw}}
+#boot-status{position:fixed;inset:0;z-index:2147483647;background:#071a25;color:#eef3e8;display:grid;place-items:center;text-align:center;isolation:isolate}#loading-shot{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:-2}#boot-status:before{content:"";position:absolute;inset:0;background:linear-gradient(transparent 55%,#071a250d 75%,#071a2577);z-index:-1}.loading-card{position:absolute;left:50%;bottom:max(22px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(360px,78vw);padding:14px 20px;border-radius:14px;background:#102b36e8;max-width:min(420px,80vw);border:1px solid #d6e4c844}.loading-card h1{letter-spacing:.18em;font-size:26px}.loading-bar{height:4px;background:#ffffff26;border-radius:4px;margin-top:12px;overflow:hidden}.loading-bar:after{content:"";display:block;height:100%;width:35%;background:#d6e4c8;animation:loading 1.8s ease-in-out infinite alternate}@keyframes loading{to{transform:translateX(185%)}}@media(prefers-reduced-motion:reduce){.loading-bar:after{animation:none;width:100%}}#boot-status[hidden]{display:none}#boot-message{margin:0;font:14px system-ui}#retry-world{margin-top:12px;font:600 15px system-ui;background:#d6e4c8;color:#173238;border:0;border-radius:7px;padding:10px 18px;cursor:pointer}#retry-world[hidden]{display:none}#startup-error-details{white-space:pre-wrap;overflow-wrap:anywhere;font:12px system-ui;text-align:left;max-height:180px;overflow:auto}
+
+</style>
+<script type="importmap">{"imports":{"./z-tattoo.js?v=20261119-entrance-steering-v118":"./z-tattoo.js?v=20261122-tattoo-v255","./stanwood-exterior.js?v=20261122-drive-cut-v235":"./stanwood-exterior.js?v=20261122-asphalt-v254","./property-signs.js?v=20261119-residential-v130":"./property-signs.js?v=20261122-tattoo-v255","./real-estate-office.js?v=20261122-listings-v238":"./real-estate-office.js?v=20261122-startup-v253","./reference-lamp.js?v=20261119-performance-v147":"./reference-lamp.js?v=20261122-controls-v246","./private-home-locks.js?v=20261122-private-homes-v214":"./private-home-locks.js?v=20261122-office-v233","./zen-pond.js?v=20261121-forest-airfield-v193":"./zen-pond.js?v=20261122-apartments-v229","./npc-startup-queue.js?v=20261121-fast-start-v205":"./npc-startup-queue.js?v=20261122-apartments-v229","./town-interactions.js?v=20261117-touch-v75":"./town-interactions.js?v=20261122-listings-v238","three":"https://esm.sh/three@0.160.1","./residential-furnishings.js?v=20261122-mirror-left-v220":"./residential-furnishings.js?v=20261122-bath-fit-v221","./residential-furnishings.js?v=20261122-floor-seams-v216":"./residential-furnishings.js?v=20261122-bath-fit-v221","./player-human.js?v=20261122-clean-hem-v213":"./player-human.js?v=20261122-shirt-mask-v219","./residential-furnishings.js?v=20261119-performance-v147":"./residential-furnishings.js?v=20261122-bath-fit-v221","three/addons/":"https://esm.sh/three@0.160.1/examples/jsm/","./realistic-human.js?v=20261118-faster-town-v106":"./realistic-human.js?v=20261121-fast-start-v205","./realistic-human.js?v=20261117-style-cuts-v88":"./realistic-human.js?v=20261121-fast-start-v205","./realistic-human.js?v=20261117-realistic-human-v68":"./realistic-human.js?v=20261121-fast-start-v205","./realistic-human.js?v=20261118-ride-attendants-v95":"./realistic-human.js?v=20261121-fast-start-v205","./fal-beach-human.js?v=20261120-still-seated-v176":"./fal-beach-human.js?v=20261121-forward-slide-v210","./street-tree-assets.js?v=20261121-fast-start-v205":"./street-tree-assets.js?v=20261122-garage-v249","./golf-landscaping.js?v=20261121-forest-airfield-v193":"./golf-landscaping.js?v=20261122-garage-v249","./resident-human.js?v=20261120-bike-fit-v180":"./resident-human.js?v=20261122-hitch-v252"}}</script>
+<script>window.zercondaBooting=true;addEventListener('zerconda-playable',()=>window.zercondaBooting=false,{once:true});(function(){try{const p=JSON.parse(localStorage.getItem('zerconda-player-appearance-v1')||'null');if(!p||p.model==='reference-hero-v180'){const l=document.createElement('link');l.rel='preload';l.as='fetch';l.crossOrigin='anonymous';l.href=new URL('./assets/hero-rigged-v181.glb',location.href).href;l.setAttribute('fetchpriority','high');document.head.append(l);}}catch{}})();</script></head><body>
+<div id="boot-status" role="status" aria-live="polite"><img id="loading-shot" src="./assets/loading-zerconda-v223.webp" alt="Zerconda — The Virtual World" fetchpriority="high" decoding="async"><div class="loading-card"><p id="boot-message">Loading last saved area…</p><button id="retry-world" hidden>Retry loading</button><details id="boot-details" hidden><summary>Loading details</summary><pre id="startup-error-details"></pre></details><div class="loading-bar" aria-hidden="true"></div></div></div>
+<div id="hud"><strong>ZERCONDA</strong><div id="status">Loading realistic 3D world…</div></div>
+
+<button id="enter">ENTER / EXIT CAR</button>
+
+<script>
+(function(){
+ const panel=document.getElementById('boot-status'),message=document.getElementById('boot-message'),retry=document.getElementById('retry-world');let painted=false,failed=false;
+ for(const type of ['keydown','keyup','pointerdown','pointerup','pointermove','wheel','touchstart','touchmove'])addEventListener(type,e=>{if(!panel.hidden&&!panel.contains(e.target)){e.stopImmediatePropagation();if(e.cancelable)e.preventDefault();}else if(!panel.hidden&&['keydown','keyup'].includes(type)&&e.key!=='Tab'&&e.key!=='Enter'){e.stopImmediatePropagation();if(e.cancelable)e.preventDefault();}},{capture:true,passive:false});
+ retry.onclick=()=>{const url=new URL(location.href);url.searchParams.set('reconnect',Date.now().toString());location.replace(url.href);};
+
+ addEventListener('zerconda-playable',()=>{painted=true;panel.hidden=true;});
+ // First frame stays covered until scenery and the character are ready.
+ addEventListener('zerconda-load-failed',e=>{failed=true;panel.hidden=false;message.textContent=/fetch|network|module.*load|loading.*module/i.test(e.detail)?'The connection was interrupted. Please try again.':'Zerconda could not finish loading. Please try again.';retry.hidden=false;document.getElementById('boot-details').hidden=false;document.getElementById('startup-error-details').textContent='Version 234 · '+e.detail;});
+ setTimeout(()=>{if(!painted&&!failed){panel.hidden=false;message.textContent='Still loading your saved area…';retry.hidden=false;}},90000);
+})();
+</script>
+<script type="module">
+const entryURL=new URL('./world-v5-complete-replacement.js?v=20261122-coastal-v257',import.meta.url);
+const isNetworkError=e=>e instanceof TypeError&&/fetch|network|module.*load|loading.*module/i.test(e.message);
+async function loadTown(){
+ for(let attempt=0;attempt<3;attempt++){
+  const url=new URL(entryURL);if(attempt)url.searchParams.set('loadRetry',attempt+'-'+Date.now());
+  try{return await import(url.href);}catch(error){
+   if(!isNetworkError(error)||attempt===2)throw error;
+   document.getElementById('boot-message').textContent='Reconnecting to your town…';
+   await new Promise(resolve=>setTimeout(resolve,attempt?1500:500));
+  }
+ }
+}
+loadTown().then(async world=>{world.startWorld();await world.initialReady;window.dispatchEvent(new Event('zerconda-ready'));})
+ .catch(e=>{console.error('Zerconda startup failed',e);window.dispatchEvent(new CustomEvent('zerconda-load-failed',{detail:e.message||String(e)}));});
+
+</script>
+</body></html>
