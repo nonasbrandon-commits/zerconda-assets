@@ -1,0 +1,11 @@
+import * as THREE from 'three';
+let material;
+function rugMaterial(){if(material)return material;const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=768;const c=canvas.getContext('2d');c.scale(1024,768);c.fillStyle='#181a1e';c.fillRect(0,0,1,1);
+function ribbon(color,draw){c.beginPath();draw(c);c.closePath();c.fillStyle=color;c.fill();c.strokeStyle='#b4b5b5';c.lineWidth=.003;c.stroke();}
+ribbon('#919294',p=>{p.moveTo(.14,-.05);p.bezierCurveTo(.85,.14,.30,.25,-.06,.43);p.lineTo(-.05,.56);p.bezierCurveTo(.5,.33,1.02,.12,.32,-.05)});
+ribbon('#06446d',p=>{p.moveTo(.35,-.05);p.bezierCurveTo(1.2,.18,.39,.37,-.05,.66);p.lineTo(-.05,.84);p.bezierCurveTo(.50,.4,1.33,.20,.59,-.05)});
+ribbon('#a2a3a4',p=>{p.moveTo(.62,-.05);p.bezierCurveTo(1.39,.22,.75,.38,-.05,.91);p.lineTo(-.05,1.15);p.bezierCurveTo(.45,.48,1.42,.44,.79,-.05)});
+ribbon('#8b8d90',p=>{p.moveTo(1.05,.24);p.bezierCurveTo(.90,.43,.43,.43,.27,.65);p.bezierCurveTo(.12,.87,.47,1.03,.69,1.05);p.lineTo(1.05,1.05);p.bezierCurveTo(.64,.94,.38,.82,.42,.68);p.bezierCurveTo(.46,.53,.91,.58,1.05,.48)});
+ribbon('#073e63',p=>{p.moveTo(1.05,.56);p.bezierCurveTo(.79,.65,.44,.59,.39,.74);p.bezierCurveTo(.37,.90,.78,.93,1.05,1.01);p.lineTo(.61,1.05);p.bezierCurveTo(.29,.94,.17,.77,.37,.64);p.bezierCurveTo(.54,.52,.89,.56,1.05,.44)});
+c.setTransform(1,0,0,1,0,0);const im=c.getImageData(0,0,1024,768);let seed=248;for(let i=0;i<im.data.length;i+=4){seed=(Math.imul(seed,1664525)+1013904223)>>>0;const grain=.76+(seed>>>24)/255*.48;for(let j=0;j<3;j++)im.data[i+j]=Math.min(255,im.data[i+j]*grain);}c.putImageData(im,0,0);c.strokeStyle='#111316';c.lineWidth=12;c.strokeRect(7,7,1010,754);c.strokeStyle='#656569';c.lineWidth=2;c.strokeRect(14,14,996,740);const map=new THREE.CanvasTexture(canvas);map.colorSpace=THREE.SRGBColorSpace;map.anisotropy=4;map.userData.preserveDetail=true;material=new THREE.MeshStandardMaterial({map,roughness:1,metalness:0});return material;}
+export function createCurvedAreaRug(parent,{x=-.65,y=.24,z=2.2,width=8,depth=6.4}={}){const rug=new THREE.Mesh(new THREE.PlaneGeometry(width,depth),rugMaterial());rug.name='Blue charcoal and silver curved woven area rug';rug.rotation.x=-Math.PI/2;rug.position.set(x,y+.014,z);rug.receiveShadow=true;rug.userData.areaRug={width,depth,clearance:.014};parent.add(rug);return rug;}

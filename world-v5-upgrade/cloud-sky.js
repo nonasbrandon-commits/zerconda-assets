@@ -28,7 +28,7 @@ export function createCloudSky(scene,{count=48,seed=1729}={}){
   const angle=rnd()*Math.PI*2,rad=155+rnd()*390;
   const cluster=new THREE.Group();cluster.position.set(-645+i/Math.max(1,count-1)*1290,180+rnd()*95,(rnd()-.5)*1100);const cloudMaterial=material.clone();
   root.add(cluster);
-  const parts=9+Math.floor(rnd()*15),span=40+rnd()*95;
+  const parts=6+Math.floor(rnd()*5),span=40+rnd()*95;
   for(let j=0;j<parts;j++){
    const p=new THREE.Sprite(cloudMaterial);
    const w=32+rnd()*47,h=24+rnd()*38;
