@@ -1,6 +1,6 @@
 import {createOfficeTVWalls} from './office-tv-walls.js?v=20261122-interior-v236';
 import {createOfficeFeatureWall} from './office-feature-wall.js?v=20261122-office-v233';
-import {createOfficeReceptionist} from './office-receptionist.js?v=20261122-interior-v236';
+import {createOfficeReceptionist} from './office-receptionist.js?v=20261122-caption-v237';
 import {createLeatherOfficeSofa} from './leather-office-sofa.js?v=20261122-apartments-v229';
 import {createCraftedReceptionDesk} from './crafted-reception-desk.js?v=20261122-office-v233';
 import * as THREE from 'three';

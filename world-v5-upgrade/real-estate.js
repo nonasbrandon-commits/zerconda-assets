@@ -1,4 +1,4 @@
-import {createRealEstateOffice} from './real-estate-office.js?v=20261122-interior-v236';
+import {createRealEstateOffice} from './real-estate-office.js?v=20261122-caption-v237';
 import {buildWesthavenRoads} from './westhaven-roads.js?v=20261122-drive-cut-v235';
 import {registerPrivateHome,homeKeypadOpen} from './private-home-locks.js?v=20261122-private-homes-v214';
 import {makeReadableSign} from './readable-signs.js?v=20261122-private-homes-v214';
