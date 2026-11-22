@@ -8,7 +8,7 @@ import {joinTrailSurfaces} from './trail-surfaces.js?v=20261118-area-travel-v110
 import {militaryReserved} from './military-base.js?v=20261121-collision-v192';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {createNaturalShrub} from './realistic-landscape-assets.js';
+import {createNaturalShrub} from './glossy-shrub.js?v=20261122-shrub-v240';
 export const NORTH_FOREST={x0:-443.1,x1:569.1,z0:-1349.1,z1:-568};
 export const FOREST_ROUTES=[
  {name:'Cedar Loop',kind:'easy',points:[[-220,-568],[-220,-610],[-175,-655],[-80,-680],[40,-670],[120,-620],[120,-568]]},

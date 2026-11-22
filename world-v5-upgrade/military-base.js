@@ -22,7 +22,7 @@ export function createMilitaryBase(scene,{getPlayer=()=>null,hasClearance=()=>fa
  ground(12,B.roadSouth-B.south,B.gateX,(B.south+B.roadSouth)/2,.07);ground(B.east-B.west,B.south-B.north,430,-1165,.08);rect(453,-1052,4,4);rect(477,-1052,4,4);
  const securityFence=createBaseSecurityFence(root,{...B,gateLeft:459,gateRight:471});
  const fortEntrance=createFortEntrance(root,{x:465,z:B.south});for(const c of fortEntrance.colliders)rect(c.x,c.z,c.w,c.d);
- for(const x of [453,477]){box(3.2,1,2,x,.58,-1052,concrete);}
+
  // Guardhouse and a broad internal circulation loop.
  function building(x,z,w,d,h,label){box(w,h,d,x,h/2+.08,z,concrete);box(w+.7,.35,d+.7,x,h+.25,z,roof);for(const side of [-1,1])for(let j=-w/2+2;j<w/2-1;j+=3.8)box(2.5,1.2,.08,x+j,2.3,z+side*(d/2+.05),dark);box(2.2,3,.12,x,1.58,z+d/2+.07,dark);rect(x,z,w+.8,d+.8);if(label)sign(label,x,h-.4,z+d/2+.12,w*.8,1.1);}
  building(485,-1072,10,9,4,'GATE CONTROL');building(427,-1165,43,29,8,'ZERCONDA COMMAND');for(const x of [415,425,435])box(1.1,3,1.1,x,9.5,-1168,iron);beam([438,8.5,-1170],[438,21,-1170],.12);for(const y of [14,18]){beam([435,y,-1170],[441,y,-1170],.08);}
