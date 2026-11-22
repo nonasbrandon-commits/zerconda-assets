@@ -1,4 +1,4 @@
-import {createResidentialGravelTrail} from './gravel-trail.js?v=20261122-trail-v227';
+import {createResidentialGravelTrail} from './gravel-trail.js?v=20261122-trail-v228';
 import {createModernPrivacyFence} from './modern-privacy-fence.js?v=20261122-fence-v226';
 import {applyGrayWoodFloor} from './gray-wood-floor.js?v=20261122-gray-oak-v225';
 import {createCraftedDiningSet,createCraftedCounter} from './crafted-dining.js?v=20261122-dining-v224';

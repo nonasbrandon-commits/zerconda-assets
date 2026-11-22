@@ -96,22 +96,13 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
  neonSign('ZERCONDA',0,6.31,8.48,10.4,1.28,'#39d1e8');
  label('DANCE • LOUNGE • POOL • DARTS',0,4.91,8.48,10.2,.55);
  // Entrance stays open and uncluttered; nearby controls explain entry.
- for(const xx of [-29,-18,-6,6,18,29]){
-  box(.16,8.6,.20,xx,4.55,8.33,graphite);
-  // Side posters extend to y=4.725: end the light above their frames.
-  const bottom=Math.abs(xx)===18?4.90:.60,top=8.50;
-  const strip=box(.055,top-bottom,.06,xx,(top+bottom)/2,8.46,xx<0?neonPink:neonBlue);strip.name='Club vertical neon · clear of posters';
- }
- box(59.6,.055,.08,0,8.91,8.35,neonBlue);
- // Leave a gap around each poster instead of drawing through its face.
- for(const [left,right] of [[-29.8,-19.5],[-16.5,16.5],[19.5,29.8]]){
-  const strip=box(right-left,.055,.08,(left+right)/2,4.52,8.35,neonPink);strip.name='Club horizontal neon · clear of posters';
- }
+ for(const xx of [-29,-18,-6,6,18,29]){box(.16,8.6,.20,xx,4.55,8.33,graphite);box(.055,7.9,.06,xx,4.55,8.46,xx<0?neonPink:neonBlue);}
+ box(59.6,.055,.08,0,8.91,8.35,neonBlue);box(59.6,.055,.08,0,4.52,8.35,neonPink);
  for(const xx of [-18,18]){
   const cv=document.createElement('canvas');cv.width=512;cv.height=768;const c=cv.getContext('2d');c.fillStyle='#101f2c';c.fillRect(0,0,512,768);
   for(let i=0;i<6;i++){c.strokeStyle=i%2?'#d04da0':'#31b9cf';c.lineWidth=6;c.beginPath();c.arc(256,290,45+i*26,0,Math.PI*2);c.stroke();}
   c.fillStyle='#fff1dc';c.textAlign='center';c.font='bold 56px sans-serif';c.fillText(xx<0?'DANCE':'PLAY',256,570);c.font='28px sans-serif';c.fillText(xx<0?'YOUR NIGHT STARTS HERE':'POOL • DARTS • LOUNGE',256,635);
-  const texture=new THREE.CanvasTexture(cv);texture.colorSpace=THREE.SRGBColorSpace;box(2.7,4.15,.12,xx,2.65,8.31,graphite);const poster=new THREE.Mesh(new THREE.PlaneGeometry(2.5,3.9),new THREE.MeshBasicMaterial({map:texture,toneMapped:false}));poster.position.set(xx,2.65,8.40);root.add(poster);
+  const texture=new THREE.CanvasTexture(cv);texture.colorSpace=THREE.SRGBColorSpace;box(2.7,4.15,.12,xx,2.65,8.56,graphite);const poster=new THREE.Mesh(new THREE.PlaneGeometry(2.5,3.9),new THREE.MeshBasicMaterial({map:texture,toneMapped:false}));poster.name=xx<0?"Unobstructed dance poster":"Unobstructed games poster";poster.position.set(xx,2.65,8.63);root.add(poster);
  }
  const exteriorParts=new Set(root.children);
  // Warm fixtures and restrained colored accents retain a room-like appearance.
