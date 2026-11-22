@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
-import {createRealisticHuman} from './realistic-human.js?v=20261118-faster-town-v106';
+import {createRealisticHuman} from './military-human.js?v=20261122-guards-v243';
 let camouflage;
 function camo(){if(camouflage)return camouflage;const c=document.createElement('canvas');c.width=c.height=256;const a=c.getContext('2d');a.fillStyle='#62654c';a.fillRect(0,0,256,256);let seed=239;const random=()=>((seed=Math.imul(seed,1664525)+1013904223>>>0)/4294967296);for(let i=0;i<550;i++){a.fillStyle=['#333c2c','#81816a','#4d5940','#a49a76'][i%4];const x=random()*256,y=random()*256;for(let j=0;j<4;j++)a.fillRect(x+random()*22,y+random()*13,5+random()*17,4+random()*9);}camouflage=new THREE.CanvasTexture(c);camouflage.colorSpace=THREE.SRGBColorSpace;camouflage.wrapS=camouflage.wrapT=THREE.RepeatWrapping;return camouflage;}
 const uniformMaterials=new WeakMap();
@@ -9,8 +9,6 @@ export function createMilitaryGuard(){const human=createRealisticHuman({shirt:0x
 function group(name,bone,build){const g=new THREE.Group();g.name=name;build(g);root.add(g);root.updateWorldMatrix(true,true);bone?.attach(g);gear.push(g);}
 function box(g,w,h,d,x,y,z,m=vest){const o=new THREE.Mesh(new RoundedBoxGeometry(w,h,d,2,.012),m);o.position.set(x,y,z);g.add(o);return o;}
 const head=bones.find(b=>/Head$/i.test(b.name)),spine=bones.find(b=>/Spine2$|Spine1$/i.test(b.name));
-group('Ballistic helmet and chin straps',head,g=>{const shell=new THREE.Mesh(new THREE.SphereGeometry(.168,24,14,0,Math.PI*2,0,Math.PI*.57),fabric);shell.position.set(0,1.765,.008);shell.scale.z=1.14;g.add(shell);box(g,.23,.025,.065,0,1.78,.15,black);for(const side of[-1,1])box(g,.016,.14,.018,side*.125,1.66,.075,black);box(g,.09,.018,.025,0,1.605,.105,black);});
-group('Plate carrier radio and utility pouches',spine,g=>{box(g,.365,.38,.16,0,1.30,.015);for(const side of[-1,1]){box(g,.055,.22,.10,side*.13,1.53,.015);box(g,.09,.15,.07,side*.108,1.25,.135);}box(g,.09,.15,.07,0,1.25,.135);box(g,.15,.04,.018,0,1.435,.107,patch);box(g,.055,.12,.045,-.20,1.40,.07,black);box(g,.008,.18,.008,-.20,1.54,.07,black);box(g,.30,.29,.10,0,1.30,-.13);});
 group('Duty belt and field equipment',bones.find(b=>/Pelvis$/i.test(b.name))||spine,g=>{box(g,.35,.055,.21,0,1.025,0,black);box(g,.08,.10,.07,.21,.99,-.01);box(g,.08,.10,.07,-.21,.99,-.01);box(g,.055,.045,.025,0,1.025,.12,patch);});
 for(const side of['L','R']){const foot=bones.find(b=>new RegExp(side+'[_ ]Foot$','i').test(b.name));if(!foot)continue;const g=new THREE.Group();g.name='Laced combat boot';const world=foot.getWorldPosition(new THREE.Vector3()),p=root.worldToLocal(world.clone());box(g,.115,.18,.15,p.x,.16,p.z,black);box(g,.12,.075,.24,p.x,.055,p.z+.035,black);root.add(g);root.updateWorldMatrix(true,true);foot.attach(g);gear.push(g);}
-root.userData.militaryEquipment={camouflage:true,helmet:true,plateCarrier:true,radio:true,combatBoots:true};root.userData.militaryGear=gear.length;return human;});return human;}
+root.userData.militaryEquipment={camouflage:true,helmet:false,plateCarrier:false,radio:false,combatBoots:true};root.userData.militaryGear=gear.length;return human;});return human;}

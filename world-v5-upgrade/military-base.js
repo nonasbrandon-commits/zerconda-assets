@@ -1,11 +1,11 @@
 import {createGateControlBooth} from './gate-control-booth.js?v=20261122-booth-v242';
-import {createGuardWatchtowers} from './guard-watchtowers.js?v=20261122-barrier-v239';
+import {createGuardWatchtowers} from './guard-watchtowers.js?v=20261122-guards-v243';
 import {createBaseSecurityFence} from './security-fence.js?v=20261122-listings-v238';
 import {createFortEntrance} from './fort-entrance.js?v=20261122-listings-v238';
 import {applyRealisticGravel} from './realistic-gravel.js?v=20261121-collision-v192';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {createMilitaryGuard} from './military-guard.js?v=20261122-barrier-v239';
+import {createMilitaryGuard} from './military-guard.js?v=20261122-guards-v243';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 export const MILITARY_BASE={west:315,east:545,north:-1270,south:-1060,gateX:465,roadSouth:-554};
 export function militaryReserved(x,z,margin=0){const b=MILITARY_BASE;return x>b.west-6-margin&&x<b.east+6+margin&&z>b.north-6-margin&&z<b.south+6+margin||Math.abs(x-b.gateX)<7+margin&&z>b.south&&z<b.roadSouth;}
