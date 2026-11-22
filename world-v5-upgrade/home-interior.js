@@ -1,7 +1,7 @@
 import {createPocketRoomDoor} from './pocket-room-door.js?v=20261122-doorways-v215';
 import {createFrontEntryDoor} from './front-entry-door.js?v=20261122-private-homes-v214';
 import {createClearMirror} from './clear-mirrors.js?v=20261119-clear-mirrors-v133';
-import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261122-private-homes-v214';
+import {createDetailedBathroom,createDetailedBed} from './residential-furnishings.js?v=20261122-floor-seams-v216';
 import {createHomeKitchen} from './home-kitchen.js?v=20261122-private-homes-v214';
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -65,7 +65,9 @@ export function createHomeInterior(scene){
  function bed(style){clear(bedrooms);const g=new THREE.Group();g.position.set(5.52,3.2,.5);g.rotation.y=-Math.PI/2;bedrooms.add(g);const w=style==='premium'?2.2:1.75;createDetailedBed(g,{width:w,length:2.75});furnitureBlock(5.52,.5,3,w+.2,1);for(const side of [-1,1])furnitureBlock(6.52,.5+side*(w*.5+.55),.58,.58,1);box(.65,2.15,3.3,.80,4.275,-5.0,wood,bedrooms,.03);for(const zz of [-5.8,-4.2])box(.06,.25,.04,1.16,4.3,zz,metal,bedrooms);furnitureBlock(.8,-5.0,.65,3.3,1);box(.65,.9,2.0,1.05,3.65,-1.8,wood,bedrooms,.03);box(.75,.12,2.05,1.05,4.13,-1.8,counter,bedrooms);furnitureBlock(1.05,-1.8,.8,2.05,1);box(.6,.12,.6,2.05,3.68,-1.8,fabric,bedrooms,.04);for(const dx of[-.23,.23])for(const dz of[-.23,.23])box(.055,.42,.055,2.05+dx,3.41,-1.8+dz,wood,bedrooms);box(.07,.56,.58,2.32,3.98,-1.8,wood,bedrooms,.018);furnitureBlock(2.05,-1.8,.65,.65,1);createClearMirror(bedrooms,{width:.80,height:1.08,x:.42,y:4.98,z:-1.8,angle:Math.PI/2,name:'Clear bedroom vanity mirror'});seats.push({x:2.05,z:-1.8,facing:Math.PI/2,sitHeight:.575,level:1,kind:'vanity chair'});}
  const kitchen=createHomeKitchen(root,{getHome:()=>activeHome,getFloor:()=>floor});
  for(const item of kitchen.solids)block(item.x,item.z,item.w,item.d,0,'kitchen');
- const bathroom=createDetailedBathroom(root,{x:-3.4,y:3.2,z:-4.2,width:6.8,depth:6.7,rightWallOffset:.22,wallHeight:3.2,vanityX:.65,vanityWidth:1.4,windowRevealDepth:{back:.22,left:.37},wallWindows:{back:[{x:-1.1,y:1.75,w:1.8,h:1.6},{x:2.4,y:1.75,w:1.8,h:1.6}],left:[{x:-1.2,y:1.75,w:1.8,h:1.6}]}});for(const o of bathroom.solids)block(o.x,o.z,o.w,o.d,1);
+ // Skirting covers the wall/floor junction without another coplanar floor layer.
+ box(.035,.09,6.85,.195,3.265,-4.175,trim);for(const [a,b]of[[-7,-2.55],[-1.25,.3]])box(b-a,.09,.035,(a+b)/2,3.265,-.845,trim);
+ const bathroom=createDetailedBathroom(root,{x:-3.4,y:3.2,z:-4.2,width:6.8,depth:6.7,rightWallOffset:.22,floorRight:.22,floorFront:.02,wallHeight:3.2,vanityX:.65,vanityWidth:1.4,windowRevealDepth:{back:.22,left:.37},wallWindows:{back:[{x:-1.1,y:1.75,w:1.8,h:1.6},{x:2.4,y:1.75,w:1.8,h:1.6}],left:[{x:-1.2,y:1.75,w:1.8,h:1.6}]}});for(const o of bathroom.solids)block(o.x,o.z,o.w,o.d,1);
  const lamp=new THREE.MeshStandardMaterial({color:0xfff3d8,emissive:0xffdf9e,emissiveIntensity:.55,roughness:.4});for(const yy of [2.94,6.34])for(const zz of [-3,4.5])box(.52,.06,.52,1,yy,zz,lamp);for(const [yy,zz]of [[2.6,0],[5.8,2]]){const light=new THREE.PointLight(0xffefd8,16,20,1.7);light.position.set(1,yy,zz);root.add(light);}
  function configure(config={}){kitchen.configure?.(config);wall.color.set(config.wall||'#e7e2d8');fabric.color.set(config.fabric||'#75877d');wood.color.set(config.wood||'#795c40');const style=[config.sofa||'standard',config.dining||'standard',config.bed||'standard'].join(':');if(style!==lastStyle){seats.length=0;furnitureBlocks.length=0;sofa(config.sofa||'standard');table(config.dining||'standard');bed(config.bed||'standard');lastStyle=style;}}
  configure();
