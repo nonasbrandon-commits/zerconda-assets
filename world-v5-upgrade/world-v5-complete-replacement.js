@@ -68,7 +68,7 @@ import {createTownObstacles} from './town-obstacles.js?v=20261121-forward-slide-
 import {createSeasideCarnival} from './seaside-carnival.js?v=20261121-cab-v188';
 import {createRVPark} from './rv-park.js?v=20261121-forest-airfield-v193';
 import {createShowroomPickup} from './showroom-pickup.js?v=20261119-reference-trucks-v126';
-import {createLuxuryVillas} from './luxury-villas.js?v=20261122-controls-v246';
+import {createLuxuryVillas} from './luxury-villas.js?v=20261122-lawn-v247';
 import {createStyleCuts} from './style-cuts.js?v=20261119-clear-mirrors-v133';
 import {createBusinessCentre} from './business-centre.js?v=20261119-entrance-steering-v118';
 import {createSkatePark} from './skate-park.js?v=20261119-entrance-steering-v118';
@@ -91,7 +91,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {installRealisticFountain} from './realistic-fountain.js?v=20261119-fountain-seating-v135';
 import {createObservationNeedle} from './observation-needle.js?v=20261120-date-palms-v184';
-import {createCloudSky} from './cloud-sky.js?v=20261122-listings-v238';
+import {createCloudSky} from './cloud-sky.js?v=20261122-lawn-v247';
 import {addCityDepth} from './city-depth-assets.js?v=20261121-entry-fix-v198';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js?v=20261119-coffee-stone-v123';

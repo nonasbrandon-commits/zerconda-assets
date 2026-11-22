@@ -35,8 +35,8 @@ export function createLuxuryVillas(scene,{getPlayer,canInteract=()=>true,onMessa
   function mesh(geo,m,x=0,y=0,z=0,parent=null,rot=[0,0,0]){const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.rotation.set(...rot);o.castShadow=true;o.receiveShadow=true;if(parent){parent.add(o);return o;}o.updateMatrix();const q=geo.clone().applyMatrix4(o.matrix),list=batches.get(m)||[];list.push(q.index?q.toNonIndexed():q);batches.set(m,list);geo.dispose();return o;}
   const box=(w,hh,d,x,y,z,m=stone,p=null)=>mesh(new THREE.BoxGeometry(w,hh,d),m,x,m===grass?GROUND_LEVEL-hh/2:m===stone&&hh<=.2&&z>13?GROUND_LEVEL+.006-hh/2:y,z,p);
   const solid=(x,z,w,d)=>h.furniture.push({x,z,w,d});
-  // Actual pool opening: surrounding ground is separated into four pieces.
-  box(21.8,.1,102,-22.1,-.15,-20,grass);box(21.8,.1,102,22.1,-.15,-20,grass);box(22.4,.1,66.8,0,-.15,-2.4,grass);box(22.4,.1,22.8,0,-.15,-59.6,grass);
+  // The continuous city lawn already includes the real pool openings.
+  // Do not overlay coplanar lawn boxes: their edges make dark seams in the grass.
   box(44.6,.40,26.6,0,0,0,stone);const floor=new THREE.Mesh(new THREE.BoxGeometry(44,.16,26),wood);floor.name='Villa gray oak floor above separated foundation';floor.position.set(0,.16,0);applyGrayWoodFloor(floor);g.add(floor);for(const side of[-1,1])box(15.5,.28,29,side*15.75,4.8,0,dark);box(16,.28,28,0,5.75,1,dark);box(15.6,.14,27.6,0,5.55,1,wood);
   // Side glazing and real openings look directly onto Zerconda.
   for(const side of[-1,1]){for(const zz of[-13,0,13])box(.30,4.4,.35,side*22,2.44,zz,h.wall);box(.25,.55,26,side*22,.515,0,h.wall);box(.25,.35,26,side*22,4.425,0,h.wall);for(const zz of[-6.5,6.5])box(.045,3.64,12.74,side*22,2.46,zz,glass);}
