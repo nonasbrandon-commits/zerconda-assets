@@ -4,9 +4,9 @@ import {allowPrivateHomeAt,allowPrivateHome,privateHomeBlocks,updatePrivateHomes
 import {installOwnedHomeLocks} from './property-lock-setup.js?v=20261122-balcony-v220';
 import {createMuseumGardenTrees} from './museum-garden-trees.js?v=20261122-private-homes-v214';
 import {createHouseSunShadows} from './house-sun-shadows.js?v=20261121-house-realism-v212';
-import {createRoadTreeMaintenance} from './road-tree-maintenance.js?v=20261121-forward-slide-v210';
+import {createRoadTreeMaintenance} from './road-tree-maintenance.js?v=20261122-apartments-v229';
 import {createChessTables} from './chess-tables.js?v=20261121-fast-start-v205';
-import {createRealEstate} from './real-estate.js?v=20261122-private-homes-v214';
+import {createRealEstate} from './real-estate.js?v=20261122-apartments-v229';
 import {loadStreetTree} from './street-tree-assets.js?v=20261121-fast-start-v205';
 import {createAmbientTraffic} from './ambient-traffic.js?v=20261122-traffic-v217';
 import {createRoadMapGeometry} from './road-map-geometry.js?v=20261121-fast-start-v205';
@@ -20,7 +20,7 @@ import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=2
 import {createCabPassengerCamera} from './cab-passenger-camera.js?v=20261121-town-v191';
 import {createVehicleHorns} from './vehicle-horns.js?v=20261121-town-v191';
 import {measureVehicleFootprint,vehicleDescriptor,vehiclePoseBlocked,sweepVehiclePose} from './vehicle-collision.js?v=20261121-town-v191';
-import {createShaderWarmup} from './shader-warmup.js?v=20261121-loading-screen-v201';
+import {createShaderWarmup} from './shader-warmup.js?v=20261122-apartments-v229';
 import {loadReferenceProp} from './reference-props.js?v=20261120-reference-props-v180';
 import {createZCabs}from './z-cabs.js?v=20261122-traffic-v217';
 import {createLuxurySedan,loadLuxurySedan,sedanColors} from './luxury-sedan.js?v=20261120-restore-silver-v185';
@@ -33,7 +33,7 @@ import {beginHomePassage,updateHomePassage,homePassageActive,cancelHomePassage} 
 import {updateReferenceLampLights} from './reference-lamp.js?v=20261119-performance-v147';
 import {improveVehicleCabin} from './vehicle-cabins.js?v=20261119-cabin-v137';
 import {createPlayerAppearance} from './player-appearance.js?v=20261122-shirt-mask-v219';
-import {createCameraClearance} from './camera-clearance.js?v=20261119-performance-v147';
+import {createCameraClearance} from './camera-clearance.js?v=20261122-apartments-v229';
 import {createSignBackMaintenance} from './readable-signs.js?v=20261122-private-homes-v214';
 import {createZFortune} from './z-fortune.js?v=20261119-performance-v147';
 import {createZStore} from './z-store.js?v=20261119-profile-v136';
@@ -41,7 +41,7 @@ import {createPlayerMenu} from './player-menu.js?v=20261121-natural-basketball-v
 import {createMouseSkateControls} from './mouse-skate-controls.js?v=20261119-entrance-steering-v118';
 import {createMouseVehicleSteering} from './mouse-vehicle-steering.js?v=20261119-entrance-steering-v118';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
-import {createRenderBudget} from './render-budget.js?v=20261119-performance-v147';
+import {createRenderBudget} from './render-budget.js?v=20261122-apartments-v229';
 import {createClothedPlayer} from './clothed-player.js';
 import {createZercondaMuseum} from './zerconda-museum.js?v=20261121-entry-fix-v198';
 import {installAvatarTattoos} from './avatar-tattoos.js?v=20261120-attribute-compat-v181';
@@ -88,7 +88,7 @@ import {createCloudSky} from './cloud-sky.js?v=20261121-cloud-drift-v207';
 import {addCityDepth} from './city-depth-assets.js?v=20261121-entry-fix-v198';
 import {addBuildingIdentity} from './nine-building-styles.js';
 import {createCoffeeShop} from './brewstone-coffee.js?v=20261119-coffee-stone-v123';
-import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261119-performance-v147';
+import {createApartmentExperience,apartmentCapacity,apartmentStreet,createApartmentExterior} from './apartment-interiors.js?v=20261122-apartments-v229';
 import {createUniversalInteriors} from './universal-furnished-interiors.js?v=20261119-fridge-v142';
 // Dealership loads separately so a failed asset cannot blank the entire city.
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261121-entry-fix-v198';
@@ -431,12 +431,13 @@ wallSegment(618,-1398,618,-18);wallSegment(618,18,618,350); // East perimeter al
 const wilderness=createWildernessLandscape(scene);
 const perimeterForest=createPerimeterForest(scene,{grass});
 const sceneryYield=createSceneryYield({moving:()=>townControls.walking||townControls.backward||Math.hypot(movement.vx,movement.vz)>.15||['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].some(k=>keys.has(k))});
+globalThis.zercondaIsMoving=()=>townControls.walking||townControls.backward||Math.hypot(movement.vx,movement.vz)>.15||['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].some(k=>keys.has(k));
 async function waitForScenerySlot(){await sceneryYield();}
 async function prepareScenery(object){if(object)await sceneryYield();}
 async function populateOuterForest(){
  const source=loaded.tree||loaded.tree2;if(!source)return;
  // Photographic broadleaf assets break up the near evergreen forest edge.
- for(let i=0;i<72;i++){await waitForScenerySlot();
+ for(let i=0;i<72;i++){while(globalThis.zercondaIsMoving?.())await new Promise(r=>setTimeout(r,150));await waitForScenerySlot();
   const side=i%3,x=side===0?-701-rand()*75:side===1?605+rand()*85:-280+rand()*960;
   const z=side===2?-567-rand()*65:-260+rand()*345;
   if(side===1&&Math.abs(z)<24)continue;
@@ -944,7 +945,7 @@ floorPanel.style.cssText='position:fixed;left:14px;top:85px;z-index:10001;backgr
 floorPanel.classList.add('town-source-panel');floorPanel.innerHTML='<b>ZERCONDA APARTMENTS</b><p>Choose a floor to visit:</p>';
 document.body.appendChild(floorPanel);
 function setApartmentFloor(f){if(!apartmentSession)return;apartmentFloor=f;apartments.showFloor(f);apartments.arrive();movement.vx=0;movement.vz=0;}
-function apartmentAction(){if(!apartmentSession)return;if(apartments.currentUnit){apartments.leaveUnit();return;}if(apartments.currentFloor!==0){setApartmentFloor(0);return;}const back=apartmentSession;apartments.hide();apartmentSession=null;floorPanel.style.display='none';player.x=back.x;player.z=back.z;movement.vx=0;movement.vz=0;camera.position.set(player.x,groundHeightAt(player.x,player.z)+2,player.z-2);}
+function apartmentAction(){if(!apartmentSession||apartments.riding)return;if(apartments.currentUnit){apartments.leaveUnit();return;}if(apartments.currentFloor!==0){apartments.rideElevator(0);return;}const back=apartmentSession;apartments.hide();apartmentSession=null;floorPanel.style.display='none';player.x=back.x;player.z=back.z;movement.vx=0;movement.vz=0;camera.position.set(player.x,groundHeightAt(player.x,player.z)+2,player.z-2);}
 function enterApartment(d){if(apartmentSession)return;const building=d.building||buildings.find(b=>Math.hypot(d.x-b.entry.x,d.z-b.entry.z)<2);if(!building)return;apartmentSession={x:player.x,z:player.z,building};apartments.configure(building);apartments.root.visible=true;activeCar=null;setApartmentFloor(0);}
 // Legacy overlay cleanup: older Airo button can survive alongside the new UI.
 const fixLegacyDoorLabels=()=>{for(const b of document.querySelectorAll('button')){if(b!==doorButton&&/^(?:F\\s*[·:.\\-]\\s*)?(?:OPEN|CLOSE)\\s+DOORS?$/i.test((b.textContent||'').trim())){b.textContent='F · ENTER BUILDING';b.onclick=()=>toggleNearbyDoor();}}};
@@ -1243,7 +1244,7 @@ function animate(){
  cloudSky.update(motionDt);
  // Keep detailed sunlight shadows around the player throughout the expanded city.
  sun.position.set(player.x-70,135,player.z+85);sun.target.position.set(player.x,0,player.z);sun.target.updateMatrixWorld();
- const inputLocked=movementLocked=!playable||chessTables.panelOpen||realEstate.panelOpen||zCabs?.riding||zCabs?.panelOpen||homePassageActive()||cityMap.expanded||hotDogVendor?.panelOpen||zStore?.panelOpen||playerMenu?.panelOpen||tattooShop?.panelOpen||courtGames?.tennisActive||courtGames?.shooting||airfield?.controlsLocked||office?.riding||carnival?.riding||carnival?.gameOpen||observationNeedle.riding||villas?.panelOpen||barber?.panelOpen||club.gameOpen||(ownableHomes.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.controlsLocked)))))||marine.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);
+ const inputLocked=movementLocked=!playable||apartments.riding||chessTables.panelOpen||realEstate.panelOpen||zCabs?.riding||zCabs?.panelOpen||homePassageActive()||cityMap.expanded||hotDogVendor?.panelOpen||zStore?.panelOpen||playerMenu?.panelOpen||tattooShop?.panelOpen||courtGames?.tennisActive||courtGames?.shooting||airfield?.controlsLocked||office?.riding||carnival?.riding||carnival?.gameOpen||observationNeedle.riding||villas?.panelOpen||barber?.panelOpen||club.gameOpen||(ownableHomes.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.controlsLocked)))))||marine.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);
  const f=inputLocked?0:townControls.backward?-1:Math.max(Number(keys.has('KeyW')||keys.has('ArrowUp')),Number(townControls.walking))-Number(keys.has('KeyS')||keys.has('ArrowDown'));
  const side=inputLocked?0:Number(keys.has('KeyD')||keys.has('ArrowRight'))-Number(keys.has('KeyA')||keys.has('ArrowLeft'));
  if(zCabs?.riding){movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
