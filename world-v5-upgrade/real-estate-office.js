@@ -1,6 +1,7 @@
-import {createOfficeReceptionist} from './office-receptionist.js?v=20261122-apartments-v229';
+import {createOfficeFeatureWall} from './office-feature-wall.js?v=20261122-office-v233';
+import {createOfficeReceptionist} from './office-receptionist.js?v=20261122-office-v233';
 import {createLeatherOfficeSofa} from './leather-office-sofa.js?v=20261122-apartments-v229';
-import {createCraftedReceptionDesk} from './crafted-reception-desk.js?v=20261122-apartments-v229';
+import {createCraftedReceptionDesk} from './crafted-reception-desk.js?v=20261122-office-v233';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createNaturalShrub} from './realistic-landscape-assets.js?v=20261121-fast-start-v205';
@@ -22,8 +23,9 @@ export function createRealEstateOffice(parent,{x=-448,z=-124,getPlayer=()=>({x:0
  for(const xx of[-2.25,2.25]){box(.65,.85,.65,xx,.425,11.6,black,true);const plant=createNaturalShrub({width:.65,height:.75,seed:Math.round(xx+20)});plant.position.set(xx,.82,11.6);root.add(plant);}
  // Reception desk remains in the same interaction area as the land controls.
  createCraftedReceptionDesk(root,{z:-3.5});solids.push({x:0,z:-3.5,w:4.3,d:1.4});for(const side of[-1,1]){createLeatherOfficeSofa(root,{x:side*6,z:-7,width:2.8});solids.push({x:side*6,z:-7,w:2.8,d:1.3});}
+ createOfficeFeatureWall(root);solids.push({x:-6.9,z:-9.6,w:.7,d:.7},{x:6.9,z:-9.6,w:.7,d:.7});
  // Roof units and parapet trim complete the side/rear views.
  for(const xx of[-6,5]){box(2.2,.75,2.3,xx,7.3,-3,trim);for(let j=0;j<7;j++)box(1.9,.025,.035,xx,7.08+j*.07,-1.83,black);}for(const xx of[-13.3,13.3])box(.18,.25,23.2,xx,6.95,0,black);box(26.7,.25,.18,0,6.95,-11.5,black);
  root.updateMatrixWorld(true);const inverse=root.matrixWorld.clone().invert(),groups=new Map(),parts=[];root.traverse(o=>{if(!o.isMesh||leaves.some(d=>o.parent===d.hinge))return;const geo=o.geometry.clone().applyMatrix4(new THREE.Matrix4().multiplyMatrices(inverse,o.matrixWorld)),g=geo.index?geo.toNonIndexed():geo;if(g!==geo)geo.dispose();const list=groups.get(o.material)||[];list.push(g);groups.set(o.material,list);parts.push(o);});for(const p of parts)p.removeFromParent();for(const [mat,list]of groups){const mesh=new THREE.Mesh(mergeGeometries(list),mat);mesh.name=mat.map===map?'Real estate front sign':'Real estate office architecture';mesh.castShadow=!mat.transparent;mesh.receiveShadow=true;root.add(mesh);list.forEach(g=>g.dispose());}
- const receptionist=createOfficeReceptionist(root,{getPlayer,onMessage,onHelp});solids.push({x:.82,z:-4.7,w:.7,d:.8});let progress=0;return{root,solids,receptionist,update(dt){receptionist.update(dt);const p=getPlayer(),near=Math.abs(p.x-x)<3.2&&Math.abs(p.z-z-10.5)<4;progress=THREE.MathUtils.damp(progress,near?1:0,7,dt);for(const leaf of leaves)leaf.hinge.rotation.y=-leaf.side*progress*Math.PI*.48;},blocks(wx,wz){const xx=wx-x,zz=wz-z;if(Math.abs(xx)>14||Math.abs(zz)>13)return false;if(solids.some(s=>Math.abs(xx-s.x)<s.w/2+.3&&Math.abs(zz-s.z)<s.d/2+.3))return true;return Math.abs(xx)<1.6&&Math.abs(zz-10.5)<.35&&progress<.8;}};
+ const receptionist=createOfficeReceptionist(root,{getPlayer,onMessage,onHelp});solids.push({x:.82,z:-4.35,w:.7,d:.8});let progress=0;return{root,solids,receptionist,update(dt){receptionist.update(dt);const p=getPlayer(),near=Math.abs(p.x-x)<3.2&&Math.abs(p.z-z-10.5)<4;progress=THREE.MathUtils.damp(progress,near?1:0,7,dt);for(const leaf of leaves)leaf.hinge.rotation.y=-leaf.side*progress*Math.PI*.48;},blocks(wx,wz){const xx=wx-x,zz=wz-z;if(Math.abs(xx)>14||Math.abs(zz)>13)return false;if(solids.some(s=>Math.abs(xx-s.x)<s.w/2+.3&&Math.abs(zz-s.z)<s.d/2+.3))return true;return Math.abs(xx)<1.6&&Math.abs(zz-10.5)<.35&&progress<.8;}};
 }

@@ -1,0 +1,4 @@
+// Static-client privacy protection; authoritative permissions require a server.
+const salt='6bPqUrw3t+A3pSAdlGOufA==',iv='JZ4z9aWkeXHJU0pG',payload='N7CuhKfuY6i9slrt/RXTVDoAxgJOk2pwMJbWYSlNpOaYEZJIg3S+8g9Ibru0ypXBYznTqCJP81E4Gjl6ZTogSB+gXuP6VE9S49kFdgM=';
+const bytes=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+export async function verifyReservedHomePIN(pin){if(!/^\d{5}$/.test(pin))return false;try{const material=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveKey']);const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:bytes(salt),iterations:240000,hash:'SHA-256'},material,{name:'AES-GCM',length:256},false,['decrypt']);const clear=await crypto.subtle.decrypt({name:'AES-GCM',iv:bytes(iv),additionalData:new TextEncoder().encode('westhaven-4')},key,bytes(payload));const record=JSON.parse(new TextDecoder().decode(clear));return record.property==='westhaven-4'?record:false;}catch{return false;}}
