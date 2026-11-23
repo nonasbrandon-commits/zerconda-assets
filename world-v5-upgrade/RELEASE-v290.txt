@@ -1,0 +1,2 @@
+Zerconda v290
+Removed the kitchen island and both stools from every apartment, including their collision obstacles. Kitchen appliances, fitted wall cabinetry and living-room furniture remain. Preserves v289 stair floors and v288 hallway fixes.
