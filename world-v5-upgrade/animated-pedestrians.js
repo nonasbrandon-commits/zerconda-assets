@@ -82,19 +82,26 @@ export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=(
   // Check body clearance against scenery, but center separation against people.
   const segment=(from,to)=>clearSegment(from,to,canWalk,radius)&&clearSegment(from,to,escapeClear,0);
 
-  let next=routePoint(a,advance);const directClear=!a.detour&&Math.hypot(next.x-old.x,next.z-old.z)<=advance+.02&&segment(old,next);a.retry=Math.max(0,(a.retry||0)-stepDt);
-  if(!a.detour&&!directClear&&!a.retry){
+  // Give people a consistent passing side before launching a long path search.
+  let next=routePoint(a,advance);
+  if(!a.detour&&a.route.kind==='sidewalk'&&!segment(old,next)){
+   const ahead=routePoint(a,Math.max(1.8,advance));const dz=Math.sign(ahead.z-old.z)||a.direction;
+   for(const side of [dz,-dz]){const candidate={x:old.x+side*advance*.8,z:old.z+dz*advance*.5};if(segment(old,candidate)){a.group.position.set(candidate.x,groundHeightAt(candidate.x,candidate.z),candidate.z);a.detour=null;a.search=null;a.retry=.2;break;}}
+  }
+  const escaped=a.group.position.distanceTo(old)>.0001;
+  next=routePoint(a,advance);const directClear=!escaped&&!a.detour&&Math.hypot(next.x-old.x,next.z-old.z)<=advance+.02&&segment(old,next);a.retry=Math.max(0,(a.retry||0)-stepDt);
+  if(!escaped&&!a.detour&&!directClear&&!a.retry){
    if(!a.search){const goal=routePoint(a,12);a.search={goal,work:createPedestrianDetourSearch({x:old.x,z:old.z},goal,clear,{radius})};}
    a.retry=.65;
   }
-  if(a.detour){const waypoint=a.detour.path[0],d=Math.hypot(waypoint.x-old.x,waypoint.z-old.z),step=Math.min(advance,d);next={x:old.x+(waypoint.x-old.x)*step/(d||1),z:old.z+(waypoint.z-old.z)*step/(d||1)};
+  if(escaped){a.waiting=false;}else if(a.detour){const waypoint=a.detour.path[0],d=Math.hypot(waypoint.x-old.x,waypoint.z-old.z),step=Math.min(advance,d);next={x:old.x+(waypoint.x-old.x)*step/(d||1),z:old.z+(waypoint.z-old.z)*step/(d||1)};
    if(segment(old,next)){a.group.position.set(next.x,groundHeightAt(next.x,next.z),next.z);if(d<=advance+.001){a.detour.path.shift();if(!a.detour.path.length){a.position=a.detour.position;a.detour=null;}}}
    else{a.detour=null;a.retry=0;a.waiting=true;}
   }else if(directClear){a.search=null;a.group.position.set(next.x,groundHeightAt(next.x,next.z),next.z);a.position=next.position;}
   else a.waiting=true;
   const moved=a.group.position.distanceTo(old);a.waiting=moved<.0001;
   a.blockedFor=a.waiting?(a.blockedFor||0)+stepDt:0;
-  if(a.blockedFor>3&&a.vehicle&&!a.route.kind){a.routeDirection=-(a.routeDirection||1);a.detour=null;a.search=null;a.retry=0;a.blockedFor=0;}if(a.blockedFor>6&&a.route.kind==='sidewalk'){a.direction*=-1;a.detour=null;a.search=null;a.retry=0;a.blockedFor=0;}if(!a.waiting){a.group.rotation.y=Math.atan2(a.group.position.x-old.x,a.group.position.z-old.z);a.distance+=moved;}
+  if(a.blockedFor>3&&a.vehicle&&!a.route.kind){a.routeDirection=-(a.routeDirection||1);a.detour=null;a.search=null;a.retry=0;a.blockedFor=0;}if(a.blockedFor>2&&a.route.kind==='sidewalk'){a.direction*=-1;a.detour=null;a.search=null;a.retry=0;a.blockedFor=0;}if(!a.waiting){a.group.rotation.y=Math.atan2(a.group.position.x-old.x,a.group.position.z-old.z);a.distance+=moved;}
   const moving=!a.waiting;a.phase+=moving?stepDt*(a.profile.activity==='bike'?7.4:1):0;a.human.update(stepDt,moving?a.speed:0,{vehicle:a.vehicle?a.profile.activity:null,phase:a.phase,detailed:distance2<70*70});a.vehicle?.update(a.distance,a.phase);
  }
  const deadline=performance.now()+2;let visited=0;while(visited++<agents.length&&performance.now()<deadline){const a=agents[searchCursor++%agents.length],job=a.search;if(!job)continue;job.work.step(deadline);if(job.work.done){if(job.work.path)a.detour={path:job.work.path,position:job.goal.position};a.search=null;a.retry=job.work.path?0:1.5;}}
