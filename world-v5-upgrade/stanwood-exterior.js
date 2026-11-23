@@ -46,3 +46,6 @@ export function createStanwoodExterior(root){const m=resources();let sequence=0;
  function driveway(){const p=[1.25,.027,8.6,7.55,.027,8.6,9.4,.027,34,9.4,.027,38.5,-1.3,.027,38.5,-1.3,.027,34],g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(p.flatMap((_,i)=>i%3===0?[p[i]/3,p[i+2]/3]:[]),2));g.setIndex([0,2,1,0,5,2,5,3,2,5,4,3]);g.computeVertexNormals();const o=new THREE.Mesh(g,m.drive);o.receiveShadow=true;root.add(o);return o;}
  return{m,stats,shrub,cedar,plant,bed,contact,surfaceUV,driveway};
 }
+
+// Shared finish keeps cottage drives identical to the admin house.
+export function getAdminDrivewayMaterial(){return resources().drive;}

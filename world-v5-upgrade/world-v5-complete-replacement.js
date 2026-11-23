@@ -1,17 +1,17 @@
-import {createChessPartner} from './chess-partner.js?v=20261123-garden-characters-v276';
+import {createChessPartner} from './chess-partner.js?v=20261123-town-v282';
 import {clearPedestrianPathMarkings} from './path-markings.js?v=20261123-pier-reference-v274';
 import {createPowersportsCenter} from './zerconda-powersports.js?v=20261123-powersports-v273';
 import {createFortuneShadeTrees} from './fortune-shade-trees.js?v=20261123-traffic-v272';
-import {createKateConversation} from './kate-conversation.js?v=20261123-needle-walk-v271';
-import {createNeedlePlaidResident} from './needle-plaid-resident.js?v=20261123-needle-walk-v271';
-import {createBoardwalkWalker} from './boardwalk-walker.js?v=20261123-waterfront-v271';
+import {createKateConversation} from './kate-conversation.js?v=20261123-town-v282';
+import {createNeedlePlaidResident} from './needle-plaid-resident.js?v=20261123-town-v282';
+import {createBoardwalkWalker} from './boardwalk-walker.js?v=20261123-town-v282';
 import {createCrowdSpacing} from './crowd-spacing.js?v=20261123-space-v265';
 import {applyPlayerSeatPose} from './player-seat-pose.js?v=20261123-boardwalk-v269';
 import {createFountainResident} from './fountain-resident.js?v=20261123-boardwalk-v269';
 import {hiddenPassageHeightAt,cutCaveTerrain} from './concealed-cavern.js?v=20261123-cave-v268';
 import {createHiddenForestPassage} from './hidden-forest-passage.js?v=20261123-cave-v268';
 import {createForestGroundCover,unifyForestGround} from './forest-ground-cover.js?v=20261123-natural-v264';
-import {clearRoadSidewalkOverlaps} from './road-surface-joins.js?v=20261123-traffic-v272';
+import {clearRoadSidewalkOverlaps} from './road-surface-joins.js?v=20261123-town-v282';
 import {createForestLandmarkRock} from './forest-landmark-rock.js?v=20261123-roads-v261';
 import {createAbandonedTransport} from './abandoned-transport.js?v=20261123-return-v258';
 import {loadConceptSUV,createConceptSUV} from './concept-suv.js?v=20261122-concept-suv-v256';
@@ -30,7 +30,7 @@ import {installOwnedHomeLocks} from './property-lock-setup.js?v=20261122-balcony
 import {createMuseumGardenTrees} from './museum-garden-trees.js?v=20261122-startup-v253';
 import {createHouseSunShadows} from './house-sun-shadows.js?v=20261121-house-realism-v212';
 import {createRoadTreeMaintenance} from './road-tree-maintenance.js?v=20261122-apartments-v229';
-import {createChessTables} from './chess-tables.js?v=20261123-garden-characters-v276';
+import {createChessTables} from './chess-tables.js?v=20261123-town-v282';
 import {createRealEstate} from './real-estate.js?v=20261122-listings-v238';
 import {loadStreetTree} from './street-tree-assets.js?v=20261121-fast-start-v205';
 import {createAmbientTraffic} from './ambient-traffic.js?v=20261123-traffic-v272';
@@ -45,7 +45,7 @@ import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=2
 import {createCabPassengerCamera} from './cab-passenger-camera.js?v=20261121-town-v191';
 import {createVehicleHorns} from './vehicle-horns.js?v=20261121-town-v191';
 import {measureVehicleFootprint,vehicleDescriptor,vehiclePoseBlocked,sweepVehiclePose} from './vehicle-collision.js?v=20261121-town-v191';
-import {createShaderWarmup} from './shader-warmup.js?v=20261122-startup-v253';
+import {createShaderWarmup} from './shader-warmup.js?v=20261123-town-v282';
 import {loadReferenceProp} from './reference-props.js?v=20261120-reference-props-v180';
 import {createZCabs}from './z-cabs.js?v=20261123-traffic-v272';
 import {createLuxurySedan,loadLuxurySedan,sedanColors} from './luxury-sedan.js?v=20261120-restore-silver-v185';
@@ -76,7 +76,7 @@ import {createCourtGames} from './court-games.js?v=20261122-startup-v253';
 import {createHotDogVendor} from './boardwalk-hotdogs.js?v=20261123-waterfront-v271';
 import {createVehicleControls} from './vehicle-controls.js?v=20261123-driving-v258';
 import {createDamagedWallPanel,createBlockedWallOpening,WALL_OPENING} from './blocked-wall-opening.js?v=20261122-listings-v238';
-import {createAreaTravel} from './area-travel.js?v=20261123-cabins-v277';
+import {createAreaTravel} from './area-travel.js?v=20261123-town-v282';
 import {createMilitaryBase} from './military-base.js?v=20261122-admin-transport-v245';
 import {upgradeMobileControls} from './mobile-controls.js?v=20261118-z-needle-v107';
 import {createAirportLoop} from './airport-loop.js?v=20261123-traffic-v272';
@@ -108,7 +108,7 @@ import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natu
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {installRealisticFountain} from './realistic-fountain.js?v=20261119-fountain-seating-v135';
-import {createObservationNeedle} from './observation-needle.js?v=20261120-date-palms-v184';
+import {createObservationNeedle} from './observation-needle.js?v=20261123-town-v282';
 import {createCloudSky} from './cloud-sky.js?v=20261122-rug-v248';
 import {addCityDepth} from './city-depth-assets.js?v=20261121-entry-fix-v198';
 import {addBuildingIdentity} from './nine-building-styles.js';
@@ -119,13 +119,13 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261121-entry-fix-v198';
 import {addAirDancers} from './air-dancers.js?v=20261120-facing-v184';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261123-waterfront-v271';
-import {createCityMap} from './top-city-map.js?v=20261123-cabins-v277';
+import {createCityMap} from './top-city-map.js?v=20261123-town-v282';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
-import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261122-coastal-v257';
+import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261123-town-v282';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261122-controls-v246';
 import {createPedestrians} from './animated-pedestrians.js?v=20261123-fountain-v267';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261121-forest-airfield-v193';
-import {createNeedleSportsPark} from './needle-sports-park.js?v=20261123-garden-characters-v276';
+import {createNeedleSportsPark} from './needle-sports-park.js?v=20261123-town-v282';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
@@ -952,7 +952,7 @@ function towerSurface(w,d,x,z,material,y=GROUND_LEVEL){
  const mesh=new THREE.Mesh(geometry,material);
  mesh.rotation.x=-Math.PI/2;mesh.position.set(x,y,z);
  walkSurfaces.push({x,z,w,d,y,source:'needle-loop',kind:material===asphalt?'road':'paving'});
- mesh.name=material===asphalt?'Needle plaza loop road':'Needle plaza stone paving';mesh.receiveShadow=true;scene.add(mesh);return mesh;
+ mesh.name=material===asphalt?'Z-View plaza loop road':'Z-View plaza stone paving';mesh.receiveShadow=true;scene.add(mesh);return mesh;
 }
 // The loop ends at the city sidewalk edges. Its inner edge also meets the paving exactly.
 // No black access strip is drawn over an existing concrete sidewalk.
@@ -1101,7 +1101,7 @@ clearRoadIntrusions();
 await yieldStartup();
 
 
-// Dedicated green space behind the Needle, outside the downtown building grid.
+// Dedicated green space behind Z-View, outside the downtown building grid.
 needleSportsPark=createNeedleSportsPark(scene,{x:48,z:-190,getPlayer:()=>wildlifePlayer});
 await yieldStartup();
 
@@ -1573,7 +1573,7 @@ await yieldStartup();
 const towerButton=actionButton('zerconda-tower-button','ENTER TOWER / ELEVATOR',245,toggleObservationDeck);
 await yieldStartup();
 
-const towerExitButton=actionButton('zerconda-tower-exit','Exit Z-Needle',245,()=>{insideNeedleLobby=false;onObservationDeck=false;player.x=observationNeedle.entrance.x;player.z=observationNeedle.entrance.z+2.2;yaw=0;keys.clear();movement.vx=0;movement.vz=0;camera.position.set(player.x,3.2,player.z-4);});
+const towerExitButton=actionButton('zerconda-tower-exit','Exit Z-View',245,()=>{insideNeedleLobby=false;onObservationDeck=false;player.x=observationNeedle.entrance.x;player.z=observationNeedle.entrance.z+2.2;yaw=0;keys.clear();movement.vx=0;movement.vz=0;camera.position.set(player.x,3.2,player.z-4);});
 await yieldStartup();
 
 const doorButton=actionButton('zerconda-door-button','F · ENTER BUILDING',305,()=>{if(universalSession)exitUniversalInterior();else if(nearestUniversalEntrance())enterUniversalInterior();else toggleNearbyDoor();});
@@ -1647,7 +1647,7 @@ function enterCafe(){if(sittingSeat){sittingSeat=null;}if(cafeInside){cafeInside
 const cafeEntryButton=actionButton('zerconda-cafe-enter','E · ENTER COFFEE SHOP',445,enterCafe);
 await yieldStartup();
 
-// Public benches in the Needle plaza, fountain square and sports park.
+// Public benches in Z-View plaza, fountain square and sports park.
 // Positions match the authored benches in city-depth-assets.js and needle-sports-park.js.
 const publicSeats=[
  ...[[28,-28,0],[68,-28,0],[28,-68,Math.PI],[68,-68,Math.PI],[29,26,0],[67,26,0],[29,70,Math.PI],[67,70,Math.PI]].map(([x,z,facing])=>({x,z,facing,kind:'bench'})),
@@ -1722,11 +1722,11 @@ function toggleObservationDeck(){
  if(insideNeedleLobby){
   if(!observationNeedle.authorized){townControls.notify('Please speak to the attendant at reception for elevator access.');return;}
   if(!observationNeedle.nearLift(player.x,player.z)){townControls.notify('Walk over to the glass elevator to ride up.');return;}
-  if(observationNeedle.calling){townControls.notify('The Z-Needle elevator is on its way.');return;}
-  stop();insideNeedleLobby=false;yaw=0;pitch=-.08;observationNeedle.startRide(true,()=>{onObservationDeck=true;player.x=observationNeedle.arrival.x;player.z=observationNeedle.arrival.z;stop();yaw=Math.PI;pitch=0;camera.position.set(player.x,observationNeedle.deckY+2.7,player.z+2);townControls.notify('Z-Needle lounge and outdoor skywalk. Walk through any of the four open portals to enjoy the city views.');});return;
+  if(observationNeedle.calling){townControls.notify('The Z-View elevator is on its way.');return;}
+  stop();insideNeedleLobby=false;yaw=0;pitch=-.08;observationNeedle.startRide(true,()=>{onObservationDeck=true;player.x=observationNeedle.arrival.x;player.z=observationNeedle.arrival.z;stop();yaw=Math.PI;pitch=0;camera.position.set(player.x,observationNeedle.deckY+2.7,player.z+2);townControls.notify('Z-View lounge and outdoor skywalk. Walk through any of the four open portals to enjoy the city views.');});return;
  }
  if(Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)>7)return;
- stop();insideNeedleLobby=true;player.x=observationNeedle.x;player.z=observationNeedle.z+6.0;yaw=Math.PI;pitch=0;camera.position.set(player.x,2.4,player.z+2);townControls.notify('Welcome to Z-Needle. The attendant can let you into the scenic glass elevator.');
+ stop();insideNeedleLobby=true;player.x=observationNeedle.x;player.z=observationNeedle.z+6.0;yaw=Math.PI;pitch=0;camera.position.set(player.x,2.4,player.z+2);townControls.notify('Welcome to Z-View. The attendant can let you into the scenic glass elevator.');
 }
 
 function insideHouse(){return realEstate.contains(player.x,player.z)||!!(coastal?.homeAt(player.x,player.z)||villas?.at(player.x,player.z)||premier?.at(player.x,player.z)||ownableHomes?.active||universalSession?.home||apartmentSession||camp?.insideCabin||rvPark?.inside);}
@@ -2025,7 +2025,7 @@ const gravelTires=createGravelTireAudio({scene,getVehicle:()=>{if(adminTransport
 await yieldStartup();
 
 function animate(){
- requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);forestGroundCover.update();chessPartner.update(motionDt);fountainResident.update(dt);boardwalkWalker.update(motionDt);needlePlaidResident.update(motionDt);kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
+ requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);forestGroundCover.update();chessPartner.update(motionDt);chessTables.update(motionDt);fountainResident.update(dt);boardwalkWalker.update(motionDt);needlePlaidResident.update(motionDt);kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
  if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
  updateTreeBreeze(elapsed);airDancers.update(elapsed);dealership.update?.(motionDt);coffeeShop.update(motionDt);powersports?.update(motionDt);zFortune?.update(motionDt);
@@ -2220,7 +2220,7 @@ function animate(){
  const nearTower=!boutique.active&&!bowling.active&&!scooters.riding&&!skate?.riding&&!activeCar&&Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)<7;
  towerButton.style.display=(!observationNeedle.riding&&((onObservationDeck&&observationNeedle.nearLift(player.x,player.z))||(insideNeedleLobby&&observationNeedle.authorized&&observationNeedle.nearLift(player.x,player.z))||(!onObservationDeck&&!insideNeedleLobby&&nearTower)))?'block':'none';
  towerExitButton.style.display=insideNeedleLobby?'block':'none';
- towerButton.textContent=onObservationDeck?'T · RIDE Z-NEEDLE DOWN':insideNeedleLobby?'T · RIDE Z-NEEDLE UP':'T · ENTER Z-NEEDLE';
+ towerButton.textContent=onObservationDeck?'T · RIDE Z-VIEW DOWN':insideNeedleLobby?'T · RIDE Z-VIEW UP':'T · ENTER Z-VIEW';
  const universalEntry=universalSession?{label:'EXIT'}:nearestUniversalEntrance();
  const door=universalEntry?null:nearestDoor();doorButton.style.display=(door||universalEntry)?'block':'none';
  doorButton.textContent=universalSession?(universalSession.home?'Exit Home':'F · EXIT BUILDING'):universalEntry?.garage?'F · ENTER GARAGE':universalEntry?.home?'Enter home':universalEntry?.apartment?'F · ENTER APARTMENTS':'F · ENTER BUILDING';

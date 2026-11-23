@@ -6,9 +6,9 @@ import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=2
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
 import {createZenPond} from './zen-pond.js?v=20261123-wildlife-v276';
-// Public park north of the Observation Needle. All features are traversable scenery.
+// Public park north of the Z-View. All features are traversable scenery.
 export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}){
- const root=new THREE.Group();root.name='Needle Park - twin basketball courts and fish pond';root.position.set(x,0,z);scene.add(root);
+ const root=new THREE.Group();root.name='Z-View Park - twin basketball courts and fish pond';root.position.set(x,0,z);scene.add(root);
  const mat=(c,r=.85)=>new THREE.MeshStandardMaterial({color:c,roughness:r});
  const turf=mat(0x537b3c),path=createTownSidewalkMaterial(),asphalt=mat(0x4b555b),blue=mat(0x245b85),red=mat(0xb44f42),white=mat(0xf1eee4),metal=mat(0x424e50),wood=mat(0x795337),water=new THREE.MeshPhysicalMaterial({color:0x3c9f9d,roughness:.17,metalness:.06,transparent:true,opacity:.78,depthWrite:false});
  applyRealisticGrass(turf);

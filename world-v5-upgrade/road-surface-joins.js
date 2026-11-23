@@ -5,6 +5,8 @@ import {joinTrailSurfaces} from './trail-surfaces.js?v=20261118-area-travel-v110
 export function clearRoadSidewalkOverlaps(scene,{asphalt,paving,curb,gravelRoot}){
  scene.updateMatrixWorld(true);const roads=createRoadMapGeometry(scene,asphalt).scan().map(p=>({vertices:[p[0],.02,p[1],p[2],.02,p[3],p[4],.02,p[5]]}));
  gravelRoot?.traverse(o=>{if(!o.isMesh)return;const p=o.geometry.attributes.position;for(let i=0;i<p.count;i+=3){const vertices=[];for(let k=0;k<3;k++){const v=new THREE.Vector3().fromBufferAttribute(p,i+k).applyMatrix4(o.matrixWorld);vertices.push(v.x,.02,v.z);}roads.push({vertices});}});
+ // Driveway aprons own the paving beneath them, including the curb opening.
+ scene.traverse(o=>{if(!o.isMesh||!o.userData.drivewaySurface)return;const p=o.geometry.attributes.position,idx=o.geometry.index;for(let i=0;i<(idx?.count||p.count);i+=3){const vertices=[];for(let k=0;k<3;k++){const v=new THREE.Vector3().fromBufferAttribute(p,idx?idx.getX(i+k):i+k).applyMatrix4(o.matrixWorld);vertices.push(v.x,.02,v.z);}roads.push({vertices});}});
  const bounds=v=>({x0:Math.min(v[0],v[3],v[6]),x1:Math.max(v[0],v[3],v[6]),z0:Math.min(v[2],v[5],v[8]),z1:Math.max(v[2],v[5],v[8])});
  const grid=new Map(),cell=24;for(const r of roads){r.b=bounds(r.vertices);for(let x=Math.floor(r.b.x0/cell);x<=Math.floor(r.b.x1/cell);x++)for(let z=Math.floor(r.b.z0/cell);z<=Math.floor(r.b.z1/cell);z++){const k=x+','+z,a=grid.get(k)||[];a.push(r);grid.set(k,a);}}
  let trimmed=0;const objects=[];scene.traverse(o=>{if(o.isMesh&&!o.isInstancedMesh&&(o.material===paving||o.material===curb||o.userData.roadEdge)&&!o.userData.roadJoined)objects.push(o);});

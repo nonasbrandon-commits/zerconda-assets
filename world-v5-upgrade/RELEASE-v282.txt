@@ -1,0 +1,10 @@
+Zerconda v282
+Ready changes: Z-View landmark rename across entry sign, elevator labels, maps, destinations, Kate text and replacement recorded replies. Tom named at Table 8. Chess panel beside the scene with equal 8x8 grid tracks, explicit White selection instructions, New game/reply cancellation checked, animated physical moves including castling rook and base rings. Plaid walker uses bounded local detours around people. All twelve beachfront cottage drives reach the street, with matching shared admin asphalt and paving/curb apertures. Loading image covers every viewport; asynchronous shader preparation has an eight-second deadline.
+Brunette boardwalk walker: clean T-pose rebuilt from specifically approved original front image. Meshy mixamo rig with separate hand joints; walking GLB optimized with meshopt/WebP to about 2.6 MB. Existing model route retained. New front/side pose sheets inspected locally to check gait and hand clearance; they were not uploaded.
+Generated sources:
+Base mesh: https://v3b.fal.media/files/b/0ab3985d/MOgwn0kh12hkj_UTjwpPB_base_basic_pbr.glb
+Walking mesh: https://v3b.fal.media/files/b/0ab39870/7X2C_jN8DoU_KWvM81EI7_walking.glb
+Rigged mesh: https://v3b.fal.media/files/b/0ab3986f/uczw9i_gi9RicHwDm1l0t_rigged_character.glb
+Kate reply 1: https://v3b.fal.media/files/b/0ab39812/XcOamk7mr98dgZO0u2KJY_output.mp3
+Kate reply 2: https://v3b.fal.media/files/b/0ab39812/urgZocRN8Wxqp9jNgZ3y__output.mp3
+Checks: JS syntax, chess New game/legal move/AI reply/restart/leave and physical animation tests; stationary/moving-person walker detour simulation; apron geometry and paving subtraction; shader normal/stalled completion tests; generated audio decoding; walking renders. Full live WebGL visual check unavailable: shared browser reported graphics disabled.
