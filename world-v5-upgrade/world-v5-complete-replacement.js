@@ -1,3 +1,4 @@
+import {createHiddenForestPassage} from './hidden-forest-passage.js?v=20261123-hidden-v262';
 import {createForestGroundCover,unifyForestGround} from './forest-ground-cover.js?v=20261123-roads-v261';
 import {clearRoadSidewalkOverlaps} from './road-surface-joins.js?v=20261123-roads-v261';
 import {createForestLandmarkRock} from './forest-landmark-rock.js?v=20261123-roads-v261';
@@ -25,7 +26,7 @@ import {createAmbientTraffic} from './ambient-traffic.js?v=20261122-listings-v23
 import {createRoadMapGeometry} from './road-map-geometry.js?v=20261121-fast-start-v205';
 import {createAreaResume,createSceneryYield} from './resume-area.js?v=20261121-fast-start-v205';
 import {createCityResidents} from './city-residents.js?v=20261122-photo-v258';
-import {createPerimeterForest} from './perimeter-forest.js?v=20261123-roads-v261';
+import {createPerimeterForest} from './perimeter-forest.js?v=20261123-hidden-v262';
 import {updateTreeBreeze} from './tree-breeze.js?v=20261121-forest-airfield-v193';
 import {createTownSidewalkMaterial} from './town-sidewalks.js?v=20261121-forest-airfield-v193';
 import {createPlayerCameraGuard} from './player-camera-guard.js?v=20261121-town-v191';
@@ -705,7 +706,7 @@ function wallSegment(x1,z1,x2,z2){
  const group=new THREE.Group();group.position.set(x1,0,z1);group.rotation.y=-angle;scene.add(group);
  for(let pos=0;pos<len;pos+=12){
   const w=Math.min(12,len-pos);
-  if(z1===WALL_OPENING.z&&z2===z1&&Math.abs(x1+pos+w/2-WALL_OPENING.x)<.01){const panel=createDamagedWallPanel(w,WALL_HEIGHT,WALL_THICKNESS,wallStone);panel.position.set(pos+w/2,0,0);group.add(panel);}else box(w,WALL_HEIGHT,WALL_THICKNESS,pos+w/2,WALL_HEIGHT/2,0,wallStone,group);
+  if(x1===-720&&x2===-720&&Math.abs(z1+pos+w/2+612)<.01){const side=(w-2.2)/2;box(side,WALL_HEIGHT,WALL_THICKNESS,pos+side/2,WALL_HEIGHT/2,0,wallStone,group);box(side,WALL_HEIGHT,WALL_THICKNESS,pos+w-side/2,WALL_HEIGHT/2,0,wallStone,group);box(2.2,WALL_HEIGHT-3.2,WALL_THICKNESS,pos+w/2,3.2+(WALL_HEIGHT-3.2)/2,0,wallStone,group);}else if(z1===WALL_OPENING.z&&z2===z1&&Math.abs(x1+pos+w/2-WALL_OPENING.x)<.01){const panel=createDamagedWallPanel(w,WALL_HEIGHT,WALL_THICKNESS,wallStone);panel.position.set(pos+w/2,0,0);group.add(panel);}else box(w,WALL_HEIGHT,WALL_THICKNESS,pos+w/2,WALL_HEIGHT/2,0,wallStone,group);
   box(w+.03,.32,WALL_THICKNESS+.3,pos+w/2,WALL_HEIGHT+.16,0,wallCap,group);
   box(.15,WALL_HEIGHT,.06,pos, WALL_HEIGHT/2,WALL_THICKNESS/2+.03,wallCap,group);
  }
@@ -782,6 +783,7 @@ await yieldStartup();
 const wilderness=createWildernessLandscape(scene);
 await yieldStartup();
 
+const hiddenForestPassage=createHiddenForestPassage(scene,{wallMaterial:wallStone,getPlayer:()=>player,onStop:()=>{keys.clear();townControls.stop();}});
 const perimeterForest=createPerimeterForest(scene,{grass});
 await yieldStartup();
 forestGravelRoads=createForestGravelRoads(scene);
@@ -1920,7 +1922,7 @@ await yieldStartup();
 addEventListener('keydown',e=>{if(controlsGuide?.panelOpen||adminTransport?.active||chessTables.panelOpen||realEstate.panelOpen||militaryAccess?.panelOpen||zCabs?.riding||zCabs?.panelOpen||hotDogVendor?.panelOpen||zStore?.panelOpen||playerMenu?.panelOpen)return;if(e.code==='Escape'&&!e.repeat){carnival.close();}if(e.code==='KeyF'&&!e.repeat&&(camp?.resting||airfield?.boarded)){e.preventDefault();e.stopImmediatePropagation();camp.stopRest();airfield?.exit();skate?.end();office?.exit();barber?.exit();villas?.close();observationNeedle?.reset();return;}if(e.code!=='KeyF'||e.repeat||carnival?.riding||carnival?.gameOpen||observationNeedle.riding||villas?.panelOpen||barber?.panelOpen||club.gameOpen||(ownableHomes.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.boarded)))))||marine?.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;const action=townControls.activeActions[0];if(action){e.preventDefault();e.stopImmediatePropagation();townControls.activate(action.id);}},true);
 await yieldStartup();
 
-function walkable(x,z){
+function walkable(x,z){const secretWalk=hiddenForestPassage.canWalk(x,z);if(secretWalk!==null)return !activeCar&&!scooters?.riding&&secretWalk;
  if(privateHomeBlocks(x,z)||residentialShadeTrees?.blocks(x,z)||museumGardenTrees?.blocks(x,z))return false;
  if(scooters?.inside)return scooters.canWalkInterior(x,z);
  if(zCabs?.blocks(x,z))return false;if(ambientTraffic?.collisionVehicles.some(v=>Math.hypot(x-v.x,z-v.z)<1.5))return false;
@@ -2011,7 +2013,7 @@ const gravelTires=createGravelTireAudio({scene,getVehicle:()=>{if(adminTransport
 await yieldStartup();
 
 function animate(){
- requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();forestGroundCover.update();let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
+ requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);forestGroundCover.update();let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
  if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
  updateTreeBreeze(elapsed);airDancers.update(elapsed);dealership.update?.(motionDt);coffeeShop.update(motionDt);zFortune?.update(motionDt);
