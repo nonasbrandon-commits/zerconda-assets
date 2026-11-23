@@ -1,0 +1,1 @@
+Ruby uses Microsoft Rocketbox adult character topology, textures and native rig under the MIT license. Source: https://github.com/microsoft/Microsoft-Rocketbox . Clothing palette, braided ponytail, bracelets and seated pose adapted for Zerconda. See ROCKETBOX-LICENSE.txt.

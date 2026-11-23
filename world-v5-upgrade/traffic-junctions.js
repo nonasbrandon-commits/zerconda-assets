@@ -6,7 +6,7 @@ export function junctionMustYield(vehicle,network,now=performance.now()/1000){
  for(const[key,r]of reservations){if(now-r.stamp>2||r.entered&&Math.hypot(r.root.position.x-r.x,r.root.position.z-r.z)>19)reservations.delete(key);}
  let junction=null;for(const n of nodes){if(Math.hypot(p.x-n.x,p.z-n.z)>24)continue;for(let d=0;d<=12;d+=3){const q=vehicle.path.sample(Math.min(vehicle.path.length,vehicle.progress+d));if(Math.hypot(q.x-n.x,q.z-n.z)<14){junction=n;break;}}if(junction)break;}
  if(!junction)return false;const key=junction.x+','+junction.z,distance=Math.hypot(p.x-junction.x,p.z-junction.z);let r=reservations.get(key);
- if(r?.root===root){if(!r.motion||Math.hypot(p.x-r.motion.x,p.z-r.motion.z)>.15){r.motion={x:p.x,z:p.z};r.movedAt=now;}if(!r.entered&&distance>12&&now-(r.movedAt??now)>5){reservations.delete(key);vehicle.junctionYieldUntil=now+2;return true;}r.stamp=now;if(distance<12)r.entered=true;return false;}
+ if(r?.root===root){if(!r.motion||Math.hypot(p.x-r.motion.x,p.z-r.motion.z)>.15){r.motion={x:p.x,z:p.z};r.movedAt=now;}if(now-(r.movedAt??now)>5){reservations.delete(key);vehicle.junctionYieldUntil=now+2;return true;}r.stamp=now;if(distance<12)r.entered=true;return false;}
  // Vehicles already inside must clear the intersection, even when loading mid-route.
  if(distance<10)return false;
  if(r||now<(vehicle.junctionYieldUntil||0))return true;
