@@ -1,3 +1,4 @@
+import {createStoreMillwork} from './store-millwork.js?v=20261123-store-v278';
 import {avatarHeadFrame} from './avatar-fit.js?v=20261119-profile-v136';
 import * as THREE from 'three';
 import {GROUND_LEVEL as G} from './ground-level.js?v=20261119-level-ground-v117';
@@ -16,9 +17,9 @@ export function createZStore(scene,{getPlayer,controller,onStop=()=>{},onMessage
  for(const x of [-6,6]){box(8,2.7,.07,x,1.65,11,glass);box(8,.5,.25,x,.27,11,trim);}for(const x of [-10,-2,2,10])box(.13,4.5,.18,x,2.27,11.06,trim);box(20,.55,.22,0,4.3,11,trim);label('Z STORE',10,.9,0,3.7,11.15);label('GENERAL GOODS · COLORS & CURIOS',12,.38,0,4.36,11.15);
  // A permanently open four-metre doorway gives a clear, level route to the counter.
  box(4,.1,6,0,G-.05,14,stone);
- box(14,1.0,1.3,0,.52,-5,wood);box(14.4,.10,1.55,0,1.07,-5,stone);label('ORDER HERE',3,.35,0,.72,-4.17);
+ const millwork=createStoreMillwork(root);
  box(.55,.1,.45,4,1.17,-5,trim);const screen=box(.45,.35,.06,4,1.4,-5,metal);screen.rotation.x=-.18;box(.36,.25,.065,4,1.4,-4.99,new THREE.MeshBasicMaterial({color:'#77c6b3'}));
- const solids=[{x:0,z:-5,w:14.4,d:1.55}];
+ const solids=[{x:0,z:-5,w:14.4,d:1.55},millwork.obstacle];
  for(const x of [-8,8]){box(.12,2.7,6,x+(x>0?1:-1),1.37,-1,wood);for(const y of [.5,1.25,2])box(2.1,.09,6.2,x,y,-1,wood);solids.push({x,z:-1,w:2.2,d:6.3});}
  for(const x of [-4.5,4.5]){box(3.8,.55,1.35,x,.3,5,wood);box(3.8,.06,1.35,x,1.33,5,metal);box(3.8,.75,.04,x,.95,5.68,glass);box(3.8,.75,.04,x,.95,4.32,glass);for(const side of [-1,1])box(.04,.75,1.35,x+side*1.9,.95,5,glass);solids.push({x,z:5,w:3.9,d:1.5});}
  for(const x of [-6,0,6]){box(3,.04,1,x,4.49,0,new THREE.MeshBasicMaterial({color:'#fff4dc'}));const l=new THREE.PointLight('#ffe3b1',5,13);l.position.set(x,3.8,0);root.add(l);}
@@ -34,7 +35,7 @@ export function createZStore(scene,{getPlayer,controller,onStop=()=>{},onMessage
  if(id==='ring'){g.add(new THREE.Mesh(new THREE.TorusGeometry(.018,.004,8,20),silver));const gem=new THREE.Mesh(new THREE.OctahedronGeometry(.012),paint);gem.position.y=.022;g.add(gem);}
  return g;}
  for(let i=0;i<7;i++)for(let c=0;c<6;c++){const id=STORE_ITEMS[i][0],o=item(id,COLORS[c][1]);if(i<4){o.position.set(i%2?-8:8,.55+Math.floor(i/2)*.75,-3+c*.78);if(id==='balloons')o.scale.setScalar(.5);}else{o.position.set((i===4?-4.5:4.5)+(c%3-1)*.85,.7,4.7+Math.floor(c/3)*.5);if(i===6){o.position.x-=.35;o.scale.setScalar(2.5);}}root.add(o);}
- label('EVERYDAY FINDS · SOMETHING FOR EVERYONE',11,.6,0,3.1,-10.85);
+
  let clerk=null,panelOpen=false,selected='flashlight',color=COLORS[0][1],inventory=[],equipped={},lightsOn=true,knifeOpen=false;
  try{const v=JSON.parse(localStorage.getItem('zerconda-z-store-v1')||'[]');if(Array.isArray(v))inventory=v.filter(v=>STORE_ITEMS.some(i=>i[0]===v.id)&&COLORS.some(c=>c[1]===v.color)).slice(0,100);}catch{}
  const changed=()=>{try{const worn=Object.fromEntries(Object.entries(equipped).filter(([k])=>k!=='hand').map(([k,g])=>[k,g.userData.storeItem]));localStorage.setItem('zerconda-worn-items-v1',JSON.stringify(worn));}catch{}window.dispatchEvent(new Event('zerconda-inventory-change'));};

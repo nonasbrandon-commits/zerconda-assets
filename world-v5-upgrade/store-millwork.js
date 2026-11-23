@@ -1,0 +1,33 @@
+import * as THREE from 'three';
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+// Solid millwork with framed cabinet doors, a stone backsplash and a raised shop plaque.
+export function createStoreMillwork(root){
+ let seed=817;const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
+ function texture(kind){const c=document.createElement('canvas');c.width=c.height=1024;const a=c.getContext('2d');
+ if(kind==='wood'){a.fillStyle='#56321c';a.fillRect(0,0,1024,1024);for(let i=0;i<2600;i++){const x=rand()*1024;a.strokeStyle=`rgba(${rand()>.5?'205,143,76':'25,11,5'},${.03+rand()*.15})`;a.lineWidth=.5+rand()*2;a.beginPath();for(let y=0;y<=1024;y+=16){const xx=x+Math.sin(y*.011+x)*3+Math.sin(y*.03+x)*1.3;y?a.lineTo(xx,y):a.moveTo(xx,y)}a.stroke()}for(let i=0;i<12;i++){const x=rand()*1024,y=rand()*1024;a.strokeStyle='#321b1050';for(let j=1;j<8;j++){a.beginPath();a.ellipse(x,y,j*2,j*9,0,0,Math.PI*2);a.stroke()}}}
+ if(kind==='stone'){a.fillStyle='#514234';a.fillRect(0,0,1024,1024);for(let row=0;row<12;row++){let x=row%2?-100:0;while(x<1024){const w=100+rand()*160,h=83;const v=Math.floor(rand()*32);a.fillStyle=`rgb(${138+v},${112+v},${79+v})`;a.fillRect(x+3,row*85+3,w-6,h-5);for(let k=0;k<95;k++){a.fillStyle=rand()>.5?'#fff2c310':'#1b100c20';a.fillRect(x+5+rand()*(w-10),row*85+4+rand()*72,rand()*24+2,rand()*3+1)}a.strokeStyle='#e3c99d55';a.strokeRect(x+5,row*85+5,w-10,h-10);x+=w;}}}
+ if(kind==='marble'){a.fillStyle='#272723';a.fillRect(0,0,1024,1024);for(let i=0;i<70;i++){a.strokeStyle=i%4?'#b7afa02a':'#e3d9c293';a.lineWidth=i%4?.7:1.5;a.beginPath();let x=rand()*1024,y=rand()*1024;a.moveTo(x,y);for(let j=0;j<13;j++){x+=rand()*130-35;y+=rand()*95-20;a.lineTo(x,y)}a.stroke()}}
+ const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t;}
+ const wood=new THREE.MeshStandardMaterial({color:0xffffff,map:texture('wood'),roughness:.39}),recess=wood.clone();recess.color.set('#c8a47d');const stone=new THREE.MeshStandardMaterial({map:texture('stone'),roughness:.92}),marble=new THREE.MeshStandardMaterial({map:texture('marble'),roughness:.23,metalness:.05}),brass=new THREE.MeshStandardMaterial({color:'#c59c51',metalness:.75,roughness:.3}),dark=new THREE.MeshStandardMaterial({color:'#151510',roughness:.55}),glow=new THREE.MeshBasicMaterial({color:'#ffc86d'});
+ const g=new THREE.Group();g.name='Everyday Finds · carved walnut and stone millwork';g.userData.storeMillwork=true;root.add(g);
+ function box(w,h,d,x,y,z,m=wood){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);g.add(o);return o;}
+ function frame(w,h,x,y,z){box(w,h,.055,x,y,z,recess);for(const s of [-1,1]){box(.055,h,.06,x+s*(w/2-.028),y,z+.04);box(w,.055,.06,x,y+s*(h/2-.028),z+.04)}box(w-.15,h-.15,.025,x,y,z+.045);}
+ function cabinets(w,z,front=true){box(w,1.02,.82,0,.54,z);box(w+.12,.12,.95,0,1.1,z,marble);box(w+.08,.09,.9,0,.08,z);const count=12,step=w/count;for(let i=0;i<count;i++){const x=-w/2+step*(i+.5);if(i===3||i===8){for(let j=0;j<3;j++){frame(step-.08,.25,x,.29+j*.28,z+.45);box(.29,.025,.045,x,.29+j*.28,z+.52,brass)}}else{frame(step-.08,.84,x,.57,z+.45);box(.025,.18,.045,x+(i%2?-.28:.28),.72,z+.52,brass)}}}
+ // Back wall: side wood panels, center stone, columns and stepped crown.
+ box(15.7,3.82,.32,0,2.07,-10.55);box(10.7,2.72,.08,0,2.51,-10.34,stone);
+ for(const x of [-6.75,6.75]){for(let j=0;j<10;j++)box(1.6,.255,.04,x,1.3+j*.27,-10.34,recess)}
+ for(const x of [-7.8,-5.5,5.5,7.8]){box(.34,3.5,.38,x,2.05,-10.2);box(.48,.17,.48,x,.38,-10.16);box(.48,.19,.48,x,3.73,-10.16);for(const dx of [-.115,.115])box(.024,3.03,.035,x+dx,2.04,-9.99,brass)}
+ box(16.2,.15,.74,0,3.91,-10.23);box(16.5,.12,.85,0,4.04,-10.23);box(11.9,.15,.86,0,4.18,-10.23);box(12.15,.09,.94,0,4.29,-10.23);
+ cabinets(15.7,-10.02);
+ for(const x of [-7,-5.3,-3.5,-1.75,0,1.75,3.5,5.3,7]){const lamp=new THREE.Mesh(new THREE.CylinderGeometry(.085,.085,.035,16),glow);lamp.position.set(x,3.8,-9.95);g.add(lamp)}
+ for(const x of [-4,0,4]){const l=new THREE.PointLight('#ffbb62',1.8,5,2);l.position.set(x,3.5,-9.5);g.add(l)}
+ // Plaque is extruded, with an arched crest and a fine gold rim.
+ function plaque(w,h,depth,mat,z){const s=new THREE.Shape();s.moveTo(-w/2,-h/2);s.lineTo(w/2,-h/2);s.lineTo(w/2,h*.28);s.lineTo(w*.2,h*.28);s.quadraticCurveTo(0,h*.9,-w*.2,h*.28);s.lineTo(-w/2,h*.28);s.closePath();const o=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.025,bevelThickness:.018,curveSegments:24}),mat);o.position.set(0,2.65,z);g.add(o)}
+ plaque(6.05,1.42,.04,brass,-10.12);plaque(5.93,1.3,.045,dark,-10.06);
+ const c=document.createElement('canvas');c.width=2048;c.height=640;const a=c.getContext('2d');a.clearRect(0,0,2048,640);a.strokeStyle='#eedfc4';a.lineWidth=7;a.beginPath();a.moveTo(938,63);a.lineTo(965,63);a.lineTo(992,155);a.lineTo(1086,155);a.lineTo(1111,87);a.lineTo(978,87);a.stroke();for(const x of [1004,1072]){a.beginPath();a.arc(x,180,10,0,Math.PI*2);a.stroke()}a.fillStyle='#fff4dc';a.textAlign='center';a.font='bold 142px Georgia';a.fillText('EVERYDAY FINDS',1024,351);a.fillStyle='#cba254';a.fillRect(220,405,1608,4);a.fillStyle='#f6ead5';a.font='52px sans-serif';a.fillText('SOMETHING FOR EVERYONE',1024,503);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;const p=new THREE.Mesh(new THREE.PlaneGeometry(5.55,1.56),new THREE.MeshBasicMaterial({map:t,transparent:true,depthWrite:false}));p.position.set(0,2.72,-9.98);g.add(p);
+ // Customer counter retains its existing footprint, with inset panels and a marble top.
+ box(14,1.0,1.3,0,.52,-5);box(14.4,.1,1.55,0,1.07,-5,marble);box(14.1,.09,1.37,0,.075,-5);for(let i=0;i<7;i++){const x=-6+i*2;frame(1.84,.73,x,.55,-4.32);box(.09,.92,.11,x-.96,.53,-4.25);box(1.8,.018,.018,x,.96,-4.2,glow)}box(13.85,.018,.018,0,.14,-4.29,glow);for(const x of [-7,7]){box(.14,.97,1.36,x,.55,-5);box(.22,.12,1.42,x,.12,-5)}
+ // Batch static joinery by material so the detailed doors do not add hundreds of draw calls.
+ g.updateMatrixWorld(true);const buckets=new Map();for(const o of [...g.children])if(o.isMesh){let geo=o.geometry.clone();geo.applyMatrix4(o.matrix);if(geo.index)geo=geo.toNonIndexed();if(!buckets.has(o.material))buckets.set(o.material,[]);buckets.get(o.material).push(geo);g.remove(o);o.geometry.dispose();}for(const[m,geos]of buckets){const merged=mergeGeometries(geos,false);for(const geo of geos)geo.dispose();const mesh=new THREE.Mesh(merged,m);mesh.name='Store millwork · batched finish';g.add(mesh);}
+ return{group:g,obstacle:{x:0,z:-10.02,w:16.25,d:1.3}};
+}
