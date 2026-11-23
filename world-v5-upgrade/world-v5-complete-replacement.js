@@ -1,5 +1,6 @@
+import {createKateConversation} from './kate-conversation.js?v=20261123-plaid-v270';
+import {createNeedlePlaidResident} from './needle-plaid-resident.js?v=20261123-plaid-v270';
 import {createBoardwalkWalker} from './boardwalk-walker.js?v=20261123-boardwalk-v269';
-import {createBoardwalkResident} from './boardwalk-resident.js?v=20261123-boardwalk-v269';
 import {createCrowdSpacing} from './crowd-spacing.js?v=20261123-space-v265';
 import {applyPlayerSeatPose} from './player-seat-pose.js?v=20261123-boardwalk-v269';
 import {createFountainResident} from './fountain-resident.js?v=20261123-boardwalk-v269';
@@ -1328,7 +1329,7 @@ await yieldStartup();
 
 // Third-person walking avatar: forward-facing, visible from the default camera.
 // Kept lightweight so mobile devices do not need an additional model download.
-const pedestrianSystem=createPedestrians(scene,{count:20,getPlayer:()=>player,getPeople:()=>[...cityResidents.collisionPeople,...(boardwalkWalker.group.visible?[boardwalkWalker.group.position]:[]),...(fountainResident.group.visible?[fountainResident.group.position]:[])],groundHeightAt:(x,z)=>groundHeightAt(x,z)+.004,canWalk:(x,z)=>ambientResidentsAllowed(x,z)&&walkable(x,z)});
+const pedestrianSystem=createPedestrians(scene,{count:20,getPlayer:()=>player,getPeople:()=>[...cityResidents.collisionPeople,...(needlePlaidResident.group.visible?[needlePlaidResident.group.position]:[]),...(boardwalkWalker.group.visible?[boardwalkWalker.group.position]:[]),...(fountainResident.group.visible?[fountainResident.group.position]:[])],groundHeightAt:(x,z)=>groundHeightAt(x,z)+.004,canWalk:(x,z)=>ambientResidentsAllowed(x,z)&&walkable(x,z)});
 await yieldStartup();
 
 const playerRig=pedestrianSystem.createHuman(0);
@@ -1844,10 +1845,11 @@ await yieldStartup();
 airportLoop=createAirportLoop(scene,{roadMaterial:asphalt,walkMaterial:paving});
 await yieldStartup();
 northernForest=createNorthernForest(scene,{mobile:MOBILE});
-const crowdSpacing=createCrowdSpacing({getPeople:()=>[...pedestrianSystem.agents.filter(a=>a.human.ready).map(a=>a.group),...cityResidents.agents.filter(a=>a.human.ready&&!a.staff&&!a.seated).map(a=>a.group)],getAnchors:()=>[player,...(boardwalkWalker.group.visible?[boardwalkWalker.group.position]:[]),...cityResidents.agents.filter(a=>a.seated&&a.human.ready).map(a=>a.group.position),...(fountainResident.group.visible?[fountainResident.group.position]:[])],canWalk:(x,z)=>ambientResidentsAllowed(x,z)&&walkable(x,z),getHeight:standingHeightAt});
-const boardwalkWalker=createBoardwalkWalker(scene,{getPlayer:()=>player,getPeople:()=>[...pedestrianSystem.agents.filter(a=>a.human.ready&&a.group.visible).map(a=>a.group.position),...cityResidents.collisionPeople,...(boardwalkResident.group.visible?[boardwalkResident.group.position]:[])],canWalk:walkable});
-const boardwalkResident=createBoardwalkResident(scene,{getPlayer:()=>player,getSeat:()=>southBeach.boardwalkFurniture.seats.find(s=>Math.abs(s.x-37.56)<.1)});
-const fountainResident=createFountainResident(scene,{getPlayer:()=>player,getHeight:standingHeightAt,getSeat:()=>realisticPlaza?.seats?.[4]||null});
+const crowdSpacing=createCrowdSpacing({getPeople:()=>[...pedestrianSystem.agents.filter(a=>a.human.ready).map(a=>a.group),...cityResidents.agents.filter(a=>a.human.ready&&!a.staff&&!a.seated).map(a=>a.group)],getAnchors:()=>[player,...(needlePlaidResident.group.visible?[needlePlaidResident.group.position]:[]),...(boardwalkWalker.group.visible?[boardwalkWalker.group.position]:[]),...cityResidents.agents.filter(a=>a.seated&&a.human.ready).map(a=>a.group.position),...(fountainResident.group.visible?[fountainResident.group.position]:[])],canWalk:(x,z)=>ambientResidentsAllowed(x,z)&&walkable(x,z),getHeight:standingHeightAt});
+const needlePlaidResident=createNeedlePlaidResident(scene,{getPlayer:()=>player,getHeight:standingHeightAt,canWalk:walkable});
+const boardwalkWalker=createBoardwalkWalker(scene,{getPlayer:()=>player,getPeople:()=>[...pedestrianSystem.agents.filter(a=>a.human.ready&&a.group.visible).map(a=>a.group.position),...cityResidents.collisionPeople],canWalk:walkable});
+const fountainResident=createFountainResident(scene,{getPlayer:()=>player,getHeight:standingHeightAt,getSeat:()=>realisticPlaza?.seats?.[4]||null});fountainResident.group.name='Kate · seated fountain visitor';fountainResident.group.userData.npcIdentity='Kate';
+const kateConversation=createKateConversation({getPlayer:()=>player,getKate:()=>fountainResident,canTalk:()=>!activeCar&&!zCabs?.riding&&!playerMenu?.panelOpen&&!cityMap.expanded});
 const forestGroundCover=createForestGroundCover(scene,{getPlayer:()=>player,getRoadPolygons:()=>roadMap.polygons,getForestSegments:()=>[...(northernForest?.segments||[]),...(camp?.trailSegments||[]).map(([ax,az,bx,bz])=>({ax,az,bx,bz,width:3.2}))],getHeight:()=>.02,mobile:MOBILE});
 await yieldStartup();
 militaryBase=createMilitaryBase(scene,{getPlayer:()=>player,hasClearance:militaryAccess.hasClearance,onAccessRequest:militaryAccess.request,onStop:()=>{keys.clear();townControls.stop();movement.vx=movement.vz=0;},canUseTower:()=>!adminTransport?.active&&!activeCar&&!zCabs?.riding,onTeleport:(x,y,z)=>{player.x=x;player.z=z;keys.clear();townControls.stop();movement.vx=movement.vz=0;yaw=0;pitch=0;avatar.position.set(x,y,z);camera.position.set(x,y+1.68,z);},onMessage:m=>townControls.notify(m),onReject:(x,z)=>{player.x=x;player.z=z;movement.vx=0;movement.vz=0;keys.clear();townControls.stop();}});
@@ -2014,7 +2016,7 @@ const gravelTires=createGravelTireAudio({scene,getVehicle:()=>{if(adminTransport
 await yieldStartup();
 
 function animate(){
- requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);forestGroundCover.update();fountainResident.update(dt);boardwalkResident.update(dt);boardwalkWalker.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
+ requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);forestGroundCover.update();fountainResident.update(dt);boardwalkWalker.update(motionDt);needlePlaidResident.update(motionDt);kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
  if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
  updateTreeBreeze(elapsed);airDancers.update(elapsed);dealership.update?.(motionDt);coffeeShop.update(motionDt);zFortune?.update(motionDt);
