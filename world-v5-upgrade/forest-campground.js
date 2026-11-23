@@ -1,4 +1,4 @@
-import {createForestGrassMaterial} from './forest-ground-cover.js?v=20261123-roads-v261';
+import {createForestGrassMaterial} from './forest-ground-cover.js?v=20261123-meadow-v263';
 import {createCampCabinShell} from './camp-cabin-shell.js?v=20261121-forest-airfield-v193';
 import {addNaturalFerns,addNaturalBoulders} from './forest-natural-details.js?v=20261121-forest-airfield-v193';
 import {applyRealisticGravel} from './realistic-gravel.js?v=20261121-collision-v192';

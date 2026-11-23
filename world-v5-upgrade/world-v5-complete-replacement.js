@@ -1,5 +1,5 @@
-import {createHiddenForestPassage} from './hidden-forest-passage.js?v=20261123-hidden-v262';
-import {createForestGroundCover,unifyForestGround} from './forest-ground-cover.js?v=20261123-roads-v261';
+import {createHiddenForestPassage} from './hidden-forest-passage.js?v=20261123-meadow-v263';
+import {createForestGroundCover,unifyForestGround} from './forest-ground-cover.js?v=20261123-meadow-v263';
 import {clearRoadSidewalkOverlaps} from './road-surface-joins.js?v=20261123-roads-v261';
 import {createForestLandmarkRock} from './forest-landmark-rock.js?v=20261123-roads-v261';
 import {createAbandonedTransport} from './abandoned-transport.js?v=20261123-return-v258';
@@ -81,7 +81,7 @@ import {createBusinessCentre} from './business-centre.js?v=20261119-entrance-ste
 import {createSkatePark} from './skate-park.js?v=20261119-entrance-steering-v118';
 import {createAirfield} from './airfield.js?v=20261121-profile-studio-v203';
 import * as THREE from 'three';
-import {createForestCampground} from './forest-campground.js?v=20261123-roads-v261';
+import {createForestCampground} from './forest-campground.js?v=20261123-meadow-v263';
 import {createPremierHomes} from './premier-homes.js?v=20261122-controls-v246';
 import {createZercondaNews} from './zerconda-news.js?v=20261121-fast-start-v205';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261121-town-v191';
@@ -510,7 +510,7 @@ function groundHeightAt(x,z){
 const soleSamples=[[0,0],[.16,0],[-.16,0],[0,.18],[0,-.14],[.11,.12],[-.11,.12],[.11,-.1],[-.11,-.1]];
 await yieldStartup();
 
-function standingHeightAt(x,z){
+function standingHeightAt(x,z){if(x< -718.5&&x> -733.4&&Math.abs(z+612)<1.25)return .065;
  const center=groundHeightAt(x,z);let support=center;
  for(const [dx,dz]of soleSamples){const y=groundHeightAt(x+dx,z+dz);if(y<=center+.34)support=Math.max(support,y);}
  return support+.004;
