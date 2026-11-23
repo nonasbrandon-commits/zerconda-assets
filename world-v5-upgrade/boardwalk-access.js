@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 const north=150,south=181,width=19,guardZ=180.10,defaultCenters=[-418,-96,0,96];
-export function accessRoadHeight(x,z,centers=defaultCenters){return centers.some(c=>Math.abs(x-c)<=9.5)&&z>=north&&z<=south?(z<=154?THREE.MathUtils.lerp(.02,.092,(z-north)/(154-north)):THREE.MathUtils.lerp(.092,.215,(z-154)/(south-154))):null;}
+export function accessRoadHeight(x,z,centers=defaultCenters){return centers.some(c=>Math.abs(x-c)<=9.5)&&z>=north&&z<=south?(z<=154?THREE.MathUtils.lerp(.02,.092,(z-north)/(154-north)):THREE.MathUtils.lerp(.092,.095,(z-154)/(south-154))):null;}
 export function createBoardwalkAccess(parent,{roadMaterial=null,roadCenters=defaultCenters}={}){
  const root=new THREE.Group();root.name='All waterfront roads · boardwalk approaches and aggregate bollards';parent.add(root);const asphalt=roadMaterial||new THREE.MeshStandardMaterial({color:'#333638',roughness:.98}),heightAt=(x,z)=>accessRoadHeight(x,z,roadCenters),roads=[],markings=[],bollards=[];
  const white=new THREE.MeshStandardMaterial({color:'#deded4',roughness:.95}),yellow=new THREE.MeshStandardMaterial({color:'#e5c55a',roughness:.95});

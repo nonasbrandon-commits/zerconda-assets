@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 export const BENNY_FAREWELL="Enjoy that dog, friend. You make sure you don't go outside the Wall now, alright?";
 export function createHotDogVendor(scene,{getPlayer,onMessage=()=>{}}){
- const x=-78,z=183,y=.215,root=new THREE.Group();root.name='ZDogz gourmet cart · Benny the friendly vendor';root.userData.customInterior=true;root.position.set(x,y,z);scene.add(root);let vendor=null,elapsed=0,orderTime=0,preparing=false,ready=false,finished=false,quipped=false,voiceOn=true,served=0,utterance=null,prepPhase=0,lastTalkAt=0,chatterIndex=0,greeted=false;const recordedVoice=createBennyVoice();
+ const x=-78,z=183,y=.095,root=new THREE.Group();root.name='ZDogz gourmet cart · Benny the friendly vendor';root.userData.customInterior=true;root.position.set(x,y,z);scene.add(root);let vendor=null,elapsed=0,orderTime=0,preparing=false,ready=false,finished=false,quipped=false,voiceOn=true,served=0,utterance=null,prepPhase=0,lastTalkAt=0,chatterIndex=0,greeted=false;const recordedVoice=createBennyVoice();
  try{voiceOn=localStorage.getItem('zerconda-zdogz-voice-v1')!=='off';served=Math.max(0,Number(localStorage.getItem('zerconda-zdogz-served-v1'))||0)}catch{}
  const mat=(color,metalness=0,roughness=.6)=>new THREE.MeshStandardMaterial({color,metalness,roughness}),black=mat('#11191c',.35,.36),gold=mat('#cda33e',.7,.26),steel=mat('#9ca5a4',.75,.3),red=mat('#923d25'),bun=mat('#dba34f');
  function box(w,h,d,px,py,pz,m,parent=root){const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);mesh.position.set(px,py,pz);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;}
