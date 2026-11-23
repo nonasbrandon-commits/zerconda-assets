@@ -5,7 +5,7 @@ import {residentProfiles} from './resident-profiles.js?v=20261118-residents-v97'
 import {createResidentVehicle} from './resident-vehicles.js?v=20261120-bikes-v180';
 // Articulated human-shaped characters and animated pedestrian NPCs.
 // Adult resident meshes are adapted from the MIT-licensed Microsoft Rocketbox collection.
-export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=()=>true,getPlayer=()=>null}={}){
+export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=()=>true,getPlayer=()=>null,getPeople=()=>[]}={}){
  const root=new THREE.Group();root.name='Animated Zerconda pedestrians';scene.add(root);
  const skin=[0xe7b58d,0x9d6345,0xc78d68,0xf0c9a6,0x69432f].map(color=>new THREE.MeshStandardMaterial({color,roughness:.88}));
  const shirts=[0x7731a1,0x171d23,0x52705c,0xd0c7b8,0x444b64,0x9b8665,0x9b3652,0x336d96].map(color=>new THREE.MeshStandardMaterial({color,roughness:.91}));
@@ -74,8 +74,9 @@ export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=(
   if(a.route.kind==='sidewalk'&&(a.position>=79.99&&a.direction>0||a.position<=-79.99&&a.direction<0))a.direction*=-1;
   const radius=a.vehicle?.48:.28;
   // An overlapping spawn must be able to separate before normal clearance applies.
-  const obstacles=agents.filter(other=>other!==a&&other.human.ready).map(other=>({x:other.group.position.x,z:other.group.position.z,r:.55}));
-  if(player)obstacles.push({x:player.x,z:player.z,r:a.vehicle?1.5:.6});
+  const obstacles=agents.filter(other=>other!==a&&other.human.ready).map(other=>({x:other.group.position.x,z:other.group.position.z,r:.94}));
+  for(const p of getPeople())obstacles.push({x:p.x,z:p.z,r:.94});
+  if(player)obstacles.push({x:player.x,z:player.z,r:a.vehicle?1.5:.94});
   const escapeClear=(x,z)=>obstacles.every(o=>{const before=Math.hypot(old.x-o.x,old.z-o.z),after=Math.hypot(x-o.x,z-o.z);return after>=o.r||before<o.r+radius&&after>before+.00001;});
   const clear=(x,z)=>canWalk(x,z)&&escapeClear(x,z);
   // Check body clearance against scenery, but center separation against people.
