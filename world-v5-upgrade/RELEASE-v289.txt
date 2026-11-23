@@ -1,0 +1,2 @@
+Zerconda v289
+Filled both enclosed stairwell bases across the full 5.5m depth and connected the corridor floor to the stair landings. Upper floors retain their descending flight openings; lower stairwell base hides exposed terrain. Preserves the recessed elevator and sealed wall junctions from v288. Checks: full base coverage, hallway passage, elevator entry and floor ride.
