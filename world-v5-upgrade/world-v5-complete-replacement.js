@@ -899,19 +899,9 @@ const blocks=[
 ];
 await yieldStartup();
 
-for(let k=0;k<blocks.length;k++){
- const [bx,bz]=blocks[k];
- if(bx===48&&bz===48)continue; // Central fountain park: no buildings.
- if(bx===48&&bz===-48)continue; // Dedicated observation needle district: no buildings.
- if(Math.abs(bx)>100||Math.abs(bz)>100)continue; // avoid outside-city half blocks
- for(const [i,j] of [[-1,-1],[1,-1],[-1,1],[1,1]]){
-  // Keep the complete building footprint and trim well behind the curb.
-  // Road centers are 96m apart; this leaves at least 11m from each wall to asphalt.
-  const x=bx+i*15,z=bz+j*15;
-  if(bx===-48&&bz===-48)continue; // Reserved commercial district: cafe, dealership, and access road. // Reserve east side for Brewstone cafe opposite the Needle.
-  makeBuilding(x,z,24,23,18+Math.floor(rand()*5)*3.2,k+Math.round(rand()*4));
- }
-}
+// Two full-width apartment buildings fit this block without overlapping one
+// another or the street corridor. Exterior width includes the furnished units.
+for(const z of [33,63])makeBuilding(-48,z,39.8,19.2,10.9,0);
 await yieldStartup();
 
 
