@@ -1,0 +1,2 @@
+Zerconda v298
+Added deep solid stone collars around both cavern/tunnel junctions to hide oblique side and ceiling sightlines, including the return passage. Clear opening dimensions and walking route preserved. Keeps the v297 natural crystal/fossil room and all prior terrain and portal fixes.
