@@ -1,0 +1,2 @@
+Zerconda v291
+Arranged the sink, stove and refrigerator in one run along the apartment back wall. Moved the appliances out of the living-room side aisle and kept the entry clear. Updated collision footprints to match the new positions and orientation. Preserves removal of island and stools, stair flooring and recessed elevator. Checks: entry and former furniture positions walkable; three appliance footprints on back wall; elevator and hallway regression checks.
