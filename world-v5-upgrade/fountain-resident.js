@@ -1,2 +1,2 @@
-import{createBoardwalkResident}from'./boardwalk-resident.js?v=20261123-fountain-v267';
+import{createBoardwalkResident}from'./boardwalk-resident.js?v=20261123-boardwalk-v269';
 export function createFountainResident(scene,{getPlayer,getHeight=()=>.02,getSeat=()=>null}={}){const actor=createBoardwalkResident(scene,{getPlayer,getHeight,getSeat:()=>getSeat()||{x:55.608,z:55.608,facing:Math.PI/4,sitHeight:.58},handsOnRim:true,variant:'fountain'});actor.group.name='Ruby · seated fountain visitor';return actor;}

@@ -1,4 +1,4 @@
-import {addConcealedCavern,passageFloor,passageFootprint} from './concealed-cavern.js?v=20261123-natural-v264';
+import {addConcealedCavern,passageFloor,passageFootprint} from './concealed-cavern.js?v=20261123-cave-v268';
 import {verifyReservedHomePIN} from './property-access.js?v=20261122-office-v233';
 import * as THREE from 'three';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
@@ -30,7 +30,7 @@ export function createHiddenForestPassage(scene,{wallMaterial,getPlayer,onStop=(
  let outerHold=0,returning=false;
  function update(dt){const p=local();if(Math.abs(p.x)<1.05&&p.z< -1.75&&p.z> -4.5&&!returning){opened=false;outerHold=0;}if(Math.abs(p.x)<1.05&&p.z> -2.9&&p.z< -1.8&&p.z>lastDepth+.002){returning=true;opened=true;outerHold=2;}if(returning&&p.z> -4.5&&p.z<2)opened=true;if(p.z>2)returning=false;if(Math.abs(p.x)<1.1&&Math.abs(p.z)<1.7&&slide>.9)outerHold=1.5;if(outerHold>0){outerHold-=dt;opened=true;}if(p.z>4&&outerHold<=0)opened=false;slide=THREE.MathUtils.damp(slide,opened?1:0,5,dt);panel.position.x=-2.3*slide;const atInner=authorized&&innerRequested||p.z< -10.2;innerSlide=THREE.MathUtils.damp(innerSlide,atInner?1:0,5,dt);for(const{leaf,side}of inner)leaf.position.x=side*(.635+innerSlide*1.3);lastDepth=p.z;}
  let lastDepth=2;
- function canWalk(x,z){const p=root.worldToLocal(new THREE.Vector3(x,.02,z));if(Math.abs(p.x)>10||p.z>1.9||p.z< -79||p.z> -45&&Math.abs(p.x)>1.6)return null;if(!passageFootprint(p.x,p.z))return false;if(p.z<1.22&&p.z> -1.22&&slide<.92)return false;if(Math.abs(p.z+9.4)<.4&&innerSlide<.92)return false;return true;}
- function updateCamera(camera,yaw,pitch){const p=local();if(p.z>=-.25||!passageFootprint(p.x,p.z))return false;camera.position.set(getPlayer().x,passageFloor(p.z)+1.62,getPlayer().z);camera.near=.08;camera.updateProjectionMatrix();camera.lookAt(camera.position.clone().add(new THREE.Vector3(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch))));return true;}
+ function canWalk(x,z){const p=root.worldToLocal(new THREE.Vector3(x,.02,z));if(Math.abs(p.x)>15||p.z>1.9||p.z< -137||p.z> -45&&Math.abs(p.x)>1.6)return null;if(!passageFootprint(p.x,p.z))return false;if(p.z<1.22&&p.z> -1.22&&slide<.92)return false;if(Math.abs(p.z+9.4)<.4&&innerSlide<.92)return false;return true;}
+ function updateCamera(camera,yaw,pitch){const p=local();if(p.z>=-.25||p.z< -106||!passageFootprint(p.x,p.z))return false;camera.position.set(getPlayer().x,passageFloor(p.z)+1.62,getPlayer().z);camera.near=.08;camera.updateProjectionMatrix();camera.lookAt(camera.position.clone().add(new THREE.Vector3(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch))));return true;}
  return{root,panel,inner,keypad,update,updateCamera,canWalk,near,get panelOpen(){return !!codePanel},get authorized(){return authorized},get opened(){return opened},get slide(){return slide},get innerSlide(){return innerSlide},dispose(){closeCode();unregister();unregisterKeypad();button.remove();keypadButton.remove();scene.remove(root);}};
 }

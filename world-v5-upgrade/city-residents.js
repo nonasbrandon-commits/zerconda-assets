@@ -1,4 +1,4 @@
-import {poseSeatedResident} from './seated-resident.js?v=20261123-fountain-v267';
+import {poseSeatedResident} from './seated-resident.js?v=20261123-boardwalk-v269';
 import {createPhotographerRoutine} from './photographer-routine.js?v=20261122-photo-v258';
 import {createResidentRoaming} from './resident-roaming.js?v=20261122-private-homes-v214';
 import {createRealisticHuman} from './player-human.js?v=20261122-clean-hem-v213';
@@ -23,7 +23,7 @@ export function createCityResidents(scene,{getPlayer=()=>({x:0,z:0}),getHeight=(
 
  }a.walking=speed>0;a.item.visible=false;}
 
- a.human.update(dt,speed);if(a.seated){a.group.position.set(60,getHeight(60,68),68);a.group.rotation.y=Math.atan2(-12,-20);poseSeatedResident(a.human,{sitHeight:.52},elapsed);}a.item.visible=false;if(a.profile.id===29){if(!a.photographer)a.photographer=createPhotographerRoutine(a);a.photographer.update(dt,speed>0);}
+ a.human.update(dt,speed);if(a.seated){a.group.position.set(60,getHeight(60,68),68);a.group.rotation.y=Math.atan2(-12,-20);poseSeatedResident(a.human,{sitHeight:.52,casual:true,legSpread:.18},elapsed);}a.item.visible=false;if(a.profile.id===29){if(!a.photographer)a.photographer=createPhotographerRoutine(a);a.photographer.update(dt,speed>0);}
  a.group.updateMatrixWorld(true);
  }}
  return{root,agents,readyPromise,update,get collisionPeople(){return agents.filter(a=>a.human.ready&&a.group.parent.visible).map(a=>a.group.getWorldPosition(new THREE.Vector3()));},dispose(){for(const a of agents){a.button.remove();a.human.dispose();a.group.removeFromParent();}root.removeFromParent();}};
