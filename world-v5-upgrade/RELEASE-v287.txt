@@ -1,0 +1,3 @@
+Zerconda v287
+Replaced the remaining old turquoise and auburn/lilac beach women with the new white and yellow swimsuit walking models. Preserved their beach routes and the total visitor count. All beach visitors now use the new reference models; the blue visitor stays on the boardwalk. Shared source models are cached and skeletons cloned independently. Existing v286 model assets reused. No new generation.
+Validation: all seven visitors use reference assets, no legacy beach-human factory remains; every route advances in simulation.
