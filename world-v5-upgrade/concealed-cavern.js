@@ -1,9 +1,10 @@
+import {addCaveChamberDetails,caveDetailBlocked} from './cave-chamber-details.js?v=20261123-chamber-v297';
 import {upgradePineMeshes} from './realistic-forest-pines.js?v=20261121-forest-airfield-v193';
 import {addNaturalFerns} from './forest-natural-details.js?v=20261121-forest-airfield-v193';
 import {createForestGrassMaterial} from './forest-ground-cover.js?v=20261123-natural-v264';
 import * as THREE from 'three';
 export function passageFloor(d){return d< -77?Math.min(.065,-7.935+(-77-d)*8/30):.065+Math.max(-8,Math.min(0,(d+12)*.25));}
-export function passageFootprint(x,d){return d<=-76&&d>=-107&&Math.abs(x)<1.35||d< -106&&((x/13)**2+((d+119)/18)**2<1)||d<=1.9&&d>=-47&&Math.abs(x)<=1.05||d< -45&&d> -51&&Math.abs(x)<1.8||((x/8.6)**2+((d+62)/15.5)**2<1);}
+export function passageFootprint(x,d){return d<=-76&&d>=-107&&Math.abs(x)<1.35||d< -106&&((x/13)**2+((d+119)/18)**2<1)||d<=1.9&&d>=-47&&Math.abs(x)<=1.05||d< -45&&d> -51&&Math.abs(x)<1.8||((x/8.6)**2+((d+62)/15.5)**2<1&&!caveDetailBlocked(x,d));}
 export function hiddenPassageHeightAt(x,z){const lateral=-(z+612),depth=x+720;return passageFootprint(lateral,depth)?passageFloor(depth):null;}
 export function clipHollowGrass(geometry){
  const src=geometry.index?geometry.toNonIndexed():geometry,position=src.attributes.position,uv=src.attributes.uv,out=[],tex=[],edge=-15.8;
@@ -22,7 +23,7 @@ export function addConcealedCavern(root){
  function face(a,b,low,ha,hb){wall.push(a[0],bottom+low,a[2],b[0],bottom+low,b[2],b[0],bottom+hb,b[2],a[0],bottom+low,a[2],b[0],bottom+hb,b[2],a[0],bottom+ha,a[2]);}
  if(!portal)face(p,q,0,h,hh);else{const rear=p[2]<-74,half=rear?1.5:1.4,clearance=rear?3.5:3.3;face(p,q,clearance,h,hh);for(const side of[-1,1]){const pa=p[0]*side>=half,qa=q[0]*side>=half;if(pa&&qa)face(p,q,0,clearance,clearance);else if(pa!==qa){const t=(side*half-p[0])/(q[0]-p[0]),v=[side*half,bottom,p[2]+(q[2]-p[2])*t];if(pa)face(p,v,0,clearance,clearance);else face(v,q,0,clearance,clearance);}}}
 ground.push(0,bottom,-62,...q,...p);ceiling.push(0,bottom+6.5,-62,p[0],bottom+h,p[2],q[0],bottom+hh,q[2]);}
- mesh(wall,rock).name='Enclosed mountain cavern walls';mesh(ceiling,rock).name='Solid cave ceiling';mesh(ground,floor).name='Walkable stone cavern floor';
+ mesh(wall,rock).name='Enclosed mountain cavern walls';mesh(ceiling,rock).name='Solid cave ceiling';mesh(ground,floor).name='Walkable stone cavern floor';addCaveChamberDetails(root,{floorY:bottom,rock});
  for(let i=0;i<12;i++){const a=i*Math.PI*2/12;if(Math.abs(Math.cos(a)*8.9)<2.6&&Math.abs(Math.sin(a))>.75)continue;const o=new THREE.Mesh(new THREE.DodecahedronGeometry(.5+i%3*.2,0),rock);o.position.set(Math.cos(a)*8.9,bottom+.35,-62+Math.sin(a)*15.8);o.scale.set(1,1.2+i%2,1);root.add(o);}
  for(const d of[-17,-27,-38,-52,-65,-73]){const light=new THREE.PointLight(0xffbd74,1.6,d< -48?18:8,1.5);light.position.set(d< -48?3:0,passageFloor(d)+2.2,d);root.add(light);}
 

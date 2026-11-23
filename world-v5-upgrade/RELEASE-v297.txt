@@ -1,0 +1,7 @@
+Zerconda v297 — natural fossil and crystal chamber
+
+Added rounded rock shelves, hanging stalactites, floor formations, moss and vines, blue and violet crystal clusters, three groups of animal remains, scattered stones and damp floor patches. Warm chamber lights and colored crystal glow follow the supplied visual reference. Kept existing rock textures and tunnel openings. Fossils occupy side areas with matching walking exclusions; the central aisle remains clear.
+
+Static details batch to nine meshes, with no generated model downloads. Existing cave access controls, repaired portals, grass clipping and entrance threshold remain.
+
+Validation: finite geometry, bounded draw batches, fossil walking exclusions, uninterrupted central passage and eye line. Offline preview inspected; no full rendered WebGL browser verification was available.
