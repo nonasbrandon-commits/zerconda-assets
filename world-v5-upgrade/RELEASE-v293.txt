@@ -1,0 +1,3 @@
+Zerconda v293
+Aligned front and rear facade window openings with the widened four-unit-per-floor layout. Windows now stay inside each apartment side-wall span, with solid wall space at the bedroom/living partition and side-wall junctions. Window glass, sash and frames all follow the same corrected openings. Preserves prior kitchen, hallway, stairwell and beach changes.
+Bedroom doorway: frame is now stored explicitly with its door and widened alongside the leaf. Removed coordinate-only lookup that incorrectly selected the lintel mesh instead of the frame group. Layout, kitchen clearance and elevator regression checks pass.
