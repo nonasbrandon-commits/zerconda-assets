@@ -5,6 +5,14 @@ import * as THREE from 'three';
 export function passageFloor(d){return d< -77?Math.min(.065,-7.935+(-77-d)*8/30):.065+Math.max(-8,Math.min(0,(d+12)*.25));}
 export function passageFootprint(x,d){return d<=-76&&d>=-107&&Math.abs(x)<1.35||d< -106&&((x/13)**2+((d+119)/18)**2<1)||d<=1.9&&d>=-47&&Math.abs(x)<=1.05||d< -45&&d> -51&&Math.abs(x)<1.8||((x/8.6)**2+((d+62)/15.5)**2<1);}
 export function hiddenPassageHeightAt(x,z){const lateral=-(z+612),depth=x+720;return passageFootprint(lateral,depth)?passageFloor(depth):null;}
+export function clipHollowGrass(geometry){
+ const src=geometry.index?geometry.toNonIndexed():geometry,position=src.attributes.position,uv=src.attributes.uv,out=[],tex=[],edge=-15.8;
+ for(let i=0;i<position.count;i+=3){let poly=[0,1,2].map(j=>({x:position.getX(i+j),y:position.getY(i+j),z:position.getZ(i+j),u:uv.getX(i+j),v:uv.getY(i+j)})),clipped=[];
+  for(let j=0;j<poly.length;j++){const a=poly[j],b=poly[(j+1)%poly.length],inside=a.y>=edge,next=b.y>=edge;if(inside)clipped.push(a);if(inside!==next){const t=(edge-a.y)/(b.y-a.y);clipped.push(Object.fromEntries(['x','y','z','u','v'].map(k=>[k,a[k]+(b[k]-a[k])*t])));}}
+  for(let j=1;j<clipped.length-1;j++)for(const v of[clipped[0],clipped[j],clipped[j+1]]){out.push(v.x,v.y,v.z);tex.push(v.u,v.v);}
+ }
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(out,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(tex,2));g.computeVertexNormals();if(src!==geometry)src.dispose();geometry.dispose();return g;
+}
 export function addConcealedCavern(root){
  const texture=new THREE.TextureLoader().load(new URL('./assets/alpine-granite-v259.webp',import.meta.url).href);texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=8;const rock=new THREE.MeshStandardMaterial({map:texture,color:0xaaa59a,roughness:1,side:THREE.DoubleSide}),floor=new THREE.MeshStandardMaterial({map:texture,color:0x827c6b,roughness:.93,side:THREE.DoubleSide});
  function mesh(vertices,mat){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));const uv=[];for(let i=0;i<vertices.length;i+=9){const p=new THREE.Vector3(...vertices.slice(i,i+3)),q=new THREE.Vector3(...vertices.slice(i+3,i+6)),v=new THREE.Vector3(...vertices.slice(i+6,i+9)),n=q.sub(p).cross(v.sub(p));const axis=Math.abs(n.y)>Math.max(Math.abs(n.x),Math.abs(n.z))?'y':Math.abs(n.x)>Math.abs(n.z)?'x':'z';for(let j=0;j<9;j+=3){const[x,y,z]=vertices.slice(i+j,i+j+3);uv.push((axis==='x'?z:x)/2,(axis==='y'?z:y)/2);}}g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.computeVertexNormals();const o=new THREE.Mesh(g,mat);root.add(o);return o;}
@@ -17,7 +25,7 @@ export function addConcealedCavern(root){
 
  // Ascending rock passage opens naturally into a densely planted forest hollow.
  for(let d=-76;d> -107;d-=1){slab(d,d-1,1.62,0,floor);slab(d,d-1,1.65,3.5,rock);for(const side of[-1,1]){const a=passageFloor(d)-.02,b=passageFloor(d-1)-.02,x=side*1.5;mesh([x,a,d,x,b,d-1,x,b+3.5,d-1,x,a,d,x,b+3.5,d-1,x,a+3.5,d],rock);}}
- const outdoorGround=new THREE.Mesh(new THREE.CircleGeometry(28,64),createForestGrassMaterial());outdoorGround.rotation.x=-Math.PI/2;outdoorGround.position.set(0,.045,-123);outdoorGround.name='Forest hollow outside cave';root.add(outdoorGround);
+ const outdoorGround=new THREE.Mesh(clipHollowGrass(new THREE.CircleGeometry(28,64)),createForestGrassMaterial());outdoorGround.rotation.x=-Math.PI/2;outdoorGround.position.set(0,.01,-123);outdoorGround.name='Forest hollow outside cave';root.add(outdoorGround);
  const dirt=new THREE.MeshStandardMaterial({color:0xb5a88c,roughness:1,map:texture});
  const trail=[];for(let d=-107;d>=-135;d--){const x=Math.sin((d+107)*.13)*2.5,xx=Math.sin((d+106)*.13)*2.5;trail.push(x-1,.052,d,x+1,.052,d,xx+1,.052,d-1,x-1,.052,d,xx+1,.052,d-1,xx-1,.052,d-1);}mesh(trail,dirt).name='Winding brush-lined cave trail';
  for(const side of[-1,1])for(let i=0;i<7;i++){const b=new THREE.Mesh(new THREE.DodecahedronGeometry(1,1),rock);b.position.set(side*(3.4+i*.6),1.0+i%3*.8,-106+i*.35);b.scale.set(1.6,2+i%2,2.5);b.rotation.set(i*.3,i*.8,i*.1);root.add(b);}for(const side of[-1,1]){const jamb=new THREE.Mesh(new THREE.BoxGeometry(2.4,3.65,1.4),rock);jamb.position.set(side*2.6,1.8,-106.8);root.add(jamb);}const cap=new THREE.Mesh(new THREE.DodecahedronGeometry(1,1),rock);cap.position.set(0,4.7,-106);cap.scale.set(4.5,1.4,3.2);root.add(cap);

@@ -1,4 +1,4 @@
-import {addConcealedCavern,passageFloor,passageFootprint} from './concealed-cavern.js?v=20261123-cave-v268';
+import {addConcealedCavern,passageFloor,passageFootprint} from './concealed-cavern.js?v=20261123-floor-v295';
 import {verifyReservedHomePIN} from './property-access.js?v=20261122-office-v233';
 import * as THREE from 'three';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
@@ -8,8 +8,8 @@ export function createHiddenForestPassage(scene,{wallMaterial,getPlayer,onStop=(
  const box=(w,h,d,x,y,z,m)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);root.add(o);return o;};
  // The outer leaf shares the actual perimeter material, thickness and flush face.
  const panelMaterial=wallMaterial.clone();panelMaterial.polygonOffset=true;panelMaterial.polygonOffsetFactor=-1;panelMaterial.polygonOffsetUnits=-1;panelMaterial.onBeforeCompile=s=>{s.vertexShader=s.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 concealedPanelWorld;').replace('#include <begin_vertex>','#include <begin_vertex>\nconcealedPanelWorld=(modelMatrix*vec4(transformed,1.)).xyz;');s.fragmentShader=s.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 concealedPanelWorld;').replace('#include <clipping_planes_fragment>','#include <clipping_planes_fragment>\nif(concealedPanelWorld.z < -613.1 || concealedPanelWorld.z > -610.9)discard;');};panelMaterial.customProgramCacheKey=()=> 'concealed-wall-pocket-v262';
- const panel=box(2.2,3.18,1.8,0,1.59,0,panelMaterial);panel.name='Flush concealed concrete sliding panel';
- box(2.94,.16,12.91,0,-.035,-5.545,floor);box(.22,3.3,12.75,-1.4,1.65,-5.625,stone);box(.22,3.3,12.75,1.4,1.65,-5.625,stone);box(2.9,.2,12.75,0,3.35,-5.625,stone);addConcealedCavern(root);
+ const panel=box(2.2,3.30,1.8,0,1.53,0,panelMaterial);panel.name='Flush concealed concrete sliding panel';
+ box(2.94,.16,12.75,0,-.035,-5.635,floor);box(.22,3.3,12.75,-1.4,1.65,-5.625,stone);box(.22,3.3,12.75,1.4,1.65,-5.625,stone);box(2.9,.2,12.75,0,3.35,-5.625,stone);addConcealedCavern(root);
  for(const side of[-1,1])box(.025,.035,12.5,side*1.275,.14,-6.1,glow);
  for(const z of[-2.2,-5.2,-8.2,-11.2]){box(.26,.025,.26,0,3.23,z,glow);const light=new THREE.PointLight(0xffcd85,.8,4.6,2);light.position.set(0,2.8,z);root.add(light);}
  const inner=[];for(const side of[-1,1]){const leaf=box(1.27,3.1,.13,side*.635,1.55,-9.4,steel);for(const y of[.18,1.15,2.95]){const strip=new THREE.Mesh(new THREE.BoxGeometry(1.22,.026,.015),gold);strip.position.set(0,y-1.55,.078);leaf.add(strip);}inner.push({leaf,side});}
