@@ -9,6 +9,7 @@ ${female?`if(y>.095&&y<.81){bool suit=vBeachArm<.3&&((y>.48&&y<.565&&x<.22)||(y>
 export function createBeachVisitors(scene,{getPlayer,getPlayerSeat=()=>null,beach}){
  const root=new THREE.Group();root.name='Beach and boardwalk visitors';root.userData.cameraPassThrough=true;scene.add(root);
  const specs=[
+  {name:'Beach visitor · dark-haired man in white swim shorts west',female:false,asset:'assets/fit-male-swim-walk-v292.glb',height:1.84,speed:1.10,route:[[-245,212],[-290,222],[-330,208],[-270,197]],pause:0},
   {name:'Beach visitor · muscular man in white swim shorts',female:false,asset:'assets/male-swim-walk-v286.glb',height:1.86,speed:1.10,route:[[68,219],[104,224],[146,219],[174,211],[122,211],[80,212]],pause:0},
   {name:'Boardwalk visitor · brunette blue swimsuit',female:true,look:'blue-reference',asset:'assets/blue-swimsuit-walk-v286.glb',height:1.7,speed:1.15,route:[[24,184.4],[95,184.4],[190,184.4],[270,184.4],[180,184.4],[80,184.4],[-45,184.4],[-115,184.4]],pause:0},
   {name:'Beach visitor · black hair white swimsuit west',female:true,asset:'assets/white-bikini-walk-v286.glb',height:1.7,rests:false,speed:1.45,route:[[-100,216],[-66,230],[-25,226],[-72,197]],pause:2,firstRest:20},

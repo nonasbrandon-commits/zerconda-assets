@@ -1,0 +1,12 @@
+Zerconda v292
+Added the supplied dark-haired male in white swim shorts and black sandals to the western beach. Route stays west of x=-200, opposite the existing male beach visitor. Existing visitors stay in place. Model uses the shared lazy-loaded walking controller.
+
+Preserves v291 wall-aligned kitchen appliances, v290 island/stool removal, v289 full stairwell base floors, and v288 recessed elevator and sealed wall junctions.
+
+Checks: eight visitors advance in route simulation; new western route remains on sand; animated rig has both hands and finite geometry over seven walk phases; walking render inspected; model optimized for web delivery. No full rendered WebGL browser check was available in the managed browser.
+
+Generated with fal.ai Meshy 7.1 from the supplied reference:
+Source model: https://v3b.fal.media/files/b/0ab39a89/cSFKcv6q1IBBa80sWGNjl_model.glb
+Source walking GLB: https://v3b.fal.media/files/b/0ab39aa0/6Xx-_brfN3VrnLjb5J6ac_walking.glb
+Preview: https://v3b.fal.media/files/b/0ab39a93/QoZpNzDL2uGNygQxSdrhx_preview.png
+Integration: assets/fit-male-swim-walk-v292.glb contains the compressed walking model, loaded by beach-visitors.js through reference-swim-visitor.js. Height 1.84m.
