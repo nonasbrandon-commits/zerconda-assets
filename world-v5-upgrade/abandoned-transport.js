@@ -1,0 +1,8 @@
+import * as THREE from 'three';
+// A camera-frustum test is deliberately conservative: even a partly visible vehicle stays put.
+export function createAbandonedTransport({getEntries,getObservers,canReturn=()=>true,now=()=>performance.now()/1000,delay=120}={}){
+ const records=new Map(),frustum=new THREE.Frustum(),matrix=new THREE.Matrix4(),sphere=new THREE.Sphere(),point=new THREE.Vector3();let nextCheck=0;
+ function watched(entry,home=false){const p=home?entry.home:entry.position();for(const observer of getObservers()){if(observer.position&&Math.hypot(observer.position.x-p.x,observer.position.z-p.z)<8)return true;const camera=observer.camera;if(!camera)continue;camera.updateMatrixWorld();matrix.multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse);frustum.setFromProjectionMatrix(matrix);sphere.set(point.set(p.x,(p.y||0)+1,p.z),entry.radius||3.5);if(frustum.intersectsSphere(sphere))return true;}return false;}
+ function update(){const time=now();if(time<nextCheck)return;nextCheck=time+.25;for(const entry of getEntries()){let record=records.get(entry.id);if(!record){record={home:{...entry.home},leftAt:time,used:false};records.set(entry.id,record);}if(entry.occupied()){record.leftAt=time;record.used=true;record.wasOccupied=true;continue;}if(record.wasOccupied){record.leftAt=time;record.wasOccupied=false;}const p=entry.position();if(Math.hypot(p.x-record.home.x,p.z-record.home.z)<.5){record.leftAt=time;continue;}if(time-record.leftAt<delay||watched(entry)||watched({...entry,home:record.home},true)||!canReturn(entry,record.home))continue;entry.restore(record.home);record.leftAt=time;record.used=false;}}
+ return{update,records};
+}

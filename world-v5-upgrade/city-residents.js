@@ -1,3 +1,4 @@
+import {createPhotographerRoutine} from './photographer-routine.js?v=20261122-photo-v258';
 import {createResidentRoaming} from './resident-roaming.js?v=20261122-private-homes-v214';
 import {createRealisticHuman} from './player-human.js?v=20261122-clean-hem-v213';
 import * as THREE from 'three';
@@ -20,7 +21,7 @@ export function createCityResidents(scene,{getPlayer=()=>({x:0,z:0}),getHeight=(
  else if((r.stuck+=dt)>4){r.route=[];r.remaining=0;r.stuck=0;}
  }a.walking=speed>0;a.item.visible=false;}
 
- a.human.update(dt,speed);a.item.visible=false;
+ a.human.update(dt,speed);a.item.visible=false;if(a.profile.id===29){if(!a.photographer)a.photographer=createPhotographerRoutine(a);a.photographer.update(dt,speed>0);}
  a.group.updateMatrixWorld(true);
  }}
  return{root,agents,readyPromise,update,get collisionPeople(){return agents.filter(a=>a.human.ready&&a.group.parent.visible).map(a=>a.group.getWorldPosition(new THREE.Vector3()));},dispose(){for(const a of agents){a.button.remove();a.human.dispose();a.group.removeFromParent();}root.removeFromParent();}};

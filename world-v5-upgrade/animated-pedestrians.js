@@ -68,7 +68,7 @@ export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=(
  function routePoint(a,advance){
   if(a.route.kind==='boardwalk'){const position=(a.position+advance)%1648,t=position<=824?position:1648-position;return{x:-266+t,z:a.route.z,position};}
   if(a.route.kind==='sidewalk')return{x:a.route.x,z:THREE.MathUtils.clamp(a.position+a.direction*advance,-80,80),position:THREE.MathUtils.clamp(a.position+a.direction*advance,-80,80)};
-  const length=a.route.getLength(),position=(a.position+advance)%length,p=a.route.getPointAt(position/length);return{x:p.x,z:p.z,position};
+  const length=a.route.getLength(),position=(a.position+advance*(a.routeDirection||1)+length)%length,p=a.route.getPointAt(position/length);return{x:p.x,z:p.z,position};
  }
  function update(dt,time){simulationTime+=dt;const player=getPlayer();if(mobile&&player){const near=[...agents].sort((a,b)=>Math.hypot(a.group.position.x-player.x,a.group.position.z-player.z)-Math.hypot(b.group.position.x-player.x,b.group.position.z-player.z)).filter(a=>Math.hypot(a.group.position.x-player.x,a.group.position.z-player.z)<210).slice(0,6);for(const a of agents){if(!near.includes(a)&&a.human.ready){a.human.dispose();a.group.visible=false;}}if(!loading){const a=near.find(a=>!a.human.ready);if(a){loading=true;a.human.load().then(()=>{a.group.visible=true}).catch(console.warn).finally(()=>loading=false);}}}const actorDeadline=performance.now()+4;let actorVisits=0;while(actorVisits++<agents.length&&performance.now()<actorDeadline){const a=agents[agentCursor++%agents.length];if(!a.human.ready)continue;const stepDt=Math.min(.15,simulationTime-(a.lastSimulationTime??simulationTime-dt));a.lastSimulationTime=simulationTime;const distance2=player?(a.group.position.x-player.x)**2+(a.group.position.z-player.z)**2:0;a.group.visible=distance2<180*180;if(!a.group.visible)continue;const old=a.group.position.clone(),advance=Math.min(stepDt,.15)*a.speed;a.waiting=false;
   if(a.route.kind==='sidewalk'&&(a.position>=79.99&&a.direction>0||a.position<=-79.99&&a.direction<0))a.direction*=-1;
@@ -93,7 +93,7 @@ export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=(
   else a.waiting=true;
   const moved=a.group.position.distanceTo(old);a.waiting=moved<.0001;
   a.blockedFor=a.waiting?(a.blockedFor||0)+stepDt:0;
-  if(a.blockedFor>6&&a.route.kind==='sidewalk'){a.direction*=-1;a.detour=null;a.search=null;a.retry=0;a.blockedFor=0;}if(!a.waiting){a.group.rotation.y=Math.atan2(a.group.position.x-old.x,a.group.position.z-old.z);a.distance+=moved;}
+  if(a.blockedFor>3&&a.vehicle&&!a.route.kind){a.routeDirection=-(a.routeDirection||1);a.detour=null;a.search=null;a.retry=0;a.blockedFor=0;}if(a.blockedFor>6&&a.route.kind==='sidewalk'){a.direction*=-1;a.detour=null;a.search=null;a.retry=0;a.blockedFor=0;}if(!a.waiting){a.group.rotation.y=Math.atan2(a.group.position.x-old.x,a.group.position.z-old.z);a.distance+=moved;}
   const moving=!a.waiting;a.phase+=moving?stepDt*(a.profile.activity==='bike'?7.4:1):0;a.human.update(stepDt,moving?a.speed:0,{vehicle:a.vehicle?a.profile.activity:null,phase:a.phase,detailed:distance2<70*70});a.vehicle?.update(a.distance,a.phase);
  }
  const deadline=performance.now()+2;let visited=0;while(visited++<agents.length&&performance.now()<deadline){const a=agents[searchCursor++%agents.length],job=a.search;if(!job)continue;job.work.step(deadline);if(job.work.done){if(job.work.path)a.detour={path:job.work.path,position:job.goal.position};a.search=null;a.retry=job.work.path?0:1.5;}}
