@@ -1,0 +1,2 @@
+Zerconda v294
+Shows stone-colored perimeter walls on the cab destination map and regular nearby/overview map. Shared wall geometry matches the physical north, west and east boundaries, preserving the east gate and west passage gaps. No south wall across the open beach. Cab whole-map view includes the wall ends at z=350. Maps draw walls below labels and player markers. Legend identifies tan lines as walls.
