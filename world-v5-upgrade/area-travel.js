@@ -30,7 +30,7 @@ export const AREA_DESTINATIONS=[
  {id:'forest',name:'North Woods Trails',group:'Forest & airfield',x:-220,z:-580,yaw:Math.PI},
  {id:'military',name:'Military Checkpoint',group:'Forest & airfield',x:465,z:-1048,yaw:Math.PI}
 ];
-export function createAreaTravel({onCall,onStop=()=>{}}){
+export function createAreaTravel({onCall,onCancel=()=>{},onStop=()=>{}}){
  document.getElementById('town-area-travel')?.remove();
  const style=document.createElement('style');style.textContent=`
  #town-area-travel{position:fixed;top:66px;right:max(12px,env(safe-area-inset-right));z-index:13000;box-sizing:border-box;width:240px;max-width:calc(100vw - 24px);padding:10px 12px;border:1px solid #91adb9;border-radius:12px;background:#102b3bec;box-shadow:0 4px 20px #0004;color:#f3f0e5;font:13px system-ui}
@@ -45,8 +45,8 @@ export function createAreaTravel({onCall,onStop=()=>{}}){
  `;document.head.appendChild(style);
  const panel=document.createElement('nav');panel.id='town-area-travel';panel.setAttribute('aria-label','Request Z Cab');
  const label=document.createElement('label');label.htmlFor='town-cab-call';label.textContent='Request Z Cab';panel.appendChild(label);
- const callButton=document.createElement('button');callButton.type='button';callButton.id='town-cab-call';callButton.textContent='Request pickup';callButton.setAttribute('aria-label','Request Z Cab to the nearest road');panel.appendChild(callButton);document.body.appendChild(panel);
+ const callButton=document.createElement('button');callButton.type='button';callButton.id='town-cab-call';callButton.textContent='Request pickup';callButton.setAttribute('aria-label','Request Z Cab to the nearest road');const row=document.createElement('div');row.style.cssText='display:flex;gap:6px;min-width:0';callButton.style.cssText='flex:1;min-width:0;padding:9px 6px';const cancelButton=document.createElement('button');cancelButton.id='town-cab-cancel';cancelButton.type='button';cancelButton.textContent='Cancel cab';cancelButton.style.cssText='display:none;flex:0 0 88px;width:88px;padding:9px 6px;background:#f2d9cb';cancelButton.onclick=()=>{onStop();onCancel();cancelButton.blur();};row.append(callButton,cancelButton);panel.append(row);document.body.appendChild(panel);
  callButton.onclick=()=>{onStop();onCall();callButton.blur();};
  for(const event of ['pointerdown','pointerup','click','keydown','keyup'])panel.addEventListener(event,e=>{e.stopPropagation();if(event==='pointerdown')onStop();});
- return {element:panel,callButton,destinations:AREA_DESTINATIONS};
+ return {element:panel,callButton,cancelButton,setCabState(state){const pending=['finding','enroute','arrived','riding'].includes(state);cancelButton.style.display=pending?'block':'none';callButton.disabled=['finding','enroute','riding'].includes(state);callButton.textContent=state==='finding'?'Finding cab…':state==='enroute'?'Cab on its way…':state==='arrived'?'Cab arrived':state==='riding'?'In Z Cab':'Request pickup';callButton.setAttribute('aria-label',callButton.textContent);},destinations:AREA_DESTINATIONS};
 }
