@@ -1,0 +1,2 @@
+Zerconda v288
+Recessed the central elevator into the right vestibule wall, with a doorway, floor and ceiling alcove. Updated cabin detection, door proximity, collision, floor action targets and arrival facing. Closed four wall junction gaps between the central vestibule and apartment corridor wings.
