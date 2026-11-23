@@ -1,0 +1,18 @@
+Zerconda v286 — beach and boardwalk reference characters
+
+Replaces the old beach man with the supplied muscular male in white swim shorts and black sandals. His shoulder width is reduced and torso/thigh volume increased per the requested proportions. Replaces the old yellow boardwalk visitor with the brunette in blue. Replaces the coral beach visitor with the supplied blonde in red. Adds the blonde in yellow and black-haired woman in white to the beach.
+
+The original red pier attendant and navy/white-shorts boardwalk walkers remain. The two existing lounging beach visitors remain. New reference visitors use animated walking rigs, proximity loading, fitted heights, grounded feet, and pedestrian detours.
+
+The red character's original rig had incorrect leg/hand skin weights. Repaired weights using the matching intact blonde swimsuit rig and checked the repaired walk before release.
+
+Checks: seven-visitor placement and route progression; skinned model fit under translated/rotated parents; seven animation phases finite with no body-height spikes; offline walking renders inspected. The managed browser has no WebGL context, so no full interactive rendered-browser verification was available. Deployed production bytes checked separately.
+
+Source walking assets generated with the fal.ai plugin from user-provided references:
+Blue: https://v3b.fal.media/files/b/0ab39997/giJt0xK3jox-F3V4vVqMX_walking.glb
+Red (original rig repaired locally): https://v3b.fal.media/files/b/0ab399b8/QmB_a3io5YIyq8eXpikJ__walking.glb
+Yellow: https://v3b.fal.media/files/b/0ab399bd/FpCdX2NU36A6-MnAnEbMU_walking.glb
+White: https://v3b.fal.media/files/b/0ab399d3/0z4iRMa1zWO-iZ5pe2-oj_walking.glb
+Male: https://v3b.fal.media/files/b/0ab399d6/2NM5Fc0kkgPIm0JKeSShK_walking.glb
+
+Integration: assets/*-v286.glb use Meshopt compression and WebP textures. reference-swim-visitor.js loads each model once and clones its skeleton. beach-visitors.js assigns walking routes; the main module and import map use the v286 cache key.

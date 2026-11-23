@@ -1,3 +1,4 @@
+import {createReferenceSwimVisitor} from './reference-swim-visitor.js?v=20261123-swimsuits-v286';
 import * as THREE from 'three';
 import {createFalBeachHuman} from './fal-beach-human.js?v=20261123-waterfront-v271';
 import {findPedestrianDetour,clearSegment} from './pedestrian-detour.js?v=20261119-fixes-v148';
@@ -9,13 +10,15 @@ ${female?`if(y>.095&&y<.81){bool suit=vBeachArm<.3&&((y>.48&&y<.565&&x<.22)||(y>
 export function createBeachVisitors(scene,{getPlayer,getPlayerSeat=()=>null,beach}){
  const root=new THREE.Group();root.name='Beach and boardwalk visitors';root.userData.cameraPassThrough=true;scene.add(root);
  const specs=[
-  {name:'Beach visitor · blue swim shorts',female:false,speed:1.10,route:[[68,219],[104,224],[146,219],[174,211],[122,211],[80,212]],pause:5},
-  {name:'Boardwalk visitor · blonde, yellow swimsuit',female:true,look:'blonde',speed:1.45,route:[[24,184.4],[95,184.4],[190,184.4],[270,184.4],[180,184.4],[80,184.4],[-45,184.4],[-115,184.4]],pause:1.2},
+  {name:'Beach visitor · muscular man in white swim shorts',female:false,asset:'assets/male-swim-walk-v286.glb',height:1.86,speed:1.10,route:[[68,219],[104,224],[146,219],[174,211],[122,211],[80,212]],pause:0},
+  {name:'Boardwalk visitor · brunette blue swimsuit',female:true,look:'blue-reference',asset:'assets/blue-swimsuit-walk-v286.glb',height:1.7,speed:1.15,route:[[24,184.4],[95,184.4],[190,184.4],[270,184.4],[180,184.4],[80,184.4],[-45,184.4],[-115,184.4]],pause:0},
   {name:'Beach visitor · brunette, turquoise swimsuit',female:true,look:'turquoise',rests:true,speed:1.45,route:[[-100,216],[-66,230],[-25,226],[-72,197]],pause:2,firstRest:20},
-  {name:'Beach visitor · black hair, coral swimsuit',female:true,look:'coral',rests:true,speed:1.40,route:[[32,199],[82,217],[130,231],[65,227]],pause:2,firstRest:40},
+  {name:'Beach visitor · blonde red swimsuit',female:true,look:'red-reference',asset:'assets/blonde-red-swimsuit-walk-v286.glb',height:1.7,rests:false,speed:1.15,route:[[32,199],[82,217],[130,231],[65,227]],pause:0,firstRest:40},
+  {name:'Beach visitor · blonde yellow swimsuit',female:true,asset:'assets/yellow-swimsuit-walk-v286.glb',height:1.7,speed:1.12,route:[[-46,205],[-105,221],[-126,205],[-70,194]],pause:0},
+  {name:'Beach visitor · black hair white swimsuit',female:true,asset:'assets/white-bikini-walk-v286.glb',height:1.7,speed:1.10,route:[[163,222],[126,211],[97,228],[145,231]],pause:0},
   {name:'Beach visitor · auburn, lilac swimsuit',female:true,look:'lilac',rests:true,speed:1.50,route:[[140,212],[108,198],[54,213],[111,231]],pause:2,firstRest:65}
  ];
- const visitors=specs.map((s,id)=>{const actor=createFalBeachHuman(s.female?'woman':'man',{look:s.look,naturalWalk:s.look==='blonde'}),anchor=new THREE.Group();anchor.name=s.name;anchor.position.set(s.route[0][0],beach.heightAt(...s.route[0])??.085,s.route[0][1]);root.add(anchor);anchor.add(actor.root);return{...s,id,actor,root:anchor,index:1,path:[],pauseLeft:0,clock:0,repath:0,distance:0,state:'walking',nextRest:s.firstRest??Infinity,seat:null,restCount:0,seatTime:0};});
+ const visitors=specs.map((s,id)=>{const actor=s.asset?createReferenceSwimVisitor({asset:s.asset,height:s.height,getPlayer,identity:s.name}):createFalBeachHuman(s.female?'woman':'man',{look:s.look,naturalWalk:s.look==='blonde'}),anchor=new THREE.Group();anchor.name=s.name;anchor.position.set(s.route[0][0],beach.heightAt(...s.route[0])??.085,s.route[0][1]);root.add(anchor);anchor.add(actor.root);return{...s,id,actor,root:anchor,index:1,path:[],pauseLeft:0,clock:0,repath:0,distance:0,state:'walking',nextRest:s.firstRest??Infinity,seat:null,restCount:0,seatTime:0};});
  const lounges=beach.lounges.map(l=>({l,x:l.root.position.x,z:l.root.position.z,c:Math.cos(l.root.rotation.y),s:Math.sin(l.root.rotation.y),tx:l.tablePoint.x,tz:l.tablePoint.z,ux:l.parasol.position.x,uz:l.parasol.position.z}));
  const square=(x,z,r)=>x*x+z*z<r*r;
  const blocked=(x,z)=>beach.access.blocks(x,z)||(z<182.4&&beach.boardwalkFurniture.blocks(x,z))||(z>191.4&&z<228&&beach.palms.some(p=>square(x-p.x,z-p.z,.48)))||(z>204&&z<228&&lounges.some(p=>{const dx=x-p.x,dz=z-p.z,lx=p.c*dx-p.s*dz,lz=p.s*dx+p.c*dz;return Math.abs(lx)<.57&&lz>-.98&&lz<1.25||square(x-p.tx,z-p.tz,.43)||square(lx-p.ux,lz-p.uz,.14);}));
@@ -25,7 +28,7 @@ export function createBeachVisitors(scene,{getPlayer,getPlayerSeat=()=>null,beac
  function approachFor(l){const s=l.seat,right={x:Math.cos(s.facing),z:-Math.sin(s.facing)},side=(l.tablePoint.x-s.x)*right.x+(l.tablePoint.z-s.z)*right.z>0?-1:1;return{x:s.x+right.x*.94*side,z:s.z+right.z*.94*side};}
  function chooseChair(v,legal){const player=getPlayer(),options=beach.lounges.filter(l=>!l.seat.npcOccupant&&l.seat!==getPlayerSeat()&&Math.hypot(player.x-l.seat.x,player.z-l.seat.z)>2.5).map(l=>({l,point:approachFor(l),d:Math.hypot(l.seat.x-v.root.position.x,l.seat.z-v.root.position.z)})).filter(o=>o.d<70&&[[0,0],[.28,0],[-.28,0],[0,.28],[0,-.28]].every(([dx,dz])=>legal(o.point.x+dx,o.point.z+dz))).sort((a,b)=>a.d-b.d);const picked=options[0];if(!picked){v.nextRest=v.clock+8;return;}v.lounge=picked.l;v.seat=picked.l.seat;v.seat.npcOccupant=v.name;v.approach=picked.point;v.state='approaching';v.approachSince=v.clock;v.path=[];v.repath=0;v.pauseLeft=0;}
  function update(dt){dt=Math.min(dt,.15);const p=getPlayer();for(const v of visitors){v.clock+=dt;v.repath-=dt;const a=v.root,old=a.position.clone(),visible=Math.hypot(p.x-a.position.x,p.z-a.position.z)<190;a.visible=visible;
-  const legal=(x,z)=>x>-420&&x<550&&z>181.5&&z<233&&!blocked(x,z)&&Math.hypot(x-p.x,z-p.z)>.85&&!visitors.some(other=>other!==v&&Math.hypot(x-other.root.position.x,z-other.root.position.z)<.70);
+  const legal=(x,z)=>x>-420&&x<550&&z>181.5&&z<233&&!blocked(x,z)&&Math.hypot(x-p.x,z-p.z)>1.05&&!visitors.some(other=>other!==v&&Math.hypot(x-other.root.position.x,z-other.root.position.z)<.95);
   if(v.rests&&v.state==='walking'&&v.clock>=v.nextRest)chooseChair(v,legal);
   if(v.state==='approaching'&&(v.clock-v.approachSince>55||getPlayerSeat()===v.seat||Math.hypot(p.x-v.seat.x,p.z-v.seat.z)<1.7)){release(v);v.state='walking';v.nextRest=v.clock+15;}
   let loungeBlend=0;
