@@ -1,3 +1,4 @@
+import {createFortuneShadeTrees} from './fortune-shade-trees.js?v=20261123-traffic-v272';
 import {createKateConversation} from './kate-conversation.js?v=20261123-needle-walk-v271';
 import {createNeedlePlaidResident} from './needle-plaid-resident.js?v=20261123-needle-walk-v271';
 import {createBoardwalkWalker} from './boardwalk-walker.js?v=20261123-waterfront-v271';
@@ -7,7 +8,7 @@ import {createFountainResident} from './fountain-resident.js?v=20261123-boardwal
 import {hiddenPassageHeightAt,cutCaveTerrain} from './concealed-cavern.js?v=20261123-cave-v268';
 import {createHiddenForestPassage} from './hidden-forest-passage.js?v=20261123-cave-v268';
 import {createForestGroundCover,unifyForestGround} from './forest-ground-cover.js?v=20261123-natural-v264';
-import {clearRoadSidewalkOverlaps} from './road-surface-joins.js?v=20261123-roads-v261';
+import {clearRoadSidewalkOverlaps} from './road-surface-joins.js?v=20261123-traffic-v272';
 import {createForestLandmarkRock} from './forest-landmark-rock.js?v=20261123-roads-v261';
 import {createAbandonedTransport} from './abandoned-transport.js?v=20261123-return-v258';
 import {loadConceptSUV,createConceptSUV} from './concept-suv.js?v=20261122-concept-suv-v256';
@@ -29,7 +30,7 @@ import {createRoadTreeMaintenance} from './road-tree-maintenance.js?v=20261122-a
 import {createChessTables} from './chess-tables.js?v=20261122-startup-v253';
 import {createRealEstate} from './real-estate.js?v=20261122-listings-v238';
 import {loadStreetTree} from './street-tree-assets.js?v=20261121-fast-start-v205';
-import {createAmbientTraffic} from './ambient-traffic.js?v=20261123-natural-v264';
+import {createAmbientTraffic} from './ambient-traffic.js?v=20261123-traffic-v272';
 import {createRoadMapGeometry} from './road-map-geometry.js?v=20261123-waterfront-v271';
 import {createAreaResume,createSceneryYield} from './resume-area.js?v=20261121-fast-start-v205';
 import {createCityResidents} from './city-residents.js?v=20261123-boardwalk-v269';
@@ -43,7 +44,7 @@ import {createVehicleHorns} from './vehicle-horns.js?v=20261121-town-v191';
 import {measureVehicleFootprint,vehicleDescriptor,vehiclePoseBlocked,sweepVehiclePose} from './vehicle-collision.js?v=20261121-town-v191';
 import {createShaderWarmup} from './shader-warmup.js?v=20261122-startup-v253';
 import {loadReferenceProp} from './reference-props.js?v=20261120-reference-props-v180';
-import {createZCabs}from './z-cabs.js?v=20261123-natural-v264';
+import {createZCabs}from './z-cabs.js?v=20261123-traffic-v272';
 import {createLuxurySedan,loadLuxurySedan,sedanColors} from './luxury-sedan.js?v=20261120-restore-silver-v185';
 import {createBeachVisitors} from './beach-visitors.js?v=20261123-waterfront-v271';
 import {positionBeachLoungeCamera} from './beach-lounge-camera.js?v=20261119-coastal-breeze-v154';
@@ -75,7 +76,7 @@ import {createDamagedWallPanel,createBlockedWallOpening,WALL_OPENING} from './bl
 import {createAreaTravel} from './area-travel.js?v=20261123-cab-v260';
 import {createMilitaryBase} from './military-base.js?v=20261122-admin-transport-v245';
 import {upgradeMobileControls} from './mobile-controls.js?v=20261118-z-needle-v107';
-import {createAirportLoop} from './airport-loop.js?v=20261122-listings-v238';
+import {createAirportLoop} from './airport-loop.js?v=20261123-traffic-v272';
 import {createNorthernForest} from './northern-forest.js?v=20261123-roads-v261';
 import {createMobilePerformance} from './mobile-performance.js?v=20261120-player-detail-v181-20261119-rv-junction-v128';
 import {createTownObstacles} from './town-obstacles.js?v=20261121-forward-slide-v210';
@@ -977,6 +978,7 @@ await yieldStartup();
 // Place Brewstone on the north side of the east-west street, opposite the dealership.
 // Its south-facing entrance and patio face the road; the showroom stays unobstructed.
 zFortune=createZFortune(scene,{getPlayer:()=>player});
+const fortuneShadeTrees=createFortuneShadeTrees(scene);
 await yieldStartup();
 
 const coffeeShop=createCoffeeShop(scene,{x:-28,z:-132,getPlayer:()=>player});
@@ -1928,6 +1930,7 @@ function walkable(x,z){const secretWalk=hiddenForestPassage.canWalk(x,z);if(secr
  if(privateHomeBlocks(x,z)||residentialShadeTrees?.blocks(x,z)||museumGardenTrees?.blocks(x,z))return false;
  if(scooters?.inside)return scooters.canWalkInterior(x,z);
  if(zCabs?.blocks(x,z))return false;if(ambientTraffic?.collisionVehicles.some(v=>Math.hypot(x-v.x,z-v.z)<1.5))return false;
+ if(fortuneShadeTrees.blocks(x,z))return false;
  const fortuneWalk=zFortune?.canWalk(x,z);if(fortuneWalk!==null&&fortuneWalk!==undefined)return fortuneWalk;
  const museumWalk=museum?.canWalk(x,z,!!activeCar||!!scooters?.riding||!!skate?.riding);if(museumWalk!==null&&museumWalk!==undefined)return museumWalk;
  const storeWalk=zStore?.canWalk(x,z);if(storeWalk!==null&&storeWalk!==undefined)return storeWalk;

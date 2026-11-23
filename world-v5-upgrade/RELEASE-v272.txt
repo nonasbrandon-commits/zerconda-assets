@@ -1,0 +1,5 @@
+Cabs and ambient traffic now use a single canonical traffic-junctions module, sharing intersection reservations. Both traffic systems avoid reversing while correctly waiting for their turn; regular traffic now has safe swept reverse/replan recovery. Validated crossing cab trip arrived in 7.1 seconds with no vehicle overlap.
+Added eleven tall/medium shade trees beside Z Fortune and the northwest residential lawn; 153 varied-height instanced evergreen trees fill the museum's eastern lawn. Sidewalks and building entrance remain clear; trunks participate in walking collision.
+Airport loop curb meshes are included in road/sidewalk overlap trimming, removing stray coplanar white strips across connecting roadways while preserving road edges elsewhere.
+Includes v271 expanded apartments, level connected waterfront, corrected beach map, Kate conversation and Needle walking voice updates.
+Character work remains pending: latest red-bikini ZIP requires image-specific fal.ai upload consent; experimental brunette hand meshes remain excluded from production due to visual defects.
