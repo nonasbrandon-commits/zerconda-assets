@@ -1,0 +1,11 @@
+Waterfront v285
+White-shorts reference character added as one separate walking visitor on the boardwalk. Original brunette retained. Models use the same reusable walker with separate identity, asset and start-distance settings. White outfit lazily loads within 100m. Reference upload specifically approved by the user; no new bikini variants generated because the earlier outfit-edit request was blocked.
+Low pier approach accepts entry from either dry-sand edge. Elevated water edges retain player-radius protection. Plank tops are clipped to avoid coplanar overlaps; main ramp endpoints use explicit matching top coordinates and heights. 144 square metres of duplicate deck faces removed.
+Watercraft mouse input: scroll throttle, hold Forward or Reverse, left-drag steering, right-drag camera, Brake. Keyboard remains available. Reset input when locked, blurred or dismounted; replace keyboard-required help.
+Checks: JS syntax; isolated low-shore collision and ramp-height assertions; plank overlap subtraction; wheel, held buttons, steering/look, brake and cleanup event tests; 7 animated white-character poses with finite geometry and stable height; walking still render; optimized web GLB. Full shared-browser WebGL unavailable.
+Generated assets:
+Base: https://v3b.fal.media/files/b/0ab3991f/O-t0NYpeUAcdIuuXHYAVC_base_basic_pbr.glb
+Walking: https://v3b.fal.media/files/b/0ab39930/Qm2Kf5-2gP14vwPyEsn2Z_walking.glb
+Rigged: https://v3b.fal.media/files/b/0ab39930/uiOlwGrBtmAxJ-6Ho5G8R_rigged_character.glb
+
+Detailed sport jet skis replace both simple craft (blue and red): sculpted black hull, gloss panels, solid cushion and pedestal, ribbed footwells, digital cockpit, grips, levers, bow lamps and jet nozzle. Eight material batches per craft. Offline render inspected; finite geometry and rider/collision-compatible size checked. Existing boarding, rental, wake and movement logic retained.

@@ -1,10 +1,11 @@
+import {createWatercraftMouseControls} from './watercraft-mouse-controls.js?v=20261123-waterfront-v285';
 import {createChessPartner} from './chess-partner.js?v=20261123-town-v282';
 import {clearPedestrianPathMarkings} from './path-markings.js?v=20261123-pier-reference-v274';
 import {createPowersportsCenter} from './zerconda-powersports.js?v=20261123-powersports-v273';
 import {createFortuneShadeTrees} from './fortune-shade-trees.js?v=20261123-traffic-v272';
 import {createKateConversation} from './kate-conversation.js?v=20261123-town-v282';
 import {createNeedlePlaidResident} from './needle-plaid-resident.js?v=20261123-town-v282';
-import {createBoardwalkWalker} from './boardwalk-walker.js?v=20261123-town-v282';
+import {createBoardwalkWalker} from './boardwalk-walker.js?v=20261123-waterfront-v285';
 import {createCrowdSpacing} from './crowd-spacing.js?v=20261123-space-v265';
 import {applyPlayerSeatPose} from './player-seat-pose.js?v=20261123-boardwalk-v269';
 import {createFountainResident} from './fountain-resident.js?v=20261123-boardwalk-v269';
@@ -16,7 +17,7 @@ import {createForestLandmarkRock} from './forest-landmark-rock.js?v=20261123-roa
 import {createAbandonedTransport} from './abandoned-transport.js?v=20261123-return-v258';
 import {loadConceptSUV,createConceptSUV} from './concept-suv.js?v=20261122-concept-suv-v256';
 import {yieldStartup} from './startup-yield.js?v=20261122-startup-v253';
-import {createControlGuide} from './control-guide.js?v=20261123-driving-v258';
+import {createControlGuide} from './control-guide.js?v=20261123-waterfront-v285';
 import {createAdminTransport} from './admin-transport.js?v=20261122-admin-transport-v245';
 import {createForestGravelRoads} from './forest-gravel-roads.js?v=20261123-natural-v264';
 import {ambientResidentsAllowed} from './ambient-resident-areas.js?v=20261122-listings-v238';
@@ -98,7 +99,7 @@ import {createZercondaNews} from './zerconda-news.js?v=20261123-cave-v268';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261121-town-v191';
 import {createBowlingAlley} from './bowling-alley.js?v=20261123-walkin-v265';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261123-return-v258';
-import {createSeasidePier} from './seaside-pier.js?v=20261123-pier-reference-v274';
+import {createSeasidePier} from './seaside-pier.js?v=20261123-waterfront-v285';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261123-alpine-v259';
 import {createClubZerconda} from './club-zerconda.js?v=20261122-trail-v228';
@@ -1337,7 +1338,7 @@ await yieldStartup();
 
 // Third-person walking avatar: forward-facing, visible from the default camera.
 // Kept lightweight so mobile devices do not need an additional model download.
-const pedestrianSystem=createPedestrians(scene,{count:20,getPlayer:()=>player,getPeople:()=>[...cityResidents.collisionPeople,...(needlePlaidResident.group.visible?[needlePlaidResident.group.position]:[]),...(boardwalkWalker.group.visible?[boardwalkWalker.group.position]:[]),...(fountainResident.group.visible?[fountainResident.group.position]:[])],groundHeightAt:(x,z)=>groundHeightAt(x,z)+.004,canWalk:(x,z)=>ambientResidentsAllowed(x,z)&&walkable(x,z)});
+const pedestrianSystem=createPedestrians(scene,{count:20,getPlayer:()=>player,getPeople:()=>[...cityResidents.collisionPeople,...(needlePlaidResident.group.visible?[needlePlaidResident.group.position]:[]),...(boardwalkWalker.group.visible?[boardwalkWalker.group.position]:[]),...(whiteFitnessWalker.group.visible?[whiteFitnessWalker.group.position]:[]),...(fountainResident.group.visible?[fountainResident.group.position]:[])],groundHeightAt:(x,z)=>groundHeightAt(x,z)+.004,canWalk:(x,z)=>ambientResidentsAllowed(x,z)&&walkable(x,z)});
 await yieldStartup();
 
 const playerRig=pedestrianSystem.createHuman(0);
@@ -1407,6 +1408,7 @@ await yieldStartup();
 const playerCameraGuard=createPlayerCameraGuard();
 await yieldStartup();
 
+let boatMouseControls=null,boatLookYaw=0;
 let driverLookYaw=0,driverLookPitch=0,driverSteer=0,driverWheelThrottle=0,drivingControls=null,mouseVehicleSteering=null,mouseSkateControls=null,rideWheelThrottle=0;
 await yieldStartup();
 
@@ -1759,6 +1761,7 @@ const townControls=createTownInteractions({
 });
 await yieldStartup();
 
+boatMouseControls=createWatercraftMouseControls({canvas:renderer.domElement,getCraft:()=>marine?.riding?marine:null,isLocked:()=>movementLocked,onLook:(dx,dy)=>{boatLookYaw=THREE.MathUtils.clamp(boatLookYaw-dx*.003,-1.5,1.5);pitch=THREE.MathUtils.clamp(pitch+dy*.0025,-.5,.5);}});
 mouseVehicleSteering=createMouseVehicleSteering({canvas:renderer.domElement,getVehicle:()=>activeCar,onLook:(dx,dy)=>{driverLookYaw=THREE.MathUtils.clamp(driverLookYaw-dx*.003,-1.25,1.25);driverLookPitch=THREE.MathUtils.clamp(driverLookPitch+dy*.0025,-.45,.55);},isLocked:()=>!!(hotDogVendor?.panelOpen||zStore?.panelOpen||playerMenu?.panelOpen||tattooShop?.panelOpen||news?.panelOpen||club?.gameOpen||carnival?.gameOpen)||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)});
 await yieldStartup();
 
@@ -1771,7 +1774,7 @@ await yieldStartup();
 const beachVisitors=createBeachVisitors(scene,{getPlayer:()=>player,getPlayerSeat:()=>sittingSeat,beach:southBeach});
 await yieldStartup();
 
-marine=createSeasidePier(scene,{getPlayer:()=>player,getYaw:()=>yaw,getAvatar:()=>avatar,onRodEquip:()=>zStore?.chooseHand(''),canInteract:()=>!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!scooters?.riding&&!skate?.riding&&!activeCar&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!insideNeedleLobby&&!onObservationDeck,onMessage:message=>townControls.notify(message),onTeleport:(x,y,z,heading)=>{yaw=heading;pitch=-.08;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;camera.position.set(x-Math.sin(yaw)*7,y+3.0,z-Math.cos(yaw)*7);}});
+marine=createSeasidePier(scene,{getPlayer:()=>player,getYaw:()=>yaw,getAvatar:()=>avatar,onRodEquip:()=>zStore?.chooseHand(''),canInteract:()=>!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!scooters?.riding&&!skate?.riding&&!activeCar&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!insideNeedleLobby&&!onObservationDeck,onMessage:message=>townControls.notify(message),onTeleport:(x,y,z,heading)=>{boatMouseControls?.reset();boatLookYaw=0;yaw=heading;pitch=-.08;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;camera.position.set(x-Math.sin(yaw)*7,y+3.0,z-Math.cos(yaw)*7);}});
 await yieldStartup();
 
 scooters=createScooterRentals(scene,{onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=-.04;camera.position.set(x-Math.sin(yaw)*2.4,y+2.1,z-Math.cos(yaw)*2.4);},getPlayer:()=>player,getYaw:()=>yaw,getHeight:groundHeightAt,canInteract:()=>!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!activeCar&&!marine.riding&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,canMove:(x,z)=>walkable(x,z)&&!southBeach.blocksVehicle(x,z),onMessage:m=>townControls.notify(m),onStop:()=>{keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();}});
@@ -1853,9 +1856,10 @@ await yieldStartup();
 airportLoop=createAirportLoop(scene,{roadMaterial:asphalt,walkMaterial:paving});
 await yieldStartup();
 northernForest=createNorthernForest(scene,{mobile:MOBILE});
-const crowdSpacing=createCrowdSpacing({getPeople:()=>[...pedestrianSystem.agents.filter(a=>a.human.ready).map(a=>a.group),...cityResidents.agents.filter(a=>a.human.ready&&!a.staff&&!a.seated).map(a=>a.group)],getAnchors:()=>[player,...(needlePlaidResident.group.visible?[needlePlaidResident.group.position]:[]),...(boardwalkWalker.group.visible?[boardwalkWalker.group.position]:[]),...cityResidents.agents.filter(a=>a.seated&&a.human.ready).map(a=>a.group.position),...(fountainResident.group.visible?[fountainResident.group.position]:[])],canWalk:(x,z)=>ambientResidentsAllowed(x,z)&&walkable(x,z),getHeight:standingHeightAt});
+const crowdSpacing=createCrowdSpacing({getPeople:()=>[...pedestrianSystem.agents.filter(a=>a.human.ready).map(a=>a.group),...cityResidents.agents.filter(a=>a.human.ready&&!a.staff&&!a.seated).map(a=>a.group)],getAnchors:()=>[player,...(needlePlaidResident.group.visible?[needlePlaidResident.group.position]:[]),...(boardwalkWalker.group.visible?[boardwalkWalker.group.position]:[]),...(whiteFitnessWalker.group.visible?[whiteFitnessWalker.group.position]:[]),...cityResidents.agents.filter(a=>a.seated&&a.human.ready).map(a=>a.group.position),...(fountainResident.group.visible?[fountainResident.group.position]:[])],canWalk:(x,z)=>ambientResidentsAllowed(x,z)&&walkable(x,z),getHeight:standingHeightAt});
 const needlePlaidResident=createNeedlePlaidResident(scene,{getPlayer:()=>player,getHeight:standingHeightAt,canWalk:walkable,canGreet:()=>!activeCar&&!zCabs?.riding&&!playerMenu?.panelOpen,getPeople:()=>[...cityResidents.collisionPeople,...pedestrianSystem.agents.filter(a=>a.human.ready&&a.group.visible).map(a=>a.group.position)]});
-const boardwalkWalker=createBoardwalkWalker(scene,{getPlayer:()=>player,getPeople:()=>[...pedestrianSystem.agents.filter(a=>a.human.ready&&a.group.visible).map(a=>a.group.position),...cityResidents.collisionPeople],canWalk:walkable});
+const boardwalkWalker=createBoardwalkWalker(scene,{getPlayer:()=>player,getPeople:()=>[...pedestrianSystem.agents.filter(a=>a.human.ready&&a.group.visible).map(a=>a.group.position),...cityResidents.collisionPeople,...(whiteFitnessWalker.group.visible?[whiteFitnessWalker.group.position]:[])],canWalk:walkable});
+const whiteFitnessWalker=createBoardwalkWalker(scene,{getPlayer:()=>player,modelAsset:'assets/white-fitness-walk-v285.glb',name:'Boardwalk visitor · white shorts',referenceSource:'Zerconda_Two_Fitness_Characters.zip',startDistance:300,loadRadius:100,getPeople:()=>[...pedestrianSystem.agents.filter(a=>a.human.ready&&a.group.visible).map(a=>a.group.position),...cityResidents.collisionPeople,...(boardwalkWalker.group.visible?[boardwalkWalker.group.position]:[])],canWalk:walkable});
 const fountainResident=createFountainResident(scene,{getPlayer:()=>player,getHeight:standingHeightAt,getSeat:()=>realisticPlaza?.seats?.[4]||null});fountainResident.group.name='Kate · seated fountain visitor';fountainResident.group.userData.npcIdentity='Kate';
 const kateConversation=createKateConversation({getPlayer:()=>player,getKate:()=>fountainResident,canTalk:()=>!activeCar&&!zCabs?.riding&&!playerMenu?.panelOpen&&!cityMap.expanded});
 const forestGroundCover=createForestGroundCover(scene,{getPlayer:()=>player,getRoadPolygons:()=>roadMap.polygons,getForestSegments:()=>[...(northernForest?.segments||[]),...(camp?.trailSegments||[]).map(([ax,az,bx,bz])=>({ax,az,bx,bz,width:3.2}))],getHeight:()=>.02,mobile:MOBILE});
@@ -2025,7 +2029,7 @@ const gravelTires=createGravelTireAudio({scene,getVehicle:()=>{if(adminTransport
 await yieldStartup();
 
 function animate(){
- requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);forestGroundCover.update();chessPartner.update(motionDt);chessTables.update(motionDt);fountainResident.update(dt);boardwalkWalker.update(motionDt);needlePlaidResident.update(motionDt);kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
+ requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);forestGroundCover.update();chessPartner.update(motionDt);chessTables.update(motionDt);fountainResident.update(dt);boardwalkWalker.update(motionDt);whiteFitnessWalker.update(motionDt);needlePlaidResident.update(motionDt);kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
  if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
  updateTreeBreeze(elapsed);airDancers.update(elapsed);dealership.update?.(motionDt);coffeeShop.update(motionDt);powersports?.update(motionDt);zFortune?.update(motionDt);
@@ -2070,7 +2074,7 @@ function animate(){
  const inputLocked=movementLocked=!playable||hiddenForestPassage.panelOpen||controlsGuide?.panelOpen||apartments.riding||chessTables.panelOpen||realEstate.panelOpen||militaryAccess?.panelOpen||zCabs?.riding||zCabs?.panelOpen||homePassageActive()||cityMap.expanded||hotDogVendor?.panelOpen||zStore?.panelOpen||playerMenu?.panelOpen||tattooShop?.panelOpen||courtGames?.tennisActive||courtGames?.shooting||airfield?.controlsLocked||office?.riding||carnival?.riding||carnival?.gameOpen||observationNeedle.riding||villas?.panelOpen||barber?.panelOpen||club.gameOpen||(ownableHomes.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.controlsLocked)))))||marine.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName);
  const f=inputLocked?0:townControls.backward?-1:Math.max(Number(keys.has('KeyW')||keys.has('ArrowUp')),Number(townControls.walking))-Number(keys.has('KeyS')||keys.has('ArrowDown'));
  const side=inputLocked?0:Number(keys.has('KeyD')||keys.has('ArrowRight'))-Number(keys.has('KeyA')||keys.has('ArrowLeft'));
- adminTransport.update(motionDt,{locked:inputLocked});controlsGuide.update(motionDt);
+ boatMouseControls.update();adminTransport.update(motionDt,{locked:inputLocked});controlsGuide.update(motionDt);
  if(adminTransport.active){movement.vx=movement.vz=movement.wheelImpulse=0;
  }else if(zCabs?.riding){movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
  }else if(carnival.riding||carnival.gameOpen){movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
@@ -2081,7 +2085,7 @@ function animate(){
  }else if(scooters.riding){
   yaw-=side*motionDt*1.65;const scooterInput=inputLocked?0:(f||Number(mouseSkateControls.pushing)||rideWheelThrottle);if(inputLocked)scooters.stop();scooters.drive(motionDt,scooterInput,yaw);rideWheelThrottle*=Math.exp(-3*motionDt);if(Math.abs(rideWheelThrottle)<.04)rideWheelThrottle=0;movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
  }else if(marine.riding){
-  yaw-=side*dt*1.1;marine.drive(dt,{forward:f,yaw});movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
+  const boatSteer=inputLocked?0:(side||boatMouseControls.steer),boatThrottle=inputLocked||boatMouseControls.braking?0:(f||boatMouseControls.throttle);yaw-=boatSteer*motionDt*1.1;if(inputLocked||boatMouseControls.braking)marine.stop();marine.drive(motionDt,{forward:boatThrottle,yaw});movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
  }else if(activeCar){
   const c=activeCar,throttle=inputLocked?0:(drivingControls.throttle||f||driverWheelThrottle),steering=inputLocked?0:(drivingControls.steer||side||mouseVehicleSteering.steer);
   driverWheelThrottle*=Math.exp(-3*motionDt);
@@ -2149,7 +2153,8 @@ function animate(){
   const target=new THREE.Vector3(player.x,eye,player.z);
   // Camera elevation and target elevation must not cancel one another.
   // Positive pitch looks UP, negative pitch looks DOWN, with full vertical range.
-  const desired=new THREE.Vector3(player.x-Math.sin(yaw)*dist,eye+(indoors||!marine.riding&&!onObservationDeck&&!insideNeedleLobby ? .45 : 1.15),player.z-Math.cos(yaw)*dist);
+  const viewYaw=marine.riding?yaw+boatLookYaw:yaw;
+  const desired=new THREE.Vector3(player.x-Math.sin(viewYaw)*dist,eye+(indoors||!marine.riding&&!onObservationDeck&&!insideNeedleLobby ? .45 : 1.15),player.z-Math.cos(viewYaw)*dist);
   camera.position.lerp(desired,Math.min(1,dt*8));
   scooters.clampCamera(camera.position);
   museum?.clampCamera(camera.position,player);
