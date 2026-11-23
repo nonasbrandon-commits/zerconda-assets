@@ -1,10 +1,12 @@
-import {createForestLandmarkRock} from './forest-landmark-rock.js?v=20261123-rock-v260';
+import {createForestGroundCover,unifyForestGround} from './forest-ground-cover.js?v=20261123-roads-v261';
+import {clearRoadSidewalkOverlaps} from './road-surface-joins.js?v=20261123-roads-v261';
+import {createForestLandmarkRock} from './forest-landmark-rock.js?v=20261123-roads-v261';
 import {createAbandonedTransport} from './abandoned-transport.js?v=20261123-return-v258';
 import {loadConceptSUV,createConceptSUV} from './concept-suv.js?v=20261122-concept-suv-v256';
 import {yieldStartup} from './startup-yield.js?v=20261122-startup-v253';
 import {createControlGuide} from './control-guide.js?v=20261123-driving-v258';
 import {createAdminTransport} from './admin-transport.js?v=20261122-admin-transport-v245';
-import {createForestGravelRoads} from './forest-gravel-roads.js?v=20261122-listings-v238';
+import {createForestGravelRoads} from './forest-gravel-roads.js?v=20261123-roads-v261';
 import {ambientResidentsAllowed} from './ambient-resident-areas.js?v=20261122-listings-v238';
 import {createMilitaryAdminAccess} from './military-admin-access.js?v=20261122-listings-v238';
 import {createGravelTireAudio} from './gravel-tire-audio.js?v=20261122-listings-v238';
@@ -23,7 +25,7 @@ import {createAmbientTraffic} from './ambient-traffic.js?v=20261122-listings-v23
 import {createRoadMapGeometry} from './road-map-geometry.js?v=20261121-fast-start-v205';
 import {createAreaResume,createSceneryYield} from './resume-area.js?v=20261121-fast-start-v205';
 import {createCityResidents} from './city-residents.js?v=20261122-photo-v258';
-import {createPerimeterForest} from './perimeter-forest.js?v=20261123-rock-v260';
+import {createPerimeterForest} from './perimeter-forest.js?v=20261123-roads-v261';
 import {updateTreeBreeze} from './tree-breeze.js?v=20261121-forest-airfield-v193';
 import {createTownSidewalkMaterial} from './town-sidewalks.js?v=20261121-forest-airfield-v193';
 import {createPlayerCameraGuard} from './player-camera-guard.js?v=20261121-town-v191';
@@ -33,7 +35,7 @@ import {createVehicleHorns} from './vehicle-horns.js?v=20261121-town-v191';
 import {measureVehicleFootprint,vehicleDescriptor,vehiclePoseBlocked,sweepVehiclePose} from './vehicle-collision.js?v=20261121-town-v191';
 import {createShaderWarmup} from './shader-warmup.js?v=20261122-startup-v253';
 import {loadReferenceProp} from './reference-props.js?v=20261120-reference-props-v180';
-import {createZCabs}from './z-cabs.js?v=20261123-cab-v260';
+import {createZCabs}from './z-cabs.js?v=20261123-roads-v261';
 import {createLuxurySedan,loadLuxurySedan,sedanColors} from './luxury-sedan.js?v=20261120-restore-silver-v185';
 import {createBeachVisitors} from './beach-visitors.js?v=20261122-coastal-v257';
 import {positionBeachLoungeCamera} from './beach-lounge-camera.js?v=20261119-coastal-breeze-v154';
@@ -66,7 +68,7 @@ import {createAreaTravel} from './area-travel.js?v=20261123-cab-v260';
 import {createMilitaryBase} from './military-base.js?v=20261122-admin-transport-v245';
 import {upgradeMobileControls} from './mobile-controls.js?v=20261118-z-needle-v107';
 import {createAirportLoop} from './airport-loop.js?v=20261122-listings-v238';
-import {createNorthernForest} from './northern-forest.js?v=20261122-shrub-v240';
+import {createNorthernForest} from './northern-forest.js?v=20261123-roads-v261';
 import {createMobilePerformance} from './mobile-performance.js?v=20261120-player-detail-v181-20261119-rv-junction-v128';
 import {createTownObstacles} from './town-obstacles.js?v=20261121-forward-slide-v210';
 import {createSeasideCarnival} from './seaside-carnival.js?v=20261121-cab-v188';
@@ -78,11 +80,11 @@ import {createBusinessCentre} from './business-centre.js?v=20261119-entrance-ste
 import {createSkatePark} from './skate-park.js?v=20261119-entrance-steering-v118';
 import {createAirfield} from './airfield.js?v=20261121-profile-studio-v203';
 import * as THREE from 'three';
-import {createForestCampground} from './forest-campground.js?v=20261121-forest-airfield-v193';
+import {createForestCampground} from './forest-campground.js?v=20261123-roads-v261';
 import {createPremierHomes} from './premier-homes.js?v=20261122-controls-v246';
 import {createZercondaNews} from './zerconda-news.js?v=20261121-fast-start-v205';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261121-town-v191';
-import {createBowlingAlley} from './bowling-alley.js?v=20261122-luxe-v258';
+import {createBowlingAlley} from './bowling-alley.js?v=20261123-floor-v261';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261123-return-v258';
 import {createSeasidePier} from './seaside-pier.js?v=20261120-still-seated-v176';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
@@ -105,7 +107,7 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261121-entry-fix-v198';
 import {addAirDancers} from './air-dancers.js?v=20261120-facing-v184';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261121-cab-v188';
-import {createCityMap} from './top-city-map.js?v=20261122-map-v250';
+import {createCityMap} from './top-city-map.js?v=20261123-roads-v261';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261122-coastal-v257';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261122-controls-v246';
@@ -1835,6 +1837,7 @@ await yieldStartup();
  townObstacles=createTownObstacles({scene,getFloor:standingHeightAt,getDynamic:()=>cars.filter(c=>c!==activeCar).map(c=>c.group).concat(zCabs?.vehicles.map(v=>v.root)||[]),ignore:o=>o===avatar||o===realisticPlayer.root||o.name==='Cloud sky'||o.name==='Zerconda South Beach'||cars.some(c=>c.group===o)||zCabs?.vehicles.some(v=>v.root===o)});
 await yieldStartup();
 const forestLandmarkRock=createForestLandmarkRock(scene);
+const westForestBoulder=createForestLandmarkRock(scene,{x:-692,z:-625,low:true});westForestBoulder.root.name='Low mossy boulder · western North Woods clearing';
 townObstacles.scan();
 await yieldStartup();
 
@@ -1843,6 +1846,7 @@ await yieldStartup();
 airportLoop=createAirportLoop(scene,{roadMaterial:asphalt,walkMaterial:paving});
 await yieldStartup();
 northernForest=createNorthernForest(scene,{mobile:MOBILE});
+const forestGroundCover=createForestGroundCover(scene,{getPlayer:()=>player,getRoadPolygons:()=>roadMap.polygons,getForestSegments:()=>[...(northernForest?.segments||[]),...(camp?.trailSegments||[]).map(([ax,az,bx,bz])=>({ax,az,bx,bz,width:3.2}))],getHeight:()=>.02,mobile:MOBILE});
 await yieldStartup();
 militaryBase=createMilitaryBase(scene,{getPlayer:()=>player,hasClearance:militaryAccess.hasClearance,onAccessRequest:militaryAccess.request,onStop:()=>{keys.clear();townControls.stop();movement.vx=movement.vz=0;},canUseTower:()=>!adminTransport?.active&&!activeCar&&!zCabs?.riding,onTeleport:(x,y,z)=>{player.x=x;player.z=z;keys.clear();townControls.stop();movement.vx=movement.vz=0;yaw=0;pitch=0;avatar.position.set(x,y,z);camera.position.set(x,y+1.68,z);},onMessage:m=>townControls.notify(m),onReject:(x,z)=>{player.x=x;player.z=z;movement.vx=0;movement.vz=0;keys.clear();townControls.stop();}});
 await yieldStartup();
@@ -2007,7 +2011,7 @@ const gravelTires=createGravelTireAudio({scene,getVehicle:()=>{if(adminTransport
 await yieldStartup();
 
 function animate(){
- requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
+ requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();forestGroundCover.update();let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
  if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
  updateTreeBreeze(elapsed);airDancers.update(elapsed);dealership.update?.(motionDt);coffeeShop.update(motionDt);zFortune?.update(motionDt);
@@ -2243,7 +2247,7 @@ await yieldStartup();
 
 // Keep the screenshot screen up until scenery and the available character are prepared.
 export const initialReady=Promise.race([realisticPlayer.readyPromise,new Promise(resolve=>setTimeout(resolve,12000))]).then(()=>undefined).catch(error=>{console.warn('Using the available player while character details load',error);}).finally(()=>{characterPrepared=true;});
-export function startWorld(){if(townEntered)return;townEntered=true;clock.getDelta();signBacks?.scan();renderBudget.scan();roadMap.scan();treeRoadMaintenance.scanRoads();treeRoadMaintenance.update(2);setTimeout(startScenery,200);}
+export function startWorld(){if(townEntered)return;townEntered=true;unifyForestGround(scene);clearRoadSidewalkOverlaps(scene,{asphalt,paving,curb,gravelRoot:forestGravelRoads?.root});clock.getDelta();signBacks?.scan();renderBudget.scan();roadMap.scan();treeRoadMaintenance.scanRoads();treeRoadMaintenance.update(2);setTimeout(startScenery,200);}
 
 addEventListener('zerconda-enter',startWorld);
 await yieldStartup();

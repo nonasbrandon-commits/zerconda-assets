@@ -1,22 +1,24 @@
-import {createCabDestinationMap} from './cab-destination-map.js?v=20261123-cab-v260';
+import {forestGravelNavigationRoutes} from './forest-gravel-roads.js?v=20261123-roads-v261';
+import {createCabDestinationMap} from './cab-destination-map.js?v=20261123-roads-v261';
 import {recoverCabGridlock} from './cab-gridlock-recovery.js?v=20261122-traffic-v258';
 import {junctionMustYield} from './traffic-junctions.js?v=20261122-traffic-v258';
 import {avoidPeople,peoplePoseBlocked} from './traffic-people.js?v=20261122-traffic-v258';
-import {installRollingCabWheels,rollCabWheels} from './cab-rolling-wheels.js?v=20261123-round-v258';
+import {installRollingCabWheels,rollCabWheels} from './cab-rolling-wheels.js?v=20261123-fit-v261';
 import {installCabBranding} from './cab-branding.js?v=20261121-cab-signs-v189';
 import {vehicleDescriptor,vehiclePoseBlocked} from './vehicle-collision.js?v=20261121-town-v191';
 import * as THREE from 'three';
 import {GLTFLoader}from'three/addons/loaders/GLTFLoader.js';
 import{AREA_DESTINATIONS}from'./area-travel.js?v=20261121-town-v191';
 import{registerTownAction}from'./town-interactions.js?v=20261117-touch-v75';
-export function createCabRoadNetwork(){const points=[],edges=[],lookup=new Map();function node(x,z){const key=x+','+z;if(!lookup.has(key)){lookup.set(key,points.length);points.push({x,z});}return lookup.get(key);}function edge(a,b){const i=node(...a),j=node(...b);edges.push({i,j,length:Math.hypot(a[0]-b[0],a[1]-b[1])});}function road(ps){for(let i=1;i<ps.length;i++)edge(ps[i-1],ps[i]);}
+export function createCabRoadNetwork(){const points=[],edges=[],lookup=new Map();function node(x,z){const key=x+','+z;if(!lookup.has(key)){lookup.set(key,points.length);points.push({x,z});}return lookup.get(key);}function edge(a,b,surface='asphalt'){const i=node(...a),j=node(...b);edges.push({i,j,surface,length:Math.hypot(a[0]-b[0],a[1]-b[1])});}function road(ps,surface){for(let i=1;i<ps.length;i++)edge(ps[i-1],ps[i],surface);}
  for(const z of[-283,-96,0,96])road([-418,-96,0,96,542].map(x=>[x,z]));for(const x of[-96,0,96])road([-283,-96,0,96,169].map(z=>[x,z]));road([-554,-283,-96,0,96,169].map(z=>[-418,z]));road([[-418,-554],[465,-554],[542,-554]]);road([[542,-554],[542,-283]]);road([[465,-554],[465,-1040]]);
  // Westhaven streets are real roads too, including the road beside Lots 1 and 2.
  for(const z of[-283,-192,-96,0,96,175])road([-646,-562,-478,-418].map(x=>[x,z]));
  for(const x of[-646,-562,-478])road([-283,-192,-96,0,96,175].map(z=>[x,z]));
  road([[-418,169],[-418,175]]);
+ road([[-418,-554],[-418,-559]]);for(const route of forestGravelNavigationRoutes())road(route,'gravel');
  // Split collinear roads at every shared node so T-junctions connect both ways.
- const raw=edges.splice(0),seenEdges=new Set();for(const e of raw){const a=points[e.i],b=points[e.j],dx=b.x-a.x,dz=b.z-a.z,L=e.length,list=[];for(let i=0;i<points.length;i++){const q=points[i],t=((q.x-a.x)*dx+(q.z-a.z)*dz)/(L*L);if(t>=-1e-7&&t<=1+1e-7&&Math.abs((q.x-a.x)*dz-(q.z-a.z)*dx)<1e-5)list.push({i,t});}list.sort((a,b)=>a.t-b.t);for(let k=1;k<list.length;k++){const i=list[k-1].i,j=list[k].i,key=[i,j].sort((a,b)=>a-b).join(',');if(!seenEdges.has(key)){seenEdges.add(key);edges.push({i,j,length:Math.hypot(points[j].x-points[i].x,points[j].z-points[i].z)});}}}
+ const raw=edges.splice(0),seenEdges=new Set();for(const e of raw){const a=points[e.i],b=points[e.j],dx=b.x-a.x,dz=b.z-a.z,L=e.length,list=[];for(let i=0;i<points.length;i++){const q=points[i],t=((q.x-a.x)*dx+(q.z-a.z)*dz)/(L*L);if(t>=-1e-7&&t<=1+1e-7&&Math.abs((q.x-a.x)*dz-(q.z-a.z)*dx)<1e-5)list.push({i,t});}list.sort((a,b)=>a.t-b.t);for(let k=1;k<list.length;k++){const i=list[k-1].i,j=list[k].i,key=[i,j].sort((a,b)=>a-b).join(',');if(!seenEdges.has(key)){seenEdges.add(key);edges.push({i,j,surface:e.surface,length:Math.hypot(points[j].x-points[i].x,points[j].z-points[i].z)});}}}
  function nearest(p){let best;for(const e of edges){const a=points[e.i],b=points[e.j],dx=b.x-a.x,dz=b.z-a.z,t=THREE.MathUtils.clamp(((p.x-a.x)*dx+(p.z-a.z)*dz)/(e.length*e.length),0,1),q={x:a.x+dx*t,z:a.z+dz*t},d=Math.hypot(q.x-p.x,q.z-p.z);if(!best||d<best.d)best={...q,d,e,t};}return best;}
  function route(from,to,heading=null){const s=nearest(from),t=nearest(to),P=[...points,s,t],S=P.length-2,T=P.length-1,adj=P.map(()=>[]),connect=(i,j,w)=>{adj[i].push([j,w]);adj[j].push([i,w]);};for(const e of edges)connect(e.i,e.j,e.length);for(const[q,k]of[[s,S],[t,T]]){let allowed=null;if(k===S&&heading!==null&&q.t*q.e.length>2&&(1-q.t)*q.e.length>2){const a=points[q.e.i],b=points[q.e.j],dot=(Math.sin(heading)*(b.x-a.x)+Math.cos(heading)*(b.z-a.z))/q.e.length;if(Math.abs(dot)>.5)allowed=dot>0?q.e.j:q.e.i;}if(allowed===null||allowed===q.e.i)connect(k,q.e.i,q.e.length*q.t);if(allowed===null||allowed===q.e.j)connect(k,q.e.j,q.e.length*(1-q.t));}if(s.e===t.e&&(heading===null||((t.x-s.x)*Math.sin(heading)+(t.z-s.z)*Math.cos(heading))>=0))connect(S,T,s.e.length*Math.abs(s.t-t.t));const dist=P.map(()=>Infinity),prev=[];dist[S]=0;const open=new Set(P.map((_,i)=>i));while(open.size){let u=-1;for(const k of open)if(u<0||dist[k]<dist[u])u=k;if(u===T||!Number.isFinite(dist[u]))break;open.delete(u);for(const[v,w]of adj[u])if(dist[u]+w<dist[v]){dist[v]=dist[u]+w;prev[v]=u;}}if(!Number.isFinite(dist[T]))return null;const result=[];for(let u=T;u!==undefined;u=prev[u]){result.unshift(P[u]);if(u===S)break;}return result.filter((p,i)=>!i||Math.hypot(p.x-result[i-1].x,p.z-result[i-1].z)>.1);}
  return{points,edges,nearest,route};}
@@ -69,7 +71,7 @@ export function createZCabs(scene,{getPlayer,onHonk=()=>{},onPickupState=()=>{},
  }
  function pickupPath(v,road){
   const base=roadPath(v,road);if(!base)return null;
-  const end=base.sample(base.length),before=base.sample(Math.max(0,base.length-2)),direction=end.clone().sub(before).normalize(),right=new THREE.Vector3(-direction.z,0,direction.x),goal=new THREE.Vector3(road.x,0,road.z).addScaledVector(right,5.4),cut=Math.max(0,base.length-14),start=base.sample(cut),curve=new THREE.CubicBezierCurve3(start,start.clone().addScaledVector(direction,4),goal.clone().addScaledVector(direction,-4),goal),points=base.points.filter((q,i)=>base.lengths[i]<cut);
+  const end=base.sample(base.length),before=base.sample(Math.max(0,base.length-2)),direction=end.clone().sub(before).normalize(),right=new THREE.Vector3(-direction.z,0,direction.x),goal=new THREE.Vector3(road.x,0,road.z).addScaledVector(right,network.nearest(road).e.surface==='gravel'?3.8:5.4),cut=Math.max(0,base.length-14),start=base.sample(cut),curve=new THREE.CubicBezierCurve3(start,start.clone().addScaledVector(direction,4),goal.clone().addScaledVector(direction,-4),goal),points=base.points.filter((q,i)=>base.lengths[i]<cut);
   points.push(start);for(let i=1;i<=16;i++)points.push(curve.getPoint(i/16));const lengths=[0];for(let i=1;i<points.length;i++)lengths.push(lengths.at(-1)+points[i].distanceTo(points[i-1]));
   return{points,lengths,length:lengths.at(-1),pickup:goal,heading:Math.atan2(direction.x,direction.z),sample(distance){let i=1;while(i<lengths.length-1&&lengths[i]<distance)i++;return points[i-1].clone().lerp(points[i],THREE.MathUtils.clamp((distance-lengths[i-1])/Math.max(.001,lengths[i]-lengths[i-1]),0,1));}};
  }
