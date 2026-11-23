@@ -5,7 +5,7 @@ import {createTownSidewalkMaterial} from './town-sidewalks.js?v=20261121-forest-
 import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
-import {createZenPond} from './zen-pond.js?v=20261121-forest-airfield-v193';
+import {createZenPond} from './zen-pond.js?v=20261123-wildlife-v276';
 // Public park north of the Observation Needle. All features are traversable scenery.
 export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}){
  const root=new THREE.Group();root.name='Needle Park - twin basketball courts and fish pond';root.position.set(x,0,z);scene.add(root);
@@ -74,7 +74,7 @@ export function createNeedleSportsPark(scene,{x=48,z=-224,getPlayer=()=>null}={}
  // Continuous stone-paver pedestrian spine between the two courts.
  const paver=createTownSidewalkMaterial();paver.userData.townSidewalk=true;const joint=mat(0x827f78),edge=mat(0x8e8b83);
  box(6,.10,96,0,.055,33.5,paver); // -14.5..81.5, ending on the city sidewalk
- for(const side of [-1,1])box(3,.10,83,side*31,.055,2.5,paver);
+ for(const side of [-1,1])box(3,.10,64,side*31,.055,12,paver);
  for(const pz of [-11,44])box(65,.10,3,0,.055,pz,paver);
  // Branches meet the open ends of both courts, keeping their side fences clear.
  for(const [cx,lo,hi]of [[-18,-11,.5],[18,-11,.5],[-18,29.5,44],[18,29.5,44]])box(3,.10,hi-lo,cx,.055,(lo+hi)/2,paver);

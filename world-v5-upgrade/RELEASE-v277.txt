@@ -1,0 +1,8 @@
+Zerconda v277
+Tall Pines Cabins replaces the RVs: four furnished walk-in cabins, porch steps, doors, sign, travel and map labels.
+Updated pier attendant from approved red bikini reference, seated chess opponent at Table 8 with legal AI replies, realistic walking squirrels, fuller flowering shrubs, tree-only birds and pedestrian path cleanup.
+Approved fal.ai model sources:
+Pier: https://v3b.fal.media/files/b/0ab39667/fge3lZb1hZzXJm6DUqO72_base_basic_pbr.glb
+Chess: https://v3b.fal.media/files/b/0ab396a7/wqclI2YMQ4rhLdngdBInC_rigged_character.glb
+Squirrel: https://v3b.fal.media/files/b/0ab396e6/ZAIQYjxgl2kNjInwoeviO_base_basic_pbr.glb
+Local checks: JavaScript syntax; cabin room reachability and steps; chess rules/reply/undo; squirrel animation and foot placement; bird height and path cleanup; complete-world integration.

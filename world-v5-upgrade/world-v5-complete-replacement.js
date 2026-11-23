@@ -1,3 +1,5 @@
+import {createChessPartner} from './chess-partner.js?v=20261123-garden-characters-v276';
+import {clearPedestrianPathMarkings} from './path-markings.js?v=20261123-pier-reference-v274';
 import {createPowersportsCenter} from './zerconda-powersports.js?v=20261123-powersports-v273';
 import {createFortuneShadeTrees} from './fortune-shade-trees.js?v=20261123-traffic-v272';
 import {createKateConversation} from './kate-conversation.js?v=20261123-needle-walk-v271';
@@ -28,7 +30,7 @@ import {installOwnedHomeLocks} from './property-lock-setup.js?v=20261122-balcony
 import {createMuseumGardenTrees} from './museum-garden-trees.js?v=20261122-startup-v253';
 import {createHouseSunShadows} from './house-sun-shadows.js?v=20261121-house-realism-v212';
 import {createRoadTreeMaintenance} from './road-tree-maintenance.js?v=20261122-apartments-v229';
-import {createChessTables} from './chess-tables.js?v=20261122-startup-v253';
+import {createChessTables} from './chess-tables.js?v=20261123-garden-characters-v276';
 import {createRealEstate} from './real-estate.js?v=20261122-listings-v238';
 import {loadStreetTree} from './street-tree-assets.js?v=20261121-fast-start-v205';
 import {createAmbientTraffic} from './ambient-traffic.js?v=20261123-traffic-v272';
@@ -74,7 +76,7 @@ import {createCourtGames} from './court-games.js?v=20261122-startup-v253';
 import {createHotDogVendor} from './boardwalk-hotdogs.js?v=20261123-waterfront-v271';
 import {createVehicleControls} from './vehicle-controls.js?v=20261123-driving-v258';
 import {createDamagedWallPanel,createBlockedWallOpening,WALL_OPENING} from './blocked-wall-opening.js?v=20261122-listings-v238';
-import {createAreaTravel} from './area-travel.js?v=20261123-powersports-v273';
+import {createAreaTravel} from './area-travel.js?v=20261123-cabins-v277';
 import {createMilitaryBase} from './military-base.js?v=20261122-admin-transport-v245';
 import {upgradeMobileControls} from './mobile-controls.js?v=20261118-z-needle-v107';
 import {createAirportLoop} from './airport-loop.js?v=20261123-traffic-v272';
@@ -82,7 +84,7 @@ import {createNorthernForest} from './northern-forest.js?v=20261123-roads-v261';
 import {createMobilePerformance} from './mobile-performance.js?v=20261120-player-detail-v181-20261119-rv-junction-v128';
 import {createTownObstacles} from './town-obstacles.js?v=20261121-forward-slide-v210';
 import {createSeasideCarnival} from './seaside-carnival.js?v=20261121-cab-v188';
-import {createRVPark} from './rv-park.js?v=20261121-forest-airfield-v193';
+import {createRVPark} from './rv-park.js?v=20261123-cabins-v277';
 import {createShowroomPickup} from './showroom-pickup.js?v=20261119-reference-trucks-v126';
 import {createLuxuryVillas} from './luxury-villas.js?v=20261122-hedge-v251';
 import {createStyleCuts} from './style-cuts.js?v=20261119-clear-mirrors-v133';
@@ -96,7 +98,7 @@ import {createZercondaNews} from './zerconda-news.js?v=20261123-cave-v268';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261121-town-v191';
 import {createBowlingAlley} from './bowling-alley.js?v=20261123-walkin-v265';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261123-return-v258';
-import {createSeasidePier} from './seaside-pier.js?v=20261123-waterfront-v271';
+import {createSeasidePier} from './seaside-pier.js?v=20261123-pier-reference-v274';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261123-alpine-v259';
 import {createClubZerconda} from './club-zerconda.js?v=20261122-trail-v228';
@@ -117,13 +119,13 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261121-entry-fix-v198';
 import {addAirDancers} from './air-dancers.js?v=20261120-facing-v184';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261123-waterfront-v271';
-import {createCityMap} from './top-city-map.js?v=20261123-powersports-v273';
+import {createCityMap} from './top-city-map.js?v=20261123-cabins-v277';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261122-coastal-v257';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261122-controls-v246';
 import {createPedestrians} from './animated-pedestrians.js?v=20261123-fountain-v267';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261121-forest-airfield-v193';
-import {createNeedleSportsPark} from './needle-sports-park.js?v=20261122-startup-v253';
+import {createNeedleSportsPark} from './needle-sports-park.js?v=20261123-garden-characters-v276';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
 const cameraClearance=createCameraClearance();
@@ -1319,7 +1321,8 @@ await yieldStartup();
 realEstate=createRealEstate(scene,{asphalt,paving,getPlayer:()=>player,onStop:()=>{keys.clear();townControls.stop();movement.vx=0;movement.vz=0;},onMessage:(m,duration)=>townControls.notify(m,duration),getListings:()=>availablePropertyListings({starter:ownableHomes,coastal,premier,villas,apartments:apartmentExteriors,apartmentOwned:apartments.owned}),onVisit:p=>travelToArea({name:p.title,x:p.x,z:p.z,yaw:p.yaw}),canUse:()=>!activeCar&&!zCabs?.riding&&!airfield?.boarded});
 await yieldStartup();
 
-const chessTables=createChessTables(scene,{getPlayer:()=>player,onStop:()=>{keys.clear();townControls.stop();movement.vx=0;movement.vz=0;},canUse:()=>!activeCar&&!zCabs?.riding});
+const chessTables=createChessTables(scene,{getPlayer:()=>player,onSit:seat=>{if(!sittingSeat)seatReturn={x:player.x,z:player.z};sittingSeat=seat;player.x=seat.x;player.z=seat.z;yaw=seat.facing;movement.vx=movement.vz=movement.wheelImpulse=0;},onStop:()=>{keys.clear();townControls.stop();movement.vx=0;movement.vz=0;},canUse:()=>!activeCar&&!zCabs?.riding});
+const chessPartner=createChessPartner(scene,{getPlayer:()=>player,getHeight:standingHeightAt,getSeat:()=>chessTables.seats.find(s=>s.tableId===8&&s.side===-1)});
 await yieldStartup();
 
 const treeRoadMaintenance=createRoadTreeMaintenance(scene,{asphalt,paving});
@@ -2022,7 +2025,7 @@ const gravelTires=createGravelTireAudio({scene,getVehicle:()=>{if(adminTransport
 await yieldStartup();
 
 function animate(){
- requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);forestGroundCover.update();fountainResident.update(dt);boardwalkWalker.update(motionDt);needlePlaidResident.update(motionDt);kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
+ requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);forestGroundCover.update();chessPartner.update(motionDt);fountainResident.update(dt);boardwalkWalker.update(motionDt);needlePlaidResident.update(motionDt);kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
  if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
  updateTreeBreeze(elapsed);airDancers.update(elapsed);dealership.update?.(motionDt);coffeeShop.update(motionDt);powersports?.update(motionDt);zFortune?.update(motionDt);
@@ -2259,7 +2262,7 @@ await yieldStartup();
 
 // Keep the screenshot screen up until scenery and the available character are prepared.
 export const initialReady=Promise.race([realisticPlayer.readyPromise,new Promise(resolve=>setTimeout(resolve,12000))]).then(()=>undefined).catch(error=>{console.warn('Using the available player while character details load',error);}).finally(()=>{characterPrepared=true;});
-export function startWorld(){if(townEntered)return;townEntered=true;unifyForestGround(scene);cutCaveTerrain(scene);clearRoadSidewalkOverlaps(scene,{asphalt,paving,curb,gravelRoot:forestGravelRoads?.root});clock.getDelta();signBacks?.scan();renderBudget.scan();roadMap.scan();treeRoadMaintenance.scanRoads();treeRoadMaintenance.update(2);setTimeout(startScenery,200);}
+export function startWorld(){if(townEntered)return;townEntered=true;unifyForestGround(scene);cutCaveTerrain(scene);clearRoadSidewalkOverlaps(scene,{asphalt,paving,curb,gravelRoot:forestGravelRoads?.root});clearPedestrianPathMarkings(scene);clock.getDelta();signBacks?.scan();renderBudget.scan();roadMap.scan();treeRoadMaintenance.scanRoads();treeRoadMaintenance.update(2);setTimeout(startScenery,200);}
 
 addEventListener('zerconda-enter',startWorld);
 await yieldStartup();

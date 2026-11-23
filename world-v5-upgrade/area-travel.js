@@ -27,7 +27,7 @@ export const AREA_DESTINATIONS=[
  {id:'scooters',name:'Scooter Rentals',group:'Beach & recreation',x:126,z:81,yaw:Math.PI},
  {id:'airport',name:'North Airfield',group:'Forest & airfield',x:-96,z:-307,yaw:Math.PI},
  {id:'camp',name:'Forest Campground',group:'Forest & airfield',x:-111,z:-168,yaw:-Math.PI/2},
- {id:'rv',name:'RV Park',group:'Forest & airfield',x:-82,z:-154,yaw:Math.PI/2},
+ {id:'rv',name:'Tall Pines Cabins',group:'Forest & airfield',x:-82,z:-154,yaw:Math.PI/2},
  {id:'forest',name:'North Woods Trails',group:'Forest & airfield',x:-220,z:-580,yaw:Math.PI},
  {id:'military',name:'Military Checkpoint',group:'Forest & airfield',x:465,z:-1048,yaw:Math.PI}
 ];

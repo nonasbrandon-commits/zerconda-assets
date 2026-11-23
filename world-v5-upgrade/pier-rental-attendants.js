@@ -1,16 +1,16 @@
-import {createFalBeachHuman} from './fal-beach-human.js?v=20261123-waterfront-v271';
+import {createPierReferenceWoman} from './pier-reference-woman.js?v=20261123-pier-reference-v274';
 import * as THREE from 'three';
 import {createRealisticHuman} from './player-human.js?v=20261119-profile-v136';
 export function addRentalAttendant(kiosk){
- const female=kiosk.kind==='boat',person=female?createFalBeachHuman('attendant'):createRealisticHuman({shirt:'#e3dccf',pants:'#263447',initialOutfit:{shorts:true,tee:false}});
+ const female=kiosk.kind==='boat',person=female?createPierReferenceWoman():createRealisticHuman({shirt:'#e3dccf',pants:'#263447',initialOutfit:{shorts:true,tee:false}});
  person.root.visible=!female;const anchor=new THREE.Group();anchor.name=female?'Boat rental attendant':'Fishing pole attendant';anchor.position.set(-.25,.13,2.48);kiosk.root.add(anchor);anchor.add(person.root);
- // Both actors use the exact 1.86 m normalization used by the player's model.
- anchor.userData.height=1.86;anchor.userData.gender=female?'female':'male';anchor.userData.controller=person;anchor.userData.time=female?1.7:0;anchor.userData.step=0;anchor.userData.speaking=false;
+ // Normalize the reference woman and existing male attendant to their own heights.
+ anchor.userData.height=female?1.73:1.86;anchor.userData.gender=female?'female':'male';anchor.userData.controller=person;anchor.userData.time=female?1.7:0;anchor.userData.step=0;anchor.userData.speaking=false;
  person.readyPromise.then(()=>{if(!female)person.setHair({style:'original',color:'#4a3224'});person.root.updateMatrixWorld(true);person.root.visible=true;anchor.userData.ready=person.ready;});kiosk.attendant=anchor;return anchor;
 }
 const point=new THREE.Vector3();
 export function updateRentalAttendants(kiosks,dt,player,talking=null){for(const kiosk of kiosks){const a=kiosk.attendant;if(!a)continue;const d=Math.hypot(player.x-kiosk.root.position.x,player.z-kiosk.root.position.z);if(d>65)continue;const u=a.userData;for(const pose of u.gestureBase||[])pose.bone.quaternion.copy(pose.quaternion);u.gestureBase=[];u.time+=Math.min(dt,.1);const t=u.time,cycle=t%14;
- const destination=cycle<5?-.45:cycle<10?.22:-.25,old=a.position.x;a.position.x=THREE.MathUtils.damp(a.position.x,destination,1.5,dt);const speed=Math.abs(a.position.x-old)/Math.max(dt,.001);
+ const destination=u.gender==='female'?-.25:cycle<5?-.45:cycle<10?.22:-.25,old=a.position.x;a.position.x=THREE.MathUtils.damp(a.position.x,destination,1.5,dt);const speed=Math.abs(a.position.x-old)/Math.max(dt,.001);
  u.controller.update(dt,speed>.065?.18:0);kiosk.root.updateWorldMatrix(true,false);point.set(player.x,kiosk.root.position.y+1.6,player.z);kiosk.root.worldToLocal(point);const turn=THREE.MathUtils.clamp(Math.atan2(point.x-a.position.x,point.z-a.position.z),-.32,.32);a.rotation.y=THREE.MathUtils.damp(a.rotation.y,turn,3,dt);
  let head;const arms=[];a.traverse(o=>{if(!o.isBone)return;const n=o.name.replace(/[^a-z0-9]/gi,'');if(/Head$/.test(n))head=o;if(/Forearm$|UpperArm$/.test(n))arms.push(o);});const engaged=talking===kiosk.kind;u.talkLeft=engaged&&!u.wasEngaged?4:Math.max(0,(u.talkLeft||0)-dt);u.wasEngaged=engaged;const speaking=engaged&&u.talkLeft>0;u.speaking=speaking;
  if(head){u.gestureBase.push({bone:head,quaternion:head.quaternion.clone()});head.rotation.y+=Math.sin(t*.61)*.025+turn*.2;head.rotation.z+=Math.sin(t*.83)*.018;head.rotation.x+=speaking?Math.sin(t*3.2)*.035:Math.sin(t*.72)*.012;}
