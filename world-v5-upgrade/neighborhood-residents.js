@@ -1,5 +1,5 @@
-import {SLIM_RESIDENTS} from './slim-resident-profiles.js?v=20261124-slim-v344';
-import {FULLER_RESIDENTS} from './fuller-resident-profiles.js?v=20261124-fuller-v343';
+import {SLIM_RESIDENTS} from './slim-resident-profiles.js?v=20261124-body-fix-v345';
+import {FULLER_RESIDENTS} from './fuller-resident-profiles.js?v=20261124-body-fix-v345';
 import {COMMUNITY_RESIDENTS} from './community-resident-profiles.js?v=20261124-community-v342';
 import * as THREE from 'three';
 import {createNeighborhoodHuman as createResidentHuman} from './neighborhood-human.js?v=20261124-neighborhood-v316';
