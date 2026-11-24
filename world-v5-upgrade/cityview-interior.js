@@ -1,3 +1,4 @@
+import {createLobbyMarbleFloor} from './lobby-marble-floor.js?v=20261124-marble-v336';
 import {createApartmentWallArt} from './apartment-wall-art.js?v=20261124-art-v333';
 import {createCityviewElevator} from './cityview-elevator.js?v=20261124-elevator-v329';
 import {createGraySectional} from './gray-sectional.js?v=20261124-doors-v328';
@@ -16,7 +17,7 @@ import {createKitchenSink} from './kitchen-sink.js?v=20261122-private-homes-v214
 import {applyGrayWoodFloor} from './gray-wood-floor.js?v=20261122-gray-oak-v225';
 import {createTuftedCornerChaise} from './tufted-corner-chaise.js?v=20261124-chaise-v323';
 export function buildCityviewInterior(scene,level){const root=new THREE.Group();root.userData.customInterior=true;root.name='Cityview '+(level?'level '+level+' full-floor apartment':'public lobby');root.position.set(CITYVIEW.x,cityviewFloorY(level),CITYVIEW.z);root.rotation.y=CITYVIEW.angle;scene.add(root);const m=cityviewMaterials(),solids=[],doors=[];const box=(...a)=>cityviewBox(root,...a),solid=(x,z,w,d)=>solids.push({x,z,w,d});const H=level?3.32:3.9;const seats=level?[{x:-11,z:6.6,facing:Math.PI,sitHeight:.54,kind:'chaise',restHands:true},{x:7.12,z:4.76,facing:Math.PI/2,sitHeight:.62,kind:'sectional',restHands:true},{x:7.12,z:3.5,facing:Math.PI/2,sitHeight:.62,kind:'sectional',restHands:true},{x:7.6,z:2.24,facing:Math.PI/2,sitHeight:.62,kind:'sectional',restHands:true}]:[-3.8,3.8].flatMap(z=>[-9,9].map(x=>({x,z,facing:z<0?0:Math.PI,sitHeight:.52,kind:'sofa',restHands:true})));
-const floor=box(28,.12,20,0,-.06,0,m.cream);if(level)applyGrayWoodFloor(floor);else floor.material=m.stone;
+const floor=box(28,.12,20,0,-.06,0,m.cream);if(level)applyGrayWoodFloor(floor);else floor.material=createLobbyMarbleFloor();
 box(28,.12,20,0,H+.06,0,m.cream);for(const x of[-13.9,13.9]){box(.2,.5,20,x,.25,0,m.cream);box(.2,.4,20,x,H-.2,0,m.cream);cityviewGlazing(root,20,H-.88,x,H/2+.05,0,x<0?-Math.PI/2:Math.PI/2);for(const z of[-9,-5,-1,3,7,9.8])box(.10,H-.92,.12,x+(x<0?.065:-.065),H/2+.05,z,m.dark);}
 box(28,H,.20,0,H/2,-9.9,m.cream);
 // Continuous facade: glazing, sills, headers and jambs meet without open seams.
