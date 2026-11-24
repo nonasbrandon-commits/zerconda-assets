@@ -20,7 +20,12 @@ export function buildCityviewExterior(scene){
  const downlight=(x,y,z)=>{const trim=new THREE.Mesh(new THREE.CylinderGeometry(.105,.105,.022,16),f.dark);trim.position.set(x,y,z);root.add(trim);const lens=new THREE.Mesh(new THREE.CircleGeometry(.066,16),f.lamp);lens.rotation.x=Math.PI/2;lens.position.set(x,y-.013,z);root.add(lens);};
  // The podium retains the existing walk-through entrance and ramp.
  box(31,.25,26,0,.035,0,f.dark);box(30,4,.28,0,2.1,-12,f.core);
- for(const side of[-1,1]){const x=side*14.82;box(.32,4,24,x,2.1,0,f.panel);for(let z=-10;z<=10;z+=4){box(.018,3.85,.022,x+side*.169,2.12,z,f.dark);}box(.02,.018,24,x+side*.17,2.0,0,f.dark);}
+ for(const side of[-1,1]){const x=side*14.82;
+ box(.32,.40,24,x,.30,0,f.panel);box(.32,.46,24,x,3.87,0,f.panel);
+ for(const z of[-9.6,-4.8,0,4.8,9.6]){box(.045,3.14,4.58,x+side*.17,2.04,z,f.glass);box(.07,3.20,.065,x+side*.20,2.04,z,f.dark);}
+ for(const z of[-12,-7.2,-2.4,2.4,7.2,12])box(.36,3.2,.20,x,2.04,z,f.dark);
+ for(const y of[.46,3.64])box(.10,.07,24,x+side*.20,y,0,f.trim);
+}root.userData.lobbySideWindows=10;
  for(const side of[-1,1]){
   const x=side*9.1;box(10.75,3.05,.045,x,1.82,12.055,f.glass);
   for(let k=-2;k<=2;k++)box(.065,3.12,.11,x+k*2.12,1.82,12.10,f.dark);
