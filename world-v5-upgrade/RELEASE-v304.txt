@@ -1,0 +1,2 @@
+Zerconda v304
+Cuts the grass terrain geometry out of the descending entrance ramp, tunnel and cavern footprint, rather than relying solely on material clipping. Preserves outside terrain and vertex attributes. Stone ramp and cave surfaces remain. Retains all previous cave and apartment updates.
