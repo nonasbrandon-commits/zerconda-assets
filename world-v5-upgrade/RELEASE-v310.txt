@@ -1,0 +1,1 @@
+v310: All five mountain hiking routes and the winding cave-exit trail use the existing gray small-stone gravel texture and world-space scale, with subtle bump detail. New mountain forest ground uses the same shared photographic grass material as the forest hollow. Forest style preference recorded in FOREST-STYLE.md. Existing cave grass cuts and quiet bat sounds preserved.

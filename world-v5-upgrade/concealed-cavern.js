@@ -1,3 +1,4 @@
+import {applyRealisticGravel} from './realistic-gravel.js?v=20261121-collision-v192';
 import {removeCaveTerrainGeometry} from './cave-terrain-cut.js?v=20261124-trails-v307';
 import {addCaveChamberDetails,caveDetailBlocked} from './cave-chamber-details.js?v=20261123-chamber-v297';
 import {upgradePineMeshes} from './realistic-forest-pines.js?v=20261121-forest-airfield-v193';
@@ -33,7 +34,7 @@ ground.push(0,bottom,-62,...q,...p);ceiling.push(0,bottom+6.5,-62,p[0],bottom+h,
  // Ascending rock passage opens naturally into a densely planted forest hollow.
  for(let d=-76;d> -107;d-=1){slab(d,d-1,1.62,0,floor);slab(d,d-1,1.65,3.5,rock);for(const side of[-1,1]){const a=passageFloor(d)-.02,b=passageFloor(d-1)-.02,x=side*1.5;mesh([x,a,d,x,b,d-1,x,b+3.5,d-1,x,a,d,x,b+3.5,d-1,x,a+3.5,d],rock);}}
  const outdoorGround=new THREE.Mesh(clipHollowGrass(new THREE.CircleGeometry(28,64)),createForestGrassMaterial());outdoorGround.rotation.x=-Math.PI/2;outdoorGround.position.set(0,.01,-123);outdoorGround.name='Forest hollow outside cave';root.add(outdoorGround);
- const dirt=new THREE.MeshStandardMaterial({color:0xb5a88c,roughness:1,map:texture});
+ const dirt=applyRealisticGravel(new THREE.MeshStandardMaterial({roughness:1}));
  const trail=[];for(let d=-107;d>=-135;d--){const x=Math.sin((d+107)*.13)*2.5,xx=Math.sin((d+106)*.13)*2.5;trail.push(x-1,.052,d,x+1,.052,d,xx+1,.052,d-1,x-1,.052,d,xx+1,.052,d-1,xx-1,.052,d-1);}mesh(trail,dirt).name='Winding brush-lined cave trail';
  for(const side of[-1,1])for(let i=0;i<7;i++){const b=new THREE.Mesh(new THREE.DodecahedronGeometry(1,1),rock);b.position.set(side*(3.4+i*.6),1.0+i%3*.8,-106+i*.35);b.scale.set(1.6,2+i%2,2.5);b.rotation.set(i*.3,i*.8,i*.1);root.add(b);}for(const side of[-1,1]){const jamb=new THREE.Mesh(new THREE.BoxGeometry(2.4,3.65,1.4),rock);jamb.position.set(side*2.6,1.8,-106.8);root.add(jamb);}const cap=new THREE.Mesh(new THREE.DodecahedronGeometry(1,1),rock);cap.position.set(0,4.7,-106);cap.scale.set(4.5,1.4,3.2);root.add(cap);
  let seed=268;const rnd=()=>((seed=Math.imul(seed,1664525)+1013904223>>>0)/4294967296),trees=[],ferns=[];
