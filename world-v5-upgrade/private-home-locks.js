@@ -20,7 +20,7 @@ function showPanel(lock,grant,manage=false){lock.stop?.();closePanel();const pre
 export function registerPrivateHome({id,label='Private home',code,verifyCode,isPrivate=()=>true,canManage=()=>false,contains,getPlayer,isInside,onRelock=()=>{},canRelock=()=>true,onMessage=()=>{},target,parent,mount,onStop=()=>{}}={}){
  homes.get(id)?.dispose();let privateRecord=null;let authorized=false,entered=false,pending=false,grantUntil=0,wasInside=false,lastPrivate=false,disposed=false;const inside=()=>isInside?isInside():contains(getPlayer().x,getPlayer().z);if(verifyCode){if(id in stored){delete stored[id];save();}}else if(!validHomePIN(stored[id])){stored[id]=validHomePIN(code)?code:newPIN();save();}
  let keypad=null,ctx=null,canvas=null,lastState='';const buttons=[];
- const api={id,label,contains,isPrivate,stop:onStop,get code(){return verifyCode?undefined:stored[id]},get owner(){return authorized?privateRecord?.ownerRole:null},get authorized(){return authorized},get locked(){return isPrivate()&&!authorized},get inside(){return inside()},
+ const api={id,label,get manageable(){return canManage()},contains,isPrivate,stop:onStop,get code(){return verifyCode?undefined:stored[id]},get owner(){return authorized?privateRecord?.ownerRole:null},get authorized(){return authorized},get locked(){return isPrivate()&&!authorized},get inside(){return inside()},
  tryCode(value){if(!validHomePIN(value))return false;const grant=record=>{if(!record)return false;privateRecord=typeof record==='object'?record:null;authorized=true;pending=false;entered=inside();grantUntil=performance.now()+60000;return true;};if(verifyCode)return Promise.resolve(verifyCode(value)).then(grant,()=>false);return grant(value===stored[id]);},
  setCode(value){if(verifyCode||!validHomePIN(value))return false;stored[id]=value;save();authorized=false;pending=true;onMessage(label+' code saved.');return true;},
  request(grant){if(!isPrivate()||authorized||inside()){grant?.();return true;}showPanel(api,grant);return false;},
@@ -36,3 +36,6 @@ export function allowPrivateHome(id,retry){const lock=homes.get(id);if(!lock||!l
 export function allowPrivateHomeAt(x,z,retry){for(const [id,h]of homes)if(h.contains(x,z)&&!allowPrivateHome(id,retry))return false;return true;}
 export function privateHomeBlocks(x,z){for(const h of homes.values())if(h.isPrivate()&&!h.authorized&&!h.inside&&h.contains(x,z))return true;return false;}
 export function updatePrivateHomes(){for(const h of homes.values())h.update();}
+
+export function getManagedPrivateHomes(){return [...homes.values()].filter(h=>h.manageable).map(h=>({id:h.id,label:h.label}));}
+export function managePrivateHome(id){const h=homes.get(id);if(h?.manageable)h.manage();}
