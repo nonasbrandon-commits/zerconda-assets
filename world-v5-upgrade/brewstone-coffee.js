@@ -1,3 +1,4 @@
+import {createCoffeeCornerLounges} from './coffee-corner-lounges.js?v=20261124-lounges-v356';
 import {createCoffeeMarbleFloor} from './coffee-marble-floor.js?v=20261124-marble-v354';
 import {createCoffeeCounter} from './coffee-counter.js?v=20261124-vines-v355';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
@@ -39,7 +40,8 @@ export function createCoffeeShop(scene,{x=-28,z=-132,getPlayer=()=>null}={}){
  const terraceTex=new THREE.CanvasTexture(terraceCanvas);terraceTex.colorSpace=THREE.SRGBColorSpace;terraceTex.wrapS=terraceTex.wrapT=THREE.RepeatWrapping;terraceTex.repeat.set(13.5,6.5);terraceTex.anisotropy=8;const terraceMat=mat(0xffffff,.85);terraceMat.map=terraceTex;terraceMat.polygonOffset=true;terraceMat.polygonOffsetFactor=-1;terraceMat.polygonOffsetUnits=-2;
  const terrace=box(.5,-.06,15.5,27,.12,13,terraceMat);terrace.name='Brewstone Coffee · full stone terrace';
 
- const seats=[],solids=[counter.solid];
+ const lounge=createCoffeeCornerLounges(root,{x,z,ground:GROUND_LEVEL});
+ const seats=[...lounge.seats],solids=[counter.solid,...lounge.solids];
  // Higher-detail patio furniture: metal frames, wood slat seats, curved chair backs,
  // tapered table pedestals, and individual leaf clusters instead of green spheres.
  const furnitureFrame=mat(0x292f31,.35,.68),oak=mat(0xa17b55,.72),cushion=mat(0x3e6b64,.95);
@@ -134,7 +136,7 @@ export function createCoffeeShop(scene,{x=-28,z=-132,getPlayer=()=>null}={}){
  function canWalk(px,pz){const lx=px-x,lz=pz-z;if(Math.abs(lx)>12.4||lz< -9.4||lz>18)return null;
  if(lz<9.4){if(Math.abs(lx)>11.6||lz< -8.6)return false;if(lz>8.6&&Math.abs(lx)>.70)return false;}
  return !solids.some(s=>Math.abs(lx-s.x)<s.w/2+.26&&Math.abs(lz-s.z)<s.d/2+.26);}
- return {root,seats,shrubContainers,doors,solids,counter,canWalk,update(dt){const p=getPlayer();const near=p&&Math.hypot(p.x-x,p.z-z-9)<3.8;doorGap=THREE.MathUtils.damp(doorGap,near?1:0,10,dt);for(const{door,side}of doors)door.position.x=side*(.46+doorGap*.94);},entrance:{x,z:z+11},isInside:(px,pz)=>Math.abs(px-x)<11.8&&Math.abs(pz-z)<8.8,
+ return {root,seats,shrubContainers,doors,solids,counter,lounge,canWalk,update(dt){const p=getPlayer();const near=p&&Math.hypot(p.x-x,p.z-z-9)<3.8;doorGap=THREE.MathUtils.damp(doorGap,near?1:0,10,dt);for(const{door,side}of doors)door.position.x=side*(.46+doorGap*.94);},entrance:{x,z:z+11},isInside:(px,pz)=>Math.abs(px-x)<11.8&&Math.abs(pz-z)<8.8,
  nearestSeat(px,pz,max=2.1){let best=null,dist=max;for(const seat of seats){const d=Math.hypot(seat.x-px,seat.z-pz);if(d<dist){dist=d;best=seat;}}return best;},
  dispose(){scene.remove(root);}};
 }
