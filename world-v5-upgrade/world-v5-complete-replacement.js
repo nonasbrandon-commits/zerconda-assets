@@ -1,4 +1,4 @@
-import {createBoardwalkFitness} from './boardwalk-fitness.js?v=20261124-sneakers-v366';
+import {createBoardwalkFitness} from './boardwalk-fitness.js?v=20261124-repairs-v369';
 import {createCoffeeCustomers} from './coffee-customers.js?v=20261124-customers-v358';
 import {createCharacterThumbnails} from './character-thumbnail.js?v=20261124-portraits-v360';
 import {collectAdminCharacters} from './admin-character-roster.js?v=20261124-portraits-v360';
@@ -13,7 +13,7 @@ import {getManagedPrivateHomes,managePrivateHome} from './private-home-locks.js?
 import {collectHomeLocations} from './home-location-names.js?v=20261124-homes-v322';
 import {createNeighborhoodResidents} from './neighborhood-residents.js?v=20261124-neighborhood-v316';
 import {installPremiumGameUI} from './premium-game-ui.js?v=20261124-boardwalk-v314';
-import {createSunglassesHut} from './sunglasses-hut.js?v=20261124-boardwalk-v314';
+import {createSunglassesHut} from './sunglasses-hut.js?v=20261124-repairs-v369';
 import {createMountainWilderness,updateMountainWilderness,mountainHeightAt,mountainWalkable,extraForestBlocks} from './mountain-wilderness.js?v=20261124-trails-v307';
 import {trackTrailExploration} from './trail-discovery.js?v=20261124-trails-v307';
 import {updateCaveLife} from './cave-life.js?v=20261124-remains-v306';
@@ -24,7 +24,7 @@ import {createPowersportsCenter} from './zerconda-powersports.js?v=20261123-powe
 import {createFortuneShadeTrees} from './fortune-shade-trees.js?v=20261124-garden-v365';
 import {createKateConversation} from './kate-conversation.js?v=20261123-town-v282';
 import {createNeedlePlaidResident} from './needle-plaid-resident.js?v=20261123-town-v282';
-import {createBoardwalkWalker} from './boardwalk-walker.js?v=20261123-waterfront-v285';
+import {createBoardwalkWalker} from './boardwalk-walker.js?v=20261124-repairs-v369';
 import {createCrowdSpacing} from './crowd-spacing.js?v=20261123-space-v265';
 import {applyPlayerSeatPose} from './player-seat-pose.js?v=20261123-boardwalk-v269';
 import {createFountainResident} from './fountain-resident.js?v=20261123-boardwalk-v269';
@@ -69,7 +69,7 @@ import {createShaderWarmup} from './shader-warmup.js?v=20261123-town-v282';
 import {loadReferenceProp} from './reference-props.js?v=20261120-reference-props-v180';
 import {createZCabs}from './z-cabs.js?v=20261123-traffic-v272';
 import {createLuxurySedan,loadLuxurySedan,sedanColors} from './luxury-sedan.js?v=20261120-restore-silver-v185';
-import {createBeachVisitors} from './beach-visitors.js?v=20261124-passing-v368';
+import {createBeachVisitors} from './beach-visitors.js?v=20261124-repairs-v369';
 import {positionBeachLoungeCamera} from './beach-lounge-camera.js?v=20261119-coastal-breeze-v154';
 import {applyBeachLoungePose} from './beach-lounge-pose.js?v=20261119-beach-seating-v151';
 import {addVehicleLOD} from './vehicle-lod.js?v=20261120-z-cabs-v178';
@@ -107,21 +107,21 @@ import {createSeasideCarnival} from './seaside-carnival.js?v=20261121-cab-v188';
 import {createRVPark} from './rv-park.js?v=20261123-cabins-v277';
 import {createShowroomPickup} from './showroom-pickup.js?v=20261119-reference-trucks-v126';
 import {createLuxuryVillas} from './luxury-villas.js?v=20261122-hedge-v251';
-import {createStyleCuts} from './style-cuts.js?v=20261124-salon-v367';
-import {createBusinessCentre} from './business-centre.js?v=20261119-entrance-steering-v118';
+import {createStyleCuts} from './style-cuts.js?v=20261124-public-doors-v369';
+import {createBusinessCentre} from './business-centre.js?v=20261124-public-doors-v369';
 import {createSkatePark} from './skate-park.js?v=20261119-entrance-steering-v118';
 import {createAirfield} from './airfield.js?v=20261121-profile-studio-v203';
 import * as THREE from 'three';
 import {createForestCampground} from './forest-campground.js?v=20261123-natural-v264';
 import {createPremierHomes} from './premier-homes.js?v=20261122-controls-v246';
-import {createZercondaNews} from './zerconda-news.js?v=20261123-cave-v268';
-import {createClothingBoutique} from './clothing-boutique.js?v=20261121-town-v191';
-import {createBowlingAlley} from './bowling-alley.js?v=20261123-walkin-v265';
-import {createScooterRentals} from './electric-scooter-rentals.js?v=20261123-return-v258';
+import {createZercondaNews} from './zerconda-news.js?v=20261124-public-doors-v369';
+import {createClothingBoutique} from './clothing-boutique.js?v=20261124-public-doors-v369';
+import {createBowlingAlley} from './bowling-alley.js?v=20261124-public-doors-v369';
+import {createScooterRentals} from './electric-scooter-rentals.js?v=20261124-public-doors-v369';
 import {createSeasidePier} from './seaside-pier.js?v=20261123-waterfront-v285';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261124-trails-v307';
-import {createClubZerconda} from './club-zerconda.js?v=20261122-trail-v228';
+import {createClubZerconda} from './club-zerconda.js?v=20261124-public-doors-v369';
 import {createRealisticHuman} from './realistic-human.js?v=20261118-faster-town-v106';
 import {createEastForestGate} from './east-forest-gate.js?v=20261121-city-life-v196';
 import {createZercondaAvatar} from './zerconda-avatar-upgrade.js?v=20261117-natural-walk-v68';
@@ -143,7 +143,7 @@ import {createCityMap} from './top-city-map.js?v=20261124-trails-v307';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261123-town-v282';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261122-controls-v246';
-import {createPedestrians} from './animated-pedestrians.js?v=20261123-fountain-v267';
+import {createPedestrians} from './animated-pedestrians.js?v=20261124-repairs-v369';
 import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261121-forest-airfield-v193';
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261123-town-v282';
 
@@ -1710,6 +1710,8 @@ function toggleCafeSeat(){
 addEventListener('keydown',e=>{if(cityview?.panelOpen||cityview?.riding||adminAccount?.panelOpen||controlsGuide?.panelOpen||adminTransport?.active||chessTables.panelOpen||realEstate.panelOpen||militaryAccess?.panelOpen||zCabs?.riding||zCabs?.panelOpen||(hotDogVendor?.panelOpen||sunglassesHut?.panelOpen)||zStore?.panelOpen||playerMenu?.panelOpen)return;if(villas?.panelOpen||barber?.panelOpen||(ownableHomes.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.boarded)))))||marine?.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;if(e.code==='KeyC'&&!e.repeat&&(sittingSeat||nearestAvailableSeat()))toggleCafeSeat();});
 await yieldStartup();
 
+let publicLobbyCooldown=0;
+function updatePublicLobbyPassage(dt){publicLobbyCooldown=Math.max(0,publicLobbyCooldown-dt);if(publicLobbyCooldown||activeCar||scooters?.riding||powersports?.riding||marine?.riding||skate?.riding||sittingSeat||homePassageActive()||playerMenu?.panelOpen)return;if(universalSession?.home){if(Math.abs(player.x-ownableHomes.interior.x-3.5)<1.1&&player.z<ownableHomes.interior.z-7.35){publicLobbyCooldown=2;exitUniversalInterior();}return;}if(apartmentSession){if(apartments.currentUnit||apartments.riding||apartments.currentFloor!==0)return;const local=apartments.local(player.x,player.z);if(Math.abs(local.x)<1.6&&local.z>9.15){const building=apartmentSession.building;apartmentAction();const e=building.entry,dx=e.x-building.x,dz=e.z-building.z,len=Math.hypot(dx,dz)||1;player.x=e.x+dx/len;player.z=e.z+dz/len;publicLobbyCooldown=1.2;}return;}const entry=nearestUniversalEntrance();if(entry?.home&&!entry.garage&&Math.hypot(player.x-entry.home.door.x,player.z-entry.home.door.z)<1.4){publicLobbyCooldown=3;enterUniversalInterior();return;}if(entry?.apartment&&!entry.home){const door=entry.building.door||entry.building.entry;if(Math.hypot(player.x-door.x,player.z-door.z)<1.75){enterApartment(entry);publicLobbyCooldown=1.2;}}}
 function nearestUniversalEntrance(){
  if(boutique?.active||bowling?.active||scooters?.riding||club?.active||activeCar||onObservationDeck||insideNeedleLobby||apartmentSession||universalSession||cafeInside||dealerInside)return null;
  let best=null,dist=4.7;
@@ -1883,7 +1885,7 @@ northernForest=createNorthernForest(scene,{mobile:MOBILE});
 const crowdSpacing=createCrowdSpacing({getPeople:()=>[...pedestrianSystem.agents.filter(a=>a.human.ready).map(a=>a.group),...cityResidents.agents.filter(a=>a.human.ready&&!a.staff&&!a.seated).map(a=>a.group)],getAnchors:()=>[player,...(boardwalkFitness?.collisionPeople||[]),...(neighborhoodResidents?.collisionPeople||[]),...(needlePlaidResident.group.visible?[needlePlaidResident.group.position]:[]),...(boardwalkWalker.group.visible?[boardwalkWalker.group.position]:[]),...(whiteFitnessWalker.group.visible?[whiteFitnessWalker.group.position]:[]),...(curlyFitnessWalker.group.visible?[curlyFitnessWalker.group.position]:[]),...(curlyBusinessWalker.group.visible?[curlyBusinessWalker.group.position]:[]),...cityResidents.agents.filter(a=>a.seated&&a.human.ready).map(a=>a.group.position),...(fountainResident.group.visible?[fountainResident.group.position]:[])],canWalk:(x,z)=>ambientResidentsAllowed(x,z)&&walkable(x,z),getHeight:standingHeightAt});
 const needlePlaidResident=createNeedlePlaidResident(scene,{getPlayer:()=>player,getHeight:standingHeightAt,canWalk:walkable,canGreet:()=>!activeCar&&!zCabs?.riding&&!playerMenu?.panelOpen,getPeople:()=>[...cityResidents.collisionPeople,...(boardwalkFitness?.collisionPeople||[]),...(coffeeCustomers?.collisionPeople||[]),...(neighborhoodResidents?.collisionPeople||[]),...pedestrianSystem.agents.filter(a=>a.human.ready&&a.group.visible).map(a=>a.group.position)]});
 const boardwalkWalker=createBoardwalkWalker(scene,{getPlayer:()=>player,getPeople:()=>[...pedestrianSystem.agents.filter(a=>a.human.ready&&a.group.visible).map(a=>a.group.position),...cityResidents.collisionPeople,...(boardwalkFitness?.collisionPeople||[]),...(neighborhoodResidents?.collisionPeople||[]),...(whiteFitnessWalker.group.visible?[whiteFitnessWalker.group.position]:[]),...(curlyFitnessWalker.group.visible?[curlyFitnessWalker.group.position]:[]),...(curlyBusinessWalker.group.visible?[curlyBusinessWalker.group.position]:[])],canWalk:walkable});
-const whiteFitnessWalker=createBoardwalkWalker(scene,{getPlayer:()=>player,modelAsset:'assets/white-fitness-walk-v285.glb',name:'Boardwalk visitor · white shorts',referenceSource:'Zerconda_Two_Fitness_Characters.zip',startDistance:300,loadRadius:100,getPeople:()=>[...pedestrianSystem.agents.filter(a=>a.human.ready&&a.group.visible).map(a=>a.group.position),...cityResidents.collisionPeople,...(boardwalkFitness?.collisionPeople||[]),...(neighborhoodResidents?.collisionPeople||[]),...(boardwalkWalker.group.visible?[boardwalkWalker.group.position]:[])],canWalk:walkable});
+const whiteFitnessWalker=createBoardwalkWalker(scene,{getPlayer:()=>player,modelAsset:'assets/white-fitness-walk-v369.glb',name:'Boardwalk visitor · white shorts',referenceSource:'Zerconda_Two_Fitness_Characters.zip',startDistance:300,loadRadius:100,getPeople:()=>[...pedestrianSystem.agents.filter(a=>a.human.ready&&a.group.visible).map(a=>a.group.position),...cityResidents.collisionPeople,...(boardwalkFitness?.collisionPeople||[]),...(neighborhoodResidents?.collisionPeople||[]),...(boardwalkWalker.group.visible?[boardwalkWalker.group.position]:[])],canWalk:walkable});
 const curlyFitnessWalker=createBoardwalkWalker(scene,{getPlayer:()=>player,modelAsset:'assets/curly-updo-fitness-walk-v314.glb',name:'Curly-updo fitness visitor',referenceSource:'User supplied fitness reference sheet · description-based model',startDistance:170,walkingSpeed:1.05,canWalk:walkable,getPeople:()=>[...cityResidents.collisionPeople,...(boardwalkFitness?.collisionPeople||[]),...(coffeeCustomers?.collisionPeople||[]),...(neighborhoodResidents?.collisionPeople||[]),boardwalkWalker.group.position,whiteFitnessWalker.group.position]});
 const curlyBusinessWalker=createBoardwalkWalker(scene,{getPlayer:()=>player,modelAsset:'assets/curly-updo-business-walk-v314.glb',name:'Curly-updo Skyline business visitor',referenceSource:'User supplied business reference sheet · description-based model',walkingSpeed:.78,routePoints:[[185,-27],[191,-27],[191,-18],[185,-18]],getGroundHeight:standingHeightAt,canWalk:walkable,getPeople:()=>cityResidents.collisionPeople});
 neighborhoodResidents=createNeighborhoodResidents(scene,{getSeats:()=>publicSeats,getOccupiedSeat:()=>sittingSeat,getRoadPolygons:()=>roadMap.polygons,getPlayer:()=>player,getHeight:standingHeightAt,canWalk:(x,z)=>ambientResidentsAllowed(x,z)&&walkable(x,z),getPeople:()=>[...cityResidents.collisionPeople,...(boardwalkFitness?.collisionPeople||[]),...(coffeeCustomers?.collisionPeople||[]),...pedestrianSystem.agents.filter(a=>a.human.ready&&a.group.visible).map(a=>a.group.position),...(curlyFitnessWalker.group.visible?[curlyFitnessWalker.group.position]:[]),...(curlyBusinessWalker.group.visible?[curlyBusinessWalker.group.position]:[])],getVehicles:()=>[...cars,...(zCabs?.collisionVehicles||[]),...(ambientTraffic?.collisionVehicles||[])]});
@@ -1971,7 +1973,7 @@ addEventListener('keydown',e=>{if(cityview?.panelOpen||cityview?.riding||adminAc
 await yieldStartup();
 
 function walkable(x,z){const cvWalk=cityview?.canWalk(x,z);if(cvWalk!==null&&cvWalk!==undefined)return cvWalk;const mountainWalk=mountainWalkable(x,z);if(mountainWalk!==null)return !activeCar&&!scooters?.riding&&!powersports?.riding&&mountainWalk;const secretWalk=hiddenForestPassage.canWalk(x,z);if(secretWalk!==null)return !activeCar&&!scooters?.riding&&!powersports?.riding&&secretWalk;if(extraForestBlocks(x,z))return false;const bowlPortal=bowling?.portalWalk(x,z);if(bowlPortal!==null&&bowlPortal!==undefined)return bowlPortal;
- if(privateHomeBlocks(x,z)||residentialShadeTrees?.blocks(x,z)||museumGardenTrees?.blocks(x,z))return false;
+ if(privateHomeBlocks(x,z)||residentialShadeTrees?.blocks(x,z)||museumGardenTrees?.blocks(x,z))return false;for(const portal of [barber?.canWalk(x,z),office?.portalWalk(x,z),club?.portalWalk(x,z),news?.canWalk(x,z,!!activeCar||!!scooters?.riding||!!powersports?.riding)])if(portal!==null&&portal!==undefined)return portal;
  if(scooters?.inside)return scooters.canWalkInterior(x,z);
  if(zCabs?.blocks(x,z))return false;if(ambientTraffic?.collisionVehicles.some(v=>Math.hypot(x-v.x,z-v.z)<1.5))return false;
  if(powersports?.blocks(x,z)||styleCutsGrove?.blocks(x,z)||fortuneShadeTrees.blocks(x,z))return false;
@@ -2064,7 +2066,7 @@ await yieldStartup();
 
 adminWorld=createAdminWorldControls({scene,sun,hemisphere,sky:cloudSky,renderer,isAdmin:()=>!!adminAccount?.isAdmin});
 const propertyThumbnail=createPropertyThumbnails({scene,renderer,avatar}),characterThumbnail=createCharacterThumbnails({scene,renderer});
-adminDashboard=createAdminDashboard({getCharacterThumbnail:characterThumbnail,getPropertyThumbnail:propertyThumbnail,getCharacters:()=>collectAdminCharacters({scene,groups:[{agents:boardwalkFitness?.agents||[],category:'Fitness and beach visitor'},{agents:neighborhoodResidents?.agents||[],category:'Neighborhood resident'},{agents:cityResidents.agents,category:'Town resident'},{agents:coffeeCustomers?.agents||[],category:'Coffee customer'},{agents:pedestrianSystem.agents,category:'Pedestrian'},{agents:beachVisitors.visitors,category:'Beach visitor'}],individuals:[zFortune?.fortuneTeller,needlePlaidResident,boardwalkWalker,whiteFitnessWalker,curlyFitnessWalker,curlyBusinessWalker,fountainResident,chessPartner,{group:avatar,name:playerMenu?.state.name||'Resident',role:'Current player',category:'Player'}],extra:[{id:'store-hugo',name:'Hugo',role:'Everyday Finds owner',x:155,y:.15,z:58}]}),onVisitCharacter:c=>travelToArea({name:c.name,x:c.x+1.5,z:c.z+1.5}),isAdmin:()=>!!adminAccount?.isAdmin,onStop:stopCityview,onSignOut:()=>adminAccount.signOut(),world:adminWorld,getPlayer:()=>player,getPlayerName:()=>playerMenu?.state.name||'Resident',getRuntime:()=>{let meshes=0;scene.traverse(o=>{if(o.isMesh)meshes++});return{version:367,renderPixelRatio:renderer.getPixelRatio(),drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,sceneMeshes:meshes,vehicles:{powersports:powersports?.models.length||0,cars:cars.length,ambientTraffic:ambientTraffic?.collisionVehicles.length||0},currentActivity:powersports?.riding?'Powersports vehicle':activeCar?'Car':cityview?.active?'Cityview':'Town'};},getProperties:()=>{const homes=collectHomeLocations({starter:ownableHomes,premier,villas,coastal,apartments:apartmentExteriors,apartmentExperience}).map(h=>({...h,owner:h.id==='H'+String(ownableHomes.owned?.id).padStart(2,'0')?ownableHomes.owned.username:null}));for(const f of cityview.ownership.list())homes.push({id:'CV'+String(f.level).padStart(2,'0'),name:'Cityview · Level '+f.level,x:-378,z:-62,level:f.level,owner:f.owner,ownerId:cityview.ownership.records[f.level]?.ownerId||null});return homes;},onVisit:h=>{if(powersports?.riding&&!powersports.end())return;if(activeCar)toggleCar();scooters?.end();skate?.end();marine?.end?.();cityview.leave();stopCityview();const a=h.angle||0,offset=(h.minZ??-14)-3;player.x=h.x+Math.sin(a)*offset;player.z=h.z+Math.cos(a)*offset;yaw=a;pitch=0;cityMap.draw(true);}});
+adminDashboard=createAdminDashboard({getCharacterThumbnail:characterThumbnail,getPropertyThumbnail:propertyThumbnail,getCharacters:()=>collectAdminCharacters({scene,groups:[{agents:boardwalkFitness?.agents||[],category:'Fitness and beach visitor'},{agents:neighborhoodResidents?.agents||[],category:'Neighborhood resident'},{agents:cityResidents.agents,category:'Town resident'},{agents:coffeeCustomers?.agents||[],category:'Coffee customer'},{agents:pedestrianSystem.agents,category:'Pedestrian'},{agents:beachVisitors.visitors,category:'Beach visitor'}],individuals:[zFortune?.fortuneTeller,needlePlaidResident,boardwalkWalker,whiteFitnessWalker,curlyFitnessWalker,curlyBusinessWalker,fountainResident,chessPartner,{group:avatar,name:playerMenu?.state.name||'Resident',role:'Current player',category:'Player'}],extra:[{id:'store-hugo',name:'Hugo',role:'Everyday Finds owner',x:155,y:.15,z:58}]}),onVisitCharacter:c=>travelToArea({name:c.name,x:c.x+1.5,z:c.z+1.5}),isAdmin:()=>!!adminAccount?.isAdmin,onStop:stopCityview,onSignOut:()=>adminAccount.signOut(),world:adminWorld,getPlayer:()=>player,getPlayerName:()=>playerMenu?.state.name||'Resident',getRuntime:()=>{let meshes=0;scene.traverse(o=>{if(o.isMesh)meshes++});return{version:369,renderPixelRatio:renderer.getPixelRatio(),drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,sceneMeshes:meshes,vehicles:{powersports:powersports?.models.length||0,cars:cars.length,ambientTraffic:ambientTraffic?.collisionVehicles.length||0},currentActivity:powersports?.riding?'Powersports vehicle':activeCar?'Car':cityview?.active?'Cityview':'Town'};},getProperties:()=>{const homes=collectHomeLocations({starter:ownableHomes,premier,villas,coastal,apartments:apartmentExteriors,apartmentExperience}).map(h=>({...h,owner:h.id==='H'+String(ownableHomes.owned?.id).padStart(2,'0')?ownableHomes.owned.username:null}));for(const f of cityview.ownership.list())homes.push({id:'CV'+String(f.level).padStart(2,'0'),name:'Cityview · Level '+f.level,x:-378,z:-62,level:f.level,owner:f.owner,ownerId:cityview.ownership.records[f.level]?.ownerId||null});return homes;},onVisit:h=>{if(powersports?.riding&&!powersports.end())return;if(activeCar)toggleCar();scooters?.end();skate?.end();marine?.end?.();cityview.leave();stopCityview();const a=h.angle||0,offset=(h.minZ??-14)-3;player.x=h.x+Math.sin(a)*offset;player.z=h.z+Math.cos(a)*offset;yaw=a;pitch=0;cityMap.draw(true);}});
 function animate(){
  requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!powersports?.riding||!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding&&!powersports?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);updateCaveLife(motionDt,player);updateMountainWilderness(player);trackTrailExploration(motionDt,player,!activeCar&&!marine.riding&&!scooters.riding&&!powersports?.riding&&!airfield.boarded&&!zCabs.riding);forestGroundCover.update();chessPartner.update(motionDt);chessTables.update(motionDt);fountainResident.update(dt);boardwalkFitness?.update(motionDt);boardwalkWalker.update(motionDt);whiteFitnessWalker.update(motionDt);curlyFitnessWalker.update(motionDt);curlyBusinessWalker.update(motionDt);needlePlaidResident.update(motionDt);kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
@@ -2163,9 +2165,10 @@ function animate(){
   }
   walkingDistance=Math.hypot(player.x-walkStartX,player.z-walkStartZ);
  }
+ updatePublicLobbyPassage(dt);
  for(const d of doors){
   const near=Math.hypot(player.x-d.x,player.z-d.z)<3.4;
-  d.open=THREE.MathUtils.damp(d.open,near&&d.manual?1:0,4,dt);
+  d.open=THREE.MathUtils.damp(d.open,near?1:0,6,dt);
   d.hinge.rotation.y=d.side*d.open*1.22;
  }
  // The old procedural fountain's jetMaterial was removed with that fountain.
@@ -2186,7 +2189,7 @@ function animate(){
   const direction=new THREE.Vector3(Math.sin(heading),-Math.sin(driverLookPitch),Math.cos(heading));
   camera.lookAt(eyePos.clone().addScaledVector(direction,25));
  }else{
-  const indoors=zFortune?.contains(player.x,player.z)||cityview?.active||realEstate.contains(player.x,player.z)||scooters.inside||museum?.contains(player.x,player.z)||rvPark.inside||!!villas.at(player.x,player.z)||barber.active||office.lobby||camp.insideCabin||!!premier.at(player.x,player.z)||boutique.active||bowling.active||!!coastal.homeAt(player.x,player.z)||club.active||ownableHomes.active||!!apartmentSession||!!universalSession||cafeInside||dealerInside;
+  const indoors=news?.contains(player.x,player.z)||zFortune?.contains(player.x,player.z)||cityview?.active||realEstate.contains(player.x,player.z)||scooters.inside||museum?.contains(player.x,player.z)||rvPark.inside||!!villas.at(player.x,player.z)||barber.active||office.lobby||camp.insideCabin||!!premier.at(player.x,player.z)||boutique.active||bowling.active||!!coastal.homeAt(player.x,player.z)||club.active||ownableHomes.active||!!apartmentSession||!!universalSession||cafeInside||dealerInside;
   const dist=powersports?.riding?4.6:marine.riding?7:indoors?2.4:onObservationDeck?2.8:insideNeedleLobby?1.6:3.65,eye=marine.riding?southBeach.ocean.heightAt(player.x,player.z)+1.5:onObservationDeck?observationNeedle.deckY+1.7:(indoors?1.65:1.3)+groundHeightAt(player.x,player.z)+(skate.riding?skate.jumpHeight+.2:0);
   const desiredFov=!indoors&&!marine.riding&&!onObservationDeck&&!insideNeedleLobby?60:66;if(camera.fov!==desiredFov){camera.fov=desiredFov;camera.updateProjectionMatrix();}
   const target=new THREE.Vector3(player.x,eye,player.z);
@@ -2202,6 +2205,7 @@ function animate(){
   office.clampCamera(camera.position);
   barber.clampCamera(camera.position);
   villas.clampCamera(camera.position,player.x,player.z);
+  if(news?.contains(player.x,player.z))news.clampCamera(camera.position);
   if(boutique.active)boutique.clampCamera(camera.position);
   if(bowling.active)bowling.clampCamera(camera.position);
   if(club.active)club.clampCamera(camera.position);
@@ -2265,11 +2269,11 @@ function animate(){
  homeButton.style.display=nearHome?'block':'none';
  if(nearHome)homeButton.textContent=ownableHomes.owned?.id===nearHome.id?'H · CUSTOMIZE HOME':'H · CLAIM / HOME OPTIONS';
  const nearTower=!boutique.active&&!bowling.active&&!scooters.riding&&!powersports?.riding&&!skate?.riding&&!activeCar&&Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)<7;
- towerButton.style.display=(!observationNeedle.riding&&((onObservationDeck&&observationNeedle.nearLift(player.x,player.z))||(insideNeedleLobby&&observationNeedle.authorized&&observationNeedle.nearLift(player.x,player.z))||(!onObservationDeck&&!insideNeedleLobby&&nearTower)))?'block':'none';
- towerExitButton.style.display=insideNeedleLobby?'block':'none';
+ towerButton.style.display=(!observationNeedle.riding&&((onObservationDeck&&observationNeedle.nearLift(player.x,player.z))||(insideNeedleLobby&&observationNeedle.authorized&&observationNeedle.nearLift(player.x,player.z))))?'block':'none';
+ towerExitButton.style.display='none';
  towerButton.textContent=onObservationDeck?'T · RIDE Z-VIEW DOWN':insideNeedleLobby?'T · RIDE Z-VIEW UP':'T · ENTER Z-VIEW';
  const universalEntry=universalSession?{label:'EXIT'}:nearestUniversalEntrance();
- const door=universalEntry?null:nearestDoor();doorButton.style.display=(door||universalEntry)?'block':'none';
+ const door=universalEntry?null:nearestDoor();doorButton.style.display='none';
  doorButton.textContent=universalSession?(universalSession.home?'Exit Home':'F · EXIT BUILDING'):universalEntry?.garage?'F · ENTER GARAGE':universalEntry?.home?'Enter home':universalEntry?.apartment?'F · ENTER APARTMENTS':'F · ENTER BUILDING';
  const nearSeat=nearestAvailableSeat();
  cafeButton.style.display=(sittingSeat||nearSeat)&&!activeCar?'block':'none';
@@ -2280,7 +2284,7 @@ function animate(){
  dealerButton.style.display='none';
  dealerButton.textContent=dealerInside?'E · EXIT DEALERSHIP':'E · ENTER DEALERSHIP';
  const showroomCar=dealerInside?dealership.nearestCar(player.x,player.z,5):null;showroomButton.style.display=showroomCar?'block':'none';if(showroomCar)showroomButton.textContent='View '+showroomCar.name;
- apartmentButton.style.display=apartmentSession&&!apartments.currentUnit?'block':'none';apartmentButton.textContent=apartments.currentUnit?'Return to apartment corridor':apartments.currentFloor?'Return to ground floor':'Exit apartments';
+ apartmentButton.style.display=apartmentSession&&!apartments.currentUnit&&apartments.currentFloor!==0?'block':'none';apartmentButton.textContent=apartments.currentUnit?'Return to apartment corridor':apartments.currentFloor?'Return to ground floor':'Exit apartments';
  if(enter){enter.style.display=!adminTransport?.active&&(activeCar||!otherInterior&&!cafeInside&&!dealerInside&&nearestUsableCar())?'block':'none';enter.textContent=activeCar?'Exit vehicle':'Enter vehicle';}
  townControls.update();
  drivingControls.update(activeCar||powersports?.activeVehicle);
