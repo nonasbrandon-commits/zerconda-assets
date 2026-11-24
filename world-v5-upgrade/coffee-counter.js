@@ -1,0 +1,40 @@
+import * as THREE from 'three';
+// Freestanding, human-scale joinery; front is +Z, staff aisle is -Z.
+export function createCoffeeCounter(parent){
+ const root=new THREE.Group();root.name='Brewstone · crafted counter and illuminated back bar';parent.add(root);
+ const mat=(c,r=.55,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
+ const oak=[mat('#794522'),mat('#985e30'),mat('#ac713b')],dark=mat('#20201e',.32),stone=mat('#30302d',.26,.12),steel=mat('#adb5b5',.25,.8),ceramic=mat('#fff5df',.25),gold=mat('#c49b59',.3,.65),soil=mat('#332b1c'),leaves=mat('#4f7926');
+ const glow=new THREE.MeshStandardMaterial({color:'#ffe3ad',emissive:'#ffac38',emissiveIntensity:2.5});const glass=new THREE.MeshPhysicalMaterial({color:'#e0f1f0',roughness:.08,transparent:true,opacity:.16,depthWrite:false,side:THREE.DoubleSide});
+ const cube=new THREE.BoxGeometry(1,1,1),cylinder=new THREE.CylinderGeometry(1,1,1,20);
+ function box(name,x,y,z,w,h,d,m){const o=new THREE.Mesh(cube,m);o.name=name;o.position.set(x,y,z);o.scale.set(w,h,d);o.castShadow=o.receiveShadow=true;root.add(o);return o;}
+ function cyl(name,x,y,z,r,h,m){const o=new THREE.Mesh(cylinder,m);o.name=name;o.position.set(x,y,z);o.scale.set(r,h,r);root.add(o);return o;}
+ function line(name,pts,r,m){const curve=new THREE.CatmullRomCurve3(pts.map(p=>new THREE.Vector3(...p)));const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,32,r,6,false),m);mesh.name=name;root.add(mesh);return mesh;}
+ function emblem(x,y,z,s){line('Raised illuminated coffee cup',[[x-.34*s,y+.12*s,z],[x-.24*s,y-.22*s,z],[x,y-.29*s,z],[x+.24*s,y-.22*s,z],[x+.34*s,y+.12*s,z]],.018*s,glow);line('Cup rim',[[x-.34*s,y+.12*s,z],[x,y+.08*s,z],[x+.34*s,y+.12*s,z]],.018*s,glow);line('Cup handle',[[x+.32*s,y+.1*s,z],[x+.50*s,y+.06*s,z],[x+.47*s,y-.10*s,z],[x+.27*s,y-.14*s,z]],.018*s,glow);line('Saucer',[[x-.43*s,y-.34*s,z],[x,y-.38*s,z],[x+.43*s,y-.34*s,z]],.018*s,glow);for(const dx of[-.13,.08])line('Rising coffee steam',[[x+dx*s,y+.24*s,z],[x+(dx-.08)*s,y+.40*s,z],[x+(dx+.02)*s,y+.58*s,z],[x+dx*s,y+.72*s,z]],.016*s,glow);}
+ function text(label,x,y,z,w,h,size=76){const c=document.createElement('canvas');c.width=1024;c.height=256;const ctx=c.getContext('2d');ctx.clearRect(0,0,1024,256);ctx.fillStyle='#f7dfb0';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='600 '+size+'px Georgia';ctx.fillText(label,512,128,980);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const o=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:t,transparent:true,depthWrite:false}));o.name=label;o.position.set(x,y,z);root.add(o);}
+ function mug(x,y,z){cyl('Ceramic cup',x,y+.075,z,.065,.15,ceramic);cyl('Coffee surface',x,y+.152,z,.052,.003,soil);const handle=new THREE.Mesh(new THREE.TorusGeometry(.048,.012,6,16),ceramic);handle.position.set(x+.071,y+.08,z);root.add(handle);}
+ // Counter base and continuous end panels. Staff side is furnished separately.
+ box('Inset kickboard',0,.065,-5.65,12,.13,1.32,dark);box('Counter carcass',0,.58,-5.65,12,1.00,1.32,dark);
+ for(let i=0;i<120;i++){const xx=-5.95+i*.1;box('Individual oak front flute',xx,.59,-4.973,.074,.91,.055,oak[i%3]);}
+ for(const side of[-1,1])for(let i=0;i<13;i++)box('Oak return slat',side*6.02,.59,-6.25+i*.1,.055,.91,.074,oak[i%3]);
+ box('Dark stone worktop',0,1.13,-5.65,12.35,.12,1.55,stone);box('Recessed warm counter strip',0,1.055,-4.947,11.96,.025,.025,glow);box('Front emblem panel',0,.59,-4.925,1.8,.92,.07,dark);emblem(0,.52,-4.88,.64);
+ // Staff-side doors, refrigerator, sink, open storage and till.
+ for(const xx of[-4.7,-3.45]){box('Under counter stainless refrigerator',xx,.59,-6.326,1.17,.90,.035,steel);box('Fridge handle',xx+.44,.72,-6.365,.025,.30,.025,dark);}
+ for(const xx of[-1.9,-.9,1.0]){box('Staff cabinet door',xx,.57,-6.33,.91,.88,.035,dark);box('Cabinet pull',xx+.32,.80,-6.37,.18,.025,.025,steel);}
+ box('Sink rim',-.1,1.199,-5.96,.65,.018,.46,steel);box('Sink bowl',-.1,1.204,-5.96,.53,.018,.34,dark);line('Gooseneck tap',[[-.1,1.20,-6.22],[-.1,1.53,-6.22],[-.1,1.59,-6.04],[-.1,1.45,-6.00]],.018,steel);
+ for(const yy of[.18,.55])box('Open rear shelf',3.8,yy,-6.0,3.6,.06,.5,dark);for(let i=0;i<6;i++)mug(2.5+i*.42,.58,-6.15);
+ cyl('POS pedestal',3.8,1.30,-5.55,.07,.25,dark);const pos=box('Angled point of sale display',3.8,1.52,-5.59,.70,.42,.07,dark);pos.rotation.x=-.25;box('Card reader',2.9,1.24,-5.35,.2,.10,.27,dark);
+ for(let j=0;j<3;j++)for(let i=0;i<5;i++)cyl('Stacked takeaway cups',1.9+j*.18,1.22+i*.032,-5.45,.068,.052,ceramic);
+ // Raised glass pastry cabinet: real shelves, frames, trays and individual pastries.
+ box('Pastry case plinth',-3.8,1.23,-5.6,3.0,.12,1.08,dark);
+ for(const xx of[-5.3,-2.3]){box('Pastry glass end',xx,1.64,-5.6,.022,.72,1.08,glass);for(const zz of[-6.14,-5.06])box('Pastry case upright',xx,1.64,zz,.03,.78,.03,dark);}
+ box('Pastry front glass',-3.8,1.64,-5.05,3,.72,.022,glass);box('Pastry case glass roof',-3.8,2.02,-5.6,3,.025,1.08,glass);
+ for(const yy of[1.32,1.66]){box('Pastry tray',-3.8,yy,-5.6,2.88,.025,.94,steel);box('Cabinet shelf light',-3.8,yy+.29,-6.08,2.8,.015,.02,glow);for(let i=0;i<8;i++){const pastry=new THREE.Mesh(new THREE.TorusGeometry(.105,.044,8,12,Math.PI*1.7),oak[2]);pastry.name='Golden baked croissant';pastry.rotation.x=Math.PI/2;pastry.position.set(-5.04+(i%4)*.78,yy+.065,-5.84+Math.floor(i/4)*.43);root.add(pastry);}}
+ // Matching slatted back wall and central framed coffee sign.
+ box('Back bar backing',0,2.15,-8.71,13.6,4.3,.16,dark);for(let i=0;i<136;i++)box('Back wall vertical oak',-6.75+i*.1,2.15,-8.60,.075,4.24,.08,oak[i%3]);
+ box('Raised back bar sign',0,2.87,-8.42,4.1,2.30,.14,dark);for(const xx of[-2.08,2.08])box('Sign brass edge',xx,2.87,-8.32,.025,2.36,.025,gold);for(const yy of[1.69,4.05])box('Sign brass edge',0,yy,-8.32,4.18,.025,.025,gold);emblem(0,3.08,-8.30,.85);text('BREWSTONE COFFEE',0,2.35,-8.30,3.75,.50,70);
+ for(const side of[-1,1])for(const yy of[1.85,3.05]){const xx=side*4.5;box('Floating oak shelf',xx,yy,-8.1,3.3,.10,.78,oak[1]);box('Shelf warm underlight',xx,yy-.065,-7.81,3.12,.022,.025,glow);for(let i=0;i<5;i++){const px=xx-1.2+i*.58;if(yy>2){cyl('Glass coffee bean jar',px,yy+.30,-8.1,.13,.50,glass);cyl('Roasted beans',px,yy+.26,-8.1,.11,.40,soil);cyl('Jar brass lid',px,yy+.57,-8.1,.14,.035,gold);}else mug(px,yy+.06,-8.05);}}
+ // Sculpted cascading foliage at both sides of the shelving.
+ for(const side of[-1,1]){cyl('Plant pot',side*6.15,3.50,-8.1,.20,.30,dark);for(let i=0;i<25;i++){const a=i*2.4,leaf=new THREE.Mesh(new THREE.SphereGeometry(1,6,4),leaves);leaf.name='Trailing plant leaf';leaf.scale.set(.08,.17,.025);leaf.position.set(side*6.15+Math.sin(a)*(.13+i*.006),3.65-(i%8)*.12,-7.9+Math.cos(a)*.13);leaf.rotation.z=Math.sin(a)*.8;root.add(leaf);}}
+ for(const xx of[-4.5,0,4.5]){cyl('Pendant cable',xx,5.3,-6.3,.012,1.7,dark);const shade=new THREE.Mesh(new THREE.ConeGeometry(.32,.20,24,1,true),dark);shade.name='Black pendant shade';shade.position.set(xx,4.35,-6.3);root.add(shade);cyl('Warm pendant diffuser',xx,4.26,-6.3,.23,.016,glow);const l=new THREE.PointLight(0xffc481,2.2,7,2);l.position.set(xx,3.9,-6.4);root.add(l);}
+ return{root,solid:{x:0,z:-5.65,w:12.35,d:1.55},counterHeight:1.19,staffPosition:{x:3.8,z:-7.25}};
+}

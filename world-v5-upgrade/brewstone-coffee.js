@@ -1,3 +1,4 @@
+import {createCoffeeCounter} from './coffee-counter.js?v=20261124-coffee-v348';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -31,16 +32,13 @@ export function createCoffeeShop(scene,{x=-28,z=-132,getPlayer=()=>null}={}){
  for(const side of [-1,1]){const door=new THREE.Group();door.name='Brewstone center door';door.position.set(side*.46,0,9.14);root.add(door);
  const part=(w,h,d,px,py,pz,m)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(px,py,pz);door.add(o);return o;};
  part(.90,2.20,.065,0,1.10,0,glass);for(const px of [-.44,.44])part(.035,2.23,.09,px,1.115,.015,metal);for(const yy of [.025,2.205])part(.90,.035,.09,0,yy,.015,metal);part(.025,.42,.035,-side*.26,1.05,.085,black);doors.push({door,side});}
- // Cafe counter, espresso bar and shelves.
- box(0,1.05,-6.5,14,2.1,1.8,wood);box(0,2.16,-6.5,14.4,.2,2,metal);
- for(const xx of [-4,0,4]){box(xx,3.65,-8.7,2.6,.16,.55,wood);box(xx,4.75,-8.7,2.6,.16,.55,wood);}
- for(const xx of [-3,-2.4,2.5,3.2])cyl(xx,2.55,-6.4,.22,.55,black);
+ const counter=createCoffeeCounter(root);
  // Full-width stone terrace extends from the glazing to both adjoining sidewalks.
  const terraceCanvas=document.createElement('canvas');terraceCanvas.width=terraceCanvas.height=256;const tc=terraceCanvas.getContext('2d');tc.fillStyle='#c7c4b9';tc.fillRect(0,0,256,256);let stoneSeed=91;const stoneRand=()=>{stoneSeed=(Math.imul(stoneSeed,1664525)+1013904223)>>>0;return stoneSeed/4294967296;};for(let i=0;i<6000;i++){tc.fillStyle=i%2?'#ffffff16':'#554f4610';tc.fillRect(stoneRand()*256,stoneRand()*256,1.5,1.5);}tc.strokeStyle='#8e8b803f';tc.lineWidth=1.4;tc.strokeRect(0,0,256,256);tc.beginPath();tc.moveTo(128,0);tc.lineTo(128,256);tc.moveTo(0,128);tc.lineTo(256,128);tc.stroke();
  const terraceTex=new THREE.CanvasTexture(terraceCanvas);terraceTex.colorSpace=THREE.SRGBColorSpace;terraceTex.wrapS=terraceTex.wrapT=THREE.RepeatWrapping;terraceTex.repeat.set(13.5,6.5);terraceTex.anisotropy=8;const terraceMat=mat(0xffffff,.85);terraceMat.map=terraceTex;terraceMat.polygonOffset=true;terraceMat.polygonOffsetFactor=-1;terraceMat.polygonOffsetUnits=-2;
  const terrace=box(.5,-.06,15.5,27,.12,13,terraceMat);terrace.name='Brewstone Coffee · full stone terrace';
 
- const seats=[],solids=[{x:0,z:-6.5,w:14.4,d:2}];
+ const seats=[],solids=[counter.solid];
  // Higher-detail patio furniture: metal frames, wood slat seats, curved chair backs,
  // tapered table pedestals, and individual leaf clusters instead of green spheres.
  const furnitureFrame=mat(0x292f31,.35,.68),oak=mat(0xa17b55,.72),cushion=mat(0x3e6b64,.95);
@@ -68,8 +66,8 @@ export function createCoffeeShop(scene,{x=-28,z=-132,getPlayer=()=>null}={}){
   const base=new THREE.Mesh(new THREE.CylinderGeometry(.12,.44,.08,16),furnitureFrame);
   base.position.set(tx,.085,tz);root.add(base);
   for(let j=0;j<4;j++){
-   const a=j*Math.PI/2+rot,px=tx+Math.cos(a)*1.57,pz=tz+Math.sin(a)*1.57;
-   chair(px,pz,a+Math.PI);
+   const a=j*Math.PI/2+rot,px=tx+Math.cos(a)*1.24,pz=tz+Math.sin(a)*1.24;
+   chair(px,pz,Math.atan2(tx-px,tz-pz));
   }
  }
  for(const [tx,tz] of [[-7,1],[7,1],[-7,5],[7,5],[-7,14],[7,14]])table(tx,tz);
@@ -135,7 +133,7 @@ export function createCoffeeShop(scene,{x=-28,z=-132,getPlayer=()=>null}={}){
  function canWalk(px,pz){const lx=px-x,lz=pz-z;if(Math.abs(lx)>12.4||lz< -9.4||lz>18)return null;
  if(lz<9.4){if(Math.abs(lx)>11.6||lz< -8.6)return false;if(lz>8.6&&Math.abs(lx)>.70)return false;}
  return !solids.some(s=>Math.abs(lx-s.x)<s.w/2+.26&&Math.abs(lz-s.z)<s.d/2+.26);}
- return {root,seats,shrubContainers,doors,solids,canWalk,update(dt){const p=getPlayer();const near=p&&Math.hypot(p.x-x,p.z-z-9)<3.8;doorGap=THREE.MathUtils.damp(doorGap,near?1:0,10,dt);for(const{door,side}of doors)door.position.x=side*(.46+doorGap*.94);},entrance:{x,z:z+11},isInside:(px,pz)=>Math.abs(px-x)<11.8&&Math.abs(pz-z)<8.8,
+ return {root,seats,shrubContainers,doors,solids,counter,canWalk,update(dt){const p=getPlayer();const near=p&&Math.hypot(p.x-x,p.z-z-9)<3.8;doorGap=THREE.MathUtils.damp(doorGap,near?1:0,10,dt);for(const{door,side}of doors)door.position.x=side*(.46+doorGap*.94);},entrance:{x,z:z+11},isInside:(px,pz)=>Math.abs(px-x)<11.8&&Math.abs(pz-z)<8.8,
  nearestSeat(px,pz,max=2.1){let best=null,dist=max;for(const seat of seats){const d=Math.hypot(seat.x-px,seat.z-pz);if(d<dist){dist=d;best=seat;}}return best;},
  dispose(){scene.remove(root);}};
 }
