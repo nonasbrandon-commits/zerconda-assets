@@ -1,4 +1,4 @@
-import {SLIM_RESIDENTS} from './slim-resident-profiles.js?v=20261124-body-fix-v345';
+import {SLIM_RESIDENTS} from './slim-resident-profiles.js?v=20261124-proportions-v346';
 import {FULLER_RESIDENTS} from './fuller-resident-profiles.js?v=20261124-body-fix-v345';
 import {COMMUNITY_RESIDENTS} from './community-resident-profiles.js?v=20261124-community-v342';
 import * as THREE from 'three';
