@@ -1,4 +1,4 @@
-import {createFortuneInterior} from './fortune-interior.js?v=20261124-books-v350';
+import {createFortuneInterior} from './fortune-interior.js?v=20261124-crystals-v351';
 import {createSolidPlanter} from './solid-planter.js?v=20261121-planters-v202';
 import * as THREE from 'three';
 import {GROUND_LEVEL as G} from './ground-level.js?v=20261119-level-ground-v117';
