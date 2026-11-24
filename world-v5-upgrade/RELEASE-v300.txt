@@ -1,0 +1,2 @@
+Zerconda v300
+Replaced the pale green living-room floor rectangle with a charcoal-gray pile rug matching the supplied reference style: fine mottled texture, rounded corners and raised bound edge. Preserves seating-area position and footprint. Shared procedural texture/materials require no external image download.
