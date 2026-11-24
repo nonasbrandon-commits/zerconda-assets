@@ -1,0 +1,1 @@
+Startup hotfix: restore chessTables.update and animated 3D piece movement from the previously working chess module, preserving the premium chess UI and occupied-seat corrections. The lost API method caused animate() to throw before any playable frame. The added neighborhood crowd remains a separate pending change.
