@@ -1,0 +1,3 @@
+import {createDetailedBathroom} from './residential-furnishings.js?v=20261122-bath-fit-v221';
+// Apartment shells widen X by 1.7; fixtures stay at their house-scale dimensions.
+export function createApartmentBathroom(parent){const bathroom=createDetailedBathroom(parent,{width:4.675,depth:4.10,tub:false,wallHeight:2.95,vanityWall:'right',vanityZ:.35,vanityWidth:1.35});bathroom.root.name='Apartment upgraded stone bathroom · house fixtures';bathroom.root.position.set(-2.75,0,-1.95);bathroom.root.userData.bathroomUpgrade={houseFixtures:true,glassShower:true,floatingVanity:true,backlitMirror:true,width:4.675,depth:4.10};return{root:bathroom.root,solids:bathroom.solids.map(s=>({...s,x:-2.75+s.x/1.7,z:-1.95+s.z}))};}

@@ -1,3 +1,4 @@
+import {collectHomeLocations} from './home-location-names.js?v=20261124-homes-v322';
 import {createNeighborhoodResidents} from './neighborhood-residents.js?v=20261124-neighborhood-v316';
 import {installPremiumGameUI} from './premium-game-ui.js?v=20261124-boardwalk-v314';
 import {createSunglassesHut} from './sunglasses-hut.js?v=20261124-boardwalk-v314';
@@ -1339,7 +1340,7 @@ const roadMap=createRoadMapGeometry(scene,asphalt);
 await yieldStartup();
 roadMap.scan();
 await yieldStartup();
-const cityMap=createCityMap({player,getRoadPolygons:()=>roadMap.polygons,getLots:()=>realEstate.mapLots(),getNavigation:()=>{const cab=zCabs?.activeCab;if(!cab)return null;return{destination:cab.destination,points:[cab.root.position,...cab.path.points.filter((p,i)=>cab.path.lengths[i]>=cab.progress)]};}});
+const cityMap=createCityMap({player,getHomes:()=>collectHomeLocations({starter:ownableHomes,premier,villas,coastal,apartments:apartmentExteriors,apartmentExperience}),getRoadPolygons:()=>roadMap.polygons,getLots:()=>realEstate.mapLots(),getNavigation:()=>{const cab=zCabs?.activeCab;if(!cab)return null;return{destination:cab.destination,points:[cab.root.position,...cab.path.points.filter((p,i)=>cab.path.lengths[i]>=cab.progress)]};}});
 await yieldStartup();
 
 // Third-person walking avatar: forward-facing, visible from the default camera.
