@@ -1,3 +1,4 @@
+import {createCoffeeMarbleFloor} from './coffee-marble-floor.js?v=20261124-marble-v354';
 import {createCoffeeCounter} from './coffee-counter.js?v=20261124-proportions-v353';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
@@ -7,7 +8,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 export function createCoffeeShop(scene,{x=-28,z=-132,getPlayer=()=>null}={}){
  const root=new THREE.Group();root.name='Brewstone Coffee - 3D furnished cafe';root.position.set(x,GROUND_LEVEL,z);root.userData.customInterior=true;scene.add(root);
  const mat=(color,roughness=.7,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
- const brick=mat(0xa5755e,.92),plaster=mat(0xe6ded0,.92),floor=mat(0xb8aa93,.8),wood=mat(0x76503b,.65),
+ const brick=mat(0xa5755e,.92),plaster=mat(0xe6ded0,.92),floor=createCoffeeMarbleFloor(),wood=mat(0x76503b,.65),
   black=mat(0x28343a,.35,.4),glass=new THREE.MeshPhysicalMaterial({color:0xb1d5dc,roughness:.12,metalness:.1,transparent:true,opacity:.24,side:THREE.DoubleSide,depthWrite:false}),
   fabric=mat(0x466e69,.95),metal=mat(0x9aa6a6,.32,.7);
  // Existing photographic brickwork makes the recovered exterior consistent with the upgraded patio.
@@ -18,7 +19,7 @@ export function createCoffeeShop(scene,{x=-28,z=-132,getPlayer=()=>null}={}){
  function box(x,y,z,w,h,d,m){const o=new THREE.Mesh(cube,m);o.position.set(x,y,z);o.scale.set(w,h,d);o.receiveShadow=true;root.add(o);return o;}
  function cyl(x,y,z,r,h,m){const o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,16),m);o.position.set(x,y,z);root.add(o);return o;}
  // Open cafe, 24x18 meters. South-facing glazed entrance faces tower.
- box(0,-.12,0,24,.24,18,floor);
+ box(0,-.12,0,24,.24,18,floor).name='Brewstone polished marble floor';
  box(0,3.2,-9,24,6.4,.35,brick);
  for(const sx of [-1,1])box(sx*12,3.2,0,.35,6.4,18,brick);
  box(0,6.45,0,24.7,.38,18.7,black);
