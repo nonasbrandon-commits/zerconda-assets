@@ -1,3 +1,4 @@
+import {createFortunePavingMaterial} from './fortune-paving.js?v=20261124-paving-v364';
 import {createFortuneTeller} from './fortune-teller.js?v=20261124-teller-v361';
 import {createFortuneInterior} from './fortune-interior.js?v=20261124-seat-v363';
 import {createSolidPlanter} from './solid-planter.js?v=20261121-planters-v202';
@@ -25,7 +26,7 @@ export function createZFortune(scene,{getPlayer=()=>null,onMessage=()=>{}}={}){
  const name=document.createElement('canvas');name.width=1536;name.height=160;const n=name.getContext('2d');n.textAlign='center';n.textBaseline='middle';n.fillStyle='#f4e0ac';n.font='bold 137px Georgia';n.fillText('Z FORTUNE',768,83,1410);sign(name,13.5,1.0,0,5.02,10.15).name='Z Fortune illuminated name';
  const eye=document.createElement('canvas');eye.width=768;eye.height=384;const e=eye.getContext('2d');e.fillStyle='#173f51';e.fillRect(0,0,768,384);e.strokeStyle='#e5c077';e.lineWidth=16;e.strokeRect(12,12,744,360);e.beginPath();e.moveTo(110,192);e.quadraticCurveTo(384,-20,658,192);e.quadraticCurveTo(384,404,110,192);e.fillStyle='#e5c077';e.fill();e.beginPath();e.arc(384,192,78,0,Math.PI*2);e.fillStyle='#4f9bb0';e.fill();e.beginPath();e.ellipse(384,192,19,65,0,0,Math.PI*2);e.fillStyle='#14232e';e.fill();sign(eye,4,2,0,8.3,6.64).name='Z Fortune eye emblem';
  // Level stone entry and planted corners leave a wide unobstructed approach.
- const pathMat=lightStone.clone();pathMat.polygonOffset=true;pathMat.polygonOffsetFactor=-1;pathMat.polygonOffsetUnits=-2;box(4,.1,12,0,-.05,16,pathMat);
+ const pathMat=createFortunePavingMaterial(4,12);pathMat.polygonOffset=true;pathMat.polygonOffsetFactor=-1;pathMat.polygonOffsetUnits=-2;box(4,.1,12,0,-.05,16,pathMat).name='Z Fortune · detailed stone entry paving';
  const interior=createFortuneInterior(root,{x:cfg.x,z:cfg.z,ground:G});
  const fortuneTeller=createFortuneTeller(root,{seat:interior.seats[1],x:cfg.x,z:cfg.z,getPlayer,onMessage});
  const solids=[];for(const side of[-1,1]){const x=side*6.8;createSolidPlanter(root,{x,y:0,z:12.4,width:1.5});solids.push({x,z:12.4,r:.85});}
