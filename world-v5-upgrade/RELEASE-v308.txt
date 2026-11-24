@@ -1,0 +1,1 @@
+v308: Cut the existing continuous alpine terrain beneath the concealed tunnel. This terrain uses a custom grass shader and was omitted by the earlier forest-grass-only filter. Physical geometry removal and shader clipping now cover both terrain sources. Surrounding exterior ground remains intact.
