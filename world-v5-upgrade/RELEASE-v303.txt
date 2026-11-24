@@ -1,0 +1,2 @@
+Zerconda v303
+Elevator floor buttons now appear at the doorway as well as inside. Choosing a floor from the doorway boards the cabin and starts the ride. Removed Apartment directory. Added flower planters on both sides of the entrance with collision footprints. Increased cabin wall clearance and reduced apartment camera near clipping to prevent seeing through close cabin walls. Preserves v302 kitchen/dining/console/stair changes and earlier TV/rug updates.
