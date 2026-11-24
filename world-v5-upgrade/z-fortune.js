@@ -1,7 +1,7 @@
 import {createFortunePavingMaterial} from './fortune-paving.js?v=20261124-paving-v364';
 import {createFortuneTeller} from './fortune-teller.js?v=20261124-teller-v361';
 import {createFortuneInterior} from './fortune-interior.js?v=20261124-seat-v363';
-import {createSolidPlanter} from './solid-planter.js?v=20261121-planters-v202';
+import {createDetailedGardenPlanter as createSolidPlanter} from './detailed-garden-planter.js?v=20261124-garden-v365';
 import * as THREE from 'three';
 import {GROUND_LEVEL as G} from './ground-level.js?v=20261119-level-ground-v117';
 export const Z_FORTUNE={x:-56,z:-132,width:18,depth:20};
