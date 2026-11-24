@@ -1,4 +1,5 @@
-import {createCoffeeCornerLounges} from './coffee-corner-lounges.js?v=20261124-lounges-v356';
+import {createCoffeeBoundary} from './coffee-boundary.js?v=20261124-walls-v357';
+import {createCoffeeCornerLounges} from './coffee-corner-lounges.js?v=20261124-walls-v357';
 import {createCoffeeMarbleFloor} from './coffee-marble-floor.js?v=20261124-marble-v354';
 import {createCoffeeCounter} from './coffee-counter.js?v=20261124-vines-v355';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
@@ -7,6 +8,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Zerconda original cafe set across the north street from Observation Needle.
 // Seats are local interactions; multiplayer presence needs a shared realtime server.
 export function createCoffeeShop(scene,{x=-28,z=-132,getPlayer=()=>null}={}){
+ const boundary=createCoffeeBoundary({x,z,ground:GROUND_LEVEL});
  const root=new THREE.Group();root.name='Brewstone Coffee - 3D furnished cafe';root.position.set(x,GROUND_LEVEL,z);root.userData.customInterior=true;scene.add(root);
  const mat=(color,roughness=.7,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
  const brick=mat(0xa5755e,.92),plaster=mat(0xe6ded0,.92),floor=createCoffeeMarbleFloor(),wood=mat(0x76503b,.65),
@@ -133,10 +135,8 @@ export function createCoffeeShop(scene,{x=-28,z=-132,getPlayer=()=>null}={}){
  for(const xx of [-9,-3,3,9]){
   const light=new THREE.PointLight(0xffd6a1,.8,6);light.position.set(xx,4.8,1);root.add(light);
  }
- function canWalk(px,pz){const lx=px-x,lz=pz-z;if(Math.abs(lx)>12.4||lz< -9.4||lz>18)return null;
- if(lz<9.4){if(Math.abs(lx)>11.6||lz< -8.6)return false;if(lz>8.6&&Math.abs(lx)>.70)return false;}
- return !solids.some(s=>Math.abs(lx-s.x)<s.w/2+.26&&Math.abs(lz-s.z)<s.d/2+.26);}
- return {root,seats,shrubContainers,doors,solids,counter,lounge,canWalk,update(dt){const p=getPlayer();const near=p&&Math.hypot(p.x-x,p.z-z-9)<3.8;doorGap=THREE.MathUtils.damp(doorGap,near?1:0,10,dt);for(const{door,side}of doors)door.position.x=side*(.46+doorGap*.94);},entrance:{x,z:z+11},isInside:(px,pz)=>Math.abs(px-x)<11.8&&Math.abs(pz-z)<8.8,
+ function canWalk(px,pz){const shell=boundary.canWalk(px,pz);if(shell!==true)return shell;const lx=px-x,lz=pz-z;return !solids.some(s=>Math.abs(lx-s.x)<s.w/2+.26&&Math.abs(lz-s.z)<s.d/2+.26);}
+ return {root,seats,shrubContainers,doors,solids,counter,lounge,canWalk,clampCamera:boundary.clampCamera,update(dt){const p=getPlayer();const near=p&&Math.hypot(p.x-x,p.z-z-9)<3.8;doorGap=THREE.MathUtils.damp(doorGap,near?1:0,10,dt);for(const{door,side}of doors)door.position.x=side*(.46+doorGap*.94);},entrance:{x,z:z+11},isInside:(px,pz)=>Math.abs(px-x)<11.8&&Math.abs(pz-z)<8.8,
  nearestSeat(px,pz,max=2.1){let best=null,dist=max;for(const seat of seats){const d=Math.hypot(seat.x-px,seat.z-pz);if(d<dist){dist=d;best=seat;}}return best;},
  dispose(){scene.remove(root);}};
 }
