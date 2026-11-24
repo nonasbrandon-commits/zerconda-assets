@@ -1,0 +1,21 @@
+Zerconda v314
+
+Coastal Shades: black/red peaked boardwalk hut at (-35,182.5), eight 3D sunglass styles, display cases, 1,000 starter game credits, prices 70–130 credits. Local purchases, ownership and selected pair persist atomically in browser storage. Owned pairs may be equipped without buying again; remove option included. No real payment. Eight frame/lens combinations visibly attach to the player head.
+
+Two original description-based character approximations from supplied visual reference sheets (not exact image-conditioned reconstructions): curly-updo fitness visitor on boardwalk and black-suit business visitor near Skyline. Rodin geometry, Meshy walking rigs, compressed GLB assets around 1 MB each, lazy loading, foot grounding, crowd avoidance.
+
+Fitness GLB source: https://v3b.fal.media/files/b/0ab3b440/9E4bQbS1P-Gfd2R7MM0sm_walking.glb
+Business GLB source: https://v3b.fal.media/files/b/0ab3b442/59P2RfW0hgD35DaXuxZA-_walking.glb
+Anchor: adult woman, medium warm tan skin, dark eyes, black high updo, hoop earrings and delicate necklace; either black fitness set/white sneakers or black blazer/white blouse/pencil skirt/heels.
+
+Skyline: stone entrance piers, timber accents, layered canopy, architectural lights, dimensional skyline emblem, public lobby/rooftop sign; improved glazing uses a static stylized sky/tree reflection environment, not live scene reflections. Lobby opening and rooftop travel preserved.
+
+Skate park: framed blue-accent entrance sign, timber/metal illuminated six-board take-and-return stand. Front curb removed and full-width approach made flush with sidewalk at .145m. Trick ramps and ride controls preserved.
+
+Verification: generated model previews inspected, walking animations/skins preserved, shop transactional behavior and style geometry tested, park sidewalk datum and take/return verified; JavaScript syntax/import mapping checks. Full rendered browser flow not verified.
+
+Tom seating: lower the occupied chair by .20m, align his pelvis and feet with that chair and shift him .22m toward the front. Specialized chess seated pose leaves other NPC seating unchanged. Real skinned-model sampling found deep cushion-region intersections reduced from 8,270 to 13 vertices (surface contact), feet held at floor target.
+
+Premium HUD/chess styling: dark metallic panels, blue light accents, wood-framed slate/ivory board, SVG chess pieces, coordinate labels, responsive touch controls. Legal moves, Tom reply, undo pair and leave-cancellation tested in desktop/mobile Chromium. Browser UI screenshots inspected; full 3D town rendering not verified.
+
+Bowling corner flicker: recess the cyan/violet trim to the interior side of the wall and shorten both ends, removing near-coplanar neon fragments bleeding through exterior corners. Preserve entrance, lanes and bowling controls.

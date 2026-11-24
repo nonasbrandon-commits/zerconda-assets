@@ -1,3 +1,4 @@
+import {createSunglasses} from './sunglasses-styles.js?v=20261124-boardwalk-v314';
 import {fitHeroClothing} from './hero-clothing-fit.js?v=20261122-shirt-mask-v219';
 const skinComponent=(a,i,c)=>c===0?a.getX(i):c===1?a.getY(i):c===2?a.getZ(i):a.getW(i);
 import {avatarHeadFrame} from './avatar-fit.js?v=20261120-head-fit-v181';
@@ -71,7 +72,7 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
  function attach(g,bone){root.add(g);root.updateMatrixWorld(true);bone?.attach(g);wearables.push(g);}
  const head=bones.find(b=>/Head$/i.test(b.name)),headFit=avatarHeadFrame(root,head);
  if(outfit.hat&&outfit.hat!=='none'){const g=new THREE.Group();if(outfit.hat==='cap'){add(g,new THREE.SphereGeometry(.17,24,14,0,Math.PI*2,0,Math.PI/2),accent,0,1.8,.015);const brim=add(g,new THREE.SphereGeometry(1,20,10),accent,0,1.81,.15);brim.scale.set(.18,.018,.15);}else{add(g,new THREE.CylinderGeometry(.15,.17,.17,24),accent,0,1.88,.015);add(g,new THREE.CylinderGeometry(.25,.25,.025,32),accent,0,1.80,.015);add(g,new THREE.CylinderGeometry(.165,.17,.035,24),black,0,1.815,.015);}g.scale.setScalar(headFit.scale);g.position.set(headFit.point.x,headFit.top-1.82*headFit.scale,headFit.point.z);g.userData.isHat=true;attach(g,head);}
- if(outfit.glasses){const g=new THREE.Group();for(const side of [-1,1]){add(g,new RoundedBoxGeometry(.067,.042,.024,2,.01),black,side*.04,1.705,.137);const arm=add(g,new THREE.BoxGeometry(.012,.012,.12),black,side*.079,1.715,.08);}add(g,new THREE.BoxGeometry(.025,.012,.018),gold,0,1.715,.145);g.position.set(headFit.point.x,headFit.top-.13-1.705,headFit.point.z);attach(g,head);}
+ if(outfit.glasses){const g=createSunglasses(outfit.sunglassesStyle||'wayfarer');g.position.set(headFit.point.x,headFit.top-.13,headFit.point.z+.137);attach(g,head);}
  if(outfit.bag&&outfit.bag!=='none'){const g=new THREE.Group(),px=outfit.bag==='purse'?-.31:.22,py=outfit.bag==='purse'?.78:.92;add(g,new RoundedBoxGeometry(.23,.21,.10,3,.025),accent,px,py,.08);add(g,new THREE.BoxGeometry(.04,.03,.012),gold,px,py+.02,.14);const handle=add(g,new THREE.TorusGeometry(.08,.012,8,20,Math.PI),accent,px,py+.11,.08);if(outfit.bag==='crossbody'){const strap=add(g,new THREE.BoxGeometry(.025,.72,.025),accent,.03,1.28,.13);strap.rotation.z=.5;}attach(g,outfit.bag==='purse'?bones.find(b=>/L_Hand$|L Hand$/.test(b.name)):bones.find(b=>/Spine1$/.test(b.name)));}
  if(hairChoice)hairRig?.apply(hairChoice);
  }

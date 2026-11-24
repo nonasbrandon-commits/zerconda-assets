@@ -23,7 +23,7 @@ export function createBowlingAlley(scene,{getPlayer,canEnter=()=>true,onTeleport
  box(root,5,.3,12,116.7,4.9,35,dark);box(root,5.1,.10,12.1,116.7,4.7,35,cyan);box(root,9.4,.12,12,114.3,floorY-.06,35,floor);box(root,.18,4.5,.18,114.6,2.35,29.3,gold);box(root,.18,4.5,.18,114.6,2.35,40.7,gold);
  sign(root,'ZERCONDA · LUXE LANES',118.3,6.0,35,28,1.7,-Math.PI/2);sign(root,'BOWLING · LOUNGE',114.05,4.95,35,10,.65,-Math.PI/2);sign(root,'EIGHT LANES · COME PLAY',140,5.8,51.2,30,1.1);
  for(const z of [22,48]){box(root,2,.9,2,115.5,.55,z,gold);const sculpture=sphere(root,.65,115.5,1.5,z,dark);for(const [dy,dz]of [[.2,.32],[.35,0],[.12,-.3]])sphere(root,.10,115.0,1.5+dy,z+dz,gold);for(const zz of [-.42,0,.42]){const shape=new THREE.LatheGeometry([[0,0],[.17,.04],[.20,.4],[.16,.85],[.08,1.2],[.075,1.45],[.13,1.65],[.12,1.85],[0,1.95]].map(p=>new THREE.Vector2(...p)),20),pin=new THREE.Mesh(shape,white);pin.position.set(115.5,1,z+zz);root.add(pin);const stripe=new THREE.Mesh(new THREE.TorusGeometry(.083,.022,8,20),red);stripe.rotation.x=Math.PI/2;stripe.position.set(115.5,2.44,z+zz);root.add(stripe);}}
- for(const z of [19,51]){box(root,42,.12,.14,140,6.65,z,cyan);box(root,42,.12,.14,140,.85,z,violet);}for(let x=123;x<160;x+=3)box(root,.12,5.5,.2,x,3.6,51.15,gold);
+ for(const z of [19.18,50.82]){box(root,41.4,.12,.06,140,6.65,z,cyan);box(root,41.4,.12,.06,140,.85,z,violet);}for(let x=123;x<160;x+=3)box(root,.12,5.5,.2,x,3.6,51.15,gold);
  batch(root);
  // Six regulation-length playing lanes with a wide approach and a lounge behind them.
  const laneCenters=[-10.5,-7.5,-4.5,-1.5,1.5,4.5,7.5,10.5],seats=[],solids=[];

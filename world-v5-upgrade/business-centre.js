@@ -1,3 +1,4 @@
+import {finishSkylineGlazing,addSkylineEntrance} from './skyline-facade.js?v=20261124-boardwalk-v314';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
@@ -8,6 +9,7 @@ export const BUSINESS_CENTRE={x:188,z:-48,w:32,d:36,height:35.2,roofY:35.42,entr
 export function createBusinessCentre(scene,{getPlayer,canEnter=()=>true,onTeleport=()=>{},onMessage=()=>{}}={}){
  const cfg=BUSINESS_CENTRE,root=new THREE.Group();root.name='Skyline Business Centre and public rooftop terrace';root.position.set(cfg.x,0,cfg.z);root.userData.customInterior=true;scene.add(root);let mode=null,time=0,fireOn=false,trip=null,cabinY=.22,doorOpen=1;const seats=[],solids={lobby:[],roof:[]},actions=[];
  const mat=(c,r=.8)=>new THREE.MeshStandardMaterial({color:c,roughness:r}),stone=mat(0xc7c9c2,.88),ivory=mat(0xe2dfd3),dark=mat(0x243d49,.45),teal=mat(0x416e80,.4),metal=mat(0x899795,.3),wood=mat(0x9e815e),cushion=mat(0xc5cabb,.9),slate=mat(0x50656b,.9),green=mat(0x4b7351,.95),glass=new THREE.MeshPhysicalMaterial({color:0xb6d3d7,transparent:true,opacity:.16,roughness:.12,metalness:.04,depthWrite:false,side:THREE.DoubleSide}),officeGlass=mat(0x32546c,.35);
+ finishSkylineGlazing(glass,officeGlass,teal);
  const parts=new Map();function mesh(geo,m,x=0,y=0,z=0,parent=null,rot=[0,0,0]){if(!geo.getAttribute('uv')){const p=geo.getAttribute('position'),u=[];for(let i=0;i<p.count;i++)u.push(p.getX(i),p.getZ(i));geo.setAttribute('uv',new THREE.Float32BufferAttribute(u,2));}const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.rotation.set(...rot);o.castShadow=true;o.receiveShadow=true;if(parent){parent.add(o);return o;}o.updateMatrix();const g=geo.clone().applyMatrix4(o.matrix),list=parts.get(m)||[];list.push(g.index?g.toNonIndexed():g);parts.set(m,list);geo.dispose();return o;}
  const box=(w,h,d,x,y,z,m=stone,p=null)=>mesh(new THREE.BoxGeometry(w,h,d),m,x,y,z,p);
  function sign(text,x,y,z,w=8,h=.75,ry=0){const c=document.createElement('canvas');c.width=1536;c.height=256;const a=c.getContext('2d');a.fillStyle='#284650';a.fillRect(0,0,1536,256);a.fillStyle='#f2e9d1';a.textAlign='center';a.textBaseline='middle';a.font='bold 65px sans-serif';a.fillText(text,768,128,1490);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const o=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:t,side:THREE.DoubleSide}));o.position.set(x,y,z);o.rotation.y=ry;root.add(o);return o;}
@@ -23,7 +25,7 @@ export function createBusinessCentre(scene,{getPlayer,canEnter=()=>true,onTelepo
  // Lobby transparent glazing surrounds an actual door opening.
  for(const side of [-1,1]){box(13.3,4.45,.1,side*9.35,2.55,18,glass);for(const xx of [3,7,11,15.8])box(.12,4.7,.16,side*xx,2.57,18.05,dark);}box(5.6,.7,.18,0,4.6,18,dark);
  const door=new THREE.Group();door.name='Lobby sliding glass doors';root.add(door);for(const side of [-1,1]){box(2.6,3.9,.10,side*1.35,2.2,18.12,glass,door);box(.08,3.9,.14,side*2.65,2.2,18.14,metal,door);box(.07,.6,.1,side*.2,2.2,18.25,metal,door);}
- box(11,.25,4.4,0,4.6,19.3,dark);box(10,.16,17,0,GROUND_LEVEL-.08,25.5,stone);sign('SKYLINE BUSINESS CENTRE',0,4.1,18.25,15,.65);sign('PUBLIC LOBBY & ROOFTOP',-8,1.4,21.4,5,.6);for(const x of [-10,-6])box(.08,1.3,.08,x,.65,21.4,dark);
+ box(10,.16,17,0,GROUND_LEVEL-.08,25.5,stone);addSkylineEntrance(root);
  // Seven private commercial floors are opaque, with no public stops or hidden entrances.
  shaftCut(31.6,29.8,35.6,0,20.1,0,dark);
  for(let f=0;f<7;f++){const y=7.1+f*4.1;for(let i=0;i<8;i++){const x=-14+i*4;for(const side of [-1,1])box(3.7,3.65,.12,x,y,side*17.86,(i+f)%4?officeGlass:teal);}for(let i=0;i<9;i++){const z=-16+i*4;for(const side of [-1,1])box(.12,3.65,3.7,side*15.86,y,z,(i+f)%4?officeGlass:teal);}shaftCut(32.5,.17,36.5,0,y+2.0,0,metal);}
