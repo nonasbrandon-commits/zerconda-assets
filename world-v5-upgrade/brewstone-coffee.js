@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 // Zerconda original cafe set across the north street from Observation Needle.
 // Seats are local interactions; multiplayer presence needs a shared realtime server.
-export function createCoffeeShop(scene,{x=-28,z=-132,getPlayer=()=>null}={}){
+export function createCoffeeShop(scene,{x=-28,z=-132,getPlayer=()=>null,getOccupiedSeats=()=>[]}={}){
  const boundary=createCoffeeBoundary({x,z,ground:GROUND_LEVEL});
  const root=new THREE.Group();root.name='Brewstone Coffee - 3D furnished cafe';root.position.set(x,GROUND_LEVEL,z);root.userData.customInterior=true;scene.add(root);
  const mat=(color,roughness=.7,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
@@ -137,7 +137,7 @@ export function createCoffeeShop(scene,{x=-28,z=-132,getPlayer=()=>null}={}){
  }
  function canWalk(px,pz){const shell=boundary.canWalk(px,pz);if(shell!==true)return shell;const lx=px-x,lz=pz-z;return !solids.some(s=>Math.abs(lx-s.x)<s.w/2+.26&&Math.abs(lz-s.z)<s.d/2+.26);}
  return {root,seats,shrubContainers,doors,solids,counter,lounge,canWalk,clampCamera:boundary.clampCamera,update(dt){const p=getPlayer();const near=p&&Math.hypot(p.x-x,p.z-z-9)<3.8;doorGap=THREE.MathUtils.damp(doorGap,near?1:0,10,dt);for(const{door,side}of doors)door.position.x=side*(.46+doorGap*.94);},entrance:{x,z:z+11},isInside:(px,pz)=>Math.abs(px-x)<11.8&&Math.abs(pz-z)<8.8,
- nearestSeat(px,pz,max=2.1){let best=null,dist=max;for(const seat of seats){const d=Math.hypot(seat.x-px,seat.z-pz);if(d<dist){dist=d;best=seat;}}return best;},
+ nearestSeat(px,pz,max=2.1){let best=null,dist=max;for(const seat of seats){if(getOccupiedSeats().some(s=>Math.hypot(s.x-seat.x,s.z-seat.z)<.2))continue;const d=Math.hypot(seat.x-px,seat.z-pz);if(d<dist){dist=d;best=seat;}}return best;},
  dispose(){scene.remove(root);}};
 }
 
