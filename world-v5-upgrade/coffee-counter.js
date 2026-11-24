@@ -1,3 +1,4 @@
+import {createTrailingPothos} from './trailing-pothos.js?v=20261124-vines-v355';
 import * as THREE from 'three';
 // Freestanding, human-scale joinery; front is +Z, staff aisle is -Z.
 export function createCoffeeCounter(parent){
@@ -33,12 +34,11 @@ export function createCoffeeCounter(parent){
  // Matching slatted back wall and central framed coffee sign.
  box('Back bar backing',0,2.15,-8.71,13.6,4.3,.16,dark);for(let i=0;i<136;i++)box('Back wall vertical oak',-6.75+i*.1,2.15,-8.60,.075,4.24,.08,oak[i%3]);
  box('Raised back bar sign',0,2.87,-8.42,4.1,2.30,.14,dark);for(const xx of[-2.08,2.08])box('Sign brass edge',xx,2.87,-8.32,.025,2.36,.025,gold);for(const yy of[1.69,4.05])box('Sign brass edge',0,yy,-8.32,4.18,.025,.025,gold);emblem(0,3.08,-8.30,.85);text('BREWSTONE COFFEE',0,2.35,-8.30,3.75,.50,70);
- for(const side of[-1,1])for(const yy of[1.85,3.05]){const xx=side*4.5;box('Floating oak shelf',xx,yy,-8.1,3.3,.10,.78,oak[1]);box('Shelf warm underlight',xx,yy-.065,-7.81,3.12,.022,.025,glow);for(let i=0;i<5;i++){const px=xx-1.2+i*.58;if(yy>2){cyl('Glass coffee bean jar',px,yy+.30,-8.1,.13,.50,glass);cyl('Roasted beans',px,yy+.26,-8.1,.11,.40,soil);cyl('Jar brass lid',px,yy+.57,-8.1,.14,.035,gold);}else mug(px,yy+.06,-8.05);}}
- // Sculpted cascading foliage at both sides of the shelving.
- for(const side of[-1,1]){cyl('Plant pot',side*6.15,3.50,-8.1,.20,.30,dark);for(let i=0;i<25;i++){const a=i*2.4,leaf=new THREE.Mesh(new THREE.SphereGeometry(1,6,4),leaves);leaf.name='Trailing plant leaf';leaf.scale.set(.08,.17,.025);leaf.position.set(side*6.15+Math.sin(a)*(.13+i*.006),3.65-(i%8)*.12,-7.9+Math.cos(a)*.13);leaf.rotation.z=Math.sin(a)*.8;root.add(leaf);}}
+ for(const side of[-1,1])for(const yy of[1.85,3.05]){const xx=side*4.5;box('Floating oak shelf',xx,yy,-8.1,3.3,.10,.78,oak[1]);box('Shelf warm underlight',xx,yy-.065,-7.81,3.12,.022,.025,glow);for(let i=0;i<5;i++){const px=xx-1.2+i*.58;if(yy>2){if(side<0&&i===0||side>0&&i===4)continue;cyl('Glass coffee bean jar',px,yy+.30,-8.1,.13,.50,glass);cyl('Roasted beans',px,yy+.26,-8.1,.11,.40,soil);cyl('Jar brass lid',px,yy+.57,-8.1,.14,.035,gold);}else mug(px,yy+.06,-8.05);}}
  for(const xx of[-4.5,0,4.5]){cyl('Pendant cable',xx,5.3,-6.3,.012,1.7,dark);const shade=new THREE.Mesh(new THREE.ConeGeometry(.32,.20,24,1,true),dark);shade.name='Black pendant shade';shade.position.set(xx,4.35,-6.3);root.add(shade);cyl('Warm pendant diffuser',xx,4.26,-6.3,.23,.016,glow);const l=new THREE.PointLight(0xffc481,2.2,7,2);l.position.set(xx,3.9,-6.4);root.add(l);}
  const sizeY=y=>y<=1.19?y*.92:1.19*.92+(y-1.19)*.65;
  for(const object of root.children){if(object.isMesh){object.updateMatrix();const geometry=object.geometry.clone().applyMatrix4(object.matrix),positions=geometry.attributes.position;geometry.computeBoundingBox();const center=geometry.boundingBox.getCenter(new THREE.Vector3()),round=/Ceramic cup|Coffee surface|Stacked takeaway cups|Glass coffee bean jar|Roasted beans|Jar brass lid|Plant pot|POS pedestal/.test(object.name);for(let i=0;i<positions.count;i++)positions.setXYZ(i,positions.getX(i)*.60,sizeY(positions.getY(i)),round?center.z+(positions.getZ(i)-center.z)*.60:positions.getZ(i));positions.needsUpdate=true;geometry.computeVertexNormals();geometry.computeBoundingBox();geometry.computeBoundingSphere();object.geometry=geometry;object.position.set(0,0,0);object.rotation.set(0,0,0);object.scale.set(1,1,1);}else if(object.isLight){object.position.x*=.60;object.position.y=sizeY(object.position.y);}}
+ const pothos=createTrailingPothos(root);
  root.userData.counterDimensions={width:7.41,height:1.0948,depth:1.55};root.userData.staffSide='negative Z';
- return{root,solid:{x:0,z:-5.65,w:7.41,d:1.55},counterHeight:1.0948,staffPosition:{x:2.28,z:-6.95}};
+ return{root,pothos,solid:{x:0,z:-5.65,w:7.41,d:1.55},counterHeight:1.0948,staffPosition:{x:2.28,z:-6.95}};
 }

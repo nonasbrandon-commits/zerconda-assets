@@ -1,5 +1,5 @@
 import {createCoffeeMarbleFloor} from './coffee-marble-floor.js?v=20261124-marble-v354';
-import {createCoffeeCounter} from './coffee-counter.js?v=20261124-proportions-v353';
+import {createCoffeeCounter} from './coffee-counter.js?v=20261124-vines-v355';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
