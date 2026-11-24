@@ -1,0 +1,11 @@
+import {MOUNTAIN_TRAILS} from './mountain-wilderness.js?v=20261124-trails-v307';
+const cave={id:'cave',name:'Discovered cave passage',samples:Array.from({length:38},(_,i)=>({x:-719-i*3,z:-612}))},segments=[];
+for(const route of[cave,...MOUNTAIN_TRAILS])for(let i=1;i<route.samples.length;i++)segments.push({id:route.id+':'+i,route:route.id,name:route.name,a:route.samples[i-1],b:route.samples[i]});
+const valid=new Set(segments.map(s=>s.id)),visited=new Set(),key='zerconda-explored-mountain-trails-v1';let timer=0,saveTimer=0,dirty=false;try{const data=JSON.parse(globalThis.localStorage?.getItem(key)||'[]');if(Array.isArray(data))for(const id of data)if(valid.has(id))visited.add(id);}catch{}
+function save(){if(!dirty)return;try{globalThis.localStorage?.setItem(key,JSON.stringify([...visited]));dirty=false;}catch{}}
+globalThis.addEventListener?.('pagehide',save);
+function distance(p,a,b){const dx=b.x-a.x,dz=b.z-a.z,t=Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.z-a.z)*dz)/(dx*dx+dz*dz)));return Math.hypot(p.x-a.x-t*dx,p.z-a.z-t*dz);}
+export function trackTrailExploration(dt,player,onFoot=true){timer+=dt;saveTimer+=dt;if(saveTimer>=2){save();saveTimer=0;}if(timer<.35||!onFoot)return;timer=0;if(player.x> -720.8||player.x< -1450||player.z< -1000||player.z> -260)return;for(const s of segments)if(!visited.has(s.id)&&distance(player,s.a,s.b)<2.8){visited.add(s.id);dirty=true;}}
+export function getExploredSegments(){return segments.filter(s=>visited.has(s.id));}
+export function exploredBounds(){const known=getExploredSegments();if(!known.length)return null;const points=known.flatMap(s=>[s.a,s.b]);return{x0:Math.min(...points.map(p=>p.x)),x1:Math.max(...points.map(p=>p.x)),z0:Math.min(...points.map(p=>p.z)),z1:Math.max(...points.map(p=>p.z))};}
+export function drawExploredTrails(ctx,project,{width,height}){const known=getExploredSegments();if(!known.length)return;ctx.save();ctx.beginPath();ctx.rect(0,0,width,height);ctx.clip();ctx.lineCap='round';ctx.lineJoin='round';ctx.setLineDash([]);ctx.strokeStyle='#544932';ctx.lineWidth=4;ctx.beginPath();for(const s of known){const a=project(s.a.x,s.a.z),b=project(s.b.x,s.b.z);ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);}ctx.stroke();ctx.strokeStyle='#f4d17b';ctx.lineWidth=2;ctx.setLineDash([4,2]);ctx.stroke();ctx.restore();}

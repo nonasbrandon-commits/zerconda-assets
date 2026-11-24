@@ -1,0 +1,5 @@
+Zerconda v307 — forested mountains and discovered trails
+Five connected hiking routes with continuous walkable terrain and dense instanced pines. Additional trees fill the western forest strip while preserving roads and the hidden entrance. Existing decorative mountains are lowered beneath the playable terrain and their overlapping trees removed.
+On-foot exploration reveals only visited cave/trail segments in gold on both maps; progress persists in browser localStorage. Overview bounds expand with discoveries. Cab routes remain unchanged.
+Grass cuts now stop inside the west wall face, restoring the exterior wall-base grass.
+Validation: 1,033 walkable trail samples, terrain/geometry checks, persistence and progressive reveal tests, cab map pin-selection smoke test, JavaScript syntax checks. Full browser rendering not verified in this environment.

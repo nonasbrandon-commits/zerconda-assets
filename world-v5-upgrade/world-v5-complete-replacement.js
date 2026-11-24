@@ -1,3 +1,5 @@
+import {createMountainWilderness,updateMountainWilderness,mountainHeightAt,mountainWalkable,extraForestBlocks} from './mountain-wilderness.js?v=20261124-trails-v307';
+import {trackTrailExploration} from './trail-discovery.js?v=20261124-trails-v307';
 import {updateCaveLife} from './cave-life.js?v=20261124-remains-v306';
 import {createWatercraftMouseControls} from './watercraft-mouse-controls.js?v=20261123-waterfront-v285';
 import {createChessPartner} from './chess-partner.js?v=20261123-town-v282';
@@ -10,7 +12,7 @@ import {createBoardwalkWalker} from './boardwalk-walker.js?v=20261123-waterfront
 import {createCrowdSpacing} from './crowd-spacing.js?v=20261123-space-v265';
 import {applyPlayerSeatPose} from './player-seat-pose.js?v=20261123-boardwalk-v269';
 import {createFountainResident} from './fountain-resident.js?v=20261123-boardwalk-v269';
-import {hiddenPassageHeightAt,cutCaveTerrain} from './concealed-cavern.js?v=20261124-remains-v306';
+import {hiddenPassageHeightAt,cutCaveTerrain} from './concealed-cavern.js?v=20261124-trails-v307';
 import {createHiddenForestPassage} from './hidden-forest-passage.js?v=20261123-floor-v295';
 import {createForestGroundCover,unifyForestGround} from './forest-ground-cover.js?v=20261123-natural-v264';
 import {clearRoadSidewalkOverlaps} from './road-surface-joins.js?v=20261123-town-v282';
@@ -102,7 +104,7 @@ import {createBowlingAlley} from './bowling-alley.js?v=20261123-walkin-v265';
 import {createScooterRentals} from './electric-scooter-rentals.js?v=20261123-return-v258';
 import {createSeasidePier} from './seaside-pier.js?v=20261123-waterfront-v285';
 import {createTownInteractions,registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
-import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261123-alpine-v259';
+import {createWildernessLandscape,wildernessHeight} from './wilderness-landscape.js?v=20261124-trails-v307';
 import {createClubZerconda} from './club-zerconda.js?v=20261122-trail-v228';
 import {createRealisticHuman} from './realistic-human.js?v=20261118-faster-town-v106';
 import {createEastForestGate} from './east-forest-gate.js?v=20261121-city-life-v196';
@@ -121,7 +123,7 @@ import {createUniversalInteriors} from './universal-furnished-interiors.js?v=202
 import {addPremiumPlazaFurniture} from './premium-plaza-furniture.js?v=20261121-entry-fix-v198';
 import {addAirDancers} from './air-dancers.js?v=20261120-facing-v184';
 import {createZercondaBeach} from './zerconda-beach.js?v=20261123-waterfront-v271';
-import {createCityMap} from './top-city-map.js?v=20261123-walls-v294';
+import {createCityMap} from './top-city-map.js?v=20261124-trails-v307';
 import {addSignatureArchitecture} from './signature-apartment-buildings.js?v=20261119-performance-v147';
 import {addWaterfrontHomes} from './waterfront-ocean-view-homes.js?v=20261123-town-v282';
 import {createOwnableHomes} from './ownable-suburban-homes.js?v=20261122-controls-v246';
@@ -514,7 +516,7 @@ function authoredGroundHeightAt(x,z){
  return Number.isFinite(height)?height:GROUND_LEVEL;
 }
 // Exterior modules and sidewalk slabs may overlap at their physical edges.
-function groundHeightAt(x,z){
+function groundHeightAt(x,z){const mountainY=mountainHeightAt(x,z);if(mountainY!==null)return mountainY;
  const estateY=realEstate?.heightAt(x,z);if(estateY!==null&&estateY!==undefined)return estateY;
  let height=authoredGroundHeightAt(x,z);
  if(barber?.active||office?.active||apartmentExperience?.active||bowling?.active||boutique?.active||club?.active||ownableHomes?.active||marine?.riding||airfield?.boarded)return height;
@@ -798,7 +800,7 @@ const wilderness=createWildernessLandscape(scene);
 await yieldStartup();
 
 const hiddenForestPassage=createHiddenForestPassage(scene,{wallMaterial:wallStone,getPlayer:()=>player,onStop:()=>{keys.clear();townControls.stop();movement.vx=movement.vz=movement.wheelImpulse=0;}});
-const perimeterForest=createPerimeterForest(scene,{grass});
+const perimeterForest=createPerimeterForest(scene,{grass});const mountainWilderness=createMountainWilderness(scene);
 await yieldStartup();
 forestGravelRoads=createForestGravelRoads(scene);
 await yieldStartup();
@@ -1937,7 +1939,7 @@ await yieldStartup();
 addEventListener('keydown',e=>{if(controlsGuide?.panelOpen||adminTransport?.active||chessTables.panelOpen||realEstate.panelOpen||militaryAccess?.panelOpen||zCabs?.riding||zCabs?.panelOpen||hotDogVendor?.panelOpen||zStore?.panelOpen||playerMenu?.panelOpen)return;if(e.code==='Escape'&&!e.repeat){carnival.close();}if(e.code==='KeyF'&&!e.repeat&&(camp?.resting||airfield?.boarded)){e.preventDefault();e.stopImmediatePropagation();camp.stopRest();airfield?.exit();skate?.end();office?.exit();barber?.exit();villas?.close();observationNeedle?.reset();return;}if(e.code!=='KeyF'||e.repeat||carnival?.riding||carnival?.gameOpen||observationNeedle.riding||villas?.panelOpen||barber?.panelOpen||club.gameOpen||(ownableHomes.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.boarded)))))||marine?.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;const action=townControls.activeActions[0];if(action){e.preventDefault();e.stopImmediatePropagation();townControls.activate(action.id);}},true);
 await yieldStartup();
 
-function walkable(x,z){const secretWalk=hiddenForestPassage.canWalk(x,z);if(secretWalk!==null)return !activeCar&&!scooters?.riding&&secretWalk;const bowlPortal=bowling?.portalWalk(x,z);if(bowlPortal!==null&&bowlPortal!==undefined)return bowlPortal;
+function walkable(x,z){const mountainWalk=mountainWalkable(x,z);if(mountainWalk!==null)return !activeCar&&!scooters?.riding&&mountainWalk;const secretWalk=hiddenForestPassage.canWalk(x,z);if(secretWalk!==null)return !activeCar&&!scooters?.riding&&secretWalk;if(extraForestBlocks(x,z))return false;const bowlPortal=bowling?.portalWalk(x,z);if(bowlPortal!==null&&bowlPortal!==undefined)return bowlPortal;
  if(privateHomeBlocks(x,z)||residentialShadeTrees?.blocks(x,z)||museumGardenTrees?.blocks(x,z))return false;
  if(scooters?.inside)return scooters.canWalkInterior(x,z);
  if(zCabs?.blocks(x,z))return false;if(ambientTraffic?.collisionVehicles.some(v=>Math.hypot(x-v.x,z-v.z)<1.5))return false;
@@ -2030,7 +2032,7 @@ const gravelTires=createGravelTireAudio({scene,getVehicle:()=>{if(adminTransport
 await yieldStartup();
 
 function animate(){
- requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);updateCaveLife(motionDt,player);forestGroundCover.update();chessPartner.update(motionDt);chessTables.update(motionDt);fountainResident.update(dt);boardwalkWalker.update(motionDt);whiteFitnessWalker.update(motionDt);needlePlaidResident.update(motionDt);kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
+ requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);updateCaveLife(motionDt,player);updateMountainWilderness(player);trackTrailExploration(motionDt,player,!activeCar&&!marine.riding&&!scooters.riding&&!airfield.boarded&&!zCabs.riding);forestGroundCover.update();chessPartner.update(motionDt);chessTables.update(motionDt);fountainResident.update(dt);boardwalkWalker.update(motionDt);whiteFitnessWalker.update(motionDt);needlePlaidResident.update(motionDt);kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
  if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
  updateTreeBreeze(elapsed);airDancers.update(elapsed);dealership.update?.(motionDt);coffeeShop.update(motionDt);powersports?.update(motionDt);zFortune?.update(motionDt);

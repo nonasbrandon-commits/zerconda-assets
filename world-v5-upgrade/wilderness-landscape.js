@@ -1,3 +1,4 @@
+import {mountainHeightAt,MOUNTAIN_BOUNDS} from './mountain-wilderness.js?v=20261124-trails-v307';
 import {installTreeBreeze} from './tree-breeze.js?v=20261121-forest-airfield-v193';
 import {scatterNaturalBoulders} from './forest-natural-details.js?v=20261121-forest-airfield-v193';
 import {getRealisticGrassTexture} from './realistic-grass.js?v=20261121-town-v191';
@@ -27,7 +28,10 @@ export function wildernessHeight(x,z){
  let westernRidge=0;
  if(western>0){for(const [px,pz,height,rx,rz]of [[-1080,-390,445,235,240],[-930,-325,275,175,220],[-1200,-510,330,205,190]]){const dx=(x-px)/rx,dz=(z-pz)/rz,r=Math.hypot(dx,dz);const crest=height*Math.exp(-r*r*1.55);westernRidge=Math.max(westernRidge,crest);}const erosion=fbm(x*.018,z*.018),gullies=Math.pow(1-Math.abs(Math.sin(x*.042+z*.018+fbm(x*.01,z*.01)*9)),5);westernRidge*=.88+erosion*.22;westernRidge-=gullies*westernRidge*.13;const band=westernRidge/38,ledge=Math.floor(band)+smooth(.48,.86,band%1);westernRidge=THREE.MathUtils.lerp(westernRidge,ledge*38,.82)*western;}
  const original=rise*(distantHills+Math.max(0,h*(.69+.35*ridges)-folds*h*.16)+(fbm(x*.018,z*.018)-.3)*h*.12+fbm(x*.005,z*.005)*12)-.22;
- return Math.max(original,rise*westernRidge-.22);
+ const oldHeight=Math.max(original,rise*westernRidge-.22),b=MOUNTAIN_BOUNDS,cx=THREE.MathUtils.clamp(x,b.x0,b.x1),cz=THREE.MathUtils.clamp(z,b.z0,b.z1),distance=Math.hypot(x-cx,z-cz);
+ if(distance<80){const h=mountainHeightAt(cx,cz)-4;return THREE.MathUtils.lerp(h,oldHeight,smooth(0,80,distance));}
+ if(x>=-850&&x<=-720&&Math.abs(z+612)<28)return -.22;
+ return oldHeight;
 }
 function rockTexture(){
  const c=document.createElement('canvas');c.width=c.height=512;const ctx=c.getContext('2d'),data=ctx.createImageData(512,512);
@@ -69,10 +73,10 @@ export function createWildernessLandscape(scene){
  // Deliberate dense edge belt tall enough to be seen above the wall.
  for(let i=0;i<470;i++){const side=i%3;const x=side===0?-728-random()*95:side===1?626+random()*110:-290+random()*970;const z=side===2?-1406-random()*110:-270+random()*355;if(side===1&&Math.abs(z)<22)continue;trees.push({x,z,y:wildernessHeight(x,z),height:29+random()*19,rotation:random()*Math.PI*2,shade:.65+random()*.45});}
  // The near-border pass must obey the same complete corridors as the distant forest.
- for(let i=trees.length-1;i>=0;i--)if(treeOverlapsRoad(trees[i].x,trees[i].z,trees[i].height*.19+1))trees.splice(i,1);
+ for(let i=trees.length-1;i>=0;i--)if((mountainHeightAt(trees[i].x,trees[i].z)!==null)||(trees[i].x>=-850&&trees[i].x<=-720&&Math.abs(trees[i].z+612)<28)||treeOverlapsRoad(trees[i].x,trees[i].z,trees[i].height*.19+1))trees.splice(i,1);
  const crowns=new THREE.InstancedMesh(crownGeometry,leaves,trees.length),trunks=new THREE.InstancedMesh(new THREE.CylinderGeometry(.006,.013,1,7),new THREE.MeshStandardMaterial({color:0x675746,roughness:1}),trees.length);crowns.name='Instanced 3D evergreen forest';trunks.name='Forest trunks';const dummy=new THREE.Object3D(),color=new THREE.Color();
  trees.forEach((t,i)=>{dummy.position.set(t.x,t.y,t.z);dummy.rotation.set(0,t.rotation,0);dummy.scale.set(t.height,t.height,t.height);dummy.updateMatrix();crowns.setMatrixAt(i,dummy.matrix);color.setRGB(.85*t.shade,t.shade,.78*t.shade);crowns.setColorAt(i,color);dummy.position.y+=t.height*.5;dummy.updateMatrix();trunks.setMatrixAt(i,dummy.matrix);});crowns.receiveShadow=true;upgradePineMeshes(crowns,trunks);root.add(crowns,trunks);const distant=[],farLimit=matchMedia('(pointer:coarse)').matches?6500:14000;for(let i=0;i<farLimit*2&&distant.length<farLimit;i++){const x=-3400+random()*7100,z=-4700+random()*4800,outside=Math.max(-720-x,x-618,-1398-z);if(outside<650||outside>3000)continue;const y=wildernessHeight(x,z);if(y>220||z>70&&y<.3)continue;distant.push({x,z,y,h:28+random()*25});}
  const farTrees=new THREE.InstancedMesh(mergeGeometries([[1,.65,-.175],[.8,.6,.1],[.5,.45,.275]].map(([r,h,y])=>{const g=new THREE.ConeGeometry(r,h,7,1,true);g.translate(0,y,0);return g;})),new THREE.MeshStandardMaterial({color:0x334b35,roughness:1}),distant.length);farTrees.name='Distant forest continuing into the haze';for(let i=0;i<distant.length;i++){const t=distant[i];dummy.position.set(t.x,t.y+t.h*.5,t.z);dummy.rotation.set(0,i*2.399,0);dummy.scale.set(t.h*.15,t.h,t.h*.15);dummy.updateMatrix();farTrees.setMatrixAt(i,dummy.matrix);color.setRGB(.28+random()*.12,.38+random()*.13,.27+random()*.1);farTrees.setColorAt(i,color);}installTreeBreeze(farTrees.material,{offset:.5,strength:.004});farTrees.computeBoundingSphere();root.add(farTrees);
- scatterNaturalBoulders(root,{bounds:{x0:-1040,x1:1150,z0:-2100,z1:55},heightAt:wildernessHeight,count:matchMedia('(pointer:coarse)').matches?80:200,seed:9531,canPlace:(x,z,r)=>{const outside=Math.max(-720-x,x-618,-1398-z);return outside>18&&outside<700&&!treeOverlapsRoad(x,z,r+1.5);}});
+ scatterNaturalBoulders(root,{bounds:{x0:-1040,x1:1150,z0:-2100,z1:55},heightAt:wildernessHeight,count:matchMedia('(pointer:coarse)').matches?80:200,seed:9531,canPlace:(x,z,r)=>{const outside=Math.max(-720-x,x-618,-1398-z);return mountainHeightAt(x,z)===null&&outside>18&&outside<700&&!treeOverlapsRoad(x,z,r+1.5);}});
  for(const mesh of root.children){if(!mesh.isMesh)continue;const kind=mesh.name==='Continuous eroded mountain terrain'?'terrain':mesh.name==='Forest trunks'?'trunk':mesh.name==='Distant forest continuing into the haze'?'far':'crown';replaceDistantTerrain(mesh.material,kind);}root.userData.replacedDistantMountains=true;const alpineHorizon=createAlpineHorizon(root);root.userData.treeCount=trees.length;root.userData.distantTreeCount=distant.length;return {root,alpineHorizon,terrainMaterial:material,treeCount:trees.length,distantTreeCount:distant.length};
 }
