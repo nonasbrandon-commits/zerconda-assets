@@ -1,0 +1,1 @@
+Move the brunette visitor from the boardwalk to the south sidewalk beside Town Plaza. Relaxed walking speed 0.85m/s, original walking animation, sidewalk height alignment, existing people avoidance and walkability checks retained. The white-fitness boardwalk visitor keeps the original route and speed.
