@@ -8,7 +8,7 @@ import {clone as cloneSkeleton} from 'three/addons/utils/SkeletonUtils.js';
 
 const BASE=new URL('../realistic-assets/characters/casual-human/',import.meta.url);
 let sourcePromise;
-const outfitCache=new Map();
+const outfitCache=new Map(),garmentRegions=new WeakMap();
 let footContactTexture;
 function contactTexture(){if(footContactTexture)return footContactTexture;const c=document.createElement('canvas');c.width=c.height=64;const a=c.getContext('2d'),g=a.createRadialGradient(32,32,2,32,32,31);g.addColorStop(0,'rgba(18,25,20,.8)');g.addColorStop(.45,'rgba(18,25,20,.45)');g.addColorStop(1,'rgba(18,25,20,0)');a.fillStyle=g;a.fillRect(0,0,64,64);return footContactTexture=new THREE.CanvasTexture(c);}
 
@@ -31,6 +31,7 @@ function colorClothes(mesh,shirt,pants,options={}){
  const point=new THREE.Vector3(),center=new THREE.Vector3();
  const bounds=new THREE.Box3().setFromObject(mesh,true),height=bounds.max.y-bounds.min.y;
  function region(part){
+  let regions=garmentRegions.get(mesh.geometry);if(!regions){regions=new Map();garmentRegions.set(mesh.geometry,regions);}const regionKey=w+':'+h+':'+!!mesh.material.map.flipY+':'+part;if(regions.has(regionKey))return regions.get(regionKey);
   mc.clearRect(0,0,w,h);mc.fillStyle='#fff';
   for(let i=0;i<(index?.count||pos.count);i+=3){
    const ids=[0,1,2].map(j=>index?index.getX(i+j):i+j);center.set(0,0,0);
@@ -43,7 +44,7 @@ function colorClothes(mesh,shirt,pants,options={}){
    function clip(key,value,greater){const out=[];for(let j=0;j<poly.length;j++){const a=poly[j],b=poly[(j+1)%poly.length],inside=v=>greater?v[key]>=value:v[key]<=value,ai=inside(a),bi=inside(b);if(ai)out.push(a);if(ai!==bi){const t=(value-a[key])/(b[key]-a[key]);out.push(Object.fromEntries(['u','v','y','arm'].map(k=>[k,a[k]+(b[k]-a[k])*t])));}}poly=out;}
    if(part==='shorts'){clip('y',.085,true);clip('y',.34,false);}if(part==='sleeves')clip('arm',.45,true);if(poly.length<3)continue;mc.beginPath();poly.forEach((p,n)=>n?mc.lineTo(p.u,p.v):mc.moveTo(p.u,p.v));mc.closePath();mc.fill();
   }
-  return mc.getImageData(0,0,w,h).data;
+  const coverage=mc.getImageData(0,0,w,h).data;regions.set(regionKey,coverage);return coverage;
  }
  for(const [part,color] of [['shirt',shirt],['pants',pants],['shoes',options.shoes||'#303b40'],...(options.shorts?[['shorts','#c3997e']]:[]),...(options.tee?[['sleeves','#c3997e']]:[])]){
   const coverage=region(part),rgb=new THREE.Color(color);rgb.convertLinearToSRGB();
@@ -56,7 +57,7 @@ function colorClothes(mesh,shirt,pants,options={}){
  }
  ctx.putImageData(pixels,0,0);mesh.material=mesh.material.clone();const texture=new THREE.CanvasTexture(canvas);texture.flipY=mesh.material.map.flipY;texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;mesh.material.map=texture;
  if((options.shorts||options.tee)&&mesh.material.normalMap?.image){const nc=document.createElement('canvas');nc.width=w;nc.height=h;const nctx=nc.getContext('2d');nctx.drawImage(mesh.material.normalMap.image,0,0,w,h);const normal=nctx.getImageData(0,0,w,h);for(const part of [...(options.shorts?['shorts']:[]),...(options.tee?['sleeves']:[])]){const coverage=region(part);for(let i=0;i<normal.data.length;i+=4)if(coverage[i+3]>127){normal.data[i]=128;normal.data[i+1]=128;normal.data[i+2]=255;}}nctx.putImageData(normal,0,0);const nt=new THREE.CanvasTexture(nc);nt.flipY=mesh.material.normalMap.flipY;mesh.material.normalMap=nt;}
- outfitCache.set(cacheKey,mesh.material);if(outfitCache.size>16){const first=outfitCache.keys().next().value,old=outfitCache.get(first);outfitCache.delete(first);old.map?.dispose();if(old.normalMap!==mesh.userData.wardrobeBase.normalMap)old.normalMap?.dispose();old.dispose();}
+ outfitCache.set(cacheKey,mesh.material);if(outfitCache.size>64){const first=outfitCache.keys().next().value;outfitCache.delete(first);/* Active meshes own these materials; evicting a cache entry must not dispose their GPU resources. */}
 }
 
 export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>{}}={}){

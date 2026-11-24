@@ -2,17 +2,17 @@ import {colliderContains,colliderExitCandidates} from './outdoor-collision-shape
 import * as THREE from 'three';
 // Small outdoor objects use a spatial index; authored interiors keep their own doors and collision.
 export function createTownObstacles({scene,getFloor=()=>0,ignore=()=>false,getDynamic=()=>[],radius=.28}={}){
- const cells=new Map(),seen=new WeakSet(),records=[],box=new THREE.Box3(),size=new THREE.Vector3(),cell=8;let elapsed=10,dynamicElapsed=1,dynamic=[],lastSafe=null;
+ const cells=new Map(),seen=new WeakSet(),groupChildren=new WeakMap(),records=[],box=new THREE.Box3(),size=new THREE.Vector3(),cell=8;let elapsed=10,dynamicElapsed=1,dynamic=[],lastSafe=null;
  function add(bounds,object,shape={}){const r={...shape,minX:bounds.min.x,maxX:bounds.max.x,minZ:bounds.min.z,maxZ:bounds.max.z,minY:bounds.min.y,maxY:bounds.max.y,object};records.push(r);for(let x=Math.floor((r.minX-radius)/cell);x<=Math.floor((r.maxX+radius)/cell);x++)for(let z=Math.floor((r.minZ-radius)/cell);z<=Math.floor((r.maxZ+radius)/cell);z++){const key=x+','+z,list=cells.get(key)||[];list.push(r);cells.set(key,list);}}
  function addExplicit(o){if(seen.has(o))return;seen.add(o);const data=o.userData.playerCollider;o.updateWorldMatrix(true,false);const e=o.matrixWorld.elements,sx=Math.hypot(e[0],e[2]),sz=Math.hypot(e[8],e[10]),x=e[12],z=e[14],angle=Math.atan2(e[8],e[10]),shape={shape:data.shape,x,z,angle};let hx,hz;if(data.shape==='circle'){shape.radius=data.radius*Math.max(sx,sz);hx=hz=shape.radius;}else{shape.halfX=data.halfX*sx;shape.halfZ=data.halfZ*sz;hx=Math.abs(Math.cos(angle))*shape.halfX+Math.abs(Math.sin(angle))*shape.halfZ;hz=Math.abs(Math.sin(angle))*shape.halfX+Math.abs(Math.cos(angle))*shape.halfZ;}add({min:{x:x-hx,y:e[13]+(data.minY??0),z:z-hz},max:{x:x+hx,y:e[13]+(data.maxY??1.5),z:z+hz}},o,shape);}
  function explicitChildren(o){if(!o.visible||ignore(o)||o.isSkinnedMesh||o.isInstancedMesh||o.userData.dynamicScenery)return;if(o.userData.playerCollider){addExplicit(o);return;}for(const child of o.children)explicitChildren(child);}
- function scan(){scene.updateMatrixWorld(true);function visit(o){if(!o.visible||ignore(o)||o.userData.dynamicScenery||o.isSkinnedMesh||o.isInstancedMesh||o.name==='Animated Zerconda pedestrians')return;
+ function scan(){scene.updateMatrixWorld();function visit(o){if(!o.visible||ignore(o)||o.userData.dynamicScenery||o.isSkinnedMesh||o.isInstancedMesh||o.name==='Animated Zerconda pedestrians')return;
   if(o.userData.playerCollider){addExplicit(o);return;}
   // Interior modules own their walls, but their outdoor benches and props still
   // register explicit colliders. Previously this skipped the entire campground.
   if(o.userData.customInterior){explicitChildren(o);return;}
   if(o.userData.outdoorSolid&&!seen.has(o)){seen.add(o);add(new THREE.Box3().setFromObject(o),o);return;}
-  if(o.isGroup&&!seen.has(o)&&o.children.length){box.setFromObject(o);box.getSize(size);let character=false;if(size.x<6&&size.z<6&&size.y>.25&&size.y<4){o.traverse(c=>{if(c.isSkinnedMesh)character=true});if(!character){seen.add(o);add(box.clone(),o);return;}}}
+  if(o.isGroup&&!seen.has(o)&&o.children.length&&groupChildren.get(o)!==o.children.length){groupChildren.set(o,o.children.length);box.setFromObject(o);box.getSize(size);let character=false;if(size.x<6&&size.z<6&&size.y>.25&&size.y<4){o.traverse(c=>{if(c.isSkinnedMesh)character=true});if(!character){seen.add(o);add(box.clone(),o);return;}}}
   if(o.isMesh&&!seen.has(o)){seen.add(o);box.setFromObject(o);box.getSize(size);if(size.x<14&&size.z<14&&size.y>.22&&(size.y<5||(size.x<2&&size.z<2))&&size.x>.05&&size.z>.05)add(box.clone(),o);}
   for(const c of o.children)visit(c);
  }for(const o of scene.children)visit(o);}
