@@ -1,3 +1,4 @@
+import {applyPowersportsRiderPose} from './powersports-rider-pose.js?v=20261124-driving-v339';
 import {createCityviewApartments} from './cityview-apartments.js?v=20261124-cityview-v326';
 import {createAdminAccount} from './admin-account.js?v=20261124-cityview-v326';
 import {getManagedPrivateHomes,managePrivateHome} from './private-home-locks.js?v=20261124-cityview-v326';
@@ -928,7 +929,7 @@ await yieldStartup();
 
 // Ocean-view residential neighborhood: homes face the southern beach.
 function passHomeDoor(p){if(!allowPrivateHomeAt(p.x,p.z,()=>passHomeDoor(p)))return;player.x=p.x;player.z=p.z;yaw=p.heading;keys.clear();movement.vx=movement.vz=movement.wheelImpulse=0;camera.position.set(p.x-Math.sin(yaw)*1.4,groundHeightAt(p.x,p.z)+2.1,p.z-Math.cos(yaw)*1.4);}
-const waterfrontHomes=coastal=addWaterfrontHomes(scene,{onPassage:passHomeDoor,count:12,getPlayer:()=>player,canInteract:()=>!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!scooters?.riding&&!skate?.riding&&!activeCar&&!club?.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes?.active,onMessage:message=>townControls.notify(message)});
+const waterfrontHomes=coastal=addWaterfrontHomes(scene,{onPassage:passHomeDoor,count:12,getPlayer:()=>player,canInteract:()=>!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!scooters?.riding&&!powersports?.riding&&!skate?.riding&&!activeCar&&!club?.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes?.active,onMessage:message=>townControls.notify(message)});
 await yieldStartup();
 
 eastsideGolf=createEastsideGolfDistrict(scene,{x:425,z:-48,getPlayer:()=>player});
@@ -996,7 +997,7 @@ await yieldStartup();
 // Its south-facing entrance and patio face the road; the showroom stays unobstructed.
 zFortune=createZFortune(scene,{getPlayer:()=>player});
 const fortuneShadeTrees=createFortuneShadeTrees(scene);
-powersports=createPowersportsCenter(scene,{getPlayer:()=>player,onMessage:m=>townControls.notify(m)});
+powersports=createPowersportsCenter(scene,{getPlayer:()=>player,getHeight:groundHeightAt,canMove:(x,z)=>walkable(x,z)&&!southBeach?.blocksVehicle(x,z)&&!cars.some(c=>Math.hypot(x-c.x,z-c.z)<1.7),canInteract:()=>!activeCar&&!scooters?.riding&&!powersports?.riding&&!skate?.riding&&!marine?.riding&&!zCabs?.riding&&!insideHouse()&&!airfield?.boarded&&!carnival?.riding&&!observationNeedle?.riding&&!sittingSeat&&!bedRest?.active,onStop:()=>{keys.clear();movement.vx=movement.vz=movement.wheelImpulse=0;townControls.stop();driverWheelThrottle=rideWheelThrottle=0;drivingControls?.reset();mouseVehicleSteering?.reset();},onMount:heading=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=-.04;driverLookYaw=driverLookPitch=0;},onMessage:m=>townControls.notify(m)});
 await yieldStartup();
 
 const coffeeShop=createCoffeeShop(scene,{x:-28,z:-132,getPlayer:()=>player});
@@ -1026,7 +1027,7 @@ await yieldStartup();
 club=createClubZerconda(scene,{
  getPlayer:()=>player,getYaw:()=>yaw,
  pauseMovement:()=>{keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;},
- canEnter:()=>!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!scooters?.riding&&!skate?.riding&&!activeCar&&!apartmentSession&&!universalSession&&!onObservationDeck,
+ canEnter:()=>!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!scooters?.riding&&!powersports?.riding&&!skate?.riding&&!activeCar&&!apartmentSession&&!universalSession&&!onObservationDeck,
  stopMovement:()=>{keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;sittingSeat=null;seatReturn=null;player.clubSeated=false;}
 });
 await yieldStartup();
@@ -1408,7 +1409,7 @@ await yieldStartup();
 for(const child of [...avatar.children])if(child!==dressedPlayer.root)child.visible=false;
 await yieldStartup();
 
-function updateRealAvatar(dt,time,speed){dressedPlayer.root.userData.animate?.(dt,speed,{seated:!!sittingSeat||!!marine?.riding,driving:!!marine?.riding||!!scooters?.riding,skating:!!skate?.riding,dancing:club?.dancing,backwards:movement.vx*Math.sin(yaw)+movement.vz*Math.cos(yaw)<-.03});}
+function updateRealAvatar(dt,time,speed){dressedPlayer.root.userData.animate?.(dt,speed,{seated:!!sittingSeat||!!powersports?.riding||!!marine?.riding,driving:!!powersports?.riding||!!marine?.riding||!!scooters?.riding&&!powersports?.riding,skating:!!skate?.riding,dancing:club?.dancing,backwards:movement.vx*Math.sin(yaw)+movement.vz*Math.cos(yaw)<-.03});}
 
 
 
@@ -1432,7 +1433,8 @@ await yieldStartup();
 camera.lookAt(48,2,48);
 await yieldStartup();
 
-function resetView(){zCabs?.cancel();cancelHomePassage();
+function resetView(){
+ if(powersports?.riding&&!powersports.end())return;zCabs?.cancel();cancelHomePassage();
  zStore?.close();playerMenu?.close();tattooShop?.close();
  courtGames?.close();
  carnival?.close();camp?.stopRest();airfield?.exit();skate?.end();office?.exit();barber?.exit();villas?.close();observationNeedle?.reset();
@@ -1546,7 +1548,7 @@ await yieldStartup();
 renderer.domElement.addEventListener('wheel',e=>{
  e.preventDefault();
  if(courtGames?.tennisActive)return;
- if(skate?.riding||scooters?.riding){rideWheelThrottle=THREE.MathUtils.clamp(rideWheelThrottle+Math.sign(-e.deltaY)*.75,-1,1);return;}
+ if(powersports?.riding||skate?.riding||scooters?.riding){rideWheelThrottle=THREE.MathUtils.clamp(rideWheelThrottle+Math.sign(-e.deltaY)*.75,-1,1);return;}
  if(activeCar){driverWheelThrottle=THREE.MathUtils.clamp(driverWheelThrottle+Math.sign(-e.deltaY)*.4,-1,1);return;}
  const dir=Math.sign(-e.deltaY);
  if(!dir)return;
@@ -1555,7 +1557,7 @@ renderer.domElement.addEventListener('wheel',e=>{
 },{passive:false});
 await yieldStartup();
 
-addEventListener('keydown',e=>{if(cityview?.panelOpen||cityview?.riding||adminAccount?.panelOpen||controlsGuide?.panelOpen||adminTransport?.active||chessTables.panelOpen||realEstate.panelOpen||militaryAccess?.panelOpen||zCabs?.riding||zCabs?.panelOpen||(hotDogVendor?.panelOpen||sunglassesHut?.panelOpen)||zStore?.panelOpen||playerMenu?.panelOpen)return;if(carnival?.riding||carnival?.gameOpen||observationNeedle?.riding||villas?.panelOpen||barber?.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)||club?.gameOpen||(ownableHomes?.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.controlsLocked)))))||marine?.panelOpen)return;keys.add(e.code);if(e.code==='KeyE'&&!e.repeat){if(skate?.riding){skate.end();return;}if(scooters?.riding){scooters.end();return;}if(club?.active||(!activeCar&&club?.near()))club.toggle();else if(apartmentSession)apartmentAction();else if(nearCafeEntrance()||cafeInside)enterCafe();else if(dealership.isNear(player.x,player.z,5.5)||dealerInside)visitDealership();else toggleCar();}if(e.code==='KeyF'&&!e.repeat){if(universalSession)exitUniversalInterior();else if(nearestUniversalEntrance())enterUniversalInterior();else toggleNearbyDoor();}if(e.code==='KeyT'&&!e.repeat)toggleObservationDeck();
+addEventListener('keydown',e=>{if(cityview?.panelOpen||cityview?.riding||adminAccount?.panelOpen||controlsGuide?.panelOpen||adminTransport?.active||chessTables.panelOpen||realEstate.panelOpen||militaryAccess?.panelOpen||zCabs?.riding||zCabs?.panelOpen||(hotDogVendor?.panelOpen||sunglassesHut?.panelOpen)||zStore?.panelOpen||playerMenu?.panelOpen)return;if(carnival?.riding||carnival?.gameOpen||observationNeedle?.riding||villas?.panelOpen||barber?.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)||club?.gameOpen||(ownableHomes?.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.controlsLocked)))))||marine?.panelOpen)return;keys.add(e.code);if(e.code==='KeyE'&&!e.repeat){if(powersports?.riding){powersports.end();return;}if(skate?.riding){skate.end();return;}if(scooters?.riding){scooters.end();return;}if(club?.active||(!activeCar&&club?.near()))club.toggle();else if(apartmentSession)apartmentAction();else if(nearCafeEntrance()||cafeInside)enterCafe();else if(dealership.isNear(player.x,player.z,5.5)||dealerInside)visitDealership();else toggleCar();}if(e.code==='KeyF'&&!e.repeat){if(universalSession)exitUniversalInterior();else if(nearestUniversalEntrance())enterUniversalInterior();else toggleNearbyDoor();}if(e.code==='KeyT'&&!e.repeat)toggleObservationDeck();
  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();});
 await yieldStartup();
 
@@ -1745,6 +1747,7 @@ function toggleObservationDeck(){
 
 function insideHouse(){return cityview?.active||realEstate.contains(player.x,player.z)||!!(coastal?.homeAt(player.x,player.z)||villas?.at(player.x,player.z)||premier?.at(player.x,player.z)||ownableHomes?.active||universalSession?.home||apartmentSession||camp?.insideCabin||rvPark?.inside);}
 function toggleCar(){
+ if(powersports?.riding)return;
  if(activeCar){const c=activeCar;c.speed=0;driverWheelThrottle=0;drivingControls?.reset();mouseVehicleSteering?.reset();let exit=null;for(const side of [1,-1]){const x=c.x+Math.cos(c.angle)*3.2*side,z=c.z-Math.sin(c.angle)*3.2*side;if(walkable(x,z)){exit={x,z};break;}}player.x=exit?.x??c.x+3.2;player.z=exit?.z??c.z;activeCar=null;driverLookYaw=0;driverLookPitch=0;driverSteer=0;mouseVehicleSteering?.reset();keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;return;}
  if(insideHouse())return;
  let closest=null,best=5;
@@ -1774,7 +1777,7 @@ const townControls=createTownInteractions({
 await yieldStartup();
 
 boatMouseControls=createWatercraftMouseControls({canvas:renderer.domElement,getCraft:()=>marine?.riding?marine:null,isLocked:()=>movementLocked,onLook:(dx,dy)=>{boatLookYaw=THREE.MathUtils.clamp(boatLookYaw-dx*.003,-1.5,1.5);pitch=THREE.MathUtils.clamp(pitch+dy*.0025,-.5,.5);}});
-mouseVehicleSteering=createMouseVehicleSteering({canvas:renderer.domElement,getVehicle:()=>activeCar,onLook:(dx,dy)=>{driverLookYaw=THREE.MathUtils.clamp(driverLookYaw-dx*.003,-1.25,1.25);driverLookPitch=THREE.MathUtils.clamp(driverLookPitch+dy*.0025,-.45,.55);},isLocked:()=>!!((hotDogVendor?.panelOpen||sunglassesHut?.panelOpen)||zStore?.panelOpen||playerMenu?.panelOpen||tattooShop?.panelOpen||news?.panelOpen||club?.gameOpen||carnival?.gameOpen)||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)});
+mouseVehicleSteering=createMouseVehicleSteering({canvas:renderer.domElement,getVehicle:()=>activeCar||powersports?.activeVehicle,onLook:(dx,dy)=>{driverLookYaw=THREE.MathUtils.clamp(driverLookYaw-dx*.003,-1.25,1.25);driverLookPitch=THREE.MathUtils.clamp(driverLookPitch+dy*.0025,-.45,.55);},isLocked:()=>!!((hotDogVendor?.panelOpen||sunglassesHut?.panelOpen)||zStore?.panelOpen||playerMenu?.panelOpen||tattooShop?.panelOpen||news?.panelOpen||club?.gameOpen||carnival?.gameOpen)||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)});
 await yieldStartup();
 
 mouseSkateControls=createMouseSkateControls({canvas:renderer.domElement,isRiding:()=>!!(skate?.riding||scooters?.riding),isLocked:()=>!!((hotDogVendor?.panelOpen||sunglassesHut?.panelOpen)||zStore?.panelOpen||playerMenu?.panelOpen||tattooShop?.panelOpen||news?.panelOpen||club?.gameOpen||carnival?.gameOpen)||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)});
@@ -1786,48 +1789,48 @@ await yieldStartup();
 const beachVisitors=createBeachVisitors(scene,{getPlayer:()=>player,getPlayerSeat:()=>sittingSeat,beach:southBeach});
 await yieldStartup();
 
-marine=createSeasidePier(scene,{getPlayer:()=>player,getYaw:()=>yaw,getAvatar:()=>avatar,onRodEquip:()=>zStore?.chooseHand(''),canInteract:()=>!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!scooters?.riding&&!skate?.riding&&!activeCar&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!insideNeedleLobby&&!onObservationDeck,onMessage:message=>townControls.notify(message),onTeleport:(x,y,z,heading)=>{boatMouseControls?.reset();boatLookYaw=0;yaw=heading;pitch=-.08;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;camera.position.set(x-Math.sin(yaw)*7,y+3.0,z-Math.cos(yaw)*7);}});
+marine=createSeasidePier(scene,{getPlayer:()=>player,getYaw:()=>yaw,getAvatar:()=>avatar,onRodEquip:()=>zStore?.chooseHand(''),canInteract:()=>!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!scooters?.riding&&!powersports?.riding&&!skate?.riding&&!activeCar&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!insideNeedleLobby&&!onObservationDeck,onMessage:message=>townControls.notify(message),onTeleport:(x,y,z,heading)=>{boatMouseControls?.reset();boatLookYaw=0;yaw=heading;pitch=-.08;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;camera.position.set(x-Math.sin(yaw)*7,y+3.0,z-Math.cos(yaw)*7);}});
 await yieldStartup();
 
 scooters=createScooterRentals(scene,{onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=-.04;camera.position.set(x-Math.sin(yaw)*2.4,y+2.1,z-Math.cos(yaw)*2.4);},getPlayer:()=>player,getYaw:()=>yaw,getHeight:groundHeightAt,canInteract:()=>!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!activeCar&&!marine.riding&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,canMove:(x,z)=>walkable(x,z)&&!southBeach.blocksVehicle(x,z),onMessage:m=>townControls.notify(m),onStop:()=>{keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();}});
 await yieldStartup();
 
-bowling=createBowlingAlley(scene,{getHandPosition:()=>realisticPlayer.handPosition('R'),getPlayer:()=>player,canEnter:()=>!barber?.active&&!office?.active&&!boutique?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=-.04;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x-Math.sin(yaw)*1.8,2.2,z-Math.cos(yaw)*1.8);}});
+bowling=createBowlingAlley(scene,{getHandPosition:()=>realisticPlayer.handPosition('R'),getPlayer:()=>player,canEnter:()=>!barber?.active&&!office?.active&&!boutique?.active&&!activeCar&&!scooters.riding&&!powersports?.riding&&!skate?.riding&&!marine.riding&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=-.04;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x-Math.sin(yaw)*1.8,2.2,z-Math.cos(yaw)*1.8);}});
 await yieldStartup();
 
 let wardrobeInitialized=false;
 await yieldStartup();
 
-boutique=createClothingBoutique(scene,{getPlayer:()=>player,canEnter:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,applyOutfit:o=>{if(!wardrobeInitialized){wardrobeInitialized=true;return;}realisticPlayer.setOutfit(o)},onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=-.04;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x-Math.sin(yaw)*1.8,y+2.2,z-Math.cos(yaw)*1.8);}});
+boutique=createClothingBoutique(scene,{getPlayer:()=>player,canEnter:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!powersports?.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,applyOutfit:o=>{if(!wardrobeInitialized){wardrobeInitialized=true;return;}realisticPlayer.setOutfit(o)},onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=-.04;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x-Math.sin(yaw)*1.8,y+2.2,z-Math.cos(yaw)*1.8);}});
 await yieldStartup();
 
-news=createZercondaNews(scene,{getPlayer:()=>player,canInteract:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});
+news=createZercondaNews(scene,{getPlayer:()=>player,canInteract:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!powersports?.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});
 await yieldStartup();
 
-premier=createPremierHomes(scene,{onPassage:passHomeDoor,getPlayer:()=>player,canInteract:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});
+premier=createPremierHomes(scene,{onPassage:passHomeDoor,getPlayer:()=>player,canInteract:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!powersports?.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});
 await yieldStartup();
 
-camp=createForestCampground(scene,{getPlayer:()=>player,canUse:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x,y+1.7,z-2);}});
+camp=createForestCampground(scene,{getPlayer:()=>player,canUse:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!powersports?.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x,y+1.7,z-2);}});
 await yieldStartup();
 
-airfield=createAirfield(scene,{groundMaterial:grass,roadMaterial:asphalt,getPlayer:()=>player,canUse:()=>!adminTransport?.active&&!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!skate?.riding&&!marine.riding&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x,y+1.6,z);}});
+airfield=createAirfield(scene,{groundMaterial:grass,roadMaterial:asphalt,getPlayer:()=>player,canUse:()=>!adminTransport?.active&&!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!powersports?.riding&&!skate?.riding&&!marine.riding&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x,y+1.6,z);}});
 await yieldStartup();
 
-skate=createSkatePark(scene,{getPlayer:()=>player,getYaw:()=>yaw,getHeight:groundHeightAt,canUse:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,canMove:(x,z)=>walkable(x,z)&&!southBeach.blocksVehicle(x,z),onMessage:m=>townControls.notify(m),onStop:()=>{cabPassengerCamera.reset();sittingSeat=null;seatReturn=null;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();}});
+skate=createSkatePark(scene,{getPlayer:()=>player,getYaw:()=>yaw,getHeight:groundHeightAt,canUse:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!powersports?.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,canMove:(x,z)=>walkable(x,z)&&!southBeach.blocksVehicle(x,z),onMessage:m=>townControls.notify(m),onStop:()=>{cabPassengerCamera.reset();sittingSeat=null;seatReturn=null;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();}});
 await yieldStartup();
 
 addEventListener('keydown',e=>{if(cityview?.panelOpen||cityview?.riding||adminAccount?.panelOpen||controlsGuide?.panelOpen||adminTransport?.active||chessTables.panelOpen||realEstate.panelOpen||militaryAccess?.panelOpen||zCabs?.riding||zCabs?.panelOpen||(hotDogVendor?.panelOpen||sunglassesHut?.panelOpen)||zStore?.panelOpen||playerMenu?.panelOpen)return;if(e.code==='Space'&&!e.repeat&&skate.riding&&!['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)){e.preventDefault();e.stopImmediatePropagation();skate.ollie();}},true);
 await yieldStartup();
 
-office=createBusinessCentre(scene,{getPlayer:()=>player,canEnter:()=>!barber?.active&&!activeCar&&!skate.riding&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x-Math.sin(yaw)*2.4,y+2.1,z-Math.cos(yaw)*2.4);}});
+office=createBusinessCentre(scene,{getPlayer:()=>player,canEnter:()=>!barber?.active&&!activeCar&&!skate.riding&&!scooters.riding&&!powersports?.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x-Math.sin(yaw)*2.4,y+2.1,z-Math.cos(yaw)*2.4);}});
 await yieldStartup();
 
 let barberHairInitialized=false;
 await yieldStartup();
-barber=createStyleCuts(scene,{getPlayer:()=>player,canEnter:()=>!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,applyHair:h=>{if(!barberHairInitialized){barberHairInitialized=true;return;}realisticPlayer.setHair(h)},onMessage:m=>townControls.notify(m),onSeat:seat=>{sittingSeat=seat;seatReturn=null;yaw=seat.facing;keys.clear();movement.vx=0;movement.vz=0;townControls.stop();},onStand:()=>{sittingSeat=null;seatReturn=null;keys.clear();movement.vx=0;movement.vz=0;townControls.stop();},onTeleport:(x,y,z,heading)=>{yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x-Math.sin(yaw)*2.4,y+2.1,z-Math.cos(yaw)*2.4);}});
+barber=createStyleCuts(scene,{getPlayer:()=>player,canEnter:()=>!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!powersports?.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,applyHair:h=>{if(!barberHairInitialized){barberHairInitialized=true;return;}realisticPlayer.setHair(h)},onMessage:m=>townControls.notify(m),onSeat:seat=>{sittingSeat=seat;seatReturn=null;yaw=seat.facing;keys.clear();movement.vx=0;movement.vz=0;townControls.stop();},onStand:()=>{sittingSeat=null;seatReturn=null;keys.clear();movement.vx=0;movement.vz=0;townControls.stop();},onTeleport:(x,y,z,heading)=>{yaw=heading;pitch=.02;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x-Math.sin(yaw)*2.4,y+2.1,z-Math.cos(yaw)*2.4);}});
 await yieldStartup();
 
-villas=createLuxuryVillas(scene,{onPassage:passHomeDoor,getPlayer:()=>player,canInteract:()=>!barber.active&&!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});
+villas=createLuxuryVillas(scene,{onPassage:passHomeDoor,getPlayer:()=>player,canInteract:()=>!barber.active&&!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!powersports?.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});
 await yieldStartup();
 villas.cutGround(mainlandGround);
 await yieldStartup();
@@ -1837,10 +1840,10 @@ await yieldStartup();
 await yieldStartup();
 
 
-rvPark=createRVPark(scene,{getPlayer:()=>player,canUse:()=>!observationNeedle.riding&&!onObservationDeck&&!insideNeedleLobby&&!barber.active&&!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=0;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x,y+1.68,z);}});
+rvPark=createRVPark(scene,{getPlayer:()=>player,canUse:()=>!observationNeedle.riding&&!onObservationDeck&&!insideNeedleLobby&&!barber.active&&!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!powersports?.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{sittingSeat=null;seatReturn=null;yaw=heading;pitch=0;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();camera.position.set(x,y+1.68,z);}});
 await yieldStartup();
 
-carnival=createSeasideCarnival(scene,{getPlayer:()=>player,getCamera:()=>camera,getCanvas:()=>renderer.domElement,canUse:()=>!observationNeedle.riding&&!onObservationDeck&&!insideNeedleLobby&&!barber.active&&!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!rvPark.inside&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onStop:()=>{cabPassengerCamera.reset();sittingSeat=null;seatReturn=null;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();},onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{yaw=heading;pitch=0;camera.position.set(x,y+1.7,z);}});
+carnival=createSeasideCarnival(scene,{getPlayer:()=>player,getCamera:()=>camera,getCanvas:()=>renderer.domElement,canUse:()=>!observationNeedle.riding&&!onObservationDeck&&!insideNeedleLobby&&!barber.active&&!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!powersports?.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!rvPark.inside&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onStop:()=>{cabPassengerCamera.reset();sittingSeat=null;seatReturn=null;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();},onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{yaw=heading;pitch=0;camera.position.set(x,y+1.7,z);}});
 await yieldStartup();
 
 const vehicleHorns=createVehicleHorns({getListener:()=>player,getVehicle:()=>activeCar?.group||null});
@@ -1853,7 +1856,7 @@ await yieldStartup();
 installOwnedHomeLocks({getPlayer:()=>player,onStop:()=>{keys.clear();townControls.stop();movement.vx=movement.vz=movement.wheelImpulse=0;},onMessage:m=>townControls.notify(m),suburban:ownableHomes,premier,villas,coastal});
 await yieldStartup();
 
-zCabs=createZCabs(scene,{getPlayer:()=>player,canRequest:()=>!scooters?.inside&&!universalSession&&!insideHouse()&&!museum?.contains(player.x,player.z)&&!tattooShop?.active&&!dealerInside&&!cafeInside,onHonk:(source,options)=>vehicleHorns.honk(source,options),onPickupState:state=>{areaTravel.setCabState(state)},getHeight:()=>GROUND_LEVEL,getVehicles:()=>[...cars,...(ambientTraffic?.collisionVehicles||[]),...dealership.cars.map(o=>vehicleDescriptor(THREE,o.model))],getPedestrians:()=>[...pedestrianSystem.agents.map(a=>a.group.position),...cityResidents.collisionPeople],canUse:()=>!activeCar&&!marine.riding&&!scooters.riding&&!skate.riding&&!onObservationDeck&&!insideNeedleLobby&&!barber.active&&!office.active&&!airfield.boarded&&!carnival.riding&&!camp.resting&&!rvPark.inside&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!ownableHomes.active,onStop:()=>{cabPassengerCamera.reset();sittingSeat=null;seatReturn=null;keys.clear();movement.vx=movement.vz=movement.wheelImpulse=0;townControls.stop();},onMessage:m=>townControls.notify(m),onAlight:p=>{cabPassengerCamera.reset();let point=null;for(const[dx,dz]of[[0,0],[1,0],[-1,0],[0,1],[0,-1],[2,0],[-2,0]])if(walkable(p.x+dx,p.z+dz)){point={x:p.x+dx,z:p.z+dz};break;}player.x=point?.x??p.x;player.z=point?.z??p.z;yaw=p.yaw;pitch=0;keys.clear();movement.vx=movement.vz=movement.wheelImpulse=0;camera.position.set(player.x-Math.sin(yaw)*3.65,standingHeightAt(player.x,player.z)+1.75,player.z-Math.cos(yaw)*3.65);}});
+zCabs=createZCabs(scene,{getPlayer:()=>player,canRequest:()=>!scooters?.inside&&!universalSession&&!insideHouse()&&!museum?.contains(player.x,player.z)&&!tattooShop?.active&&!dealerInside&&!cafeInside,onHonk:(source,options)=>vehicleHorns.honk(source,options),onPickupState:state=>{areaTravel.setCabState(state)},getHeight:()=>GROUND_LEVEL,getVehicles:()=>[...cars,...(ambientTraffic?.collisionVehicles||[]),...dealership.cars.map(o=>vehicleDescriptor(THREE,o.model))],getPedestrians:()=>[...pedestrianSystem.agents.map(a=>a.group.position),...cityResidents.collisionPeople],canUse:()=>!activeCar&&!marine.riding&&!scooters.riding&&!powersports?.riding&&!skate.riding&&!onObservationDeck&&!insideNeedleLobby&&!barber.active&&!office.active&&!airfield.boarded&&!carnival.riding&&!camp.resting&&!rvPark.inside&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!ownableHomes.active,onStop:()=>{cabPassengerCamera.reset();sittingSeat=null;seatReturn=null;keys.clear();movement.vx=movement.vz=movement.wheelImpulse=0;townControls.stop();},onMessage:m=>townControls.notify(m),onAlight:p=>{cabPassengerCamera.reset();let point=null;for(const[dx,dz]of[[0,0],[1,0],[-1,0],[0,1],[0,-1],[2,0],[-2,0]])if(walkable(p.x+dx,p.z+dz)){point={x:p.x+dx,z:p.z+dz};break;}player.x=point?.x??p.x;player.z=point?.z??p.z;yaw=p.yaw;pitch=0;keys.clear();movement.vx=movement.vz=movement.wheelImpulse=0;camera.position.set(player.x-Math.sin(yaw)*3.65,standingHeightAt(player.x,player.z)+1.75,player.z-Math.cos(yaw)*3.65);}});
 await yieldStartup();
 
  townObstacles=createTownObstacles({scene,getFloor:standingHeightAt,getDynamic:()=>cars.filter(c=>c!==activeCar).map(c=>c.group).concat(zCabs?.vehicles.map(v=>v.root)||[]),ignore:o=>o===avatar||o===realisticPlayer.root||o.name==='Cloud sky'||o.name==='Zerconda South Beach'||cars.some(c=>c.group===o)||zCabs?.vehicles.some(v=>v.root===o)});
@@ -1910,7 +1913,7 @@ function travelToArea(destination){
  if(status)status.textContent=destination.name;
  return true;
 }
-zStore=createZStore(scene,{getPlayer:()=>player,controller:realisticPlayer,onStop:()=>{keys.clear();townControls.stop();movement.vx=0;movement.vz=0;},onMessage:m=>townControls.notify(m),canUse:()=>!activeCar&&!scooters?.riding&&!skate?.riding&&!marine?.riding&&!airfield?.boarded&&!office?.active&&!club?.active&&!boutique?.active&&!bowling?.active&&!universalSession&&!apartmentSession&&!onObservationDeck&&!insideNeedleLobby&&!playerMenu?.panelOpen});
+zStore=createZStore(scene,{getPlayer:()=>player,controller:realisticPlayer,onStop:()=>{keys.clear();townControls.stop();movement.vx=0;movement.vz=0;},onMessage:m=>townControls.notify(m),canUse:()=>!activeCar&&!scooters?.riding&&!powersports?.riding&&!skate?.riding&&!marine?.riding&&!airfield?.boarded&&!office?.active&&!club?.active&&!boutique?.active&&!bowling?.active&&!universalSession&&!apartmentSession&&!onObservationDeck&&!insideNeedleLobby&&!playerMenu?.panelOpen});
 await yieldStartup();
 
 museum=createZercondaMuseum(scene,{getPlayer:()=>player});
@@ -1934,7 +1937,7 @@ hotDogVendor=createHotDogVendor(scene,{getPlayer:()=>player,onMessage:m=>townCon
 sunglassesHut=createSunglassesHut(scene,{getPlayer:()=>player,applyStyle:id=>realisticPlayer.setOutfit({...realisticPlayer.outfit,glasses:!!id,sunglassesStyle:id}),onMessage:m=>townControls.notify(m),onOpen:()=>{keys.clear();townControls.stop();movement.vx=movement.vz=movement.wheelImpulse=0;}});
 await yieldStartup();
 
-drivingControls=createVehicleControls({onExit:()=>{if(activeCar)toggleCar();},onEngage:()=>{keys.clear();townControls.stop();}});
+drivingControls=createVehicleControls({onExit:()=>{if(powersports?.riding)powersports.end();else if(activeCar)toggleCar();},onEngage:()=>{keys.clear();townControls.stop();}});
 await yieldStartup();
 
 const blockedWallOpening=createBlockedWallOpening(scene,{getPlayer:()=>player,onMessage:m=>townControls.notify(m)});
@@ -1945,7 +1948,7 @@ await yieldStartup();
 
 const stopCityview=()=>{keys.clear();townControls.stop();movement.vx=movement.vz=movement.wheelImpulse=0;sittingSeat=null;seatReturn=null;drag=false;};
 adminAccount=createAdminAccount({verifyCode:code=>cityview?.ownership.verify(10,code)??false,onStop:stopCityview,onMessage:m=>townControls.notify(m)});
-cityview=createCityviewApartments(scene,{getPlayer:()=>player,adminAccount,onStop:stopCityview,onMessage:m=>townControls.notify(m),getPlayerName:()=>playerMenu?.state.name||'Resident',getHomes:()=>collectHomeLocations({starter:ownableHomes,premier,villas,coastal,apartments:apartmentExteriors,apartmentExperience}),getManagedHomes:getManagedPrivateHomes,onManageHome:managePrivateHome,onVisit:travelToArea,canUse:()=>!activeCar&&!scooters?.riding&&!skate?.riding&&!marine?.riding&&!airfield?.boarded&&!insideHouse()&&!universalSession&&!apartmentSession,onTeleport:p=>{if(!p.walkThrough)stopCityview();player.x=p.x;player.z=p.z;yaw=p.yaw??yaw;pitch=0;avatar.position.set(p.x,p.y,p.z);avatar.rotation.y=yaw;camera.position.set(p.x-Math.sin(yaw)*3.1,p.y+2.0,p.z-Math.cos(yaw)*3.1);camera.lookAt(p.x,p.y+1.25,p.z);cityMap.draw(true);}});
+cityview=createCityviewApartments(scene,{getPlayer:()=>player,adminAccount,onStop:stopCityview,onMessage:m=>townControls.notify(m),getPlayerName:()=>playerMenu?.state.name||'Resident',getHomes:()=>collectHomeLocations({starter:ownableHomes,premier,villas,coastal,apartments:apartmentExteriors,apartmentExperience}),getManagedHomes:getManagedPrivateHomes,onManageHome:managePrivateHome,onVisit:travelToArea,canUse:()=>!activeCar&&!scooters?.riding&&!powersports?.riding&&!skate?.riding&&!marine?.riding&&!airfield?.boarded&&!insideHouse()&&!universalSession&&!apartmentSession,onTeleport:p=>{if(!p.walkThrough)stopCityview();player.x=p.x;player.z=p.z;yaw=p.yaw??yaw;pitch=0;avatar.position.set(p.x,p.y,p.z);avatar.rotation.y=yaw;camera.position.set(p.x-Math.sin(yaw)*3.1,p.y+2.0,p.z-Math.cos(yaw)*3.1);camera.lookAt(p.x,p.y+1.25,p.z);cityMap.draw(true);}});
 playerMenu=createPlayerMenu({onHomes:()=>cityview.openHomes(),onAdmin:()=>adminAccount.open(),onControls:()=>controlsGuide?.button.click(),travelElement:areaTravel.element,onStop:()=>{keys.clear();townControls.stop();movement.vx=0;movement.vz=0;},getHandItems:()=>[...zStore.getHandItems(),...marine.getHandItems(),...courtGames.getHandItems()],getHeldItem:()=>courtGames.heldValue||marine.heldValue||zStore.heldValue,onHandChange:v=>{courtGames.chooseHand(v);if(v==='basketball')return;if(v==='fishing-pole')marine.chooseHand(v);else{marine.chooseHand('');zStore.chooseHand(v);}},getAppearance:()=>realisticPlayer.state,onAppearanceChange:v=>realisticPlayer.setAppearance(v),getTattoos:()=>avatarTattoos.records,getAccessories:()=>zStore.getAccessoryOptions(),onAccessoryChange:(id,v)=>zStore.chooseAccessory(id,v),onBrightness:v=>{renderer.toneMappingExposure=v;},onQuality:q=>{preferredPixelRatio=Math.min(devicePixelRatio,q==='high'?1.25:q==='low'?.75:1);renderer.setPixelRatio(preferredPixelRatio);slowRenderFrames=0;}});
 await yieldStartup();
 
@@ -1956,13 +1959,13 @@ await yieldStartup();
 addEventListener('keydown',e=>{if(cityview?.panelOpen||cityview?.riding||adminAccount?.panelOpen||controlsGuide?.panelOpen||adminTransport?.active||chessTables.panelOpen||realEstate.panelOpen||militaryAccess?.panelOpen||zCabs?.riding||zCabs?.panelOpen||(hotDogVendor?.panelOpen||sunglassesHut?.panelOpen)||zStore?.panelOpen||playerMenu?.panelOpen)return;if(e.code==='Escape'&&!e.repeat){carnival.close();}if(e.code==='KeyF'&&!e.repeat&&(camp?.resting||airfield?.boarded)){e.preventDefault();e.stopImmediatePropagation();camp.stopRest();airfield?.exit();skate?.end();office?.exit();barber?.exit();villas?.close();observationNeedle?.reset();return;}if(e.code!=='KeyF'||e.repeat||carnival?.riding||carnival?.gameOpen||observationNeedle.riding||villas?.panelOpen||barber?.panelOpen||club.gameOpen||(ownableHomes.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.boarded)))))||marine?.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;const action=townControls.activeActions[0];if(action){e.preventDefault();e.stopImmediatePropagation();townControls.activate(action.id);}},true);
 await yieldStartup();
 
-function walkable(x,z){const cvWalk=cityview?.canWalk(x,z);if(cvWalk!==null&&cvWalk!==undefined)return cvWalk;const mountainWalk=mountainWalkable(x,z);if(mountainWalk!==null)return !activeCar&&!scooters?.riding&&mountainWalk;const secretWalk=hiddenForestPassage.canWalk(x,z);if(secretWalk!==null)return !activeCar&&!scooters?.riding&&secretWalk;if(extraForestBlocks(x,z))return false;const bowlPortal=bowling?.portalWalk(x,z);if(bowlPortal!==null&&bowlPortal!==undefined)return bowlPortal;
+function walkable(x,z){const cvWalk=cityview?.canWalk(x,z);if(cvWalk!==null&&cvWalk!==undefined)return cvWalk;const mountainWalk=mountainWalkable(x,z);if(mountainWalk!==null)return !activeCar&&!scooters?.riding&&!powersports?.riding&&mountainWalk;const secretWalk=hiddenForestPassage.canWalk(x,z);if(secretWalk!==null)return !activeCar&&!scooters?.riding&&!powersports?.riding&&secretWalk;if(extraForestBlocks(x,z))return false;const bowlPortal=bowling?.portalWalk(x,z);if(bowlPortal!==null&&bowlPortal!==undefined)return bowlPortal;
  if(privateHomeBlocks(x,z)||residentialShadeTrees?.blocks(x,z)||museumGardenTrees?.blocks(x,z))return false;
  if(scooters?.inside)return scooters.canWalkInterior(x,z);
  if(zCabs?.blocks(x,z))return false;if(ambientTraffic?.collisionVehicles.some(v=>Math.hypot(x-v.x,z-v.z)<1.5))return false;
  if(powersports?.blocks(x,z)||fortuneShadeTrees.blocks(x,z))return false;
  const fortuneWalk=zFortune?.canWalk(x,z);if(fortuneWalk!==null&&fortuneWalk!==undefined)return fortuneWalk;
- const museumWalk=museum?.canWalk(x,z,!!activeCar||!!scooters?.riding||!!skate?.riding);if(museumWalk!==null&&museumWalk!==undefined)return museumWalk;
+ const museumWalk=museum?.canWalk(x,z,!!activeCar||!!scooters?.riding&&!powersports?.riding||!!skate?.riding);if(museumWalk!==null&&museumWalk!==undefined)return museumWalk;
  const storeWalk=zStore?.canWalk(x,z);if(storeWalk!==null&&storeWalk!==undefined)return storeWalk;
  const tattooWalk=tattooShop?.canWalk(x,z);if(tattooWalk!==null&&tattooWalk!==undefined)return tattooWalk;
  if(southBeach?.blocks(x,z)||courtGames?.blocks(x,z)||hotDogVendor?.blocks(x,z)||sunglassesHut?.blocks(x,z))return false;
@@ -1973,11 +1976,11 @@ function walkable(x,z){const cvWalk=cityview?.canWalk(x,z);if(cvWalk!==null&&cvW
  if(insideNeedleLobby)return observationNeedle.isInLobby(x,z);
  if(observationNeedle?.blocksGround(x,z))return false;
  if(militaryBase?.blocks(x,z))return false;
- if(northernForest?.blocks(x,z,!!activeCar||!!scooters?.riding))return false;
+ if(northernForest?.blocks(x,z,!!activeCar||!!scooters?.riding&&!powersports?.riding))return false;
  if(chessTables.blocks(x,z)||realEstate.blocks(x,z)||townObstacles?.hit(x,z))return false;
  if(carnival?.blocks(x,z))return false;
- if(rvPark?.blocks(x,z,!!activeCar||!!scooters?.riding))return false;
- if(villas?.blocks(x,z,!!activeCar||!!scooters?.riding))return false;
+ if(rvPark?.blocks(x,z,!!activeCar||!!scooters?.riding&&!powersports?.riding))return false;
+ if(villas?.blocks(x,z,!!activeCar||!!scooters?.riding&&!powersports?.riding))return false;
  if(barber?.active)return barber.contains(x,z);
  if(barber?.blocks(x,z)||airDancers.blocks(x,z))return false;
  if(dealerInside)return dealership.inside(x,z);
@@ -1986,20 +1989,20 @@ function walkable(x,z){const cvWalk=cityview?.canWalk(x,z);if(cvWalk!==null&&cvW
  if(office?.blocks(x,z))return false;
  if(skate?.blocks(x,z))return false;
  if(airfield?.blocks(x,z))return false;
- if(camp?.blocks(x,z,!!activeCar||!!scooters?.riding))return false;
- if(premier?.blocks(x,z,!!activeCar||!!scooters?.riding))return false;
+ if(camp?.blocks(x,z,!!activeCar||!!scooters?.riding&&!powersports?.riding))return false;
+ if(premier?.blocks(x,z,!!activeCar||!!scooters?.riding&&!powersports?.riding))return false;
  if(boutique?.active)return boutique.contains(x,z);
  if(boutique?.blocks(x,z)||news?.blocks(x,z))return false;
  if(bowling?.active)return bowling.contains(x,z);
  if(bowling?.blocks(x,z))return false;
- if(marine?.footprint(x,z))return !scooters?.riding&&!skate?.riding&&!activeCar&&marine.canWalk(x,z);
+ if(marine?.footprint(x,z))return !scooters?.riding&&!powersports?.riding&&!skate?.riding&&!activeCar&&marine.canWalk(x,z);
  if(scooters?.blocks(x,z))return false;
  if(scooters?.riding&&(z>173||x>214||x< -438||z< -523))return false;
  if(club?.active)return club.contains(x,z);
  if(club?.blocks(x,z))return false;
  if(needleSportsPark?.blocks(x,z))return false;
  if(universalSession)return universalSession.home?ownableHomes.contains(x,z):universalInteriors.contains(x,z);
- if(ownableHomes.blocks(x,z)||coastal.blocks(x,z,!!activeCar||!!scooters?.riding))return false;
+ if(ownableHomes.blocks(x,z)||coastal.blocks(x,z,!!activeCar||!!scooters?.riding&&!powersports?.riding))return false;
  if(apartmentSession)return apartments.contains(x,z);
   if(cafeInside)return coffeeShop.isInside(x,z)&&coffeeShop.canWalk(x,z)!==false;
   if(coffeeShop.canWalk(x,z)===false)return false;
@@ -2017,8 +2020,8 @@ function walkable(x,z){const cvWalk=cityview?.canWalk(x,z);if(cvWalk!==null&&cvW
  return true;
 }
 function safeResumePoint(x,z){if(!walkable(x,z))return false;const h=standingHeightAt(x,z);if(!Number.isFinite(h)||h>25)return false;return [[.32,0],[-.32,0],[0,.32],[0,-.32]].every(([dx,dz])=>walkable(x+dx,z+dz)&&Math.abs(standingHeightAt(x+dx,z+dz)-h)<.12);}
-function canSaveArea(){return !adminTransport?.active&&!bedRest?.active&&!activeCar&&!zCabs?.riding&&!sittingSeat&&!insideHouse()&&!marine?.riding&&!scooters?.riding&&!scooters?.inside&&!skate?.riding&&!airfield?.boarded&&!camp?.insideCabin&&!camp?.resting&&!rvPark?.inside&&!onObservationDeck&&!insideNeedleLobby&&!observationNeedle?.riding&&!carnival?.riding&&!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!club?.active&&!ownableHomes?.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!coffeeShop.isInside(player.x,player.z)&&!museum?.contains(player.x,player.z)&&!premier?.at(player.x,player.z);}
-bedRest=createBedRest({scene,getPlayer:()=>player,getHeight:standingHeightAt,canStand:walkable,onStop:()=>{keys.clear();movement.vx=movement.vz=movement.wheelImpulse=0;townControls.stop();},onMessage:m=>townControls.notify(m),canUse:()=>!activeCar&&!sittingSeat&&!marine?.riding&&!scooters?.riding&&!skate?.riding&&!airfield?.boarded&&!realEstate.panelOpen&&!playerMenu?.panelOpen});
+function canSaveArea(){return !adminTransport?.active&&!bedRest?.active&&!activeCar&&!zCabs?.riding&&!sittingSeat&&!insideHouse()&&!marine?.riding&&!scooters?.riding&&!powersports?.riding&&!scooters?.inside&&!skate?.riding&&!airfield?.boarded&&!camp?.insideCabin&&!camp?.resting&&!rvPark?.inside&&!onObservationDeck&&!insideNeedleLobby&&!observationNeedle?.riding&&!carnival?.riding&&!barber?.active&&!office?.active&&!boutique?.active&&!bowling?.active&&!club?.active&&!ownableHomes?.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!coffeeShop.isInside(player.x,player.z)&&!museum?.contains(player.x,player.z)&&!premier?.at(player.x,player.z);}
+bedRest=createBedRest({scene,getPlayer:()=>player,getHeight:standingHeightAt,canStand:walkable,onStop:()=>{keys.clear();movement.vx=movement.vz=movement.wheelImpulse=0;townControls.stop();},onMessage:m=>townControls.notify(m),canUse:()=>!activeCar&&!sittingSeat&&!marine?.riding&&!scooters?.riding&&!powersports?.riding&&!skate?.riding&&!airfield?.boarded&&!realEstate.panelOpen&&!playerMenu?.panelOpen});
 await yieldStartup();
 
 const areaResume=createAreaResume({getPose:()=>({x:player.x,z:player.z,yaw,pitch}),isSafe:safeResumePoint,canSave:canSaveArea,applyPose:p=>{player.x=p.x;player.z=p.z;yaw=p.yaw;pitch=p.pitch;avatar.position.set(p.x,standingHeightAt(p.x,p.z),p.z);avatar.rotation.y=p.yaw;camera.position.set(p.x-Math.sin(yaw)*3.65,standingHeightAt(p.x,p.z)+2.2,p.z-Math.cos(yaw)*3.65);camera.lookAt(p.x,standingHeightAt(p.x,p.z)+1.2,p.z);}});
@@ -2033,10 +2036,10 @@ await yieldStartup();
 const renderBudget=createRenderBudget(scene,{getPlayer:()=>player,mobile:MOBILE});
 await yieldStartup();
 
-adminTransport=createAdminTransport({getPlayer:()=>player,getMilitary:()=>militaryBase?.vehicleAssets,getAirfield:()=>airfield,hasClearance:()=>militaryAccess?.hasClearance()===true,requestAccess:grant=>militaryAccess.request(grant),canBoard:()=>playable&&!activeCar&&!zCabs?.riding&&!marine?.riding&&!scooters?.riding&&!skate?.riding&&!airfield?.boarded&&!insideHouse()&&!sittingSeat&&!militaryAccess?.panelOpen,getGround:(x,z)=>standingHeightAt(x,z),canMove:(x,z)=>walkable(x,z)&&!southBeach.blocksVehicle(x,z),onStop:()=>{keys.clear();townControls.stop();movement.vx=movement.vz=movement.wheelImpulse=0;},onMessage:m=>townControls.notify(m,7000),onExit:(x,y,z)=>{player.x=x;player.z=z;avatar.position.set(x,y,z);avatar.visible=true;yaw=0;pitch=0;camera.position.set(x,y+2,z-5);}});
+adminTransport=createAdminTransport({getPlayer:()=>player,getMilitary:()=>militaryBase?.vehicleAssets,getAirfield:()=>airfield,hasClearance:()=>militaryAccess?.hasClearance()===true,requestAccess:grant=>militaryAccess.request(grant),canBoard:()=>playable&&!activeCar&&!zCabs?.riding&&!marine?.riding&&!scooters?.riding&&!powersports?.riding&&!skate?.riding&&!airfield?.boarded&&!insideHouse()&&!sittingSeat&&!militaryAccess?.panelOpen,getGround:(x,z)=>standingHeightAt(x,z),canMove:(x,z)=>walkable(x,z)&&!southBeach.blocksVehicle(x,z),onStop:()=>{keys.clear();townControls.stop();movement.vx=movement.vz=movement.wheelImpulse=0;},onMessage:m=>townControls.notify(m,7000),onExit:(x,y,z)=>{player.x=x;player.z=z;avatar.position.set(x,y,z);avatar.visible=true;yaw=0;pitch=0;camera.position.set(x,y+2,z-5);}});
 await yieldStartup();
 
-controlsGuide=createControlGuide({getMode:()=>adminTransport?.active?(adminTransport.active.kind==='car'?'military-driving':adminTransport.active.kind):activeCar?'driving':marine?.riding?'boat':skate?.riding?'skate':scooters?.riding?'scooter':courtGames?.tennisActive?'tennis':zCabs?.riding?'cab':airfield?.boarded?'passenger':club?.gameOpen||bowling?.gameOpen||carnival?.gameOpen?'game':'walking',onStop:()=>{keys.clear();townControls.stop();movement.vx=movement.vz=movement.wheelImpulse=0;drivingControls?.reset();}});
+controlsGuide=createControlGuide({getMode:()=>adminTransport?.active?(adminTransport.active.kind==='car'?'military-driving':adminTransport.active.kind):activeCar||powersports?.riding?'driving':marine?.riding?'boat':skate?.riding?'skate':scooters?.riding?'scooter':courtGames?.tennisActive?'tennis':zCabs?.riding?'cab':airfield?.boarded?'passenger':club?.gameOpen||bowling?.gameOpen||carnival?.gameOpen?'game':'walking',onStop:()=>{keys.clear();townControls.stop();movement.vx=movement.vz=movement.wheelImpulse=0;drivingControls?.reset();}});
 controlsGuide.button.hidden=true;controlsGuide.button.style.display='none';
 await yieldStartup();
 
@@ -2049,9 +2052,9 @@ const gravelTires=createGravelTireAudio({scene,getVehicle:()=>{if(adminTransport
 await yieldStartup();
 
 function animate(){
- requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);updateCaveLife(motionDt,player);updateMountainWilderness(player);trackTrailExploration(motionDt,player,!activeCar&&!marine.riding&&!scooters.riding&&!airfield.boarded&&!zCabs.riding);forestGroundCover.update();chessPartner.update(motionDt);chessTables.update(motionDt);fountainResident.update(dt);boardwalkWalker.update(motionDt);whiteFitnessWalker.update(motionDt);curlyFitnessWalker.update(motionDt);curlyBusinessWalker.update(motionDt);needlePlaidResident.update(motionDt);kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
+ requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!powersports?.riding||!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding&&!powersports?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);updateCaveLife(motionDt,player);updateMountainWilderness(player);trackTrailExploration(motionDt,player,!activeCar&&!marine.riding&&!scooters.riding&&!powersports?.riding&&!airfield.boarded&&!zCabs.riding);forestGroundCover.update();chessPartner.update(motionDt);chessTables.update(motionDt);fountainResident.update(dt);boardwalkWalker.update(motionDt);whiteFitnessWalker.update(motionDt);curlyFitnessWalker.update(motionDt);curlyBusinessWalker.update(motionDt);needlePlaidResident.update(motionDt);kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
- if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
+ if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!powersports?.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
  updateTreeBreeze(elapsed);airDancers.update(elapsed);dealership.update?.(motionDt);coffeeShop.update(motionDt);powersports?.update(motionDt);zFortune?.update(motionDt);
  forestShade=THREE.MathUtils.damp(forestShade,Math.max(northernForest?.atmosphereAt(player.x,player.z)??0,perimeterForest.atmosphereAt(player.x,player.z)),1.4,motionDt);hemisphere.intensity=THREE.MathUtils.lerp(1.3,.72,forestShade);sun.intensity=THREE.MathUtils.lerp(2.8,1.35,forestShade);scene.fog.color.copy(daylightFog).lerp(forestFog,forestShade);scene.fog.density=THREE.MathUtils.lerp(.00055,.0020,forestShade);
  militaryBase?.update(motionDt);
@@ -2102,6 +2105,8 @@ function animate(){
   movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
  }else if(skate.riding){
   yaw-=side*dt*2.2;const skateInput=inputLocked?0:(f||Number(mouseSkateControls.pushing)||rideWheelThrottle);if(inputLocked)skate.stop();skate.drive(motionDt,skateInput,yaw);rideWheelThrottle*=Math.exp(-3*motionDt);if(Math.abs(rideWheelThrottle)<.04)rideWheelThrottle=0;movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
+ }else if(powersports?.riding){
+  powersports.drive(motionDt,{throttle:inputLocked?0:(drivingControls.throttle||f||rideWheelThrottle),steer:inputLocked?0:(drivingControls.steer||side||mouseVehicleSteering.steer),brake:keys.has('Space'),locked:inputLocked});yaw=powersports.heading;rideWheelThrottle*=Math.exp(-3*motionDt);movement.vx=movement.vz=movement.wheelImpulse=0;
  }else if(scooters.riding){
   yaw-=side*motionDt*1.65;const scooterInput=inputLocked?0:(f||Number(mouseSkateControls.pushing)||rideWheelThrottle);if(inputLocked)scooters.stop();scooters.drive(motionDt,scooterInput,yaw);rideWheelThrottle*=Math.exp(-3*motionDt);if(Math.abs(rideWheelThrottle)<.04)rideWheelThrottle=0;movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
  }else if(marine.riding){
@@ -2168,12 +2173,12 @@ function animate(){
   camera.lookAt(eyePos.clone().addScaledVector(direction,25));
  }else{
   const indoors=cityview?.active||realEstate.contains(player.x,player.z)||scooters.inside||museum?.contains(player.x,player.z)||rvPark.inside||!!villas.at(player.x,player.z)||barber.active||office.lobby||camp.insideCabin||!!premier.at(player.x,player.z)||boutique.active||bowling.active||!!coastal.homeAt(player.x,player.z)||club.active||ownableHomes.active||!!apartmentSession||!!universalSession||cafeInside||dealerInside;
-  const dist=marine.riding?7:indoors?2.4:onObservationDeck?2.8:insideNeedleLobby?1.6:3.65,eye=marine.riding?southBeach.ocean.heightAt(player.x,player.z)+1.5:onObservationDeck?observationNeedle.deckY+1.7:(indoors?1.65:1.3)+groundHeightAt(player.x,player.z)+(skate.riding?skate.jumpHeight+.2:0);
+  const dist=powersports?.riding?4.6:marine.riding?7:indoors?2.4:onObservationDeck?2.8:insideNeedleLobby?1.6:3.65,eye=marine.riding?southBeach.ocean.heightAt(player.x,player.z)+1.5:onObservationDeck?observationNeedle.deckY+1.7:(indoors?1.65:1.3)+groundHeightAt(player.x,player.z)+(skate.riding?skate.jumpHeight+.2:0);
   const desiredFov=!indoors&&!marine.riding&&!onObservationDeck&&!insideNeedleLobby?60:66;if(camera.fov!==desiredFov){camera.fov=desiredFov;camera.updateProjectionMatrix();}
   const target=new THREE.Vector3(player.x,eye,player.z);
   // Camera elevation and target elevation must not cancel one another.
   // Positive pitch looks UP, negative pitch looks DOWN, with full vertical range.
-  const viewYaw=marine.riding?yaw+boatLookYaw:yaw;
+  const viewYaw=powersports?.riding?yaw+driverLookYaw:marine.riding?yaw+boatLookYaw:yaw;
   const desired=new THREE.Vector3(player.x-Math.sin(viewYaw)*dist,eye+(indoors||!marine.riding&&!onObservationDeck&&!insideNeedleLobby ? .45 : 1.15),player.z-Math.cos(viewYaw)*dist);
   camera.position.lerp(desired,Math.min(1,dt*8));
   scooters.clampCamera(camera.position);
@@ -2199,13 +2204,13 @@ function animate(){
   camera.lookAt(camera.position.clone().addScaledVector(forward,20));
   avatar.visible=!sittingSeat?.reclined&&!(onObservationDeck&&Math.hypot(camera.position.x-player.x,camera.position.z-player.z)<.85)&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!rvPark.inside&&!observationNeedle.riding&&!carnival.riding&&!apartmentSession;
   avatar.position.set(player.x,0,player.z);
-  avatar.rotation.y=marine.riding?marine.heading:sittingSeat?(sittingSeat.facing??yaw):yaw;avatar.rotation.x=marine.riding?marine.pitch:sittingSeat?.reclined?-.20:0;avatar.rotation.z=marine.riding?marine.roll:0;
+  avatar.rotation.y=powersports?.riding?powersports.heading:marine.riding?marine.heading:sittingSeat?(sittingSeat.facing??yaw):yaw;avatar.rotation.x=marine.riding?marine.pitch:sittingSeat?.reclined?-.20:0;avatar.rotation.z=marine.riding?marine.roll:0;
   // Measure only movement produced by this frame's walking/scroll input. Fast
   // scroll steps are legitimate locomotion; teleports never enter this counter.
   const walkingSpeed=Math.min(10,walkingDistance/Math.max(motionDt,.001));
   // Animate the visible clothed model, using actual displacement so blocked
   // movement and teleports cannot produce skating or an in-place run.
-  if(skate.riding){avatar.position.y=skate.riderY;avatar.quaternion.copy(skate.board.quaternion);avatar.rotateY(Math.PI/2);}else if(scooters.riding){avatar.position.y=scooters.riderY;}else if(marine.riding){avatar.position.y=marine.riderY;}else if(sittingSeat){
+  if(powersports?.riding){avatar.position.y=powersports.groundY;}else if(skate.riding){avatar.position.y=skate.riderY;avatar.quaternion.copy(skate.board.quaternion);avatar.rotateY(Math.PI/2);}else if(scooters.riding){avatar.position.y=scooters.riderY;}else if(marine.riding){avatar.position.y=marine.riderY;}else if(sittingSeat){
    // Seated pose: thighs forward, knees bent and torso lowered onto chair height.
    avatar.position.y=standingHeightAt(player.x,player.z);
    if(!realAvatar){playerRig.legs.forEach(leg=>{leg.hip.rotation.x=-1.18;leg.knee.rotation.x=1.48;});playerRig.torso.rotation.x=.05;}
@@ -2216,8 +2221,9 @@ function animate(){
   }else avatar.position.y=(apartmentSession||universalSession&&!universalSession.home?0:standingHeightAt(player.x,player.z))+playerSoleOffset;
   // Place the avatar on the current surface before solving the feet.
   avatar.updateMatrixWorld(true);
-  updateRealAvatar(motionDt,elapsed,sittingSeat||marine.riding||scooters.riding||skate.riding?0:walkingSpeed);
+  updateRealAvatar(motionDt,elapsed,sittingSeat||powersports?.riding||marine.riding||scooters.riding||skate.riding?0:walkingSpeed);
   courtGames?.animatePlayer(realisticPlayer);applyPlayerSeatPose(realisticPlayer,sittingSeat&&!sittingSeat.reclined?sittingSeat:null,standingHeightAt(player.x,player.z),elapsed);
+  if(powersports?.riding)applyPowersportsRiderPose(realisticPlayer,powersports.riderSeat,elapsed);
   if(sittingSeat?.reclined)applyBeachLoungePose(avatar,sittingSeat);
   bedRest?.applyPose(avatar);bedRest?.positionCamera(camera);
   marine.updateHeldRod();
@@ -2239,10 +2245,10 @@ function animate(){
  try{if(nearbySceneryReady&&characterPrepared&&!tattooShop?.panelOpen&&!playerMenu?.profileOpen){renderBudget.update(motionDt);ownableHomes?.renderWindows(renderer,camera);updateReferenceLampLights(camera);const renderNow=performance.now(),renderGap=renderNow-lastRenderTime;lastRenderTime=renderNow;if(renderGap>70)slowRenderFrames++;else slowRenderFrames=Math.max(0,slowRenderFrames-1);if(slowRenderFrames>=4&&renderer.getPixelRatio()>(MOBILE?.55:.6)){renderer.setPixelRatio(Math.max(MOBILE?.55:.6,renderer.getPixelRatio()*.85));slowRenderFrames=0;}shaderWarmup.render(scene,camera,()=>{houseSunShadows.render(camera);if(!paintedFrame){paintedFrame=true;window.dispatchEvent(new Event('zerconda-frame'));}if(!playable&&nearbySceneryReady&&characterPrepared&&++settledFrames>=3){playable=true;keys.clear();window.dispatchEvent(new Event('zerconda-playable'));setTimeout(()=>{ambientTraffic=createAmbientTraffic(scene,{getPlayer:()=>player,getHeight:()=>GROUND_LEVEL,getVehicles:()=>[...cars,...(zCabs?.collisionVehicles||[])],getPedestrians:()=>[...pedestrianSystem.agents.map(a=>a.group.position),...cityResidents.collisionPeople],prepareModels:()=>loadLuxurySedan(),createModel:i=>i%2?createShowroomPickup({name:'Resident pickup',color:i===1?'#637e91':'#935746'}):createLuxurySedan()});},2000);}});}}
  catch(err){renderFailure=String(err);console.error('ZERCONDA RENDER ERROR',err);if(!paintedFrame){townEntered=false;window.dispatchEvent(new CustomEvent('zerconda-load-failed',{detail:'The graphics could not start. Please retry.'}));}}
  finally{restorePlayerVisibility();if(activeCar)activeCar.group.visible=true;}
- const nearHome=!boutique.active&&!bowling.active&&!scooters.riding&&!skate?.riding&&!activeCar?ownableHomes.closest(player.x,player.z,11):null;
+ const nearHome=!boutique.active&&!bowling.active&&!scooters.riding&&!powersports?.riding&&!skate?.riding&&!activeCar?ownableHomes.closest(player.x,player.z,11):null;
  homeButton.style.display=nearHome?'block':'none';
  if(nearHome)homeButton.textContent=ownableHomes.owned?.id===nearHome.id?'H · CUSTOMIZE HOME':'H · CLAIM / HOME OPTIONS';
- const nearTower=!boutique.active&&!bowling.active&&!scooters.riding&&!skate?.riding&&!activeCar&&Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)<7;
+ const nearTower=!boutique.active&&!bowling.active&&!scooters.riding&&!powersports?.riding&&!skate?.riding&&!activeCar&&Math.hypot(player.x-observationNeedle.entrance.x,player.z-observationNeedle.entrance.z)<7;
  towerButton.style.display=(!observationNeedle.riding&&((onObservationDeck&&observationNeedle.nearLift(player.x,player.z))||(insideNeedleLobby&&observationNeedle.authorized&&observationNeedle.nearLift(player.x,player.z))||(!onObservationDeck&&!insideNeedleLobby&&nearTower)))?'block':'none';
  towerExitButton.style.display=insideNeedleLobby?'block':'none';
  towerButton.textContent=onObservationDeck?'T · RIDE Z-VIEW DOWN':insideNeedleLobby?'T · RIDE Z-VIEW UP':'T · ENTER Z-VIEW';
@@ -2261,7 +2267,7 @@ function animate(){
  apartmentButton.style.display=apartmentSession&&!apartments.currentUnit?'block':'none';apartmentButton.textContent=apartments.currentUnit?'Return to apartment corridor':apartments.currentFloor?'Return to ground floor':'Exit apartments';
  if(enter){enter.style.display=!adminTransport?.active&&(activeCar||!otherInterior&&!cafeInside&&!dealerInside&&nearestUsableCar())?'block':'none';enter.textContent=activeCar?'Exit vehicle':'Enter vehicle';}
  townControls.update();
- drivingControls.update(activeCar);
+ drivingControls.update(activeCar||powersports?.activeVehicle);
  if((diagnosticFrames++%30)===0){
   const p=camera.position;
   diag.textContent='BUILD '+ZERCONDA_BUILD+'\nRENDER '+(contextLost?'CONTEXT LOST':'ACTIVE')+
