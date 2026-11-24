@@ -1777,7 +1777,7 @@ const townControls=createTownInteractions({
 await yieldStartup();
 
 boatMouseControls=createWatercraftMouseControls({canvas:renderer.domElement,getCraft:()=>marine?.riding?marine:null,isLocked:()=>movementLocked,onLook:(dx,dy)=>{boatLookYaw=THREE.MathUtils.clamp(boatLookYaw-dx*.003,-1.5,1.5);pitch=THREE.MathUtils.clamp(pitch+dy*.0025,-.5,.5);}});
-mouseVehicleSteering=createMouseVehicleSteering({canvas:renderer.domElement,getVehicle:()=>activeCar||powersports?.activeVehicle,onLook:(dx,dy)=>{driverLookYaw=THREE.MathUtils.clamp(driverLookYaw-dx*.003,-1.25,1.25);driverLookPitch=THREE.MathUtils.clamp(driverLookPitch+dy*.0025,-.45,.55);},isLocked:()=>!!((hotDogVendor?.panelOpen||sunglassesHut?.panelOpen)||zStore?.panelOpen||playerMenu?.panelOpen||tattooShop?.panelOpen||news?.panelOpen||club?.gameOpen||carnival?.gameOpen)||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)});
+mouseVehicleSteering=createMouseVehicleSteering({canvas:renderer.domElement,getVehicle:()=>activeCar||powersports?.activeVehicle,driveOnHold:()=>!!powersports?.riding,onLook:(dx,dy)=>{driverLookYaw=THREE.MathUtils.clamp(driverLookYaw-dx*.003,-1.25,1.25);driverLookPitch=THREE.MathUtils.clamp(driverLookPitch+dy*.0025,-.45,.55);},isLocked:()=>!!((hotDogVendor?.panelOpen||sunglassesHut?.panelOpen)||zStore?.panelOpen||playerMenu?.panelOpen||tattooShop?.panelOpen||news?.panelOpen||club?.gameOpen||carnival?.gameOpen)||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)});
 await yieldStartup();
 
 mouseSkateControls=createMouseSkateControls({canvas:renderer.domElement,isRiding:()=>!!(skate?.riding||scooters?.riding),isLocked:()=>!!((hotDogVendor?.panelOpen||sunglassesHut?.panelOpen)||zStore?.panelOpen||playerMenu?.panelOpen||tattooShop?.panelOpen||news?.panelOpen||club?.gameOpen||carnival?.gameOpen)||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)});
@@ -1846,7 +1846,7 @@ await yieldStartup();
 carnival=createSeasideCarnival(scene,{getPlayer:()=>player,getCamera:()=>camera,getCanvas:()=>renderer.domElement,canUse:()=>!observationNeedle.riding&&!onObservationDeck&&!insideNeedleLobby&&!barber.active&&!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!powersports?.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!rvPark.inside&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onStop:()=>{cabPassengerCamera.reset();sittingSeat=null;seatReturn=null;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();},onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{yaw=heading;pitch=0;camera.position.set(x,y+1.7,z);}});
 await yieldStartup();
 
-const vehicleHorns=createVehicleHorns({getListener:()=>player,getVehicle:()=>activeCar?.group||null});
+const vehicleHorns=createVehicleHorns({getListener:()=>player,getVehicle:()=>activeCar?.group||powersports?.activeVehicle?.root||null});
 await yieldStartup();
 
 const cityResidents=createCityResidents(scene,{getPlayer:()=>player,getHeight:standingHeightAt,canWalk:(x,z)=>ambientResidentsAllowed(x,z)&&walkable(x,z),getRoadPolygons:()=>roadMap.polygons,shops:{coffee:coffeeShop.root,boutique:boutique.interior},getVehicles:()=>[...cars,...(zCabs?.collisionVehicles||[]),...(ambientTraffic?.collisionVehicles||[])],existingPeople:()=>[...pedestrianSystem.agents.filter(a=>a.human.ready&&a.group.visible).map(a=>a.group.position),...(fountainResident.group.visible?[fountainResident.group.position]:[])],onMessage:m=>townControls.notify(m)});
@@ -2106,7 +2106,7 @@ function animate(){
  }else if(skate.riding){
   yaw-=side*dt*2.2;const skateInput=inputLocked?0:(f||Number(mouseSkateControls.pushing)||rideWheelThrottle);if(inputLocked)skate.stop();skate.drive(motionDt,skateInput,yaw);rideWheelThrottle*=Math.exp(-3*motionDt);if(Math.abs(rideWheelThrottle)<.04)rideWheelThrottle=0;movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
  }else if(powersports?.riding){
-  powersports.drive(motionDt,{throttle:inputLocked?0:(drivingControls.throttle||f||rideWheelThrottle),steer:inputLocked?0:(drivingControls.steer||side||mouseVehicleSteering.steer),brake:keys.has('Space'),locked:inputLocked});yaw=powersports.heading;rideWheelThrottle*=Math.exp(-3*motionDt);movement.vx=movement.vz=movement.wheelImpulse=0;
+  powersports.drive(motionDt,{throttle:inputLocked?0:(drivingControls.throttle||f||rideWheelThrottle||mouseVehicleSteering.throttle),steer:inputLocked?0:(drivingControls.steer||side||mouseVehicleSteering.steer),brake:keys.has('Space'),locked:inputLocked});yaw=powersports.heading;rideWheelThrottle*=Math.exp(-3*motionDt);movement.vx=movement.vz=movement.wheelImpulse=0;
  }else if(scooters.riding){
   yaw-=side*motionDt*1.65;const scooterInput=inputLocked?0:(f||Number(mouseSkateControls.pushing)||rideWheelThrottle);if(inputLocked)scooters.stop();scooters.drive(motionDt,scooterInput,yaw);rideWheelThrottle*=Math.exp(-3*motionDt);if(Math.abs(rideWheelThrottle)<.04)rideWheelThrottle=0;movement.vx=0;movement.vz=0;movement.wheelImpulse=0;
  }else if(marine.riding){
@@ -2199,7 +2199,7 @@ function animate(){
   if(onObservationDeck)observationNeedle.clampCamera(camera.position,'deck');else if(insideNeedleLobby)observationNeedle.clampCamera(camera.position,'lobby');
   camera.position.y=Math.max(onObservationDeck?observationNeedle.deckY+1.25:1.75,camera.position.y);
   if(sittingSeat?.reclined)positionBeachLoungeCamera(camera,sittingSeat);else if(!marine.riding&&!rvPark.inside&&!camp.insideCabin&&!apartmentSession)cameraClearance.resolve(camera,target,ownableHomes.active?ownableHomes.interior.root:scene);
-  const forward=new THREE.Vector3(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch));
+  const lookPitch=powersports?.riding?driverLookPitch:pitch;const forward=new THREE.Vector3(Math.sin(yaw)*Math.cos(lookPitch),Math.sin(lookPitch),Math.cos(yaw)*Math.cos(lookPitch));
   const nextNear=apartmentSession?.05:onObservationDeck?.5:.25;if(camera.near!==nextNear){camera.near=nextNear;camera.updateProjectionMatrix();}
   camera.lookAt(camera.position.clone().addScaledVector(forward,20));
   avatar.visible=!sittingSeat?.reclined&&!(onObservationDeck&&Math.hypot(camera.position.x-player.x,camera.position.z-player.z)<.85)&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!rvPark.inside&&!observationNeedle.riding&&!carnival.riding&&!apartmentSession;
