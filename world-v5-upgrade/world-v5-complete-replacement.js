@@ -1,3 +1,4 @@
+import {updateCaveLife} from './cave-life.js?v=20261124-remains-v306';
 import {createWatercraftMouseControls} from './watercraft-mouse-controls.js?v=20261123-waterfront-v285';
 import {createChessPartner} from './chess-partner.js?v=20261123-town-v282';
 import {clearPedestrianPathMarkings} from './path-markings.js?v=20261123-pier-reference-v274';
@@ -9,7 +10,7 @@ import {createBoardwalkWalker} from './boardwalk-walker.js?v=20261123-waterfront
 import {createCrowdSpacing} from './crowd-spacing.js?v=20261123-space-v265';
 import {applyPlayerSeatPose} from './player-seat-pose.js?v=20261123-boardwalk-v269';
 import {createFountainResident} from './fountain-resident.js?v=20261123-boardwalk-v269';
-import {hiddenPassageHeightAt,cutCaveTerrain} from './concealed-cavern.js?v=20261124-terrain-v304';
+import {hiddenPassageHeightAt,cutCaveTerrain} from './concealed-cavern.js?v=20261124-remains-v306';
 import {createHiddenForestPassage} from './hidden-forest-passage.js?v=20261123-floor-v295';
 import {createForestGroundCover,unifyForestGround} from './forest-ground-cover.js?v=20261123-natural-v264';
 import {clearRoadSidewalkOverlaps} from './road-surface-joins.js?v=20261123-town-v282';
@@ -2029,7 +2030,7 @@ const gravelTires=createGravelTireAudio({scene,getVehicle:()=>{if(adminTransport
 await yieldStartup();
 
 function animate(){
- requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);forestGroundCover.update();chessPartner.update(motionDt);chessTables.update(motionDt);fountainResident.update(dt);boardwalkWalker.update(motionDt);whiteFitnessWalker.update(motionDt);needlePlaidResident.update(motionDt);kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
+ requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);elapsed+=motionDt;globalThis.zercondaTransportMoving=!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);updateCaveLife(motionDt,player);forestGroundCover.update();chessPartner.update(motionDt);chessTables.update(motionDt);fountainResident.update(dt);boardwalkWalker.update(motionDt);whiteFitnessWalker.update(motionDt);needlePlaidResident.update(motionDt);kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
  if(!onObservationDeck&&!observationNeedle.riding&&!activeCar&&!scooters.riding&&!marine.riding&&!club.active&&!apartmentSession&&!universalSession){const nx=player.x-observationNeedle.x,nz=player.z-observationNeedle.z;if(!insideNeedleLobby&&Math.abs(nx)<1.75&&nz>11.7&&nz<13.2)insideNeedleLobby=true;else if(insideNeedleLobby&&nz>=16.0)insideNeedleLobby=false;}
  updateTreeBreeze(elapsed);airDancers.update(elapsed);dealership.update?.(motionDt);coffeeShop.update(motionDt);powersports?.update(motionDt);zFortune?.update(motionDt);

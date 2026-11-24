@@ -1,0 +1,16 @@
+Zerconda v306 — weathered remains and cave bats
+
+Replaced the simple procedural fossil props with three instances of a detailed weathered animal skeleton model. Added two human skeleton remains on the cave floor along the chamber sides. Added six textured brown bats that hang from the actual ceiling height; up to two fly short circuits at a time, flap their wings and return to roost between flights.
+
+Removed all blue crystals and blue accent lighting; purple crystals were removed in v305. Cleared exterior ferns away from the tunnel mouth to prevent foliage entering the walls. Preserves the v304 physical grass cut, cave enclosure and apartment updates.
+
+Models load only near the cave, share cached source assets, and use Meshopt/WebP compression. Bat wing motion runs in the vertex shader. Static remains are centered and planted on the floor. Side placements keep the central walkway clear.
+
+Validation: offline animal, human and bat renders inspected; static fit and ground contact; five remains placements; finite fly-and-return cycle and wing motion; old procedural bone/crystal calls absent; syntax checks. No full rendered WebGL browser verification was available.
+
+Generated through fal.ai Rodin 2.5 from descriptions based on supplied visual references:
+Animal source: https://v3b.fal.media/files/b/0ab3b03a/LMhwL3Ha0qvpRCRlyxNlg_base_basic_pbr.glb
+Human source: https://v3b.fal.media/files/b/0ab3b042/BmzdBXr0b3cmuPJ0ojOV__base_basic_pbr.glb
+Bat source: https://v3b.fal.media/files/b/0ab3b052/vy7SrEl1sLi4ctgKbaykl_base_basic_pbr.glb
+
+Production assets: assets/weathered-cat-fossil-v306.glb, assets/weathered-human-remains-v306.glb, assets/cave-bat-v306.glb. Runtime integration: cave-life.js and cave-chamber-details.js.
