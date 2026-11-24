@@ -1,0 +1,2 @@
+Zerconda v305
+Removed the two purple crystal clusters and their purple accent light from the cave chamber. Blue clusters and other cave details remain. Includes the v304 grass terrain fix and all apartment updates.
