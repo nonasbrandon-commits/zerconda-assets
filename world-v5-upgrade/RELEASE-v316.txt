@@ -1,0 +1,5 @@
+Nineteen added adult residents: eight retained from the first set after excluding the two requested face/head-covering women, ten additional residents with visible faces in contemporary office/casual/workwear, plus the swimwear visitor retained for South Beach. Cole and Logan walk the Tall Pines gravel cabin path; Mason pauses and strolls on South Beach. The other 16 walk public sidewalks by the western homes, apartments and waterfront homes. No existing named residents replaced.
+
+Microsoft Rocketbox original assets, MIT license and source credits included. Texture and skin conversion verified; all 23 walk rotation targets match each of the 19 skeletons. Two concurrent model loads, 125m load radius, 110m visibility, .65–1.02m/s walking, person/car avoidance and reversal on obstruction. Shared existing walk clips.
+
+Tests: finite textured/skinned models, excluded pair absent, cabin/beach assignments, loading/culling caps, vehicle blocking/resuming, public sidewalk routes. Lineups inspected. Full-town patched startup browser test verifies the loading hotfix and new crowd together. Loading hotfix from v315 retained.
