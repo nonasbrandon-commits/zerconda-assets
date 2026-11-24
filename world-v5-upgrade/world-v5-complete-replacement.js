@@ -588,7 +588,8 @@ await yieldStartup();
 const mainlandGround=box(1250,.18,1180,165,-.28,-425,grass);
 await yieldStartup();
 
-const cityLawn=box(1014,.12,743,63,GROUND_LEVEL-.06,-196.5,grass);
+// Keep the lawn below flush pavement rather than relying on depth bias.
+const cityLawn=box(1014,.12,743,63,GROUND_LEVEL-.078,-196.5,grass);
 await yieldStartup();
 cityLawn.userData.startupEssential=true;
 await yieldStartup();
@@ -1832,7 +1833,7 @@ villas.cutGround(mainlandGround);
 await yieldStartup();
 
  // Continuous level grass keeps the real openings into the villa swimming pools.
- {const shape=new THREE.Shape();shape.moveTo(-720,568);shape.lineTo(618,568);shape.lineTo(618,-175);shape.lineTo(-720,-175);shape.closePath();for(const h of villas.homes){const xa=h.x+35.8,xb=h.x+48.2,za=h.z-11.2,zb=h.z+11.2,path=new THREE.Path();path.moveTo(xa,-za);path.lineTo(xa,-zb);path.lineTo(xb,-zb);path.lineTo(xb,-za);path.closePath();shape.holes.push(path);}const g=new THREE.ShapeGeometry(shape),p=g.attributes.position,u=g.attributes.uv;for(let i=0;i<p.count;i++)u.setXY(i,(p.getX(i)+444)/350,(-p.getY(i)+568)/350);g.rotateX(-Math.PI/2);cityLawn.geometry=g;cityLawn.position.set(0,GROUND_LEVEL,0);cityLawn.scale.set(1,1,1);}
+ {const shape=new THREE.Shape();shape.moveTo(-720,568);shape.lineTo(618,568);shape.lineTo(618,-175);shape.lineTo(-720,-175);shape.closePath();for(const h of villas.homes){const xa=h.x+35.8,xb=h.x+48.2,za=h.z-11.2,zb=h.z+11.2,path=new THREE.Path();path.moveTo(xa,-za);path.lineTo(xa,-zb);path.lineTo(xb,-zb);path.lineTo(xb,-za);path.closePath();shape.holes.push(path);}const g=new THREE.ShapeGeometry(shape),p=g.attributes.position,u=g.attributes.uv;for(let i=0;i<p.count;i++)u.setXY(i,(p.getX(i)+444)/350,(-p.getY(i)+568)/350);g.rotateX(-Math.PI/2);cityLawn.geometry=g;cityLawn.position.set(0,GROUND_LEVEL-.018,0);cityLawn.scale.set(1,1,1);}
 await yieldStartup();
 
 
