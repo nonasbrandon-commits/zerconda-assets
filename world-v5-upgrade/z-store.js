@@ -1,5 +1,7 @@
+import {createPocketKnife} from './pocket-knife.js?v=20261124-cases-v321';
+import {createBouquet,createChocolateGift,createFlowersGiftsDisplay} from './flowers-gifts-display.js?v=20261124-flowers-v321';
 import {createSunglasses} from './sunglasses-styles.js?v=20261124-boardwalk-v314';
-import {createStoreDisplayCases} from './store-display-cases.js?v=20261124-cases-v320';
+import {createStoreDisplayCases} from './store-display-cases.js?v=20261124-cases-v321';
 import {createFlashlight,poseFlashlightGrip,releaseFlashlightGrip,releaseFlashlightHand} from './handheld-flashlight.js?v=20261124-grip-v320';
 import {createStoreRegister} from './store-register.js?v=20261124-register-v320';
 import {createNeighborhoodHuman} from './neighborhood-human.js?v=20261124-neighborhood-v316';
@@ -10,7 +12,7 @@ import * as THREE from 'three';
 import {GROUND_LEVEL as G} from './ground-level.js?v=20261119-level-ground-v117';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 export const Z_STORE={x:155,z:65,w:20,d:22};
-export const STORE_ITEMS=[['flashlight','Flashlight','Switch the light on or off.'],['knife','Pocket knife','Open or fold your utility knife.'],['balloons','Balloons','Carry a floating balloon.'],['flowers','Flowers','Carry a fresh bouquet.'],['sunglasses','Sunglasses','Wear your chosen frames.'],['watch','Watch','Wear a watch; check the local time.'],['ring','Ring','Wear a colored gemstone ring.']];
+export const STORE_ITEMS=[['flashlight','Flashlight','Switch the light on or off.'],['knife','Pocket knife','Open or fold your utility knife.'],['balloons','Balloons','Carry a floating balloon.'],['flowers','Flowers','Carry a fresh bouquet.'],['sunglasses','Sunglasses','Wear your chosen frames.'],['watch','Watch','Wear a watch; check the local time.'],['ring','Ring','Wear a colored gemstone ring.'],['chocolates','Chocolates','A ribbon-wrapped box of chocolates.']];
 const COLORS=[['Teal','#28a9ab'],['Red','#dc514f'],['Blue','#458de0'],['Purple','#a36dd5'],['Gold','#dfb54c'],['Pink','#ed91bb']];
 export function createZStore(scene,{getPlayer,controller,onStop=()=>{},onMessage=()=>{},canUse=()=>true}){
  const root=new THREE.Group();root.name='Z Store · general goods';root.userData.customInterior=true;root.position.set(155,0,65);scene.add(root);
@@ -26,24 +28,26 @@ export function createZStore(scene,{getPlayer,controller,onStop=()=>{},onMessage
  const millwork=createStoreMillwork(root);
  const register=createStoreRegister(root);register.position.set(.8,1.225,-5);
  const solids=[{x:0,z:-5,w:14.4,d:1.55},millwork.obstacle];
- for(const x of [-8,8]){box(.12,2.7,6,x+(x>0?1:-1),1.37,-1,wood);for(const y of [.5,1.25,2])box(2.1,.09,6.2,x,y,-1,wood);solids.push({x,z:-1,w:2.2,d:6.3});}
+ solids.push({x:9.2,z:.4,w:1.5,d:3.9});
  for(const x of [-4.5,4.5])solids.push({x,z:5,w:3.9,d:1.5});
  for(const x of [-6,0,6]){box(3,.04,1,x,4.49,0,new THREE.MeshBasicMaterial({color:'#fff4dc'}));const l=new THREE.PointLight('#ffe3b1',5,13);l.position.set(x,3.8,0);root.add(l);}
  function item(id,color){const g=new THREE.Group(),paint=M(color,.35),dark=M('#202b32'),silver=M('#b7c0c3',.23,.8);g.name='Z Store '+id;
  const b=(w,h,d,x,y,z,m=paint)=>box(w,h,d,x,y,z,m,g);const sphere=(r,x,y,z,m=paint,s=[1,1,1])=>{const o=new THREE.Mesh(new THREE.SphereGeometry(r,16,12),m);o.position.set(x,y,z);o.scale.set(...s);g.add(o);return o;};
  const tube=(r,len,x,y,z,m=paint)=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,len,16),m);o.position.set(x,y,z);g.add(o);return o;};
  if(id==='flashlight')return createFlashlight();
- if(id==='knife'){b(.07,.22,.035,0,.11,0);const blade=b(.055,.19,.012,0,.31,0,silver);g.userData.blade=blade;}
+ if(id==='knife')return createPocketKnife(color);
  if(id==='balloons'){tube(.004,1.1,0,.55,0,silver);sphere(.24,0,1.32,0,paint,[.85,1.15,.85]);}
- if(id==='flowers'){for(let i=0;i<7;i++){const a=i*2.4,x=Math.cos(a)*.1,z=Math.sin(a)*.1;tube(.009,.32,x,.16,z,M('#376844'));for(let j=0;j<6;j++)sphere(.038,x+Math.cos(j*Math.PI/3)*.045,.34,z+Math.sin(j*Math.PI/3)*.045);sphere(.023,x,.36,z,M('#f2c853'));}b(.2,.13,.15,0,.07,0,M('#d6bd8b'));}
+ if(id==='flowers')return createBouquet(color);
+ if(id==='chocolates')return createChocolateGift(color);
  if(id==='sunglasses'){const frames=createSunglasses('wayfarer');frames.scale.setScalar(2);frames.traverse(o=>{if(o.isMesh&&o.material.isMeshStandardMaterial&&!o.material.isMeshPhysicalMaterial)o.material.color.set(color);});g.add(frames);}
  if(id==='watch'){const band=new THREE.Mesh(new THREE.TorusGeometry(.045,.009,8,24),paint);g.add(band);const face=new THREE.Mesh(new THREE.CylinderGeometry(.041,.041,.012,32),silver);face.rotation.x=Math.PI/2;face.position.z=.046;g.add(face);const dial=new THREE.Mesh(new THREE.CircleGeometry(.034,32),dark);dial.position.z=.053;g.add(dial);for(let i=0;i<12;i++){const a=i*Math.PI/6,tick=b(.002,.006,.002,Math.sin(a)*.028,Math.cos(a)*.028,.055,silver);tick.rotation.z=-a;}b(.002,.026,.002,0,.011,.057,stone);const hour=b(.018,.003,.002,.008,0,.058,stone);hour.rotation.z=.4;sphere(.003,0,0,.06,silver);b(.009,.012,.006,.044,0,.047,silver);}
  if(id==='ring'){g.add(new THREE.Mesh(new THREE.TorusGeometry(.018,.004,8,20),silver));const gem=new THREE.Mesh(new THREE.OctahedronGeometry(.012),paint);gem.position.y=.022;g.add(gem);}
  return g;}
- for(let i=0;i<7;i++)for(let c=0;c<6;c++){const id=STORE_ITEMS[i][0];if(i===4||i===5)continue;const o=item(id,COLORS[c][1]);if(i<4){o.position.set(i%2?-8:8,.55+Math.floor(i/2)*.75,-3+c*.78);if(id==='balloons')o.scale.setScalar(.5);}else{o.position.set((i===4?-4.5:4.5)+(c%3-1)*.85,.7,4.7+Math.floor(c/3)*.5);if(i===6){o.position.set(2.4+c*.25,1.27,-5);o.scale.setScalar(2.5);}}root.add(o);}
+ for(let i=0;i<7;i++)for(let c=0;c<6;c++){const id=STORE_ITEMS[i][0];if(i!==6)continue;const o=item(id,COLORS[c][1]);if(i<4){o.position.set(8,i===1?2:.55+Math.floor(i/2)*.75,-3+c*.78);if(id==='balloons')o.scale.setScalar(.5);}else{o.position.set((i===4?-4.5:4.5)+(c%3-1)*.85,.7,4.7+Math.floor(c/3)*.5);if(i===6){o.position.set(2.4+c*.25,1.27,-5);o.scale.setScalar(2.5);}}root.add(o);}
 
+ const giftsDisplay=createFlowersGiftsDisplay(root,{colors:COLORS});solids.push(giftsDisplay.obstacle);
  const displayCases=createStoreDisplayCases(root,{makeItem:item,colors:COLORS});
- let clerk=null,clerkLoading=false,clerkRetry=0,panelOpen=false,selected='flashlight',color=COLORS[0][1],inventory=[],order=[],equipped={},lightsOn=true,knifeOpen=false;
+ let clerk=null,clerkLoading=false,clerkRetry=0,panelOpen=false,selected='flashlight',color=COLORS[4][1],inventory=[],order=[],equipped={},lightsOn=true,knifeOpen=false;
  try{const v=JSON.parse(localStorage.getItem('zerconda-z-store-v1')||'[]');if(Array.isArray(v))inventory=v.filter(v=>STORE_ITEMS.some(i=>i[0]===v.id)&&COLORS.some(c=>c[1]===v.color)).slice(0,100);}catch{}
  inventory=inventory.filter(v=>['sunglasses','watch','ring'].includes(v.id)||inventory.filter(i=>!['sunglasses','watch','ring'].includes(i.id)).indexOf(v)<10);
  const animateAvatar=controller.update.bind(controller);controller.update=(dt,speed,options={})=>{releaseFlashlightGrip(controller.root);animateAvatar(dt,speed,options);const torch=equipped.hand;if(torch?.userData.flashlight){torch.visible=!options.driving&&!options.dancing;if(torch.visible)poseFlashlightGrip(controller.root,torch);}};
@@ -56,11 +60,11 @@ export function createZStore(scene,{getPlayer,controller,onStop=()=>{},onMessage
  controller.root.updateWorldMatrix(true,true);controller.root.add(g);if(slot==='sunglasses'){const fit=avatarHeadFrame(controller.root,bone);g.position.set(fit.point.x,fit.top-.13,fit.point.z+.137);g.scale.setScalar(.65);}else{const point=controller.root.worldToLocal(bone.getWorldPosition(new THREE.Vector3()));g.position.copy(point);if(slot==='watch')g.position.y+=.035;if(slot==='ring'){g.position.y-=.045;g.position.x+=.025;}if(id==='flashlight')g.rotation.x=Math.PI/2;}controller.root.updateWorldMatrix(true,true);bone.attach(g);if(id==='flashlight'){g.userData.light.intensity=lightsOn?8:0;g.userData.emitter.material.emissiveIntensity=lightsOn?2:0;poseFlashlightGrip(controller.root,g);}if(id==='knife')g.userData.blade.visible=knifeOpen;if(slot==='hand')try{localStorage.setItem('zerconda-held-item-v1',JSON.stringify(v))}catch{}changed();onMessage('Equipped '+STORE_ITEMS.find(i=>i[0]===id)[1]);draw();}
  const wearable=v=>['sunglasses','watch','ring'].includes(v.id);
  const itemKey=v=>v.id+'|'+v.color;
- const itemLabel=v=>STORE_ITEMS.find(i=>i[0]===v.id)[1]+' · '+COLORS.find(c=>c[1]===v.color)[0];
+ const itemLabel=v=>STORE_ITEMS.find(i=>i[0]===v.id)[1];
  const carried=()=>inventory.filter(v=>!wearable(v));
  function addToOrder(){const v={id:selected,color};if(inventory.some(i=>itemKey(i)===itemKey(v))||order.some(i=>itemKey(i)===itemKey(v))){onMessage('That item is already in your bag or order.');return;}if(!wearable(v)&&carried().length+order.filter(i=>!wearable(i)).length>=10){onMessage('Your bag holds 10 items. Remove an item to make room.');return;}order.push(v);draw();}
  function checkout(tab=false){if(!order.length)return;if(carried().length+order.filter(v=>!wearable(v)).length>10){onMessage('There is not enough room in your bag.');return;}const received=order.filter(v=>!inventory.some(i=>itemKey(i)===itemKey(v)));inventory.push(...received);order=[];save();for(const v of received.filter(wearable))equip(v);onMessage(tab?'Added to your tab: $0. Your items are ready.':'Order complete: $0. Your items are in your bag.');close();}
- function draw(){panel.replaceChildren();const heading=(text,tag='p')=>{const e=document.createElement(tag);e.textContent=text;panel.append(e);return e;};heading('Z Store · Hugo','h2');heading('Welcome to Everyday Finds! Pick an item and color, then add it to your order. Everything is $0 for now.');const select=document.createElement('select');select.setAttribute('aria-label','Item');select.style.cssText='width:100%;min-height:44px;font:inherit';for(const [id,name]of STORE_ITEMS){const o=document.createElement('option');o.value=id;o.textContent=name;select.append(o);}select.value=selected;select.onchange=()=>{selected=select.value;draw();};panel.append(select);heading(STORE_ITEMS.find(i=>i[0]===selected)[2]);for(const [name,hex]of COLORS){const b=button((hex===color?'✓ ':'')+name,()=>{color=hex;draw();});b.style.setProperty('border-color',hex,'important');b.setAttribute('aria-pressed',String(hex===color));}button('Add to order',addToOrder);heading('Your order','h3');if(!order.length)heading('No items added yet.');for(const v of order){const row=heading(itemLabel(v)+' — $0');button('Remove',()=>{order=order.filter(i=>i!==v);draw();},row);}heading('Total: $0','h3');const checkoutButton=button('Put it on my tab',()=>checkout(true));checkoutButton.disabled=!order.length;button('Close',close);}
+ function draw(){panel.replaceChildren();const heading=(text,tag='p')=>{const e=document.createElement(tag);e.textContent=text;panel.append(e);return e;};heading('Z Store · Hugo','h2');heading('Welcome to Everyday Finds! Pick an item, then add it to your order. Everything is $0 for now.');const select=document.createElement('select');select.setAttribute('aria-label','Item');select.style.cssText='width:100%;min-height:44px;font:inherit';for(const [id,name]of STORE_ITEMS){const o=document.createElement('option');o.value=id;o.textContent=name;select.append(o);}select.value=selected;select.onchange=()=>{selected=select.value;color=({flashlight:COLORS[4][1],knife:COLORS[2][1],balloons:COLORS[1][1],flowers:COLORS[5][1],sunglasses:COLORS[0][1],watch:COLORS[4][1],ring:COLORS[3][1],chocolates:COLORS[5][1]})[selected];draw();};panel.append(select);heading(STORE_ITEMS.find(i=>i[0]===selected)[2]);button('Add to order',addToOrder);heading('Your order','h3');if(!order.length)heading('No items added yet.');for(const v of order){const row=heading(itemLabel(v)+' — $0');button('Remove',()=>{order=order.filter(i=>i!==v);draw();},row);}heading('Total: $0','h3');const checkoutButton=button('Put it on my tab',()=>checkout(true));checkoutButton.disabled=!order.length;button('Close',close);}
  function close(){panelOpen=false;panel.style.display='none';onStop();}
  function open(){onStop();panelOpen=true;draw();panel.style.display='block';panel.scrollTop=0;panel.querySelector('select').focus({preventScroll:true});}
  for(const e of ['pointerdown','pointerup','click','wheel','keydown'])panel.addEventListener(e,event=>event.stopPropagation());panel.addEventListener('keydown',e=>{if(e.code==='Escape')close();});
