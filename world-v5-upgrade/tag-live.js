@@ -1,4 +1,4 @@
-const RELAYS=['wss://nos.lol','wss://relay.primal.net','wss://relay.ditto.pub'],TOPIC='nonasbrandon-commits/zerconda/tag-playwarehouse-v1';
+const RELAYS=['wss://nos.lol','wss://relay.primal.net','wss://relay.ditto.pub'],TOPIC='nonasbrandon-commits/zerconda/tag-playwarehouse-v2';
 export async function createTagLive({receive,status=()=>{},identity=null,room=TOPIC}={}){
  const tools=await import('https://esm.sh/nostr-tools@2.15.0/pure?bundle');const key=identity||tools.generateSecretKey(),id=tools.getPublicKey(key),sockets=new Set(),seen=new Set();let closed=false,retryAt=0,openedAt=0;
  const connected=()=>[...sockets].some(w=>w.readyState===WebSocket.OPEN);
