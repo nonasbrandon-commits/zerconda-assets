@@ -1,5 +1,5 @@
 import {posePoleSlide} from './pole-slide-pose.js?v=20261125-pole-v379';
-import {createGamepadControls} from './gamepad-controls.js?v=20261125-controller-v379';
+import {createGamepadControls} from './gamepad-controls.js?v=20261125-controller-v380';
 import {createPlaywarehouseGame} from './tag-playwarehouse-game.js?v=20261125-slide-controls-v379';
 import {createVenueRenderIsolation} from './venue-render-isolation.js?v=20261125-transition-v379';
 import {createCanopyVenue} from './canopy-venue.js?v=20261125-walkways-v379';
@@ -35,13 +35,13 @@ import {applyPlayerSeatPose} from './player-seat-pose.js?v=20261123-boardwalk-v2
 import {createFountainResident} from './fountain-resident.js?v=20261123-boardwalk-v269';
 import {hiddenPassageHeightAt,cutCaveTerrain} from './concealed-cavern.js?v=20261124-trails-v307';
 import {createHiddenForestPassage} from './hidden-forest-passage.js?v=20261123-floor-v295';
-import {createForestGroundCover,unifyForestGround} from './forest-ground-cover.js?v=20261123-natural-v264';
+import {createForestGroundCover,unifyForestGround} from './forest-ground-cover.js?v=20261125-budget-v380';
 import {clearRoadSidewalkOverlaps} from './road-surface-joins.js?v=20261123-town-v282';
 import {createForestLandmarkRock} from './forest-landmark-rock.js?v=20261123-roads-v261';
 import {createAbandonedTransport} from './abandoned-transport.js?v=20261123-return-v258';
 import {loadConceptSUV,createConceptSUV} from './concept-suv.js?v=20261122-concept-suv-v256';
 import {yieldStartup} from './startup-yield.js?v=20261122-startup-v253';
-import {createControlGuide} from './control-guide.js?v=20261125-tag-controls-v379';
+import {createControlGuide} from './control-guide.js?v=20261125-tag-controls-v380';
 import {createAdminTransport} from './admin-transport.js?v=20261122-admin-transport-v245';
 import {createForestGravelRoads} from './forest-gravel-roads.js?v=20261123-natural-v264';
 import {ambientResidentsAllowed} from './ambient-resident-areas.js?v=20261122-listings-v238';
@@ -91,7 +91,7 @@ import {createPlayerMenu} from './player-menu.js?v=20261123-space-v265';
 import {createMouseSkateControls} from './mouse-skate-controls.js?v=20261119-entrance-steering-v118';
 import {createMouseVehicleSteering} from './mouse-vehicle-steering.js?v=20261123-driving-v258';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
-import {createRenderBudget} from './render-budget.js?v=20261125-transition-v379';
+import {createRenderBudget} from './render-budget.js?v=20261125-forest-lod-v380';
 import {createClothedPlayer} from './clothed-player.js';
 import {createZercondaMuseum} from './zerconda-museum.js?v=20261121-entry-fix-v198';
 import {installAvatarTattoos} from './avatar-tattoos.js?v=20261120-attribute-compat-v181';
@@ -1636,13 +1636,14 @@ function setApartmentFloor(f){if(!apartmentSession)return;apartmentFloor=f;apart
 function apartmentAction(){if(!apartmentSession||apartments.riding)return;if(apartments.currentUnit){apartments.leaveUnit();return;}if(apartments.currentFloor!==0){apartments.rideElevator(0);return;}const back=apartmentSession;apartments.hide();apartmentSession=null;floorPanel.style.display='none';player.x=back.x;player.z=back.z;movement.vx=0;movement.vz=0;camera.position.set(player.x,groundHeightAt(player.x,player.z)+2,player.z-2);}
 function enterApartment(d){if(apartmentSession)return;const building=d.building||buildings.find(b=>Math.hypot(d.x-b.entry.x,d.z-b.entry.z)<2);if(!building)return;apartmentSession={x:player.x,z:player.z,building};apartments.configure(building);apartments.root.visible=true;activeCar=null;setApartmentFloor(0);}
 // Legacy overlay cleanup: older Airo button can survive alongside the new UI.
-const fixLegacyDoorLabels=()=>{for(const b of document.querySelectorAll('button')){if(b!==doorButton&&/^(?:F\\s*[·:.\\-]\\s*)?(?:OPEN|CLOSE)\\s+DOORS?$/i.test((b.textContent||'').trim())){b.textContent='F · ENTER BUILDING';b.onclick=()=>toggleNearbyDoor();}}};
+const fixLegacyDoorButton=b=>{if(b&&b!==doorButton&&/^(?:F\s*[·:.\-]\s*)?(?:OPEN|CLOSE)\s+DOORS?$/i.test((b.textContent||'').trim())){b.textContent='F · ENTER BUILDING';b.onclick=()=>toggleNearbyDoor();}};
+const fixLegacyDoorLabels=()=>document.querySelectorAll('button').forEach(fixLegacyDoorButton);
 await yieldStartup();
 
 fixLegacyDoorLabels();
 await yieldStartup();
 
-const legacyDoorObserver=new MutationObserver(fixLegacyDoorLabels);
+const legacyDoorObserver=new MutationObserver(records=>{for(const r of records){fixLegacyDoorButton(r.target.nodeType===1?r.target.closest('button'):null);for(const n of r.addedNodes)if(n.nodeType===1){if(n.matches('button'))fixLegacyDoorButton(n);n.querySelectorAll('button').forEach(fixLegacyDoorButton);}}});
 await yieldStartup();
 
 legacyDoorObserver.observe(document.body,{subtree:true,childList:true});
@@ -2059,7 +2060,7 @@ await yieldStartup();
 function updateAreaLoading(){} // Startup is covered by the screenshot loading screen.
 let elapsed=0,townEntered=false,paintedFrame=false;
 await yieldStartup();
-const renderBudget=createRenderBudget(scene,{getPlayer:()=>player,getHeight:()=>avatar.position.y,mobile:MOBILE,isApartmentInterior:()=>!!canopyVenue?.active||(cityview?.active&&cityview.currentFloor>0)});
+const renderBudget=createRenderBudget(scene,{getPlayer:()=>player,getCamera:()=>camera,getHeight:()=>avatar.position.y,mobile:MOBILE,isApartmentInterior:()=>!!canopyVenue?.active||(cityview?.active&&cityview.currentFloor>0)});
 await yieldStartup();
 
 adminTransport=createAdminTransport({getPlayer:()=>player,getMilitary:()=>militaryBase?.vehicleAssets,getAirfield:()=>airfield,hasClearance:()=>militaryAccess?.hasClearance()===true,requestAccess:grant=>militaryAccess.request(grant),canBoard:()=>playable&&!activeCar&&!zCabs?.riding&&!marine?.riding&&!scooters?.riding&&!powersports?.riding&&!skate?.riding&&!airfield?.boarded&&!insideHouse()&&!sittingSeat&&!militaryAccess?.panelOpen,getGround:(x,z)=>standingHeightAt(x,z),canMove:(x,z)=>walkable(x,z)&&!southBeach.blocksVehicle(x,z),onStop:()=>{keys.clear();townControls.stop();movement.vx=movement.vz=movement.wheelImpulse=0;},onMessage:m=>townControls.notify(m,7000),onExit:(x,y,z)=>{player.x=x;player.z=z;avatar.position.set(x,y,z);avatar.visible=true;yaw=0;pitch=0;camera.position.set(x,y+2,z-5);}});
@@ -2085,7 +2086,7 @@ await yieldStartup();
 adminWorld=createAdminWorldControls({scene,sun,hemisphere,sky:cloudSky,renderer,isAdmin:()=>!!adminAccount?.isAdmin});
 const propertyThumbnail=createPropertyThumbnails({scene,renderer,avatar}),characterThumbnail=createCharacterThumbnails({scene,renderer});
 const adminCharacters=()=>collectAdminCharacters({scene,groups:[{agents:boardwalkFitness?.agents||[],category:'Fitness and beach visitor'},{agents:neighborhoodResidents?.agents||[],category:'Neighborhood resident'},{agents:cityResidents.agents,category:'Town resident'},{agents:coffeeCustomers?.agents||[],category:'Coffee customer'},{agents:pedestrianSystem.agents,category:'Pedestrian'},{agents:beachVisitors.visitors,category:'Beach visitor'}],individuals:[zFortune?.fortuneTeller,needlePlaidResident,boardwalkWalker,whiteFitnessWalker,curlyFitnessWalker,curlyBusinessWalker,fountainResident,chessPartner,{group:avatar,name:playerMenu?.state.name||'Resident',role:'Current player',category:'Player'}],extra:[{id:'store-hugo',name:'Hugo',role:'Everyday Finds owner',x:155,y:.15,z:58}]});adminCharacters();
-adminDashboard=createAdminDashboard({getCharacterThumbnail:characterThumbnail,getPropertyThumbnail:propertyThumbnail,getCharacters:adminCharacters,onDeleteCharacter:c=>adminAccount?.isAdmin?deleteAdminCharacter(c):false,onRestoreCharacters:()=>{if(adminAccount?.isAdmin)restoreAdminCharacters();},getDeletedCharacterCount:deletedAdminCharacterCount,onVisitCharacter:c=>travelToArea({name:c.name,x:c.x+1.5,z:c.z+1.5}),isAdmin:()=>!!adminAccount?.isAdmin,onStop:stopCityview,onSignOut:()=>adminAccount.signOut(),world:adminWorld,getPlayer:()=>player,getPlayerName:()=>playerMenu?.state.name||'Resident',getRuntime:()=>{let meshes=0;scene.traverse(o=>{if(o.isMesh)meshes++});return{version:379,renderPixelRatio:renderer.getPixelRatio(),drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,sceneMeshes:meshes,vehicles:{powersports:powersports?.models.length||0,cars:cars.length,ambientTraffic:ambientTraffic?.collisionVehicles.length||0},currentActivity:powersports?.riding?'Powersports vehicle':activeCar?'Car':cityview?.active?'Cityview':'Town'};},getProperties:()=>{const homes=collectHomeLocations({starter:ownableHomes,premier,villas,coastal,apartments:apartmentExteriors,apartmentExperience}).map(h=>({...h,owner:h.id==='H'+String(ownableHomes.owned?.id).padStart(2,'0')?ownableHomes.owned.username:null}));for(const f of cityview.ownership.list())homes.push({id:'CV'+String(f.level).padStart(2,'0'),name:'Cityview · Level '+f.level,x:-378,z:-62,level:f.level,owner:f.owner,ownerId:cityview.ownership.records[f.level]?.ownerId||null});return homes;},onVisit:h=>{if(powersports?.riding&&!powersports.end())return;if(activeCar)toggleCar();scooters?.end();skate?.end();marine?.end?.();cityview.leave();stopCityview();const a=h.angle||0,offset=(h.minZ??-14)-3;player.x=h.x+Math.sin(a)*offset;player.z=h.z+Math.cos(a)*offset;yaw=a;pitch=0;cityMap.draw(true);}});
+adminDashboard=createAdminDashboard({getCharacterThumbnail:characterThumbnail,getPropertyThumbnail:propertyThumbnail,getCharacters:adminCharacters,onDeleteCharacter:c=>adminAccount?.isAdmin?deleteAdminCharacter(c):false,onRestoreCharacters:()=>{if(adminAccount?.isAdmin)restoreAdminCharacters();},getDeletedCharacterCount:deletedAdminCharacterCount,onVisitCharacter:c=>travelToArea({name:c.name,x:c.x+1.5,z:c.z+1.5}),isAdmin:()=>!!adminAccount?.isAdmin,onStop:stopCityview,onSignOut:()=>adminAccount.signOut(),world:adminWorld,getPlayer:()=>player,getPlayerName:()=>playerMenu?.state.name||'Resident',getRuntime:()=>{let meshes=0;scene.traverse(o=>{if(o.isMesh)meshes++});return{version:380,renderPixelRatio:renderer.getPixelRatio(),drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,sceneMeshes:meshes,vehicles:{powersports:powersports?.models.length||0,cars:cars.length,ambientTraffic:ambientTraffic?.collisionVehicles.length||0},currentActivity:powersports?.riding?'Powersports vehicle':activeCar?'Car':cityview?.active?'Cityview':'Town'};},getProperties:()=>{const homes=collectHomeLocations({starter:ownableHomes,premier,villas,coastal,apartments:apartmentExteriors,apartmentExperience}).map(h=>({...h,owner:h.id==='H'+String(ownableHomes.owned?.id).padStart(2,'0')?ownableHomes.owned.username:null}));for(const f of cityview.ownership.list())homes.push({id:'CV'+String(f.level).padStart(2,'0'),name:'Cityview · Level '+f.level,x:-378,z:-62,level:f.level,owner:f.owner,ownerId:cityview.ownership.records[f.level]?.ownerId||null});return homes;},onVisit:h=>{if(powersports?.riding&&!powersports.end())return;if(activeCar)toggleCar();scooters?.end();skate?.end();marine?.end?.();cityview.leave();stopCityview();const a=h.angle||0,offset=(h.minZ??-14)-3;player.x=h.x+Math.sin(a)*offset;player.z=h.z+Math.cos(a)*offset;yaw=a;pitch=0;cityMap.draw(true);}});
 function animate(){
  requestAnimationFrame(animate);if(!townEntered)return;const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);controllerInput?.update(motionDt);elapsed+=motionDt;canopyVenue?.update(motionDt);venueRenderIsolation?.prepare();tagGame?.update(motionDt);enforceAdminCharacterDeletions();const apartmentInteriorActive=!!canopyVenue?.active||(cityview?.active&&cityview.currentFloor>0);globalThis.zercondaTransportMoving=!!powersports?.riding||!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding&&!powersports?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);updateCaveLife(motionDt,player);updateMountainWilderness(player);trackTrailExploration(motionDt,player,!activeCar&&!marine.riding&&!scooters.riding&&!powersports?.riding&&!airfield.boarded&&!zCabs.riding);forestGroundCover.update();chessPartner.update(motionDt);chessTables.update(motionDt);if(!apartmentInteriorActive)fountainResident.update(dt);if(!apartmentInteriorActive)boardwalkFitness?.update(motionDt);if(!apartmentInteriorActive)boardwalkWalker.update(motionDt);if(!apartmentInteriorActive)whiteFitnessWalker.update(motionDt);if(!apartmentInteriorActive)curlyFitnessWalker.update(motionDt);if(!apartmentInteriorActive)curlyBusinessWalker.update(motionDt);if(!apartmentInteriorActive)needlePlaidResident.update(motionDt);if(!apartmentInteriorActive)kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
@@ -2166,8 +2167,8 @@ function animate(){
   const len=Math.hypot(f,side)||1;
   const walkingOnly=insideHouse(),movementLimit=walkingOnly?WALK_SPEED:RUN_SPEED;
   const speed=walkingOnly||townControls.backward?WALK_SPEED:keys.has('ShiftLeft')||keys.has('ShiftRight')||townControls.running?RUN_SPEED:WALK_SPEED;
-  const desiredX=(Math.sin(yaw)*f+Math.cos(yaw)*side)/len*speed;
-  const desiredZ=(Math.cos(yaw)*f-Math.sin(yaw)*side)/len*speed;
+  const desiredX=(Math.sin(yaw)*f-Math.cos(yaw)*side)/len*speed;
+  const desiredZ=(Math.cos(yaw)*f+Math.sin(yaw)*side)/len*speed;
   const damping=(f||side)?ACCELERATION:DECELERATION;
   movement.vx=THREE.MathUtils.damp(movement.vx,desiredX,damping,motionDt);
   movement.vz=THREE.MathUtils.damp(movement.vz,desiredZ,damping,motionDt);

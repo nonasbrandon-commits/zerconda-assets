@@ -118,7 +118,7 @@ export function createNineHoleGolf(course,{origin,materials,tree,getPlayer}){
   const nearBall=active&&Math.hypot(player.x-(ball.position.x+origin.x),player.z-(ball.position.z+origin.z))<11;
   const show=!!(nearBall||(!active&&nearest));button.style.display=show?'block':'none';
   button.textContent=active?'G · HIT BALL · STROKE '+(strokes+1):'G · PLAY HOLE '+(nearest?.number||'');
-  score.style.display=(player.x>232&&player.z<170)?'block':'none';
+  score.style.display=(player.x>232&&player.x<564&&player.z> -273&&player.z<170)?'block':'none';
   if(active)score.textContent='Hole '+active.number+' · Par 3 · '+strokes+' strokes · Follow the ball, then tap Hit ball';
   else if(!results.size)score.textContent='ZERCONDA · NINE-HOLE GOLF · Approach a numbered tee and tap Play';
  }
