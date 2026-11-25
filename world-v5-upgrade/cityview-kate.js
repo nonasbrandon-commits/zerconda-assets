@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import {CITYVIEW,cityviewFloorY} from './cityview-building.js?v=20261124-cityview-v326';
-import {createNeighborhoodHuman} from './neighborhood-human.js?v=20261124-neighborhood-v316';
-export const CITYVIEW_KATE={name:'Kate',gender:'woman',height:1.60,model:'./assets/kate-v384.glb',role:'Cityview Level 10 resident',area:'Cityview Apartments · Level 10',floor:10,outfit:'Pink floral G-string bikini · barefoot · copper-red shoulder-length curls'};
-export function createCityviewKate(scene,{getCityview,getPlayer,makeHuman=createNeighborhoodHuman}={}){
+import {createKateHuman} from './kate-human.js?v=20261125-reference-v385';
+export const CITYVIEW_KATE={name:'Kate',gender:'woman',height:1.60,model:'./assets/kate-v385.glb',role:'Cityview Level 10 resident',area:'Cityview Apartments · Level 10',floor:10,outfit:'Pink floral G-string bikini · barefoot · copper-red shoulder-length curls'};
+export function createCityviewKate(scene,{getCityview,getPlayer,makeHuman=createKateHuman}={}){
  const profile={...CITYVIEW_KATE},group=new THREE.Group();group.name='Kate · Cityview Level 10 resident';group.userData.dynamicScenery=true;group.userData.displayName='Kate';group.userData.source='Original reference-based character adaptation';group.visible=false;scene.add(group);const human=makeHuman({...profile,model:new URL(profile.model,import.meta.url).href});group.add(human.root);
  const world=(x,z)=>({x:CITYVIEW.x-x,z:CITYVIEW.z-z}),route=[[4.6,5.8],[3.0,5.8],[3.0,1.0],[4.6,1.0]].map(([x,z])=>world(x,z));group.position.set(route[0].x,cityviewFloorY(10),route[0].z);group.rotation.y=Math.PI;let pending=false,ready=false,retry=0,time=0,target=1,pause=4,walking=false;
  async function load(){if(ready||pending)return;pending=true;try{await human.load();if(!human.ready)throw Error('Kate model did not load');ready=true;}catch(e){group.userData.loadError=String(e);retry=time+20;}finally{pending=false;}}

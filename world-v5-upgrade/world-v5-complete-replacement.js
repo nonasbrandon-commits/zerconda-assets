@@ -1,4 +1,4 @@
-import {createCityviewKate} from './cityview-kate.js?v=20261125-kate-v384';
+import {createCityviewKate} from './cityview-kate.js?v=20261125-reference-v385';
 import {posePoleSlide} from './pole-slide-pose.js?v=20261125-pole-v379';
 import {createGamepadControls} from './gamepad-controls.js?v=20261125-controller-v380';
 import {createPlaywarehouseGame} from './tag-playwarehouse-game.js?v=20261125-slide-controls-v379';
