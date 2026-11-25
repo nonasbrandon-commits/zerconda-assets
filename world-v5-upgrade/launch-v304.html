@@ -30,22 +30,19 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:
 
  addEventListener('zerconda-playable',()=>{painted=true;panel.hidden=true;});
  // First frame stays covered until scenery and the character are ready.
- addEventListener('zerconda-load-failed',e=>{failed=true;panel.hidden=false;message.textContent=/fetch|network|module.*load|loading.*module/i.test(e.detail)?'The connection was interrupted. Please try again.':'Zerconda could not finish loading. Please try again.';retry.hidden=false;document.getElementById('boot-details').hidden=false;document.getElementById('startup-error-details').textContent='Version 405 · '+e.detail;});
+ addEventListener('zerconda-load-failed',e=>{failed=true;panel.hidden=false;message.textContent=/fetch|network|module.*load|loading.*module/i.test(e.detail)?'The connection was interrupted. Please try again.':'Zerconda could not finish loading. Please try again.';retry.hidden=false;document.getElementById('boot-details').hidden=false;document.getElementById('startup-error-details').textContent='Version 406 · '+e.detail;});
  setTimeout(()=>{if(!painted&&!failed){panel.hidden=false;message.textContent='Still loading your saved area…';retry.hidden=false;}},30000);
 })();
 </script>
 <script type="module">
-const entryURL=new URL('./world-v5-complete-replacement.js?v=20261125-starter-v405',import.meta.url);
-const isNetworkError=e=>e instanceof TypeError&&/fetch|network|module.*load|loading.*module/i.test(e.message);
+const packedParts=[{"file":"world-pack-v406-00.bin","sha256":"2e5792449d1a80364aa4fc7a38fb01b7d3404ef90ed53785536ea38a003cd156"},{"file":"world-pack-v406-01.bin","sha256":"205ee174a15d353f84bea5f2a1b041672d45879e7af899e09a38e30ed585520a"},{"file":"world-pack-v406-02.bin","sha256":"3a676bdb562bf4aede5d7fd0bead113271b16e0c0eb2af852b1708e2ebc4de35"},{"file":"world-pack-v406-03.bin","sha256":"fa0f1e4ef0230848d4a1398ca1a001c23056cf59c344c93ca5b81848c385bc2f"},{"file":"world-pack-v406-04.bin","sha256":"46bceedd3c8749d6ae0ba13be5e99635b3de89c311fa887629b9de10e057f96d"},{"file":"world-pack-v406-05.bin","sha256":"5060d9e42fb05c58a5afb505441978e42a48fe1e7603568d4e83b068bfbfd15f"},{"file":"world-pack-v406-06.bin","sha256":"1de9c1254a5aabe53ee6f84899c122fd63e5a0c48bed3ed1414deb2e3d6f3406"},{"file":"world-pack-v406-07.bin","sha256":"df552e5330bf9f619f8b7fbdb8c80c79f51e1c9ad68d85f8748c8a6e26216ac8"},{"file":"world-pack-v406-08.bin","sha256":"bc2742b54a3cb95f573015298a83a35bfe36244dafbb51a966badfb2ec98dfdc"},{"file":"world-pack-v406-09.bin","sha256":"bc3ab01dba07101bf77341c29efad71c460785d179a25cdbb1daf55c86873d16"},{"file":"world-pack-v406-10.bin","sha256":"86966b5ccc8a13eea335c9b5faa539b794a1e5dbaa66ede68c7249c26ae8ff85"}];
 async function loadTown(){
- for(let attempt=0;attempt<3;attempt++){
-  const url=new URL(entryURL);if(attempt)url.searchParams.set('loadRetry',attempt+'-'+Date.now());
-  try{return await import(url.href);}catch(error){
-   if(!isNetworkError(error)||attempt===2)throw error;
-   document.getElementById('boot-message').textContent='Reconnecting to your town…';
-   await new Promise(resolve=>setTimeout(resolve,attempt?1500:500));
-  }
- }
+ if(!globalThis.DecompressionStream) return import('./world-v5-complete-replacement.js?v=20261125-entry-v406');
+ const chunks=await Promise.all(packedParts.map(async part=>{let lastError;for(let attempt=0;attempt<3;attempt++){try{const response=await fetch(new URL('./'+part.file,import.meta.url),{signal:AbortSignal.timeout(25000)});if(!response.ok)throw Error('Town download returned '+response.status);const bytes=new Uint8Array(await response.arrayBuffer());const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),b=>b.toString(16).padStart(2,'0')).join('');if(digest!==part.sha256)throw Error('Town download was incomplete');return bytes;}catch(error){lastError=error;}}throw lastError;}));
+ document.getElementById('boot-message').textContent='Building your saved area…';
+ const stream=new Blob(chunks).stream().pipeThrough(new DecompressionStream('gzip'));
+ const code=await new Response(stream).text(),url=URL.createObjectURL(new Blob([code],{type:'text/javascript'}));
+ try{return await import(url);}finally{URL.revokeObjectURL(url);}
 }
 loadTown().then(async world=>{world.startWorld();document.getElementById('boot-message').textContent='Preparing your character…';await world.initialReady;document.getElementById('boot-message').textContent='Preparing the first view…';window.dispatchEvent(new Event('zerconda-ready'));})
  .catch(e=>{console.error('Zerconda startup failed',e);window.dispatchEvent(new CustomEvent('zerconda-load-failed',{detail:e.message||String(e)}));});
