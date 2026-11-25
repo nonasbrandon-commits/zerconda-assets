@@ -1,5 +1,5 @@
 import {createVenueRenderIsolation} from './venue-render-isolation.js?v=20261124-interior-v374';
-import {createCanopyVenue} from './canopy-venue.js?v=20261125-planters-v375';
+import {createCanopyVenue} from './canopy-venue.js?v=20261125-tinted-entry-v376';
 import {createBoardwalkFitness} from './boardwalk-fitness.js?v=20261124-repairs-v369';
 import {createCoffeeCustomers} from './coffee-customers.js?v=20261124-customers-v358';
 import {createCharacterThumbnails} from './character-thumbnail.js?v=20261124-portraits-v360';
