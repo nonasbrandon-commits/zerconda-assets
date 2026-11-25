@@ -30,12 +30,12 @@ canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:
 
  addEventListener('zerconda-playable',()=>{painted=true;panel.hidden=true;});
  // First frame stays covered until scenery and the character are ready.
- addEventListener('zerconda-load-failed',e=>{failed=true;panel.hidden=false;message.textContent=/fetch|network|module.*load|loading.*module/i.test(e.detail)?'The connection was interrupted. Please try again.':'Zerconda could not finish loading. Please try again.';retry.hidden=false;document.getElementById('boot-details').hidden=false;document.getElementById('startup-error-details').textContent='Version 285 · '+e.detail;});
- setTimeout(()=>{if(!painted&&!failed){panel.hidden=false;message.textContent='Still loading your saved area…';retry.hidden=false;}},90000);
+ addEventListener('zerconda-load-failed',e=>{failed=true;panel.hidden=false;message.textContent=/fetch|network|module.*load|loading.*module/i.test(e.detail)?'The connection was interrupted. Please try again.':'Zerconda could not finish loading. Please try again.';retry.hidden=false;document.getElementById('boot-details').hidden=false;document.getElementById('startup-error-details').textContent='Version 405 · '+e.detail;});
+ setTimeout(()=>{if(!painted&&!failed){panel.hidden=false;message.textContent='Still loading your saved area…';retry.hidden=false;}},30000);
 })();
 </script>
 <script type="module">
-const entryURL=new URL('./world-v5-complete-replacement.js?v=20261125-starter-v404',import.meta.url);
+const entryURL=new URL('./world-v5-complete-replacement.js?v=20261125-starter-v405',import.meta.url);
 const isNetworkError=e=>e instanceof TypeError&&/fetch|network|module.*load|loading.*module/i.test(e.message);
 async function loadTown(){
  for(let attempt=0;attempt<3;attempt++){
@@ -47,7 +47,7 @@ async function loadTown(){
   }
  }
 }
-loadTown().then(async world=>{world.startWorld();await world.initialReady;window.dispatchEvent(new Event('zerconda-ready'));})
+loadTown().then(async world=>{world.startWorld();document.getElementById('boot-message').textContent='Preparing your character…';await world.initialReady;document.getElementById('boot-message').textContent='Preparing the first view…';window.dispatchEvent(new Event('zerconda-ready'));})
  .catch(e=>{console.error('Zerconda startup failed',e);window.dispatchEvent(new CustomEvent('zerconda-load-failed',{detail:e.message||String(e)}));});
 
 </script>
