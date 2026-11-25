@@ -1,0 +1,8 @@
+Kate is a separate new petite adult resident of Cityview Apartments Level 10.
+Marigold's original published asset, name, profile and route are unchanged.
+Base figure and floral bikini: Microsoft Rocketbox Sports_Female_01 (MIT), adapted from the existing Marigold model.
+Loose copper-red curly hair: reference-guided original asset generated with Fal Trellis 2, then extracted, fitted to the native head rig and color matched to the supplied reference.
+Used generation: fal-ai/trellis-2 request 01a2110c-66da-76c1-b7a0-1a0ef1a58ada.
+Source result: https://v3b.fal.media/files/b/0ab3d763/iQbs_OSDp2EWbr9jakn2j_trellis2_fd2699027e5d49fea9acd6914996f356.glb
+Only the final fitted Kate model is used in game. Procedural curl tests, standalone wig tests and full-body test models are excluded.
+Clothing variant: floral G-string bottoms with the matching bikini top retained.
