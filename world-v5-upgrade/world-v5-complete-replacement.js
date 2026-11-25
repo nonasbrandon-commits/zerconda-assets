@@ -1,5 +1,5 @@
 import {createVenueRenderIsolation} from './venue-render-isolation.js?v=20261124-interior-v374';
-import {createCanopyVenue} from './canopy-venue.js?v=20261124-tag-v374';
+import {createCanopyVenue} from './canopy-venue.js?v=20261125-planters-v375';
 import {createBoardwalkFitness} from './boardwalk-fitness.js?v=20261124-repairs-v369';
 import {createCoffeeCustomers} from './coffee-customers.js?v=20261124-customers-v358';
 import {createCharacterThumbnails} from './character-thumbnail.js?v=20261124-portraits-v360';
@@ -101,7 +101,7 @@ import {createDamagedWallPanel,createBlockedWallOpening,WALL_OPENING} from './bl
 import {createAreaTravel} from './area-travel.js?v=20261124-tag-v374';
 import {createMilitaryBase} from './military-base.js?v=20261122-admin-transport-v245';
 import {upgradeMobileControls} from './mobile-controls.js?v=20261118-z-needle-v107';
-import {createAirportLoop} from './airport-loop.js?v=20261123-traffic-v272';
+import {createAirportLoop} from './airport-loop.js?v=20261125-entry-v375';
 import {createNorthernForest} from './northern-forest.js?v=20261123-roads-v261';
 import {createMobilePerformance} from './mobile-performance.js?v=20261120-player-detail-v181-20261119-rv-junction-v128';
 import {createTownObstacles} from './town-obstacles.js?v=20261124-cache-v371';
@@ -1885,7 +1885,7 @@ await yieldStartup();
 
 militaryAccess=createMilitaryAdminAccess({onStop:()=>{keys.clear();townControls.stop();movement.vx=movement.vz=0;},onMessage:m=>townControls.notify(m)});
 await yieldStartup();
-airportLoop=createAirportLoop(scene,{roadMaterial:asphalt,walkMaterial:paving});
+airportLoop=createAirportLoop(scene,{roadMaterial:asphalt,walkMaterial:paving,walkwayOpenings:[{x0:-432,x1:-427.5,z0:-437,z1:-423}]});
 await yieldStartup();
 northernForest=createNorthernForest(scene,{mobile:MOBILE});
 const crowdSpacing=createCrowdSpacing({getPeople:()=>[...pedestrianSystem.agents.filter(a=>a.human.ready).map(a=>a.group),...cityResidents.agents.filter(a=>a.human.ready&&!a.staff&&!a.seated).map(a=>a.group)],getAnchors:()=>[player,...(boardwalkFitness?.collisionPeople||[]),...(neighborhoodResidents?.collisionPeople||[]),...(needlePlaidResident.group.visible?[needlePlaidResident.group.position]:[]),...(boardwalkWalker.group.visible?[boardwalkWalker.group.position]:[]),...(whiteFitnessWalker.group.visible?[whiteFitnessWalker.group.position]:[]),...(curlyFitnessWalker.group.visible?[curlyFitnessWalker.group.position]:[]),...(curlyBusinessWalker.group.visible?[curlyBusinessWalker.group.position]:[]),...cityResidents.agents.filter(a=>a.seated&&a.human.ready).map(a=>a.group.position),...(fountainResident.group.visible?[fountainResident.group.position]:[])],canWalk:(x,z)=>ambientResidentsAllowed(x,z)&&walkable(x,z),getHeight:standingHeightAt});
