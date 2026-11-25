@@ -1,7 +1,7 @@
 # Brick Apartments
 
-User requested this building at the marked northwest site and explicitly said not to build the inside yet.
-Exterior only at(-650,-480), faces east. Lot x[-682,-601], z[-534,-420].
-Thirteen window levels, brick shell, entrance steps/canopy, rooftop plant and rails; no rooms, interior floors, occupants, ownership or entry action.
-Keep the inside unbuilt until the user supplies their further instructions.
-A six-metre access road atx-616 connects to ammo-store forecourt and hospital parking, clear of home lots.
+The exterior at (-650, -480) now has a walk-in elevator lobby and an Admin apartment preview. The exterior footprint and surrounding roads remain unchanged. One reusable apartment interior supplies the private home without numbered units or residential corridors.
+
+See [Account apartment preview](STARTER-APARTMENTS-NOTES.md) for access instructions, layout, and the current browser-local Admin identity limitation. Server-backed resident accounts and cross-device ownership are a separate integration still required before assigning homes automatically to free users.
+
+All exterior windows use matching full-size dark four-pane frames. The previous narrow side-window and window-mounted air-conditioner variations are removed.
