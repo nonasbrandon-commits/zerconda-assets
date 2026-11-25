@@ -1,0 +1,9 @@
+# Code entry and first-view readiness v408
+
+The elevator could request Admin access again after its cooldown while a player remained in the cabin. Each request rebuilt the dialog and erased partial input. The lift now disarms when it requests authentication and does not request again while the dialog is open. Admin access requests reuse an existing unauthenticated dialog and preserve its first pending action. Cancel remains closed until a new deliberate request or another approach. Five-digit validation, lockout, stored codes and authorization checks are unchanged.
+
+The game stops its 3D update loop while the unauthenticated access dialog is open and drains the frame clock. Optional scenery construction waits for the prompt/form to close. DOM keyboard input remains responsive; successful entry resumes the game and its requested elevator action.
+
+First rendering no longer waits for the entire outdoor scenery classification queue. Core geometry and available character readiness are still required, and the overlay clears only after a real successful scene render. Shader/upload warmup has a six-second preparation budget before normal rendering is attempted. It cannot indefinitely gate the first frame behind the warmup queue. No timer pretends a frame rendered.
+
+Tests: actual keyboard typing with 1.8 seconds between digits, repeated access requests during typing, preserved input node/value through all five digits, verification and requested home action; cancellation stays closed while standing in lift. A never-resolving compile fixture verifies the preparation deadline falls back to the real render callback. Production packed world startup and keyboard entry are tested separately. Rebuild the compressed v408 bundle after source edits; retain old release chunks. See the preceding APARTMENT-ENTRY-NOTES.md and versioned build/pack scripts.

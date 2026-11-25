@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {GROUND_LEVEL as G} from './ground-level.js?v=20261119-level-ground-v117';
-import {buildStarterInterior} from './starter-apartment-interior.js?v=20261125-entry-v407';
-import {createStarterHomeAccess} from './starter-home-access.js?v=20261125-entry-v407';
+import {buildStarterInterior} from './starter-apartment-interior.js?v=20261125-entry-v408';
+import {createStarterHomeAccess} from './starter-home-access.js?v=20261125-entry-v408';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 export function createStarterApartments(scene,{exterior,getPlayer,adminAccount,onTeleport,onStop=()=>{},onMessage=()=>{},canUse=()=>true,onPrepareVisit=()=>{}}){
  const S=exterior.site,root=new THREE.Group();root.name='Account apartments · shared elevator and private home';root.position.set(S.x,0,S.z);root.rotation.y=Math.PI/2;root.userData.customInterior=true;scene.add(root);let lobby=null,unit=null,mode='outside',ride=null,cooldown=0,entryOpening=0,liftOpening=0,homeRecord=null,liftArmed=false;
@@ -11,7 +11,7 @@ export function createStarterApartments(scene,{exterior,getPlayer,adminAccount,o
  function ensure(which){if(which==='lobby'&&!lobby){lobby=buildStarterInterior({lobby:true});lobby.root.position.y=G+.84;root.add(lobby.root);cameraRoots.lobby=lobby.cameraRoot;cameraRoots.lobby.position.set(S.x,G+.84,S.z);cameraRoots.lobby.rotation.y=Math.PI/2;lobby.root.visible=false;}if(which==='home'&&!unit){unit=buildStarterInterior();unit.root.position.y=G+9;root.add(unit.root);cameraRoots.home=unit.cameraRoot;cameraRoots.home.position.set(S.x,G+9,S.z);cameraRoots.home.rotation.y=Math.PI/2;unit.root.visible=false;}root.updateMatrixWorld(true);cameraRoots[which]?.updateMatrixWorld(true);return which==='lobby'?lobby:unit;}
  function place(x,z,heading){const p=world(x,z);onTeleport({...p,y:mode==='home'?G+9:G+.84,yaw:heading});}
  function show(next){ensure(next);root.visible=true;root.matrixWorldAutoUpdate=true;mode=next;liftArmed=false;if(lobby)lobby.root.visible=next==='lobby';if(unit)unit.root.visible=next==='home';exterior.root.visible=next!=='home';liftOpening=1;cooldown=2;onStop();if(next==='home')place(-4.0,2.20,Math.PI*1.5);else place(0,7.4,Math.PI/2);onMessage(next==='home'?'Admin · My apartment':'Brick Apartments · Elevator lobby');}
- function begin(next){if(ride)return;if(next==='home'){homeRecord=access.provision();if(!homeRecord){adminAccount.request(()=>begin('home'));return;}}onStop();ride={next,time:0};fade.textContent=next==='home'?'↑  Your apartment':'↓  Lobby';fade.style.display='grid';}
+ function begin(next){if(ride||(!adminAccount.isAdmin&&adminAccount.panelOpen))return;if(next==='home'){homeRecord=access.provision();if(!homeRecord){liftArmed=false;adminAccount.request(()=>begin('home'));return;}}onStop();ride={next,time:0};fade.textContent=next==='home'?'↑  Your apartment':'↓  Lobby';fade.style.display='grid';}
  function visitMine(){adminAccount.request(()=>{onPrepareVisit();homeRecord=access.provision();begin('home');});}
  function leave(teleport=false){ride=null;fade.style.display='none';mode='outside';if(lobby)lobby.root.visible=false;if(unit)unit.root.visible=false;exterior.root.visible=true;cooldown=2;homeRecord=null;if(teleport)place(0,11.1,Math.PI/2);onStop();}
  window.addEventListener('zerconda-admin-session',()=>{if(!adminAccount.isAdmin&&mode==='home')leave(true);});
