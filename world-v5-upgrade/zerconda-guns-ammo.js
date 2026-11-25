@@ -1,4 +1,4 @@
-import {createGunStoreRange} from './gun-store-range.js?v=20261125-range-v411';
+import {createGunStoreRange} from './gun-store-range.js?v=20261125-rules-wall-v413';
 import {createGunStoreLighting} from './gun-store-lighting.js?v=20261125-lighting-v410';
 import {createGunStoreDisplays} from './gun-store-displays.js?v=20261125-cases-v410';
 import {createGunStoreCounter} from './gun-store-counter.js?v=20261125-phone-v412';
