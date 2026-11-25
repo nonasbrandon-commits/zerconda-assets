@@ -1,7 +1,7 @@
 import {createHospitalPrivacyDoors} from './hospital-privacy-doors.js?v=20261125-hospital-privacy-v401';
 import {createHospitalStaff} from './hospital-staff.js?v=20261125-hospital-gallery-v400';
-import {createHospitalWayfindingSign} from './hospital-wayfinding-sign.js?v=20261125-front-parking-v396';
-import {createHospitalAmbulance} from './hospital-ambulance.js?v=20261125-ems-v395';
+import {createHospitalWayfindingSign} from './hospital-wayfinding-sign.js?v=20261125-graphics-v409';
+import {createHospitalAmbulance} from './hospital-ambulance.js?v=20261125-graphics-v409';
 import {createEmergencyEntry} from './hospital-emergency-entry.js?v=20261125-front-parking-v396';
 import {createHospitalPlanter,createHospitalEntryPlant} from './hospital-landscaping.js?v=20261125-hospital-hall-v398';
 import * as THREE from 'three';

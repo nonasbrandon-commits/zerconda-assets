@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {GROUND_LEVEL as G} from './ground-level.js?v=20261119-level-ground-v117';
-import {buildStarterInterior} from './starter-apartment-interior.js?v=20261125-entry-v408';
-import {createStarterHomeAccess} from './starter-home-access.js?v=20261125-entry-v408';
+import {buildStarterInterior} from './starter-apartment-interior.js?v=20261125-entry-v409';
+import {createStarterHomeAccess} from './starter-home-access.js?v=20261125-entry-v409';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 export function createStarterApartments(scene,{exterior,getPlayer,adminAccount,onTeleport,onStop=()=>{},onMessage=()=>{},canUse=()=>true,onPrepareVisit=()=>{}}){
  const S=exterior.site,root=new THREE.Group();root.name='Account apartments · shared elevator and private home';root.position.set(S.x,0,S.z);root.rotation.y=Math.PI/2;root.userData.customInterior=true;scene.add(root);let lobby=null,unit=null,mode='outside',ride=null,cooldown=0,entryOpening=0,liftOpening=0,homeRecord=null,liftArmed=false;
