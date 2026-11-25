@@ -1,3 +1,4 @@
+import {createStoreDeskPhone} from './store-desk-phone.js?v=20261125-phone-v412';
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 export function createGunStoreCounter({add,solid,materials:m}){
@@ -16,7 +17,6 @@ export function createGunStoreCounter({add,solid,materials:m}){
  for(let i=0;i<3;i++){box(4.0,.235,.055,x,.295+i*.255,z-.693,wood);box(.55,.025,.055,x,.32+i*.255,z-.742,metal);}
  const monitorBack=texture(256,160,c=>{c.fillStyle='#15171b';c.fillRect(0,0,256,160);c.fillStyle='#e62222';c.font='italic 900 110px Arial';c.textAlign='center';c.fillText('Z',128,120);}),monitorMaterial=new THREE.MeshBasicMaterial({map:monitorBack,toneMapped:false}),screen=new THREE.MeshStandardMaterial({color:'#101f29',emissive:'#193548',emissiveIntensity:.15,roughness:.32});
  for(const cx of[-8.5,-1.5]){box(.6,.035,.33,cx,1.14,z+.02);box(.10,.24,.10,cx,1.25,z+.02);box(1.25,.69,.09,cx,1.66,z+.02);add(new THREE.PlaneGeometry(1.17,.61),monitorMaterial,cx,1.66,z+.071);add(new THREE.PlaneGeometry(1.13,.57),screen,cx,1.66,z-.031,Math.PI);box(1.12,.035,.36,cx,1.145,z-.45);for(let row=0;row<5;row++)for(let col=0;col<17;col++){if(row===4&&col>4&&col<12)continue;box(.055,.012,.043,cx-.51+col*.064,1.169,z-.59+row*.062,m.dark);}box(.38,.012,.043,cx,1.169,z-.342,m.dark);box(.34,.008,.36,cx+.90,1.132,z-.45,m.dark);add(new THREE.SphereGeometry(1,16,10).scale(.075,.026,.11),metal,cx+.90,1.165,z-.45);}
- // Detailed multiline phone and receiver on an inclined base, with a coiled lead.
- const px=-5,pz=z-.26;box(.48,.09,.42,px,1.175,pz);box(.28,.055,.13,px,1.24,pz+.11,m.dark);box(.23,.008,.085,px,1.272,pz+.11,screen);for(let row=0;row<4;row++)for(let col=0;col<3;col++)box(.054,.014,.038,px-.07+col*.07,1.23,pz-.12+row*.053,metal);for(const dx of[-.19,.19])box(.12,.09,.14,px+dx,1.32,pz-.14);box(.34,.055,.075,px,1.35,pz-.14);const points=[];for(let i=0;i<=80;i++){const t=i/80;points.push(new THREE.Vector3(px+.26+Math.sin(t*Math.PI*24)*.015,1.19-Math.sin(t*Math.PI)*.10,pz-.13+t*.32));}add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points),80,.005,5,false),black);
- return{width:14.4,depth:1.65,stations:2};
+ const phone=createStoreDeskPhone({add,x:-5,y:1.122,z:z-.26});
+ return{width:14.4,depth:1.65,stations:2,phone};
 }
