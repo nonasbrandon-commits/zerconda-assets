@@ -31,9 +31,9 @@ export function createStanwoodInterior({root,solids,box,wall,pipe,cyl,M,trim,woo
  // Separate dining room with a broad cased opening off the foyer and kitchen.
  partition('x',1.25,-3.4,.30,.65,[-1.55]);wall('z',-3.4,1.25,7.1,.65,3.51,[{c:3.9,b:.65,w:3.6,h:2.55}],wallMat,.14);
  // Bedroom 4 and powder room are downstairs, beside an open front foyer.
- partition('z',6.50,-7.1,-3.2,.65,[-4.8]);partition('x',-3.20,2.8,6.50,.65,[]);partition('z',2.80,-7.1,-3.2,.65,[]);
+ partition('z',6.50,-7.1,-3.4,.65,[-4.8]);partition('x',-3.40,2.8,6.50,.65,[]);partition('z',2.80,-7.1,-3.4,.65,[]);
  partition('x',-4.3,1.1,2.80,.65,[1.95]);partition('z',1.10,-7.1,-4.3,.65,[]);
- room('Great room',-7.1,.7,-8.4,-1.7,0);room('Kitchen',.7,7.1,-8.4,-3.4,0);room('Dining / game room',1.25,7.1,-3.4,.3,0);room('Foyer',-3.2,1.25,2.8,8.4,0);room('Bedroom 4',-7.1,-3.2,2.8,6.5,0);room('Powder room',-7.1,-4.3,1.1,2.8,0);room('Garage / workshop',1.25,7.1,.3,8.4,0);
+ room('Great room',-7.1,.7,-8.4,-1.7,0);room('Kitchen',.7,7.1,-8.4,-3.4,0);room('Dining / game room',1.25,7.1,-3.4,.3,0);room('Foyer',-3.4,1.25,2.8,8.4,0);room('Bedroom 4',-7.1,-3.4,2.8,6.5,0);room('Powder room',-7.1,-4.3,1.1,2.8,0);room('Garage / workshop',1.25,7.1,.3,8.4,0);
  // Two-flight stair, with a landing: bottom east/front, top east/rear.
  const lowZ=.50,highZ=-.95,west=-6.15,east=-2.75,run=3.4,rise=1.5;
  for(let i=0;i<9;i++){const h=(i+1)*rise/9,x=east-(i+.5)*run/9;slab(x-run/18,x+run/18,lowZ-.55,lowZ+.55,.65+h);}
@@ -67,9 +67,9 @@ export function createStanwoodInterior({root,solids,box,wall,pipe,cyl,M,trim,woo
  box(4.8,.012,2.95,4.1,.665,-1.50,rug);const dining=createCraftedDiningSet(root,{x:4.1,y:.68,z:-1.5,width:2.65,depth:1.10});dining.scale.z=.70;solid(4.1,-1.5,2.9,2.05,.65,1.8);pendant(4.1,-1.5,2.65);art(4.2,2.35,.205,1.6,.65);
  // Bedroom furniture keeps door approaches and the central hall unobstructed.
  function bedroom(name,x,z,w,l,y,a=0){const g=new THREE.Group();g.position.set(x,y,z);g.rotation.y=a;root.add(g);createDetailedBed(g,{width:w,length:l});solid(x,z,Math.abs(Math.cos(a))*w+Math.abs(Math.sin(a))*l,Math.abs(Math.sin(a))*w+Math.abs(Math.cos(a))*l,y,y+1.1);for(const side of[-1,1]){const dx=side*(w/2+.31),dz=-l/2+.2,xx=x+Math.cos(a)*dx+Math.sin(a)*dz,zz=z-Math.sin(a)*dx+Math.cos(a)*dz;box(.43,.45,.43,xx,y+.225,zz,wood);cyl(.08,.18,xx,y+.54,zz,brass);cyl(.13,.18,xx,y+.72,zz,white);}root.userData[name]={x,z,y};}
- carpet(-6.98,-3.29,2.89,6.40,.66);bedroom('downstairsBed',-5.3,4.6,1.5,2.1,.68,Math.PI/2);art(-5.0,2.18,2.89,1.1,.65);
+ carpet(-6.98,-3.49,2.89,6.40,.66);bedroom('downstairsBed',-5.3,4.6,1.5,2.1,.68,Math.PI/2);art(-5.0,2.18,2.89,1.1,.65);
  carpet(.80,4.50,-8.30,1.0,3.66);bedroom('primaryBed',2.7,-5.8,1.9,2.3,3.68);box(1.45,.8,.45,2.75,4.05,-.55,wood);solid(2.75,-.55,1.45,.45,3.65,4.5);
- carpet(-6.98,-1.09,3.10,8.30,3.66);bedroom('bedroom2Bed',-4.9,6.3,1.55,2.2,3.68);box(1.6,1.8,.58,-6.55,4.55,3.7,wood);solid(-6.55,3.7,1.0,.6,3.65,5.5);
+ carpet(-6.98,-1.09,3.10,8.30,3.66);bedroom('bedroom2Bed',-4.9,6.3,1.55,2.2,3.68);box(.58,1.8,1.6,-6.65,4.55,5.2,wood);solid(-6.65,5.2,.58,1.6,3.65,5.5);
  carpet(1.40,6.98,3.10,8.30,3.66);bedroom('bedroom3Bed',4.75,6.3,1.55,2.2,3.68);box(1.5,1.7,.58,6.45,4.5,3.75,wood);solid(6.45,3.75,.65,1.6,3.65,5.4);
  // Real fixtures sized for the compact bathrooms, with clear center aisles.
  function toilet(x,z,y,a=0){const g=new THREE.Group();g.position.set(x,y,z);g.rotation.y=a;root.add(g);const b=(w,h,d,x,yy,z,m=white)=>{const o=new THREE.Mesh(new RoundedBoxGeometry(w,h,d,2,.03),m);o.position.set(x,yy,z);g.add(o);};b(.37,.32,.50,0,.18,0);b(.48,.18,.62,0,.43,.02);b(.42,.48,.14,0,.55,-.25);b(.12,.015,.045,0,.80,-.25,steel);solid(x,z,.55,.73,y,y+.9);}
@@ -85,7 +85,8 @@ export function createStanwoodInterior({root,solids,box,wall,pipe,cyl,M,trim,woo
  for(const xx of[5.35,6.35]){rounded(.85,.9,.78,xx,4.13,.15,white);const drum=new THREE.Mesh(new THREE.TorusGeometry(.245,.035,10,32),steel);drum.position.set(xx,4.16,.56);root.add(drum);cyl(.04,.02,xx+.22,4.44,.56,black);box(.70,.05,.46,xx,5.60,.0,wood);solid(xx,.15,.88,.8,3.65,4.65);}vanity(6.75,2.1,.70,3.69,-Math.PI/2);
  // Landing reading area and a useful foyer console.
  for(const xx of[-6.25]){rounded(.65,.18,.70,xx,4.15,2.1,linen);rounded(.65,.65,.15,xx,4.44,2.38,linen);for(const dx of[-.25,.25])box(.05,.40,.05,xx+dx,3.85,2.1,wood);solid(xx,2.15,.7,.8,3.65,4.8);}
- box(1.45,.07,.38,-2.30,1.38,7.80,wood);for(const xx of[-2.90,-1.70])box(.07,.70,.30,xx,1.0,7.80,wood);solid(-2.3,7.8,1.45,.40,.65,1.5);art(-2.3,2.15,8.30,1.25,.7);
+ // Foyer console moved off the new driveway-side door and straight hall approach.
+ box(.38,.07,1.45,.90,1.38,5.1,wood);for(const zz of[4.5,5.7])box(.30,.70,.07,.90,1.0,zz,wood);solid(.90,5.1,.40,1.45,.65,1.5);art(-.6,2.15,8.30,.9,.7);
  // Garage workshop is tucked along the back wall, preserving the driveway opening.
  box(2.7,.10,.65,5.3,1.02,.75,wood);for(const xx of[4.15,6.45])box(.10,.85,.55,xx,.55,.75,dark);box(2.7,.9,.045,5.3,1.7,.43,wood);for(let i=0;i<7;i++)pipe([4.35+i*.3,1.55,.47],[4.35+i*.3,1.95,.47],.016,steel);solid(5.3,.75,2.7,.7,.09,2.2);
  for(const [xx,zz]of[[-1.5,5.7],[-5,4.7],[4.1,-1.5],[2.0,-7.0],[5.7,5.5]])downlight(xx,zz,zz>3&&xx>1?6.96:3.48);
