@@ -1,0 +1,14 @@
+Kate · Cityview Apartments Level 10 · v385
+
+Kate is a separate reference-derived adult character. Marigold and the original Rocketbox asset are unchanged.
+Design reference: user-supplied adult character reference, adapted into a full-body A-pose using image generation.
+3D mesh: Tripo H3.1, detailed geometry/textures, request 01a21124-c6b1-7e21-b7e5-512fec30195f.
+Original generated static asset: https://v3b.fal.media/files/b/0ab3d804/fX53hKBeBPbekN3449MJt_model.glb
+Rigging and idle/walking: Meshy, forward-facing source, request 01a2112f-b3f9-7d33-a00a-5a4c26737497.
+Local material repair, coordinate normalization, animation assembly and web optimization performed for Zerconda.
+Pink floral bikini top retained. Narrow rear G-string bottoms. Petite height: 1.60 m.
+Production model: assets/kate-v385.glb
+Source and generation record retained with project work files.
+
+
+v387: Kate moved to a reserved, flat cream chaise under a navy beach parasol. Existing idle pose baked into static reclining geometry, with skin-transformed normals preserved; no new generation. No active bones, mixer or per-frame foot work for the resting character. Source asset retained unchanged. Marigold unchanged. New asset: assets/kate-reclining-v387.glb.
