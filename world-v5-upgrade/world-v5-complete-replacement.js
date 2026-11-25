@@ -1,12 +1,12 @@
-import {enhanceMajorSurfaces} from './surface-detail.js?v=20261125-graphics-v409';
-import {createRenderingUpgrade} from './rendering-upgrade.js?v=20261125-graphics-v409';
-import {createStarterApartments} from './starter-apartments.js?v=20261125-entry-v409';
+import {enhanceMajorSurfaces} from './surface-detail.js?v=20261125-graphics-v410';
+import {createRenderingUpgrade} from './rendering-upgrade.js?v=20261125-graphics-v410';
+import {createStarterApartments} from './starter-apartments.js?v=20261125-entry-v410';
 import {createBrickApartmentsExterior} from './brick-apartments-exterior.js?v=20261125-campus-v404';
-import {createVenueAccessRoads} from './venue-access-roads.js?v=20261125-campus-v404';
-import {createGunsAmmoStore} from './zerconda-guns-ammo.js?v=20261125-venues-v394';
-import {createWeaponGame} from './weapon-game.js?v=20261125-store-v389';
-import {createZercondaHospital} from './zerconda-hospital.js?v=20261125-campus-v404';
-import {createOutdoorVisibility} from './outdoor-visibility.js?v=20261125-graphics-v409';
+import {createVenueAccessRoads} from './venue-access-roads.js?v=20261125-straight-v410';
+import {createGunsAmmoStore} from './zerconda-guns-ammo.js?v=20261125-facade-v410';
+import {createWeaponGame} from './weapon-game.js?v=20261125-story-v410';
+import {createZercondaHospital} from './zerconda-hospital.js?v=20261125-service-v410';
+import {createOutdoorVisibility} from './outdoor-visibility.js?v=20261125-graphics-v410';
 import {createBeachKate} from './beach-kate.js?v=20261125-indoor-v387';
 import {posePoleSlide} from './pole-slide-pose.js?v=20261125-pole-v379';
 import {createGamepadControls} from './gamepad-controls.js?v=20261125-store-v389';
@@ -23,7 +23,7 @@ import {createAdminWorldControls} from './admin-world-controls.js?v=20261124-men
 import {createStyleCutsGrove} from './style-cuts-grove.js?v=20261124-helmets-camera-v341';
 import {applyPowersportsRiderPose} from './powersports-rider-pose.js?v=20261124-driving-v339';
 import {createCityviewApartments} from './cityview-apartments.js?v=20261125-starter-v403';
-import {createAdminAccount} from './admin-account.js?v=20261125-access-v409';
+import {createAdminAccount} from './admin-account.js?v=20261125-access-v410';
 import {getManagedPrivateHomes,managePrivateHome} from './private-home-locks.js?v=20261124-cityview-v326';
 import {collectHomeLocations} from './home-location-names.js?v=20261124-homes-v322';
 import {createNeighborhoodResidents} from './neighborhood-residents.js?v=20261124-neighborhood-v316';
@@ -80,7 +80,7 @@ import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=2
 import {createCabPassengerCamera} from './cab-passenger-camera.js?v=20261121-town-v191';
 import {createVehicleHorns} from './vehicle-horns.js?v=20261121-town-v191';
 import {measureVehicleFootprint,vehicleDescriptor,vehiclePoseBlocked,sweepVehiclePose} from './vehicle-collision.js?v=20261121-town-v191';
-import {createShaderWarmup} from './shader-warmup.js?v=20261125-access-v409';
+import {createShaderWarmup} from './shader-warmup.js?v=20261125-access-v410';
 import {loadReferenceProp} from './reference-props.js?v=20261120-reference-props-v180';
 import {createZCabs}from './z-cabs.js?v=20261125-cab-map-v379';
 import {createLuxurySedan,loadLuxurySedan,sedanColors} from './luxury-sedan.js?v=20261120-restore-silver-v185';
@@ -97,11 +97,11 @@ import {createCameraClearance} from './camera-clearance.js?v=20261122-apartments
 import {createSignBackMaintenance} from './readable-signs.js?v=20261122-rug-v248';
 import {createZFortune} from './z-fortune.js?v=20261124-garden-v365';
 import {createZStore} from './z-store.js?v=20261124-orders-v316';
-import {createPlayerMenu} from './player-menu.js?v=20261125-graphics-v409';
+import {createPlayerMenu} from './player-menu.js?v=20261125-graphics-v410';
 import {createMouseSkateControls} from './mouse-skate-controls.js?v=20261119-entrance-steering-v118';
 import {createMouseVehicleSteering} from './mouse-vehicle-steering.js?v=20261123-driving-v258';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
-import {createRenderBudget} from './render-budget.js?v=20261125-graphics-v409';
+import {createRenderBudget} from './render-budget.js?v=20261125-graphics-v410';
 import {createClothedPlayer} from './clothed-player.js';
 import {createZercondaMuseum} from './zerconda-museum.js?v=20261121-entry-fix-v198';
 import {installAvatarTattoos} from './avatar-tattoos.js?v=20261120-attribute-compat-v181';
@@ -167,7 +167,7 @@ const BOOT=stage=>globalThis.zercondaBootStage?.(stage);let LOW_GRAPHICS=new URL
 const cameraClearance=createCameraClearance();
 await yieldStartup();
 
-const ZERCONDA_BUILD='2026-11-25-recovery-v409';
+const ZERCONDA_BUILD='2026-11-25-recovery-v410';
 await yieldStartup();
 
 document.documentElement.dataset.zercondaBuild=ZERCONDA_BUILD;
@@ -2120,7 +2120,7 @@ await yieldStartup();
 adminWorld=createAdminWorldControls({scene,sun,hemisphere,sky:cloudSky,renderer,isAdmin:()=>!!adminAccount?.isAdmin});
 const propertyThumbnail=createPropertyThumbnails({scene,renderer,avatar}),characterThumbnail=createCharacterThumbnails({scene,renderer});
 const adminCharacters=()=>collectAdminCharacters({scene,groups:[{agents:boardwalkFitness?.agents||[],category:'Fitness and beach visitor'},{agents:neighborhoodResidents?.agents||[],category:'Neighborhood resident'},{agents:cityResidents.agents,category:'Town resident'},{agents:coffeeCustomers?.agents||[],category:'Coffee customer'},{agents:pedestrianSystem.agents,category:'Pedestrian'},{agents:beachVisitors.visitors,category:'Beach visitor'}],individuals:[beachKate,zFortune?.fortuneTeller,needlePlaidResident,boardwalkWalker,whiteFitnessWalker,curlyFitnessWalker,curlyBusinessWalker,fountainResident,chessPartner,{group:avatar,name:playerMenu?.state.name||'Resident',role:'Current player',category:'Player'}],extra:[{id:'store-hugo',name:'Hugo',role:'Everyday Finds owner',x:155,y:.15,z:58}]});adminCharacters();
-adminDashboard=createAdminDashboard({getCharacterThumbnail:characterThumbnail,getPropertyThumbnail:propertyThumbnail,getCharacters:adminCharacters,onDeleteCharacter:c=>adminAccount?.isAdmin?deleteAdminCharacter(c):false,onRestoreCharacters:()=>{if(adminAccount?.isAdmin)restoreAdminCharacters();},getDeletedCharacterCount:deletedAdminCharacterCount,onVisitCharacter:c=>{if(c.id===beachKate?.group.uuid){travelToArea({name:'Kate · Beach lounger',x:beachKate.group.position.x+1.8,z:beachKate.group.position.z+1.4});return;}travelToArea({name:c.name,x:c.x+1.5,z:c.z+1.5});},isAdmin:()=>!!adminAccount?.isAdmin,onStop:stopCityview,onSignOut:()=>adminAccount.signOut(),world:adminWorld,getPlayer:()=>player,getPlayerName:()=>playerMenu?.state.name||'Resident',getRuntime:()=>{let meshes=0;scene.traverse(o=>{if(o.isMesh)meshes++});return{version:409,renderPixelRatio:renderer.getPixelRatio(),drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,sceneMeshes:meshes,vehicles:{powersports:powersports?.models.length||0,cars:cars.length,ambientTraffic:ambientTraffic?.collisionVehicles.length||0},currentActivity:freeApartments?.active?'My free apartment':powersports?.riding?'Powersports vehicle':activeCar?'Car':cityview?.active?'Cityview':'Town'};},getProperties:()=>{const homes=collectHomeLocations({starter:ownableHomes,premier,villas,coastal,apartments:apartmentExteriors,apartmentExperience}).map(h=>({...h,owner:h.id==='H'+String(ownableHomes.owned?.id).padStart(2,'0')?ownableHomes.owned.username:null}));for(const f of cityview.ownership.list())homes.push({id:'CV'+String(f.level).padStart(2,'0'),name:'Cityview · Level '+f.level,x:-378,z:-62,level:f.level,owner:f.owner,ownerId:cityview.ownership.records[f.level]?.ownerId||null});homes.push({id:'FREE-ADMIN',name:'Admin · Free apartment',owner:'Admin',ownerId:'admin',x:-650,z:-480});return homes;},onVisit:h=>{if(h.id==='FREE-ADMIN'){freeApartments?.visitMine();return;}freeApartments?.leave();if(powersports?.riding&&!powersports.end())return;if(activeCar)toggleCar();scooters?.end();skate?.end();marine?.end?.();cityview.leave();stopCityview();const a=h.angle||0,offset=(h.minZ??-14)-3;player.x=h.x+Math.sin(a)*offset;player.z=h.z+Math.cos(a)*offset;yaw=a;pitch=0;cityMap.draw(true);}});
+adminDashboard=createAdminDashboard({getCharacterThumbnail:characterThumbnail,getPropertyThumbnail:propertyThumbnail,getCharacters:adminCharacters,onDeleteCharacter:c=>adminAccount?.isAdmin?deleteAdminCharacter(c):false,onRestoreCharacters:()=>{if(adminAccount?.isAdmin)restoreAdminCharacters();},getDeletedCharacterCount:deletedAdminCharacterCount,onVisitCharacter:c=>{if(c.id===beachKate?.group.uuid){travelToArea({name:'Kate · Beach lounger',x:beachKate.group.position.x+1.8,z:beachKate.group.position.z+1.4});return;}travelToArea({name:c.name,x:c.x+1.5,z:c.z+1.5});},isAdmin:()=>!!adminAccount?.isAdmin,onStop:stopCityview,onSignOut:()=>adminAccount.signOut(),world:adminWorld,getPlayer:()=>player,getPlayerName:()=>playerMenu?.state.name||'Resident',getRuntime:()=>{let meshes=0;scene.traverse(o=>{if(o.isMesh)meshes++});return{version:410,renderPixelRatio:renderer.getPixelRatio(),drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,sceneMeshes:meshes,vehicles:{powersports:powersports?.models.length||0,cars:cars.length,ambientTraffic:ambientTraffic?.collisionVehicles.length||0},currentActivity:freeApartments?.active?'My free apartment':powersports?.riding?'Powersports vehicle':activeCar?'Car':cityview?.active?'Cityview':'Town'};},getProperties:()=>{const homes=collectHomeLocations({starter:ownableHomes,premier,villas,coastal,apartments:apartmentExteriors,apartmentExperience}).map(h=>({...h,owner:h.id==='H'+String(ownableHomes.owned?.id).padStart(2,'0')?ownableHomes.owned.username:null}));for(const f of cityview.ownership.list())homes.push({id:'CV'+String(f.level).padStart(2,'0'),name:'Cityview · Level '+f.level,x:-378,z:-62,level:f.level,owner:f.owner,ownerId:cityview.ownership.records[f.level]?.ownerId||null});homes.push({id:'FREE-ADMIN',name:'Admin · Free apartment',owner:'Admin',ownerId:'admin',x:-650,z:-480});return homes;},onVisit:h=>{if(h.id==='FREE-ADMIN'){freeApartments?.visitMine();return;}freeApartments?.leave();if(powersports?.riding&&!powersports.end())return;if(activeCar)toggleCar();scooters?.end();skate?.end();marine?.end?.();cityview.leave();stopCityview();const a=h.angle||0,offset=(h.minZ??-14)-3;player.x=h.x+Math.sin(a)*offset;player.z=h.z+Math.cos(a)*offset;yaw=a;pitch=0;cityMap.draw(true);}});
 function animate(){
  requestAnimationFrame(animate);if(!townEntered)return;if(playable&&adminAccount?.panelOpen&&!adminAccount.isAdmin){graphicsEngine?.suspend();clock.getDelta();return;}const frameNow=performance.now();if(MOBILE&&frameNow-lastMobileFrame<32)return;lastMobileFrame=frameNow;const motionDt=Math.min(clock.getDelta(),.15),dt=Math.min(motionDt,.05);controllerInput?.update(motionDt);elapsed+=motionDt;gunStore?.update(motionDt);gunGame?.update(motionDt);hospital?.update(motionDt);freeApartments?.update(motionDt);outdoorVisibility.update(motionDt);canopyVenue?.update(motionDt);venueRenderIsolation?.prepare();tagGame?.update(motionDt);enforceAdminCharacterDeletions();const apartmentInteriorActive=!!freeApartments?.active||!!gunStore?.active||!!hospital?.active||!!canopyVenue?.active||!!cityview?.active;globalThis.zercondaTransportMoving=!!powersports?.riding||!!zCabs?.riding||!!activeCar&&Math.abs(activeCar.speed)>.1||!!scooters?.riding&&!powersports?.riding||!!marine?.riding;vehicleHorns.update();hiddenForestPassage.update(dt);updateCaveLife(motionDt,player);updateMountainWilderness(player);trackTrailExploration(motionDt,player,!activeCar&&!marine.riding&&!scooters.riding&&!powersports?.riding&&!airfield.boarded&&!zCabs.riding);forestGroundCover.update();chessPartner.update(motionDt);chessTables.update(motionDt);if(!apartmentInteriorActive)fountainResident.update(dt);if(!apartmentInteriorActive)boardwalkFitness?.update(motionDt);if(!apartmentInteriorActive)boardwalkWalker.update(motionDt);if(!apartmentInteriorActive)whiteFitnessWalker.update(motionDt);if(!apartmentInteriorActive)curlyFitnessWalker.update(motionDt);if(!apartmentInteriorActive)curlyBusinessWalker.update(motionDt);if(!apartmentInteriorActive)needlePlaidResident.update(motionDt);if(!apartmentInteriorActive)kateConversation.update(motionDt);let walkingDistance=0;if(insideHouse()){if(scooters?.riding)scooters.end();if(skate?.riding)skate.end();}
  // Crossing the open entrance naturally activates the authored lobby collision/camera.
@@ -2389,7 +2389,7 @@ startWorld();
 await yieldStartup();
 
 
-export function startupStatus(){return{graphics:LOW_GRAPHICS?'low':'normal',recoveryPlaza:RECOVERY_PLAZA,entered:townEntered,painted:paintedFrame,characterReady:realisticPlayer.ready,fallbackVisible:fallbackPlayer.root.visible,loadingArea:!playable,playable,player:{x:player.x,z:player.z,yaw,pitch},sceneryStarted,sceneryComplete:sceneryFinished,nearbySceneryReady,trafficCount:ambientTraffic?.vehicles.length||0,houseShadows:houseSunShadows.stats(),renderPixelRatio:renderer.getPixelRatio(),...shaderWarmup.stats(),...renderBudget.stats(),graphicsQuality:graphicsEngine?.stats()};}
+export function startupStatus(){return{graphics:LOW_GRAPHICS?'low':'normal',recoveryPlaza:RECOVERY_PLAZA,entered:townEntered,painted:paintedFrame,characterReady:realisticPlayer.ready,fallbackVisible:fallbackPlayer.root.visible,loadingArea:!playable,playable,player:{x:player.x,z:player.z,yaw,pitch},sceneryStarted,sceneryComplete:sceneryFinished,nearbySceneryReady,trafficCount:ambientTraffic?.vehicles.length||0,houseShadows:houseSunShadows.stats(),renderPixelRatio:renderer.getPixelRatio(),...shaderWarmup.stats(),...renderBudget.stats(),...outdoorVisibility.stats(),graphicsQuality:graphicsEngine?.stats()};}
 
 export function movementStatus(x=player.x,z=player.z){return{point:{x,z},walkable:walkable(x,z),hit:townObstacles?.hit(x,z)?.object?.name,locked:movementLocked,keys:[...keys],velocity:{x:movement.vx,z:movement.vz},focus:document.activeElement?.tagName,menu:playerMenu?.panelOpen,car:!!activeCar,cab:zCabs?.riding,house:insideHouse(),villa:villas?.blocks(x,z),park:needleSportsPark?.blocks(x,z)}};
 await yieldStartup();

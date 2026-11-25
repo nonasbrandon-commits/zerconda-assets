@@ -1,19 +1,17 @@
 import {joinTrailSurfaces} from './trail-surfaces.js?v=20261118-area-travel-v110';
 import * as THREE from 'three';
 import {GROUND_LEVEL as G} from './ground-level.js?v=20261119-level-ground-v117';
-// Continuous private campus lanes. No private yellow centerlines.
+// Straight continuous campus lanes with square junctions. No private yellow centerlines.
 export function createVenueAccessRoads(scene,{asphalt,paving}){
  const root=new THREE.Group();root.name='Western campus access roads';root.userData.startupEssential=true;scene.add(root);
  const roads=[],walks=[],polygons=[];
  function polygon(points,out,record=false){if(record)polygons.push(points);for(let i=1;i<points.length-1;i++)for(const j of[0,i+1,i])out.push(points[j][0],G,points[j][1]);}
  function rect(x0,x1,z0,z1,out,record=false){polygon([[x0,z0],[x1,z0],[x1,z1],[x0,z1]],out,record);}
- function circle(x,z,r,out,record=false){polygon(Array.from({length:24},(_,i)=>[x+Math.cos(i*Math.PI/12)*r,z+Math.sin(i*Math.PI/12)*r]),out,record);}
  function lane(x0,x1,z0,z1){rect(x0-2,x1+2,z0-2,z1+2,walks);rect(x0,x1,z0,z1,roads,true);}
- lane(-620,-612,-518,-310);lane(-456,-448,-518,-310);
- for(const z of[-518,-410,-310]){lane(-616,-427.5,z-4,z+4);for(const x of[-616,-452]){circle(x,z,10,walks);circle(x,z,8,roads,true);}}
+ lane(-620,-612,-522,-306);
+ for(const z of[-518,-310])lane(-616,-427.5,z-4,z+4);
  lane(-616,-590,-374,-366);
- for(const z of[-470,-360]){for(const x of[-452]){circle(x,z,9,walks);circle(x,z,7,roads,true);}}
- for(const z of[-518,-470,-410,-360,-310]){const half=z===-470||z===-360?3:4;polygon([[-440,z-half],[-427.5,z-7],[-427.5,z+7],[-440,z+half]],roads,true);}
+ for(const z of[-518,-470,-360,-310]){const half=z===-470||z===-360?3:4;polygon([[-440,z-half],[-427.5,z-7],[-427.5,z+7],[-440,z+half]],roads,true);}
  rect(-634.2,-620,-483.9,-476.1,walks);
  const make=(spec,mat,inverse)=>{const a=spec.positions;for(let i=0;i<a.length;i+=3){const v=new THREE.Vector3(a[i],G,a[i+2]);if(inverse)v.applyMatrix4(inverse);a[i]=v.x;a[i+1]=v.y;a[i+2]=v.z;}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(a,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(spec.uv,2));g.computeVertexNormals();return g;};
  const road=new THREE.Mesh(new THREE.BufferGeometry(),asphalt),walk=new THREE.Mesh(new THREE.BufferGeometry(),paving);road.name='Campus continuous asphalt';road.userData.drivewaySurface=true;walk.name='Campus sidewalks';walk.userData.roadJoined=true;root.add(road,walk);
