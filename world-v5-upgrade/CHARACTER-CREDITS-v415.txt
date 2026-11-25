@@ -1,0 +1,24 @@
+Zerconda character credits · v415
+
+Maya, store clerk: Festival F34 by PixelForge Sandbox, licensed for use in this game under the Fab Standard License. Model copyright remains with its creator. Not licensed for standalone redistribution or reuse outside this project.
+Base body, rig, expressions and other MakeHuman / MPFB assets: MakeHuman community, CC0 1.0.
+Motion capture data used in the conversation gestures of this product was obtained from mocap.cs.cmu.edu. The database was created with funding from NSF EIA-0196217.
+Source: https://www.fab.com/ (Festival F34 · PixelForge Sandbox)
+License: https://www.fab.com/eula
+
+Nolan, store clerk: native Microsoft Rocketbox Wood_Male_01 mesh and textures, adapted with a shaved scalp, authored beard and standing pose for Zerconda.
+Copyright (c) 2020 Microsoft Corporation. MIT License.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Nora, Casey and Ellis: Innerscene / MakeHuman CC0 1.0 person assets; Casey extracted from the Casey and Nora pair. Simplified and texture-compressed for the game.
+https://www.innerscene.com/tools/library/3d-parts/nora-3d-person-older-woman-walking-independently-ddf39f26
+https://www.innerscene.com/tools/library/3d-parts/casey-and-nora-3d-person-older-adults-walking-pair-86a5a2ef
+https://www.innerscene.com/tools/library/3d-parts/ellis-3d-person-older-man-with-cane-c3ba9734
+
+June, garden visitor: Elderly Woman / Botanist, Grab3D, CC0 1.0; simplified and texture-compressed for the game.
+https://grab3d.com/models/characters/elderly-woman/
+CC0: https://creativecommons.org/publicdomain/zero/1.0/
+
+Gunshot audio is generated locally by Zerconda's Web Audio synthesizer. No external sound recording is used.

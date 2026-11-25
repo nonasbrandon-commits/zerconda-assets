@@ -1,0 +1,19 @@
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
+// Six individually credited project characters. Models load only near their locations.
+export function createTownCharacterInstall(scene,{store,getPlayer,getHeight=()=>0,canWalk=()=>true}){
+ const root=new THREE.Group();root.name='Store staff and older town residents';root.userData.dynamicScenery=true;scene.add(root);
+ const staff=(name,asset,x,z,height)=>({name,asset,...store.world(x,z),height,yaw:Math.PI/2,staff:true});
+ const specs=[staff('Maya · Guns & Ammo clerk','store-woman',-8.4,-2.5,1.72),staff('Nolan · Guns & Ammo clerk','store-man',-1.6,-2.5,2.02),{name:'Nora · hospital garden visitor',asset:'nora',x:-508,z:-350,height:1.60,yaw:Math.PI/2},{name:'Casey · coffee plaza visitor',asset:'casey',x:-19,z:-124,height:1.79,yaw:-.7},{name:'June · garden botanist',asset:'botanist',x:23,z:-37,height:1.61,yaw:Math.PI},{name:'Ellis · town square visitor',asset:'ellis',x:28,z:32,height:1.74,yaw:.5}];
+ const people=specs.map(s=>{const group=new THREE.Group();group.name=s.name;group.userData.dynamicScenery=true;group.userData.npcIdentity=s.name;group.userData.characterSource=s.asset==='store-woman'?'Fab Standard License · Festival F34':s.asset==='store-man'?'Microsoft Rocketbox · MIT':'CC0';group.position.set(s.x,getHeight(s.x,s.z),s.z);group.rotation.y=s.yaw;root.add(group);if(s.staff)store.root.attach(group);return{...s,group,worldPosition:new THREE.Vector3(s.x,getHeight(s.x,s.z),s.z),loaded:false,retry:0};});
+ const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);let time=0,pending=null;
+ async function load(person){pending=person;try{let gltf;if(person.asset==='store-woman'){const packed=globalThis.zercondaCharacterAssets?.storeWoman;if(!packed)throw Error('Compiled store character missing');const bytes=Uint8Array.from(atob(packed),c=>c.charCodeAt(0));gltf=await loader.parseAsync(bytes.buffer,'');}else gltf=await loader.loadAsync(new URL('./assets/'+person.asset+'-v415.glb',import.meta.url).href);
+  const model=gltf.scene;model.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(model,true),s=person.height/(box.max.y-box.min.y);model.scale.multiplyScalar(s);model.position.set(-(box.min.x+box.max.x)*s/2,-box.min.y*s,-(box.min.z+box.max.z)*s/2);model.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=true;o.userData.dynamicScenery=true;}});person.group.add(model);
+  const clip=gltf.animations.find(a=>a.name==='idle_stand')||gltf.animations.find(a=>a.name==='walk');if(clip){person.mixer=new THREE.AnimationMixer(model);person.mixer.clipAction(clip).play();person.mixer.update(.1);if(person.asset==='botanist'){// Natural planted pose from the native walk clip; no fake sliding route.
+   person.mixer.timeScale=0;
+  }}person.loaded=true;person.group.userData.loaded=true;
+ }catch(error){person.group.userData.loadError=String(error);person.retry=time+20;}finally{pending=null;}}
+ function update(dt=.016){time+=Math.min(dt,.1);const p=getPlayer();for(const person of people){const distance=Math.hypot(p.x-person.x,p.z-person.z);person.group.visible=distance<65;person.group.position.y=getHeight(person.x,person.z)-(person.staff?store.root.position.y:0);person.group.getWorldPosition(person.worldPosition);if(person.loaded&&distance<35)person.mixer?.update(Math.min(dt,.05));}if(!pending){const next=people.filter(p=>!p.loaded&&time>=p.retry&&Math.hypot(getPlayer().x-p.x,getPlayer().z-p.z)<80).sort((a,b)=>Math.hypot(p.x-a.x,p.z-a.z)-Math.hypot(p.x-b.x,p.z-b.z))[0];if(next)load(next);}}
+ return{root,people,update,get collisionPeople(){return people.filter(p=>p.loaded&&p.group.visible).map(p=>p.worldPosition)},get ready(){return people.every(p=>p.loaded)}};
+}

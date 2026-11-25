@@ -1,3 +1,4 @@
+import {createStoreStandingMirror} from './store-standing-mirror.js?v=20261125-mirror-v415';
 import {createGunStoreRange} from './gun-store-range.js?v=20261125-rules-wall-v413';
 import {createGunStoreLighting} from './gun-store-lighting.js?v=20261125-lighting-v410';
 import {createGunStoreDisplays} from './gun-store-displays.js?v=20261125-cases-v410';
@@ -31,6 +32,7 @@ export function createGunsAmmoStore(scene,{getPlayer,roadMaterial=null,canEnter=
  for(const x of[-11,3]){box(2.3,4.3,.28,x,2.15,13.07,m.dark);box(2.6,.32,.30,x,.16,13.08,m.dark);}
  for(const[x,w]of[[-14.125,3.95],[-8,3.7],[.075,3.55],[7.025,3.35],[15,2.4]])box(w,.7,.018,x,.35,12.937,m.dark);
  // Retail counter, wall display boards and boxed in-game ammo shelves.
+ const mirror=createStoreStandingMirror(root);
  const counter=createGunStoreCounter({add,solid,materials:m});
  const displays=createGunStoreDisplays(root,{add,solid,text,materials:m,weapons:GAME_WEAPONS,makeWeapon:createGameWeapon});
  // Annex lanes. Divider gaps connect the shop and range entrance.
@@ -42,5 +44,5 @@ export function createGunsAmmoStore(scene,{getPlayer,roadMaterial=null,canEnter=
  for(const[material,list]of bins){const mesh=new THREE.Mesh(mergeGeometries(list),material);list.forEach(g=>g.dispose());mesh.name='Guns and ammo static surfaces';if(material===m.asphalt)mesh.userData.drivewaySurface=true;root.add(mesh);}root.updateMatrixWorld(true);
  const contains=(x,z)=>{const p=local(x,z);return p.x>-16.8&&p.x<16.8&&p.z<13.1&&p.z>(p.x>5?-24.8:-12.8)};
  function update(dt){const p=getPlayer(),q=local(p.x,p.z);active=contains(p.x,p.z);for(const d of doors){const near=canEnter()&&Math.abs(q.x-d.cx)<3.4&&Math.abs(q.z-13.25)<4.5;d.open=THREE.MathUtils.damp(d.open,near?1:0,5,dt);d.g.position.x=d.cx+d.side*(d.width/4+d.open*d.width*.48);}}
- return{root,site:S,targets,counter,displays,lighting,range,world,local,contains,weaponZoneContains(x,z){const p=local(x,z);return p.x>-28&&p.x<28&&p.z>-32&&p.z<60},update,get active(){return active},inRange(x,z){const p=local(x,z);return p.x>5.2&&p.x<16.8&&p.z>2&&p.z<9.5},canWalk(x,z,vehicle=false){const p=local(x,z);if(p.x< -28||p.x>28||p.z< -32||p.z>60)return null;if(vehicle&&contains(x,z))return false;if(Math.abs(p.z-13.2)<.4&&p.x>-17.3&&p.x<17.3&&!doors.some(d=>Math.abs(p.x-d.cx)<d.width/2-.25))return false;for(const b of blocks)if(Math.abs(p.x-b.x)<b.w/2+.27&&Math.abs(p.z-b.z)<b.d/2+.27)return false;if(p.x>5&&p.x<17&&p.z<1.8&&p.z>-25)return false;const back=p.x>5?-25:-13;if(p.x>-17.3&&p.x<17.3&&p.z<13.35&&p.z>back-.3){if(Math.abs(p.x)>16.7||p.z<back+.3)return false;}for(const d of doors)if(Math.abs(p.z-13.25)<.35&&Math.abs(p.x-d.cx)<d.width/2&&d.open<.70)return false;return true;},heightAt(x,z){const p=local(x,z);return (p.x>-28&&p.x<28&&p.z>-32&&p.z<60)?G:null},cameraRootAt(x,z){return contains(x,z)?root:null}};
+ return{root,site:S,targets,counter,displays,lighting,range,mirror,world,local,contains,weaponZoneContains(x,z){const p=local(x,z);return p.x>-28&&p.x<28&&p.z>-32&&p.z<60},update,get active(){return active},inRange(x,z){const p=local(x,z);return p.x>5.2&&p.x<16.8&&p.z>2&&p.z<12.85},canWalk(x,z,vehicle=false){const p=local(x,z);if(p.x< -28||p.x>28||p.z< -32||p.z>60)return null;if(vehicle&&contains(x,z))return false;if(Math.abs(p.z-13.2)<.4&&p.x>-17.3&&p.x<17.3&&!doors.some(d=>Math.abs(p.x-d.cx)<d.width/2-.25))return false;for(const b of blocks)if(Math.abs(p.x-b.x)<b.w/2+.27&&Math.abs(p.z-b.z)<b.d/2+.27)return false;if(p.x>5&&p.x<17&&p.z<1.8&&p.z>-25)return false;const back=p.x>5?-25:-13;if(p.x>-17.3&&p.x<17.3&&p.z<13.35&&p.z>back-.3){if(Math.abs(p.x)>16.7||p.z<back+.3)return false;}for(const d of doors)if(Math.abs(p.z-13.25)<.35&&Math.abs(p.x-d.cx)<d.width/2&&d.open<.70)return false;return true;},heightAt(x,z){const p=local(x,z);return (p.x>-28&&p.x<28&&p.z>-32&&p.z<60)?G:null},cameraRootAt(x,z){return contains(x,z)?root:null}};
 }
