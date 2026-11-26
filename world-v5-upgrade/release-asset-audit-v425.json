@@ -1,0 +1,13 @@
+{
+  "version": 425,
+  "baseCommit": "4fb9b17359c41f5b7e9e4694ac04868d7f2bb823",
+  "compiledSha256": "c31825e54f059eb90a4aabbd613ab7dba8d77e0994e02c7226158be6fa13e9bb",
+  "gzipSha256": "29ace133afcbb4324e32e514d0de7d09621c8ab10969f30bd82301609dfa7888",
+  "embeddedCharacterUnchanged": true,
+  "embeddedCharacterSha256": "2f5364f949a2d9950af6706070b686cabee38337323bc082cd139393a9d717e0",
+  "newExternalAssets": false,
+  "credentialPatternMatches": 0,
+  "chunkCount": 21,
+  "decompressedMatchesCompiled": true,
+  "authorization": "User approved public game updates with approve and approved after exact upload review explanation; existing credits retained. Same licensed compiled character as v424; no standalone asset export."
+}

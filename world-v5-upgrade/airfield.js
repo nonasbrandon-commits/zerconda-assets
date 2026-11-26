@@ -86,7 +86,7 @@ export function createAirfield(scene,{getPlayer,groundMaterial=null,roadMaterial
   // A restrained red-carpet approach, with rope posts kept clear of the stair entrance.
   for(const side of [-1,1]){const zz=doorZ+side*1.02;for(const xx of [stairOuter+.6,stairOuter+2.65]){mesh(new THREE.CylinderGeometry(.14,.19,.035,16),steel,xx,apronY+.0175,zz,boarding);rail([xx,apronY,zz],[xx,apronY+.84,zz],.028);sphere(xx,apronY+.86,zz,.065,.065,.065,steel,boarding);}const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(stairOuter+.6,apronY+.78,zz),new THREE.Vector3(stairOuter+1.625,apronY+.60,zz),new THREE.Vector3(stairOuter+2.65,apronY+.78,zz)]);mesh(new THREE.TubeGeometry(curve,16,.035,8,false),carpet,0,0,0,boarding);}
   p.boardingGroup=boarding;
-   label('ZC · '+(i+1)+' · 14 PASSENGERS',x,1.0,z+13.5,8,.8);box(.09,.9,.09,x,.45,z+13.5,dark);
+
  }
  for(const [i,x]of [20,60].entries()){
   const z=-352;const pad=mesh(new THREE.CylinderGeometry(12.5,12.5,.06,64),mat(0x566466),x,.13,z);const ring=new THREE.Mesh(new THREE.RingGeometry(10.7,11.05,64),new THREE.MeshBasicMaterial({color:0xe7dca8,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.set(x,.19,z);root.add(ring);box(.4,.01,7,x-2,.2,z,white);box(.4,.01,7,x+2,.2,z,white);box(4.4,.01,.4,x,.129,z,white);

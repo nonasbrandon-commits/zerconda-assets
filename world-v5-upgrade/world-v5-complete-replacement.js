@@ -1,3 +1,5 @@
+import {pedestrianSpeedLimit,pedestrianPoseBlocked,requestPedestrianYield} from './pedestrian-traffic.js?v=425';
+import {configureMobileImageDecoding} from './mobile-image-decode.js?v=425';
 import {installVehicleWheelRig,animateVehicleWheels,vehicleWheelStatus} from './vehicle-wheel-animation.js?v=424';
 import {createMobileGeometryMemory} from './mobile-geometry-memory.js?v=423';
 import {mobileGeometryStatus} from './mobile-geometry-compact.js?v=423';
@@ -179,7 +181,8 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261121
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261123-town-v282';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const BOOT=stage=>globalThis.zercondaBootStage?.(stage);const requestedGraphics=new URLSearchParams(location.search).get('graphics');let LOW_GRAPHICS=requestedGraphics==='low'||requestedGraphics!=='normal'&&matchMedia('(pointer:coarse)').matches;const startupImageMemory=matchMedia('(pointer:coarse)').matches?installStartupTextureMemory({limit:256}):()=>({resized:0,bytesAvoided:0});if(LOW_GRAPHICS)globalThis.zercondaBootGraphics?.('reduced (mobile)');const RECOVERY_PLAZA=new URLSearchParams(location.search).get('resume')==='0';BOOT('Creating the scene');
+const BOOT=stage=>globalThis.zercondaBootStage?.(stage);const requestedGraphics=new URLSearchParams(location.search).get('graphics');let LOW_GRAPHICS=requestedGraphics==='low'||requestedGraphics!=='normal'&&matchMedia('(pointer:coarse)').matches;const startupImageDecoding=await configureMobileImageDecoding();
+const startupImageMemory=matchMedia('(pointer:coarse)').matches?installStartupTextureMemory({limit:256}):()=>({resized:0,bytesAvoided:0});if(LOW_GRAPHICS)globalThis.zercondaBootGraphics?.('reduced (mobile)');const RECOVERY_PLAZA=new URLSearchParams(location.search).get('resume')==='0';BOOT('Creating the scene');
 const cameraClearance=createCameraClearance();
 await yieldStartup();
 
@@ -1911,10 +1914,10 @@ await yieldStartup();
 carnival=createSeasideCarnival(scene,{getPlayer:()=>player,getCamera:()=>camera,getCanvas:()=>renderer.domElement,canUse:()=>!observationNeedle.riding&&!onObservationDeck&&!insideNeedleLobby&&!barber.active&&!office.active&&!activeCar&&!skate.riding&&!scooters.riding&&!powersports?.riding&&!marine.riding&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!rvPark.inside&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onStop:()=>{cabPassengerCamera.reset();sittingSeat=null;seatReturn=null;keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;townControls.stop();},onMessage:m=>townControls.notify(m),onTeleport:(x,y,z,heading)=>{yaw=heading;pitch=0;camera.position.set(x,y+1.7,z);}});
 await yieldStartup();
 
-const vehicleHorns=createVehicleHorns({getListener:()=>player,getVehicle:()=>activeCar?.group||(powersports?.riding?powersports.activeVehicle?.root:null)||(scooters?.riding?scooters.activeScooter?.model:null),onHonk:source=>requestHornYield(source,[...(ambientTraffic?.vehicles||[]),...(zCabs?.vehicles||[])],zCabs?.network)});
+const vehicleHorns=createVehicleHorns({getListener:()=>player,getVehicle:()=>activeCar?.group||(powersports?.riding?powersports.activeVehicle?.root:null)||(scooters?.riding?scooters.activeScooter?.model:null),onHonk:source=>{requestHornYield(source,[...(ambientTraffic?.vehicles||[]),...(zCabs?.vehicles||[])],zCabs?.network);requestPedestrianYield(source,trafficPedestrianActors(),walkable);}});
 await yieldStartup();
 
-installedCharacters=createTownCharacterInstall(scene,{store:gunStore,getPlayer:()=>player,getHeight:standingHeightAt,canWalk:walkable});
+installedCharacters=createTownCharacterInstall(scene,{store:gunStore,getPlayer:()=>player,getHeight:standingHeightAt,canWalk:walkable,getRoadPolygons:()=>roadMap.polygons});
 const cityResidents=createCityResidents(scene,{getPlayer:()=>player,getHeight:standingHeightAt,canWalk:(x,z)=>ambientResidentsAllowed(x,z)&&walkable(x,z),getRoadPolygons:()=>roadMap.polygons,shops:{coffee:coffeeShop.root,boutique:boutique.interior},getVehicles:()=>[...cars,...(zCabs?.collisionVehicles||[]),...(ambientTraffic?.collisionVehicles||[])],existingPeople:()=>[...(boardwalkFitness?.collisionPeople||[]),...(coffeeCustomers?.collisionPeople||[]),...pedestrianSystem.agents.filter(a=>a.human.ready&&a.group.visible).map(a=>a.group.position),...(fountainResident.group.visible?[fountainResident.group.position]:[])],onMessage:m=>townControls.notify(m)});
 
 await yieldStartup();
@@ -2206,11 +2209,12 @@ function animate(){
   const c=activeCar,throttle=inputLocked?0:(drivingControls.throttle||f||driverWheelThrottle),steering=inputLocked?0:(drivingControls.steer||side||mouseVehicleSteering.steer);
   c.wheelSteering=steering;driverWheelThrottle*=Math.exp(-3*motionDt);
   c.speed=THREE.MathUtils.damp(c.speed,keys.has('Space')?0:throttle*(throttle<0?4.5:11),keys.has('Space')?12:2.6,motionDt);
-  const targetAngle=c.angle-steering*motionDt*(.55+Math.abs(c.speed)*.06)*(c.speed<-.05?-1:1);
+  const targetAngle=c.angle-Math.tan(steering*.34)*c.speed/2.95*motionDt;
   c.footprint=measureVehicleFootprint(THREE,c.group);
+  const trafficPeople=trafficPedestrianActors().map(a=>a.group.position);c.speed=pedestrianSpeedLimit(c,trafficPeople,c.speed);
   const obstacles=cars.filter(o=>o!==c).map(o=>({...o,footprint:measureVehicleFootprint(THREE,o.group)}));
   obstacles.push(...(zCabs?.collisionVehicles||[]),...(ambientTraffic?.collisionVehicles||[]),...dealership.cars.map(o=>vehicleDescriptor(THREE,o.model)));
-  const pose=sweepVehiclePose(c,c.speed*motionDt,targetAngle,obstacles,(x,z)=>!walkable(x,z)||southBeach.blocksVehicle(x,z));
+  const pose=sweepVehiclePose(c,c.speed*motionDt,targetAngle,obstacles,(x,z,angle)=>!walkable(x,z)||southBeach.blocksVehicle(x,z)||pedestrianPoseBlocked(c,x,z,angle,trafficPeople));
   c.group.position.x+=pose.x-c.x;c.group.position.z+=pose.z-c.z;c.x=pose.x;c.z=pose.z;c.angle=pose.angle;
   if(pose.blocked)c.speed=0;
   c.group.rotation.y=c.angle;player.x=c.x;player.z=c.z;yaw=c.angle;
@@ -2417,7 +2421,7 @@ startWorld();
 await yieldStartup();
 
 
-export function startupStatus(){return{warehouseParkingSpaces:scene.getObjectByName('Tag Warehouse visitor parking · 37 marked bays')?.userData.parkingSpaces||0,carCameraView:carCameraViews.label,startupImageMemory:startupImageMemory(),characterPreparation:startupCharacterSetup,texturePreparation:startupTextureBudget,renderPreparation:startupRenderPreparation,graphics:LOW_GRAPHICS?'low':'normal',recoveryPlaza:RECOVERY_PLAZA,entered:townEntered,painted:paintedFrame,characterReady:realisticPlayer.ready,fallbackVisible:fallbackPlayer.root.visible,loadingArea:!playable,playable,player:{x:player.x,z:player.z,yaw,pitch},sceneryStarted,sceneryComplete:sceneryFinished,nearbySceneryReady,trafficCount:ambientTraffic?.vehicles.length||0,referenceTruckCount:cars.filter(c=>c.referenceTruck).length,houseShadows:houseSunShadows.stats(),renderPixelRatio:renderer.getPixelRatio(),...shaderWarmup.stats(),...renderBudget.stats(),...outdoorVisibility.stats(),graphicsQuality:graphicsEngine?.stats()};}
+export function startupStatus(){return{warehouseParkingSpaces:scene.getObjectByName('Tag Warehouse visitor parking · 37 marked bays')?.userData.parkingSpaces||0,carCameraView:carCameraViews.label,startupImageDecoding,startupImageMemory:startupImageMemory(),characterPreparation:startupCharacterSetup,texturePreparation:startupTextureBudget,renderPreparation:startupRenderPreparation,graphics:LOW_GRAPHICS?'low':'normal',recoveryPlaza:RECOVERY_PLAZA,entered:townEntered,painted:paintedFrame,characterReady:realisticPlayer.ready,fallbackVisible:fallbackPlayer.root.visible,loadingArea:!playable,playable,player:{x:player.x,z:player.z,yaw,pitch},sceneryStarted,sceneryComplete:sceneryFinished,nearbySceneryReady,trafficCount:ambientTraffic?.vehicles.length||0,referenceTruckCount:cars.filter(c=>c.referenceTruck).length,houseShadows:houseSunShadows.stats(),renderPixelRatio:renderer.getPixelRatio(),...shaderWarmup.stats(),...renderBudget.stats(),...outdoorVisibility.stats(),graphicsQuality:graphicsEngine?.stats()};}
 
 export function movementStatus(x=player.x,z=player.z){return{point:{x,z},walkable:walkable(x,z),hit:townObstacles?.hit(x,z)?.object?.name,locked:movementLocked,keys:[...keys],velocity:{x:movement.vx,z:movement.vz},focus:document.activeElement?.tagName,menu:playerMenu?.panelOpen,car:!!activeCar,cab:zCabs?.riding,house:insideHouse(),villa:villas?.blocks(x,z),park:needleSportsPark?.blocks(x,z)}};
 await yieldStartup();
@@ -2444,3 +2448,7 @@ export function memoryStatus(){return {...sceneMemoryReport(scene,renderer),comp
 export function wheelAnimationStatus(){return cars.map(c=>({type:c.type||c.group.userData.vehicleType,x:c.x,z:c.z,active:c===activeCar,...vehicleWheelStatus(c.group)}));}
 
 export function pedestrianStatus(){return{pedestrians:pedestrianSystem.agents.map(a=>({id:a.profile.id,name:a.profile.name,activity:a.profile.activity})),city:cityResidents.agents.map(a=>({name:a.profile.name,staff:a.staff,seated:a.seated,route:a.roam?.route,remaining:a.roam?.remaining}))};}
+
+function trafficPedestrianActors(){return [...pedestrianSystem.agents,...cityResidents.agents,...(neighborhoodResidents?.agents||[]),...(boardwalkFitness?.agents||[]),...(installedCharacters?.people||[]),...[boardwalkWalker,whiteFitnessWalker,curlyFitnessWalker,curlyBusinessWalker].map(a=>a.trafficActor)].filter(a=>a.group.visible&&!a.vehicle&&!a.staff&&!a.seated&&!a.seat&&a.human?.ready);}
+
+export function pedestrianTrafficStatus(){return trafficPedestrianActors().map(a=>({name:a.group.name,x:a.group.position.x,z:a.group.position.z,walking:!!a.walking}));}

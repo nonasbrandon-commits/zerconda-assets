@@ -31,8 +31,8 @@ export function vehiclePoseBlocked(vehicle,x,z,angle,others){
 }
 export function sweepVehiclePose(vehicle,distance,targetAngle,others,isBlocked=()=>false){
  let {x,z,angle}=vehicle;const turn=Math.atan2(Math.sin(targetAngle-angle),Math.cos(targetAngle-angle)),turnSteps=Math.max(1,Math.ceil(Math.abs(turn)/.02)),startAngle=angle;
- for(let i=1;i<=turnSteps;i++){const next=startAngle+turn*i/turnSteps;if(vehiclePoseBlocked(vehicle,x,z,next,others))return{x,z,angle,blocked:true};angle=next;}
+ for(let i=1;i<=turnSteps;i++){const next=startAngle+turn*i/turnSteps;if(isBlocked(x,z,next)||vehiclePoseBlocked(vehicle,x,z,next,others))return{x,z,angle,blocked:true};angle=next;}
  const steps=Math.max(1,Math.ceil(Math.abs(distance)/.10)),dx=Math.sin(angle)*distance/steps,dz=Math.cos(angle)*distance/steps;
- for(let i=0;i<steps;i++){const nx=x+dx,nz=z+dz;if(isBlocked(nx,nz)||vehiclePoseBlocked(vehicle,nx,nz,angle,others))return{x,z,angle,blocked:true};x=nx;z=nz;}
+ for(let i=0;i<steps;i++){const nx=x+dx,nz=z+dz;if(isBlocked(nx,nz,angle)||vehiclePoseBlocked(vehicle,nx,nz,angle,others))return{x,z,angle,blocked:true};x=nx;z=nz;}
  return{x,z,angle,blocked:false};
 }
