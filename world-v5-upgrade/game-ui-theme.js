@@ -22,6 +22,7 @@ const style=document.createElement('style');style.id='zerconda-game-ui-theme';st
 #zerconda-v5-map button{min-height:32px!important}#zerconda-v5-map>div:last-child{color:#e0ebf4!important}
 .z-game-panel [data-square]{text-shadow:none}.z-game-panel [data-square]:focus-visible{outline-offset:-3px!important}
 @media(max-width:600px){.z-game-panel{border-radius:12px!important;box-shadow:inset 0 0 0 2px #52718a,0 0 8px #00aaff66,0 5px 12px #0008!important}.z-game-panel h2{font-size:1.25rem!important}.z-game-panel button:not([data-square]){min-height:40px}}
+@media(pointer:coarse){#town-gesture-help::before,#town-gesture-help::after{content:none!important;display:none!important}#town-gesture-help{padding:9px 14px!important}}
 @media(prefers-reduced-motion:reduce){.z-game-panel button,.z-game-control{transition:none!important}}
 `;document.head.append(style);
 function mark(el){if(!(el instanceof HTMLElement)||el.matches('canvas,script,style,#boot-status,#mobile'))return;const cs=getComputedStyle(el);if(cs.position==='fixed'){

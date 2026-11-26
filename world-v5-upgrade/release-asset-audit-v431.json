@@ -1,0 +1,11 @@
+{
+  "version": 431,
+  "runtimeVersion": 430,
+  "baseCommit": "af3be481caa2f44c6004b54725b3216a0bb9fd95",
+  "change": "Hide decorative mouse pseudo-elements and remove their reserved padding on coarse-pointer devices; refresh theme URL in existing entries.",
+  "runtimePackedPartsUnchanged": true,
+  "newMediaAssets": false,
+  "privateVideoIncluded": false,
+  "themeSha256": "294bbd56066480b6eff98f75d6da21418c4911b9d13656536bf9c2a5e5c5672b",
+  "entrySha256": "d693c5b348fdad23d9e3a72d38551d40978a2a68c9e14c1aff791b31c5753b7a"
+}
