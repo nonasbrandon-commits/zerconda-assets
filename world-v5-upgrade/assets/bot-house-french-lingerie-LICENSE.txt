@@ -1,0 +1,15 @@
+French Lingerie Bra and French Lingerie Mini Briefs
+Author: punkduck
+Original asset names: punkduck_french_lingerie_bra; punkduck_french_lingerie_mini_briefs
+License: Creative Commons Attribution 3.0 Unported
+https://creativecommons.org/licenses/by/3.0/
+Source listing: https://static.makehumancommunity.org/assets/assetpacks/underwear02.html
+Original files: https://files.makehumancommunity.org/asset_packs/underwear02/underwear02_cc0.zip
+The license is recorded in both original .mhclo and .obj files as CC BY 3.0.
+Changes: fitted to another adult character, skin weights transferred, texture resolution reduced, opaque lining retained. Garment geometry and original white lace/bow designs retained.
+
+Body source: Grab3D Woman Base Character
+https://grab3d.com/models/characters/woman-base-character/
+License: CC0 1.0 Universal
+https://creativecommons.org/publicdomain/zero/1.0/
+Changes: sportswear surface replaced with a cleaned skinned body, original head geometry and UVs retained, mobile geometry reduction, original walk/run clips retained.

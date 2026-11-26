@@ -1,0 +1,37 @@
+{
+  "version": 445,
+  "baseCommit": "c8276438673eed5fb9eea98aea1960694ab29002",
+  "compiledSha256": "255b6d2eb5798721677c9531c45fef0e2a9dcdd0da29ab69d6477b88c8165e64",
+  "gzipSha256": "53342ce52185e7496b6ad6ffc4d55c3c5ef8fd914c0f0f34611bdd52529da9e9",
+  "chunkCount": 23,
+  "decompressedMatchesCompiled": true,
+  "embeddedCharacterUnchanged": true,
+  "embeddedCharacterSha256": "2f5364f949a2d9950af6706070b686cabee38337323bc082cd139393a9d717e0",
+  "credentialPatternMatches": 0,
+  "privateVideoIncluded": false,
+  "newMediaAssets": [
+    {
+      "file": "assets/bot-house-woman-v445.glb",
+      "bodyLicense": "CC0-1.0",
+      "garmentsLicense": "CC-BY-3.0",
+      "garmentsAuthor": "punkduck",
+      "garments": [
+        "punkduck_french_lingerie_bra",
+        "punkduck_french_lingerie_mini_briefs"
+      ],
+      "source": "https://static.makehumancommunity.org/assets/assetpacks/underwear02.html",
+      "changes": "Fitted separate garments, transferred weights, reduced textures, opaque lining, cleaned former sportswear surface",
+      "creditLocations": [
+        "GLB copyright metadata",
+        "Controls > Asset credits",
+        "assets/bot-house-french-lingerie-LICENSE.txt"
+      ],
+      "bytes": 2303784,
+      "triangles": 41560
+    }
+  ],
+  "sanitationReference": "User supplied PNG reference sheets; raw ZIP/PNGs not uploaded. Authored rear-loader trucks and commercial dumpsters; existing optimized MIT Rocketbox gardener rig retained.",
+  "mobileTextureCapsUnchanged": true,
+  "mobilePixelCeilingUnchanged": true,
+  "authorization": "User explicitly requested finding and fitting the outfit, then selected punkduck_french_lingerie_bra and punkduck_french_lingerie_mini_briefs. Bot House routines and reservation retained. Licensed embedded character unchanged; no separate export."
+}

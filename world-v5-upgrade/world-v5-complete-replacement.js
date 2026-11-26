@@ -1,4 +1,4 @@
-import {createBotHouseResident} from './bot-house-resident.js?v=444';
+import {createBotHouseResident} from './bot-house-resident.js?v=445';
 import {createTrailSUV} from './trail-suv.js?v=442';
 import {createZercondaServices} from './zerconda-services.js?v=442';
 import {createTownSanitation} from './town-sanitation.js?v=443';
@@ -78,7 +78,7 @@ import {createForestLandmarkRock} from './forest-landmark-rock.js?v=20261123-roa
 import {createAbandonedTransport} from './abandoned-transport.js?v=20261123-return-v258';
 import {loadConceptSUV,createConceptSUV} from './concept-suv.js?v=20261122-concept-suv-v256';
 import {yieldStartup} from './startup-yield.js?v=20261122-startup-v253';
-import {createControlGuide} from './control-guide.js?v=437';
+import {createControlGuide} from './control-guide.js?v=445';
 import {createAdminTransport} from './admin-transport.js?v=20261122-admin-transport-v245';
 import {createForestGravelRoads} from './forest-gravel-roads.js?v=20261123-natural-v264';
 import {ambientResidentsAllowed} from './ambient-resident-areas.js?v=20261122-listings-v238';
