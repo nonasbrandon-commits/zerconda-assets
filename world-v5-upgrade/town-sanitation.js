@@ -1,5 +1,5 @@
-import {createServiceAlleys} from './service-alleys.js?v=442';
-import {createSanitationTruck,createCommercialDumpster} from './sanitation-assets.js?v=442';
+import {createServiceAlleys} from './service-alleys.js?v=443';
+import {createSanitationTruck,createCommercialDumpster} from './sanitation-assets.js?v=443';
 import {createCabRoadNetwork,lanePath} from './z-cabs.js?v=20261122-listings-v238';
 import {vehiclePoseBlocked} from './vehicle-collision.js?v=422';
 import {peoplePoseBlocked} from './traffic-people.js?v=20261122-listings-v238';
@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import {createNeighborhoodHuman} from './neighborhood-human.js?v=20261124-neighborhood-v316';
 import {GROUND_LEVEL as G} from './ground-level.js?v=20261119-level-ground-v117';
 // User-supplied PNG reference sheets guide these uniforms. No raw ZIP or source images are loaded by the game.
-export {SERVICE_ALLEYS} from './service-alley-specs.js?v=442';
+export {SERVICE_ALLEYS} from './service-alley-specs.js?v=443';
 
 export function createTownSanitation(scene,{getPlayer=()=>({x:0,z:0}),canWalk=()=>true,getPeople=()=>[],getVehicles=()=>[],getTime=()=>performance.now()/1000,asphalt,paving,curb,mobile=typeof matchMedia==='function'&&matchMedia('(pointer:coarse)').matches,makeHuman=createNeighborhoodHuman}={}){
  const root=new THREE.Group();root.name='Zerconda Sanitation · town cleanup crews';root.userData.customInterior=true;scene.add(root);let time=0,loading=false;const v=new THREE.Vector3(),q=new THREE.Quaternion();

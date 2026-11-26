@@ -1,5 +1,4 @@
 export const AREA_DESTINATIONS=[
- {id:'luxe-alley',name:'Luxe Lanes Service Alley',group:'Town & shops',x:165.64,z:32},
  {id:'cityview-pickup',name:'Cityview Apartments Pickup',group:'Town & shops',x:-358.27,z:-62},
  {id:'services-alley',name:'Services / Z Tattoo Alley',group:'Town & shops',x:-373.52,z:-26},
  {id:'services',name:'Zerconda Services',group:'Town & shops',x:-351,z:-12.6,yaw:Math.PI},
