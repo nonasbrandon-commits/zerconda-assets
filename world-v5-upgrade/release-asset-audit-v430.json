@@ -1,0 +1,14 @@
+{
+  "version": 430,
+  "baseCommit": "9754914a3778c00e13df45636a279c191296ea7d",
+  "compiledSha256": "250f07e66d33ee442bdc54e737c4bde089b6bf326030a8609305c82fa8ec84a3",
+  "gzipSha256": "5b86f41877b633fd5121e888236f3220d5916a346fe68553d5982ea708dc301c",
+  "chunkCount": 23,
+  "decompressedMatchesCompiled": true,
+  "embeddedCharacterUnchanged": true,
+  "embeddedCharacterSha256": "2f5364f949a2d9950af6706070b686cabee38337323bc082cd139393a9d717e0",
+  "credentialPatternMatches": 0,
+  "newExternalMediaAssets": false,
+  "privateVideoIncluded": false,
+  "authorization": "Existing approved public game repair/publication scope. Previously approved incorporated licensed character unchanged; no standalone model/archive export. Private video excluded."
+}
