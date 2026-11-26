@@ -1,0 +1,11 @@
+{
+  "version": 434,
+  "entryOnly": true,
+  "runtimeVersion": 433,
+  "runtimeManifestUnchanged": true,
+  "newMediaAssets": [],
+  "privateVideoIncluded": false,
+  "credentialPatternMatches": 0,
+  "authorization": "User requested repair of game failing to download on another Edge computer. Existing live game publication authorization. Entry-only text/loader changes; no compiled game chunks or incorporated models reuploaded.",
+  "entrySha256": "2016c121801102b926807397f380a5e56ba3b19e73a30a317d9d87de1fe83b18"
+}

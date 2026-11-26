@@ -1,0 +1,3 @@
+Zerconda v434 — Bounded game downloads and useful loading errors
+
+Entry-only change, v433 packed runtime retained byte-for-byte. Download game parts with three workers instead of23 concurrent fetches. Each request, response-body read and digest has a60second wall-clock deadline independent of fetch abort support; three attempts with fresh query/cache reload on retries. Preserve SHA256 validation and original part order. Stop scheduling new work after terminal failure and show failed part name/number and cause in Loading details. Correct stale v430 loading label to v434. Existing game, touch theme, graphics limits and user data unchanged. No new media or model export.

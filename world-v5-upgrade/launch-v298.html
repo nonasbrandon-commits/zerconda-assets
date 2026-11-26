@@ -28,7 +28,7 @@ for(const kind of ['localStorage','sessionStorage']){try{const storage=window[ki
 (function(){
  const panel=document.getElementById('boot-status'),message=document.getElementById('boot-message'),retry=document.getElementById('retry-world'),stage=document.getElementById('boot-stage'),details=document.getElementById('startup-error-details');let painted=false,failed=false,phase='Downloading game',downloaded=0,slow=false;const started=performance.now();let lastProgress=started;const requestedMode=new URLSearchParams(location.search).get('graphics');let mode=requestedMode==='low'?'reduced':requestedMode!=='normal'&&matchMedia('(pointer:coarse)').matches?'reduced (mobile)':'normal';
  const low=document.getElementById('low-graphics'),isReduced=()=>/^reduced/.test(mode);
- const refresh=()=>{low.disabled=isReduced();low.textContent=isReduced()?'Reduced graphics enabled':'Use reduced graphics';low.title=isReduced()?'Reduced graphics are already enabled.':'';stage.textContent='v430 · '+mode+' graphics · '+phase+' · '+Math.round((performance.now()-started)/1000)+'s';};
+ const refresh=()=>{low.disabled=isReduced();low.textContent=isReduced()?'Reduced graphics enabled':'Use reduced graphics';low.title=isReduced()?'Reduced graphics are already enabled.':'';stage.textContent='v434 · '+mode+' graphics · '+phase+' · '+Math.round((performance.now()-started)/1000)+'s';};
  window.zercondaBootGraphics=text=>{mode=text;refresh();};window.zercondaBootStage=text=>{if(text!==phase){lastProgress=performance.now();if(slow&&!failed){slow=false;retry.hidden=true;message.textContent='Loading your world…';}}phase=text;refresh();};window.zercondaBootDownload=(done,total)=>window.zercondaBootStage('Downloaded '+done+'/'+total+' game parts');
  const timer=setInterval(()=>{refresh();if(!painted&&!failed&&!slow&&performance.now()-lastProgress>=180000){slow=true;retry.hidden=false;message.textContent=isReduced()?'Still loading. This stage has not changed. You can retry loading.':'Still loading. If this stage stays unchanged, you can retry or use reduced graphics.';}},1000);refresh();
  for(const type of ['keydown','keyup','pointerdown','pointerup','pointermove','wheel','touchstart','touchmove'])addEventListener(type,e=>{if(!panel.hidden&&!panel.contains(e.target)){e.stopImmediatePropagation();if(e.cancelable)e.preventDefault();}else if(!panel.hidden&&['keydown','keyup'].includes(type)&&e.key!=='Tab'&&e.key!=='Enter'){e.stopImmediatePropagation();if(e.cancelable)e.preventDefault();}},{capture:true,passive:false});
@@ -45,7 +45,33 @@ for(const kind of ['localStorage','sessionStorage']){try{const storage=window[ki
 const packedParts=[{"file":"world-pack-v433-00.bin","sha256":"688401c83ae24cb588866289792c0852581c0be79ef5e8c9c7ddbd652abb439a"},{"file":"world-pack-v433-01.bin","sha256":"56e2aee663b6dbed5512ac914fac9b2a478b1394b856120503451708d3fd06be"},{"file":"world-pack-v433-02.bin","sha256":"00c19bbce46314a765f8917f2584a3c65d084d1ba55a201750c8a1ac72317690"},{"file":"world-pack-v433-03.bin","sha256":"91eb59aa3614557152c05a1e5bdce152ae24f7f40588446a40f49effbb4570ae"},{"file":"world-pack-v433-04.bin","sha256":"a9217a51c750563df143b2e8418aa4c56b34e1d3a0592c8078a671cb2bd7ad52"},{"file":"world-pack-v433-05.bin","sha256":"35b9efb8afa89cac395969ac5448987a5cd655ce536a4b26f1ebdc49b5b2b507"},{"file":"world-pack-v433-06.bin","sha256":"1fce64eb0197545011e76fcc5775d23ece543b7520fe0f56e4a3a88236234ff9"},{"file":"world-pack-v433-07.bin","sha256":"dcee88ca1405c318e6ab59908a3444cb2ec15bc9bb31a31e823419c43cf850de"},{"file":"world-pack-v433-08.bin","sha256":"cc0b355ebe94bb0478e497b5c28e585157da5cb6eafa6697c796750d9b99b5c9"},{"file":"world-pack-v433-09.bin","sha256":"652f6209b75d4f24e2755003e57b46a69a6d0f376006d9dfb28702c7ea2fab62"},{"file":"world-pack-v433-10.bin","sha256":"abb618d01eb4d95f70dcc104dd5bc90439204133cb97f03b0d7ded88364d7e51"},{"file":"world-pack-v433-11.bin","sha256":"cd47dd5708a62f72187be7be3499a4403bf7c5f6593eb57395c7946c2fdea414"},{"file":"world-pack-v433-12.bin","sha256":"82918844920d8ffb95528af111f8729fa550c607a238e95d2cb7e670817fe5cd"},{"file":"world-pack-v433-13.bin","sha256":"92edae5580d424d2bdd27e7829c0b80e918129b349d4d2651c395bc636cb1f35"},{"file":"world-pack-v433-14.bin","sha256":"54dd3430b903e99acdcdfb94bbab3f172203a012decc114890b9492816dc8eef"},{"file":"world-pack-v433-15.bin","sha256":"afcd241d52622148e9afa3830145fa5f8a83f61dbe1651e0eae4f6ff4bf16c93"},{"file":"world-pack-v433-16.bin","sha256":"9af18c58f70f536172acaffaf53e82c9b9b97952aa66b464897015121b5cbe21"},{"file":"world-pack-v433-17.bin","sha256":"96c5ad2f679b9404a019aebb6dfff32e8c61b0448a130a5045a6ab4ec005e940"},{"file":"world-pack-v433-18.bin","sha256":"2c8ce353ba48f39060d81f0eaf2ffb4336d09bcc2e8e7e3fe0e1f1c5d200595c"},{"file":"world-pack-v433-19.bin","sha256":"814701121706b3c4405420cc1ba5ae037124555b13a6797b5e57cb56fe822ed7"},{"file":"world-pack-v433-20.bin","sha256":"8543ad4a72d70fb576d3090249d2060198684731415d8d6e1d92a4ac74406a7d"},{"file":"world-pack-v433-21.bin","sha256":"a14fe6e9e1d84a593e336e4c2deb0b9bba18d7791f4745769b49105f2913d881"},{"file":"world-pack-v433-22.bin","sha256":"8dd575c41ce6d14080ad6da5ed5ff0934e54f05e490b10c91dfecf9115bb3f5f"}];
 async function loadTown(){
  if(!globalThis.DecompressionStream) return import('./world-v5-complete-replacement.js?v=20261125-entry-v430');
- let completed=0;window.zercondaBootStage('Downloading game');const chunks=await Promise.all(packedParts.map(async part=>{let lastError;for(let attempt=0;attempt<3;attempt++){try{const response=await fetch(new URL('./'+part.file,import.meta.url),{signal:AbortSignal.timeout(60000)});if(!response.ok)throw Error('Town download returned '+response.status);const bytes=new Uint8Array(await response.arrayBuffer());const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),b=>b.toString(16).padStart(2,'0')).join('');if(digest!==part.sha256)throw Error('Town download was incomplete');window.zercondaBootDownload(++completed,packedParts.length);return bytes;}catch(error){lastError=error;}}throw lastError;}));
+ let completed=0,next=0,stopped=false;const chunks=new Array(packedParts.length);
+ window.zercondaBootStage('Downloading game · 0/'+packedParts.length+' parts');
+ async function downloadPart(part,index){let lastError;
+  for(let attempt=0;attempt<3;attempt++){
+   const controller=new AbortController();let timer;
+   try{
+    const url=new URL('./'+part.file,import.meta.url);
+    if(attempt)url.searchParams.set('retry',Date.now()+'-'+attempt);
+    const request=(async()=>{
+     const response=await fetch(url,{signal:controller.signal,cache:attempt?'reload':'default'});
+     if(!response.ok)throw Error('HTTP '+response.status);
+     const bytes=new Uint8Array(await response.arrayBuffer());
+     if(!crypto.subtle)throw Error('Secure download verification is unavailable in this browser');
+     const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),b=>b.toString(16).padStart(2,'0')).join('');
+     if(digest!==part.sha256)throw Error('Download verification failed');
+     return bytes;
+    })();
+    const timeout=new Promise((_,reject)=>{timer=setTimeout(()=>{reject(Error('Download timed out after 60 seconds'));controller.abort();},60000);});
+    const bytes=await Promise.race([request,timeout]);
+    window.zercondaBootDownload(++completed,packedParts.length);return bytes;
+   }catch(error){lastError=error;if(stopped)throw error;}
+   finally{clearTimeout(timer);}
+  }
+  throw Error('Could not download game part '+(index+1)+'/'+packedParts.length+' ('+part.file+'): '+(lastError?.message||lastError)+'. Check this computer’s connection or security filtering, then retry.');
+ }
+ async function worker(){while(!stopped&&next<packedParts.length){const index=next++;try{chunks[index]=await downloadPart(packedParts[index],index);}catch(error){stopped=true;throw error;}}}
+ await Promise.all(Array.from({length:Math.min(3,packedParts.length)},()=>worker()));
  window.zercondaBootStage('Unpacking the game');
  const stream=new Blob(chunks).stream().pipeThrough(new DecompressionStream('gzip'));
  const code=await new Response(stream).text(),url=URL.createObjectURL(new Blob([code],{type:'text/javascript'}));
