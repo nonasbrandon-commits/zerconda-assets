@@ -1,0 +1,16 @@
+{
+  "version": 433,
+  "baseCommit": "231a43442e392bb22e83f6439de7a0935d519013",
+  "compiledSha256": "07e7a456226d339af1dabee05066a3672b47e6732ba5fe3fdb50ba9ba6cdba90",
+  "gzipSha256": "1aa18c6dc90b55be9b84dd8d65aa3fbd8479fbb9cf1dc872a230713221dc01db",
+  "chunkCount": 23,
+  "decompressedMatchesCompiled": true,
+  "onlyVenueChange": "Two additional tunnels, existing material batches, four wall collider strips. All other venue source byte-identical.",
+  "embeddedCharacterUnchanged": true,
+  "embeddedCharacterSha256": "2f5364f949a2d9950af6706070b686cabee38337323bc082cd139393a9d717e0",
+  "credentialPatternMatches": 0,
+  "newMediaAssets": [],
+  "privateVideoIncluded": false,
+  "mobileProfileUnchanged": true,
+  "authorization": "User explicitly requested a couple more existing purple-rimmed tunnels around Tag Warehouse. Existing live maintenance publication authorization. Incorporated licensed character unchanged; no standalone model or archive export."
+}

@@ -111,6 +111,14 @@ export function createCanopyVenue(scene,{getPlayer,roadMaterial=null,canEnter=()
  box(6.1,.12,.5,cx,1.77,33.5,m.dark);for(let i=0;i<5;i++){cyl(.13,.13,1.35,cx-2+i,2.66,33.35,m[i%2?'red':'blue']);cyl(.13,.13,.35,cx-2+i,1.82,33.35,m.dark);}box(.9,.55,.08,cx-.7,1.72,30,m.dark);box(.35,.4,.3,cx-.7,1.48,30.1,m.dark);
  for(const s of[-1,1]){const px=cx+s*5.35;box(1.45,.82,1.45,px,G+.41,32.6,m.dark,.1);box(1.48,.03,1.48,px,G+.77,32.6,m.warm,.012);box(1.48,.03,1.48,px,G+.08,32.6,m.warm,.012);box(1.32,.06,1.32,px,G+.83,32.6,m.soil,.02);obstacles.push({x:px,z:32.6,w:1.5,d:1.5,floor:0});for(let j=0;j<28;j++)leafBlade(px,G+.85,32.6,j*2.4,.52+(j%5)*.09,.16,j%4?plantMats.green:plantMats.light,.4+(j%4)*.2);for(let j=0;j<12;j++)leafBlade(px+s*.15,G+.85,32.9,j*Math.PI/6,.38,.10,plantMats.red,1.15);box(.22,.64,.19,px,4.04,34.30,m.dark,.04);cyl(.085,.085,.08,px,4.4,34.22,m.warm);cyl(.085,.085,.08,px,3.69,34.22,m.warm);}}
  }
+ // Extra run-through cover, separated from trees, hideout doors and stairs.
+ const extraTunnels=[{x:-12,z:-20},{x:12,z:-20}];
+ for(const {x,z} of extraTunnels){
+  add(new THREE.CylinderGeometry(1.5,1.5,7,24,1,true),m.rubber,x,G+1.15,z,Math.PI/2);
+  for(let i=0;i<8;i++)add(new THREE.TorusGeometry(1.51,.065,6,24),i===0||i===7?m.violet:m.dark,x,G+1.15,z-3.5+i);
+  for(const edge of[-1,1])obstacles.push({x:x+edge*1.5,z,w:.15,d:7,floor:0});
+ }
+ root.userData.extraTagTunnels=extraTunnels.map(p=>({...p,length:7,width:3,axis:'z'}));
  for(const b of bridges)buildBridge(b);
  const pole={x:0,z:4.2,hole:.95,outer:2.1,pad:1.30};m.chrome=mat('#bac7d3',.20,.90);const dropDeck=new THREE.Shape();dropDeck.absarc(0,0,pole.outer,0,Math.PI*2,false);const dropHole=new THREE.Path();dropHole.absarc(0,0,pole.hole,0,Math.PI*2,true);dropDeck.holes.push(dropHole);add(new THREE.ExtrudeGeometry(dropDeck,{depth:.22,bevelEnabled:false,curveSegments:40}),m.wood,pole.x,U,pole.z,Math.PI/2);add(new THREE.TorusGeometry(pole.outer-.03,.045,8,64),m.dark,0,U-.03,pole.z,Math.PI/2);add(new THREE.TorusGeometry(pole.hole+.035,.04,8,48),m.violet,0,U+.025,pole.z,Math.PI/2);add(new THREE.TorusGeometry(pole.hole+.08,.07,8,48),m.chrome,0,U-.14,pole.z,Math.PI/2);cyl(.04,.04,U+1.85,0,(U+1.85)/2,pole.z,m.chrome);cyl(pole.pad,pole.pad,.12,0,G+.06,pole.z,m.leather);add(new THREE.TorusGeometry(pole.pad-.03,.025,8,48),m.violet,0,G+.045,pole.z,Math.PI/2);for(let i=0;i<24;i++){const a=i/24*Math.PI*2;if(Math.abs(Math.atan2(Math.sin(a+Math.PI/2),Math.cos(a+Math.PI/2)))<.55)continue;const b=a+Math.PI/12,rr=1.99;rail(Math.cos(a)*rr,pole.z+Math.sin(a)*rr,Math.cos(b)*rr,pole.z+Math.sin(b)*rr);if(i%3===0)cyl(.075,.075,.025,Math.cos(a)*1.5,U-.24,pole.z+Math.sin(a)*1.5,m.warm);}
 label('FIRE POLE',1.8,.4,2.4,U+1.3,2.8);
