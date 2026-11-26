@@ -3,7 +3,7 @@ import {stepPedestrianYield} from './pedestrian-traffic.js?v=425';
 import {createNeighborhoodHuman} from './neighborhood-human.js?v=20261124-neighborhood-v316';
 import {poseSeatedResident} from './seated-resident.js?v=20261123-boardwalk-v269';
 import {createPhotographerRoutine} from './photographer-routine.js?v=20261122-photo-v258';
-import {createResidentRoaming} from './resident-roaming.js?v=20261122-private-homes-v214';
+import {createResidentRoaming} from './resident-roaming.js?v=437';
 import {createRealisticHuman} from './player-human.js?v=20261122-clean-hem-v213';
 import * as THREE from 'three';
 import {createResidentHuman} from './resident-human.js?v=20261120-bike-fit-v180';

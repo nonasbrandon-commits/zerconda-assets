@@ -1,0 +1,22 @@
+{
+  "version": 437,
+  "baseCommit": "e1d67e6d5997b42e21e080f49efbbbe443e7e697",
+  "compiledSha256": "ad8b32aa8800dff49150ef1c1a8a561999a47c4d1d632a8e9be1876fc93724e1",
+  "gzipSha256": "087079446e86e0bc484667bd50da7dfc6d954427243015cd5499c66970a480bd",
+  "chunkCount": 23,
+  "decompressedMatchesCompiled": true,
+  "embeddedCharacterUnchanged": true,
+  "embeddedCharacterSha256": "2f5364f949a2d9950af6706070b686cabee38337323bc082cd139393a9d717e0",
+  "credentialPatternMatches": 0,
+  "privateVideoIncluded": false,
+  "newMediaAssets": [],
+  "beachVisitors": {
+    "added": 8,
+    "source": "https://github.com/microsoft/Microsoft-Rocketbox",
+    "license": "MIT; full notice included",
+    "assetPolicy": "Eight distinct already hosted optimized summer-clothing male rigs reused; no new standalone model upload or startup download."
+  },
+  "mobileTextureCapsUnchanged": true,
+  "mobilePixelCeilingUnchanged": true,
+  "authorization": "User asked to finish driving/mobile/people/ground work and explicitly added spiral stair clipping, cab controller map selection, overlapping/stuck people, sunglasses-kiosk walker and eight male beach visitors from online with beach-appropriate clothes. Existing live maintenance publication authorization. Incorporated previously approved licensed character is unchanged, not exported separately. No private recording or raw archive uploaded."
+}

@@ -1,0 +1,5 @@
+Eight additional beach visitors: Arlo, Bennett, Cameron, Devon, Elliot, Grant, Micah and Rafael.
+Source: Microsoft Rocketbox, https://github.com/microsoft/Microsoft-Rocketbox
+Original rigs: Male_Adult_01, Male_Adult_02, Male_Adult_04, Male_Adult_06, Male_Adult_08, Male_Adult_09, Male_Adult_14, Male_Adult_16.
+Game adaptations: existing optimized summer-clothing resident-10,11,12,13,14,15,17,18 GLBs; newly assigned beach journeys. Existing publicly hosted assets are reused, with eight distinct male rigs. No additional media downloads during startup.
+MIT License; see BEACH-CHARACTER-LICENSE-v437.txt for full notice. Existing animation and character credits retained.
