@@ -1,6 +1,6 @@
 import {installMobileBitmapSizing} from './mobile-bitmap-sizing.js?v=427';
 import {installMobileGLTFMemory} from './mobile-gltf-memory.js?v=427';
-import {createCityLawnGeometry} from './golf-ground-joins.js?v=426';
+import {GOLF_LAWN_PARCELS,createCityLawnGeometry} from './golf-ground-joins.js?v=426';
 import {pedestrianSpeedLimit,pedestrianPoseBlocked,requestPedestrianYield} from './pedestrian-traffic.js?v=425';
 import {configureMobileImageDecoding} from './mobile-image-decode.js?v=425';
 import {installVehicleWheelRig,animateVehicleWheels,vehicleWheelStatus} from './vehicle-wheel-animation.js?v=424';
@@ -1912,7 +1912,7 @@ villas.cutGround(mainlandGround);
 await yieldStartup();
 
  // Continuous level grass keeps the real openings into the villa swimming pools.
- {const shape=new THREE.Shape();shape.moveTo(-720,568);shape.lineTo(618,568);shape.lineTo(618,-175);shape.lineTo(-720,-175);shape.closePath();for(const h of villas.homes){const xa=h.x+35.8,xb=h.x+48.2,za=h.z-11.2,zb=h.z+11.2,path=new THREE.Path();path.moveTo(xa,-za);path.lineTo(xa,-zb);path.lineTo(xb,-zb);path.lineTo(xb,-za);path.closePath();shape.holes.push(path);}const g=new THREE.ShapeGeometry(shape),p=g.attributes.position,u=g.attributes.uv;for(let i=0;i<p.count;i++)u.setXY(i,(p.getX(i)+444)/350,(-p.getY(i)+568)/350);g.rotateX(-Math.PI/2);cityLawn.geometry=g;cityLawn.position.set(0,GROUND_LEVEL-.018,0);cityLawn.scale.set(1,1,1);}
+ {const shape=new THREE.Shape();shape.moveTo(-720,568);shape.lineTo(618,568);shape.lineTo(618,-175);shape.lineTo(-720,-175);shape.closePath();for(const [lo,hi] of GOLF_LAWN_PARCELS){const path=new THREE.Path();path.moveTo(240,-lo);path.lineTo(240,-hi);path.lineTo(556,-hi);path.lineTo(556,-lo);path.closePath();shape.holes.push(path);}for(const h of villas.homes){const xa=h.x+35.8,xb=h.x+48.2,za=h.z-11.2,zb=h.z+11.2,path=new THREE.Path();path.moveTo(xa,-za);path.lineTo(xa,-zb);path.lineTo(xb,-zb);path.lineTo(xb,-za);path.closePath();shape.holes.push(path);}const g=new THREE.ShapeGeometry(shape),p=g.attributes.position,u=g.attributes.uv;for(let i=0;i<p.count;i++)u.setXY(i,(p.getX(i)+444)/350,(-p.getY(i)+568)/350);g.rotateX(-Math.PI/2);cityLawn.geometry=g;cityLawn.position.set(0,GROUND_LEVEL-.018,0);cityLawn.scale.set(1,1,1);}
 await yieldStartup();
 
 
@@ -2464,3 +2464,5 @@ export function pedestrianStatus(){return{pedestrians:pedestrianSystem.agents.ma
 function trafficPedestrianActors(){return [...pedestrianSystem.agents,...cityResidents.agents,...(neighborhoodResidents?.agents||[]),...(boardwalkFitness?.agents||[]),...(installedCharacters?.people||[]),...[boardwalkWalker,whiteFitnessWalker,curlyFitnessWalker,curlyBusinessWalker].map(a=>a.trafficActor)].filter(a=>a.group.visible&&!a.vehicle&&!a.staff&&!a.seated&&!a.seat&&a.human?.ready);}
 
 export function pedestrianTrafficStatus(){return trafficPedestrianActors().map(a=>({name:a.group.name,x:a.group.position.x,z:a.group.position.z,walking:!!a.walking}));}
+
+export function mobileResidentStatus(){const describe=list=>list.map(a=>({name:a.profile?.name||a.name,ready:!!a.human.ready,pending:!!a.pending,visible:a.group.visible}));return{primary:describe(pedestrianSystem.agents),city:describe(cityResidents.agents),neighborhood:describe(neighborhoodResidents?.agents||[]),fitness:describe(boardwalkFitness?.agents||[])};}

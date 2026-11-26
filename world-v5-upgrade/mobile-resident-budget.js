@@ -1,0 +1,2 @@
+export function selectMobileResidents(agents,player,limit,radius){return new Set(agents.map(a=>{a.group.updateWorldMatrix(true,false);const e=a.group.matrixWorld.elements,d=Math.hypot(e[12]-player.x,e[14]-player.z);return{a,d,rank:d-(a.human.ready?8:0)};}).filter(x=>x.d<radius).sort((a,b)=>a.rank-b.rank).slice(0,limit).map(x=>x.a));}
+export function releaseMobileResident(a){if(!a.human.ready||a.pending)return;a.human.dispose?.();a.ready=!!a.human.ready;a.group.visible=false;a.walking=false;a.group.userData.walking=false;}
