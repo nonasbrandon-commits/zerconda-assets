@@ -1,3 +1,4 @@
+import {joinGolfPaths} from './golf-ground-joins.js?v=426';
 import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
 import * as THREE from 'three';
 import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
@@ -21,6 +22,7 @@ export function createNineHoleGolf(course,{origin,materials,tree,getPlayer}){
   const mesh=new THREE.Mesh(geo,material);mesh.position.copy(toLocal(x,z,y));mesh.receiveShadow=true;course.add(mesh);turf.push(mesh);return mesh;
  }
  function ribbon(points,width,material,y=.045,closed=false){
+  if(material!==fairway)y=.02;
   const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>toLocal(x,z,y)),closed,'centripetal');
   const vertices=[],uv=[],indices=[],steps=Math.max(80,points.length*16);
   for(let i=0;i<=steps;i++){
@@ -36,8 +38,8 @@ export function createNineHoleGolf(course,{origin,materials,tree,getPlayer}){
  }
  // The entire marked eastern reserve becomes golf land; city streets remain separate.
  for(const [lo,hi] of [[-265,-113],[-79,-17],[17,79],[113,166]]){
-  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(316,hi-lo),rough);
-  mesh.rotation.x=-Math.PI/2;mesh.position.copy(toLocal(398,(lo+hi)/2,.012));mesh.receiveShadow=true;course.add(mesh);turf.push(mesh);
+  const mesh=new THREE.Mesh(new THREE.PlaneGeometry(316,hi-lo,27,Math.ceil((hi-lo)/12)),rough);
+  mesh.rotation.x=-Math.PI/2;mesh.position.copy(toLocal(398,(lo+hi)/2,.002));mesh.receiveShadow=true;course.add(mesh);turf.push(mesh);
  }
  const holeSpecs=[];
  for(let row=0;row<3;row++)for(let col=0;col<3;col++){
@@ -89,7 +91,8 @@ export function createNineHoleGolf(course,{origin,materials,tree,getPlayer}){
  // Paths follow the rough beside each fairway and reach every green, as well as every tee.
  for(const h of holeSpecs){const [tx,tz]=h.tee,[px,pz]=h.pin,cx=291+((h.number-1)%3)*96,side=cx+37,fromZ=h.number<4?-258:h.number<7?-18:18;const points=[[tx,fromZ],[side,fromZ],[side,(tz+pz)/2],[side,pz],[px+16,pz]];ribbon(points,3.2,edging,.078);ribbon(points,2.7,stone,.084);}
  // Clip paving and all turf at each road boundary, retaining visible asphalt crossings.
- for(const mesh of turf)trimGolfGround(mesh,origin.z,mesh.userData.golfPath?13.5:16.5);
+ for(const mesh of turf)trimGolfGround(mesh,origin.z,mesh.userData.golfPath?14:16.5);
+ const groundJoins=joinGolfPaths(turf,stone,origin);
  // Trees form a natural boundary rather than a row through the playing corridors.
  for(const xx of [242,337,433,551])for(const zz of [-225,-184,-143,-48,48,141]){
   if(xx===337&&zz===-143)continue;
@@ -125,6 +128,6 @@ export function createNineHoleGolf(course,{origin,materials,tree,getPlayer}){
  const floorCells=new Map(),cellSize=8;
  for(const mesh of turf){mesh.updateMatrix();const geo=mesh.geometry.index?mesh.geometry.toNonIndexed():mesh.geometry,p=geo.getAttribute('position');for(let i=0;i<p.count;i+=3){const a=new THREE.Vector3().fromBufferAttribute(p,i).applyMatrix4(mesh.matrix),b=new THREE.Vector3().fromBufferAttribute(p,i+1).applyMatrix4(mesh.matrix),c=new THREE.Vector3().fromBufferAttribute(p,i+2).applyMatrix4(mesh.matrix);const area=(b.x-a.x)*(c.z-a.z)-(b.z-a.z)*(c.x-a.x);if(Math.abs(area)<1e-8)continue;const tri={a,b,c,area};for(let ix=Math.floor(Math.min(a.x,b.x,c.x)/cellSize);ix<=Math.floor(Math.max(a.x,b.x,c.x)/cellSize);ix++)for(let iz=Math.floor(Math.min(a.z,b.z,c.z)/cellSize);iz<=Math.floor(Math.max(a.z,b.z,c.z)/cellSize);iz++){const key=ix+','+iz,list=floorCells.get(key)||[];list.push(tri);floorCells.set(key,list);}}}
  function heightAt(wx,wz){const x=wx-origin.x,z=wz-origin.z,list=floorCells.get(Math.floor(x/cellSize)+','+Math.floor(z/cellSize))||[];let height=null;for(const {a,b,c,area}of list){const u=((x-a.x)*(c.z-a.z)-(z-a.z)*(c.x-a.x))/area,v=((b.x-a.x)*(z-a.z)-(b.z-a.z)*(x-a.x))/area;if(u>=-1e-6&&v>=-1e-6&&u+v<=1.000001)height=Math.max(height??-1,a.y+u*(b.y-a.y)+v*(c.y-a.y));}return height;}
- return {holes:holeSpecs,cartCurve,pathCurves,heightAt,update,routeLength:cartCurve.getLength(),groundMeshes:turf};
+ return {groundJoins,holes:holeSpecs,cartCurve,pathCurves,heightAt,update,routeLength:cartCurve.getLength(),groundMeshes:turf};
 }
 

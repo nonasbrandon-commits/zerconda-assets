@@ -1,0 +1,14 @@
+{
+  "version": 426,
+  "baseCommit": "95cefad43dd44b96744e37157c154f0436c4a74e",
+  "compiledSha256": "1e2ead6ab6308f879ca2f02c78bcf413b05af93abaf26b7cfebff24effdd3461",
+  "gzipSha256": "84184997fcfe2a85f7f8b5d9ab75309000264c0bd1be2e0d2a004daa448783b1",
+  "chunkCount": 23,
+  "decompressedMatchesCompiled": true,
+  "embeddedCharacterUnchanged": true,
+  "embeddedCharacterSha256": "2f5364f949a2d9950af6706070b686cabee38337323bc082cd139393a9d717e0",
+  "credentialPatternMatches": 0,
+  "newExternalMediaAssets": false,
+  "newData": "Indexed golf ground geometry derived only from existing public authored course, prepared offline; runtime has no new third-party library.",
+  "authorization": "Existing public game repair/publication scope; user approve/approved persists. Same already-approved licensed compiled character; no standalone GLB/texture/archive export."
+}

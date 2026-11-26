@@ -158,7 +158,7 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48,getPlayer}={}){
   for(const state of movingCarts){
    state.distance=(state.distance+state.speed*dt)%layout.routeLength;
    const t=state.distance/layout.routeLength,p=layout.cartCurve.getPointAt(t),direction=layout.cartCurve.getTangentAt(t);
-   state.cart.position.set(p.x,.07,p.z);state.cart.rotation.y=Math.atan2(-direction.x,-direction.z);
+   state.cart.position.set(p.x,.01,p.z);state.cart.rotation.y=Math.atan2(-direction.x,-direction.z);
   }
  }
  return {root,clubhouse:club,movingCarts,center:{x,z},holes:9,residentialBuildings:0,layout,groves,heightAt:layout.heightAt,bounds:{minX:240,maxX:556,minZ:-265,maxZ:166},update};

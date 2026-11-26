@@ -1,3 +1,4 @@
+import {createCityLawnGeometry} from './golf-ground-joins.js?v=426';
 import {pedestrianSpeedLimit,pedestrianPoseBlocked,requestPedestrianYield} from './pedestrian-traffic.js?v=425';
 import {configureMobileImageDecoding} from './mobile-image-decode.js?v=425';
 import {installVehicleWheelRig,animateVehicleWheels,vehicleWheelStatus} from './vehicle-wheel-animation.js?v=424';
@@ -640,7 +641,7 @@ const mainlandGround=box(1250,.18,1180,165,-.28,-425,grass);
 await yieldStartup();
 
 // Keep the lawn below flush pavement rather than relying on depth bias.
-const cityLawn=box(1014,.12,743,63,GROUND_LEVEL-.078,-196.5,grass);
+const cityLawn=new THREE.Mesh(createCityLawnGeometry(GROUND_LEVEL-.018),grass);cityLawn.name="City lawn · golf parcels excluded";cityLawn.receiveShadow=true;scene.add(cityLawn);
 await yieldStartup();
 cityLawn.userData.startupEssential=true;
 await yieldStartup();
