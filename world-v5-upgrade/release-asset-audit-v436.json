@@ -1,0 +1,11 @@
+{
+  "version": 436,
+  "entryOnly": true,
+  "runtimeVersion": 433,
+  "runtimeManifestUnchanged": true,
+  "newMediaAssets": [],
+  "credentialPatternMatches": 0,
+  "privateVideoIncluded": false,
+  "authorization": "Repair user-reported stuck loading screen. Existing approved live maintenance scope. Entry-only syntax/text repair; no compiled chunks, private recording or standalone character/model upload.",
+  "entrySha256": "701bcc5140bb4ebe3e65bf93f6a76e20f0dc8f8771ff0bc3808bb4dd6f531365"
+}
