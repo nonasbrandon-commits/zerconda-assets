@@ -1,3 +1,5 @@
+import {loadSharedHumanAssets} from './shared-human-assets.js?v=423';
+import {waitForNearbyHuman} from './nearby-human-memory.js?v=423';
 import {humanStep} from "./human-runtime-budget.js?v=20261125-no-hats-v421";
 import {createSunglasses} from './sunglasses-styles.js?v=20261124-boardwalk-v314';
 import {fitHeroClothing} from './hero-clothing-fit.js?v=20261122-shirt-mask-v219';
@@ -16,13 +18,8 @@ const outfitCache=new Map();
 let footContactTexture;
 function contactTexture(){if(footContactTexture)return footContactTexture;const c=document.createElement('canvas');c.width=c.height=64;const a=c.getContext('2d'),g=a.createRadialGradient(32,32,2,32,32,31);g.addColorStop(0,'rgba(18,25,20,.8)');g.addColorStop(.45,'rgba(18,25,20,.45)');g.addColorStop(1,'rgba(18,25,20,0)');a.fillStyle=g;a.fillRect(0,0,64,64);return footContactTexture=new THREE.CanvasTexture(c);}
 
-function source(){
- if(!sourcePromise){
-  const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
-  sourcePromise=Promise.all(['human.glb','idle.glb','walk.glb','run.glb','dance.glb'].map(file=>loader.loadAsync(new URL(file,BASE).href)));
- }
- return sourcePromise;
-}
+function source(){return loadSharedHumanAssets();}
+
 function colorClothes(mesh,shirt,pants,options={}){
  if(mesh.userData.wardrobeBase)mesh.material=mesh.userData.wardrobeBase;else mesh.userData.wardrobeBase=mesh.material;
  const hero=/Main character original clothing/i.test(mesh.material.name);if(!/body|Main character original clothing/i.test(mesh.material.name)||!mesh.material.map?.image)return;
@@ -110,7 +107,7 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
   for(const {foot,mesh}of contacts){mesh.visible=!seated&&!options.driving&&!options.skating&&!options.dancing;if(!mesh.visible)continue;const p=foot.getWorldPosition(new THREE.Vector3()),lift=Math.max(0,p.y-groundY-.09);mesh.material.opacity=.34*THREE.MathUtils.clamp(1-lift/.35,0,1);const target=root.worldToLocal(new THREE.Vector3(p.x,groundY+.012,p.z));mesh.position.copy(target);mesh.scale.set(.36+lift*.2,.5+lift*.2,1);}
  }};
  controller.dispose=()=>{mixer?.stopAllAction();hairRig?.clear();const geos=new Set(),mats=new Set(),textures=new Set();root.traverse(o=>{if(!o.isMesh)return;geos.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material]){mats.add(m);for(const v of Object.values(m))if(v?.isTexture)textures.add(v);}});geos.forEach(g=>g.dispose());mats.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());root.clear();ready=false;};
- controller.readyPromise=Promise.all([source(),(modelFile||modelUrl)?new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(new URL(modelUrl||('../realistic-assets/characters/residents/'+modelFile),import.meta.url).href):Promise.resolve(null)]).then(([bundle,alternate])=>{let [character,idle,walk,run,dance]=bundle;if(alternate){character=alternate;[idle,walk,run,dance]=[idle,walk,run,dance].map(g=>({animations:g.animations.map(c=>{const copy=c.clone();copy.tracks=copy.tracks.filter(t=>t.name.endsWith('.quaternion'));return copy;})}));}
+ controller.readyPromise=waitForNearbyHuman(root).then(()=>Promise.all([source(),(modelFile||modelUrl)?new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(new URL(modelUrl||('../realistic-assets/characters/residents/'+modelFile),import.meta.url).href):Promise.resolve(null)])).then(([bundle,alternate])=>{let [character,idle,walk,run,dance]=bundle;if(alternate){character=alternate;[idle,walk,run,dance]=[idle,walk,run,dance].map(g=>({animations:g.animations.map(c=>{const copy=c.clone();copy.tracks=copy.tracks.filter(t=>t.name.endsWith('.quaternion'));return copy;})}));}
   character.scene.updateMatrixWorld(true);
   const model=cloneSkeleton(character.scene);model.updateMatrixWorld(true);
   const bounds=new THREE.Box3().setFromObject(model,true),size=bounds.getSize(new THREE.Vector3());

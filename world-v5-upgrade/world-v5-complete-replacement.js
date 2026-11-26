@@ -1,3 +1,6 @@
+import {createMobileGeometryMemory} from './mobile-geometry-memory.js?v=423';
+import {mobileGeometryStatus} from './mobile-geometry-compact.js?v=423';
+import {sceneMemoryReport} from './scene-memory-report.js?v=423';
 import {createCarCameraViews} from './car-camera-views.js?v=422';
 import {installStartupTextureMemory} from './startup-texture-memory.js?v=421';
 import {requestHornYield} from './traffic-horn-yield.js?v=421';
@@ -175,7 +178,7 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261121
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261123-town-v282';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const BOOT=stage=>globalThis.zercondaBootStage?.(stage);const requestedGraphics=new URLSearchParams(location.search).get('graphics');let LOW_GRAPHICS=requestedGraphics==='low'||requestedGraphics!=='normal'&&matchMedia('(pointer:coarse)').matches;const startupImageMemory=matchMedia('(pointer:coarse)').matches?installStartupTextureMemory({limit:512}):()=>({resized:0,bytesAvoided:0});if(LOW_GRAPHICS)globalThis.zercondaBootGraphics?.('reduced (mobile)');const RECOVERY_PLAZA=new URLSearchParams(location.search).get('resume')==='0';BOOT('Creating the scene');
+const BOOT=stage=>globalThis.zercondaBootStage?.(stage);const requestedGraphics=new URLSearchParams(location.search).get('graphics');let LOW_GRAPHICS=requestedGraphics==='low'||requestedGraphics!=='normal'&&matchMedia('(pointer:coarse)').matches;const startupImageMemory=matchMedia('(pointer:coarse)').matches?installStartupTextureMemory({limit:256}):()=>({resized:0,bytesAvoided:0});if(LOW_GRAPHICS)globalThis.zercondaBootGraphics?.('reduced (mobile)');const RECOVERY_PLAZA=new URLSearchParams(location.search).get('resume')==='0';BOOT('Creating the scene');
 const cameraClearance=createCameraClearance();
 await yieldStartup();
 
@@ -211,6 +214,8 @@ const status=document.getElementById('status');
 await yieldStartup();
 
 const scene=new THREE.Scene();
+const mobileGeometryMemory=createMobileGeometryMemory(scene,()=>globalThis.zercondaViewerPosition,{enabled:matchMedia('(pointer:coarse)').matches});
+globalThis.zercondaCompactStartup=()=>{mobileGeometryMemory.scan();return mobileGeometryMemory.status();};
 await yieldStartup();
 scene.background=new THREE.Color(0x8eb7d3);
 await yieldStartup();
@@ -2106,7 +2111,7 @@ await yieldStartup();
 function updateAreaLoading(){} // Startup is covered by the screenshot loading screen.
 let elapsed=0,townEntered=false,paintedFrame=false;
 await yieldStartup();
-let exteriorRef=null;const outdoorVisibility=createOutdoorVisibility(scene,{smallDetailDistance:MOBILE||LOW_GRAPHICS?35:50,textureLimit:MOBILE||LOW_GRAPHICS?512:1024,continuity:{update:()=>exteriorRef?.update(),install:c=>exteriorRef?.install(c),highEnd:MOBILE||LOW_GRAPHICS?120:185,stats:()=>exteriorRef?.stats()||{}},getPlayer:()=>player,isInside:()=>freeApartments?.mode==='home'||!!gunStore?.active||!!hospital?.active||!!canopyVenue?.active||(!!cityview?.active&&!cityview.balcony)});
+let exteriorRef=null;const outdoorVisibility=createOutdoorVisibility(scene,{distance:MOBILE||LOW_GRAPHICS?75:150,smallDetailDistance:MOBILE||LOW_GRAPHICS?35:50,textureLimit:MOBILE||LOW_GRAPHICS?512:1024,continuity:{update:()=>exteriorRef?.update(),install:c=>exteriorRef?.install(c),highEnd:MOBILE||LOW_GRAPHICS?70:185,stats:()=>exteriorRef?.stats()||{}},getPlayer:()=>player,isInside:()=>freeApartments?.mode==='home'||!!gunStore?.active||!!hospital?.active||!!canopyVenue?.active||(!!cityview?.active&&!cityview.balcony)});
 const renderBudget=createRenderBudget(scene,{getPlayer:()=>player,getCamera:()=>camera,getHeight:()=>avatar.position.y,mobile:MOBILE||LOW_GRAPHICS,quality:LOW_GRAPHICS?'low':playerMenu.state.quality,isApartmentInterior:()=>!!freeApartments?.active||!!gunStore?.active||!!hospital?.active||!!canopyVenue?.active||(!!cityview?.active&&!cityview.balcony)});
 graphicsEngine=createRenderingUpgrade({scene,camera,renderer,sun,getPlayer:()=>player,getGround:groundHeightAt,mobile:MOBILE,initialQuality:LOW_GRAPHICS?'low':playerMenu.state.quality,onAdaptiveBudget:q=>renderBudget.setQuality(q),isInterior:()=>!!freeApartments?.active||!!hospital?.active||!!gunStore?.active||!!cityview?.active});graphicsEngine.configureLoader(loader);const exteriorContinuity=createExteriorContinuity(scene,{getPlayer:()=>player,mobile:MOBILE||LOW_GRAPHICS,cloudSky,loadTexture:url=>graphicsEngine.loadCompressedTexture(url)});exteriorRef=exteriorContinuity;addEventListener('resize',()=>graphicsEngine?.resize());
 await yieldStartup();
@@ -2154,7 +2159,7 @@ function animate(){
  rvPark.update(dt);
  carnival.update(dt);
  if(!apartmentInteriorActive)townObstacles.update(dt);
- if(!apartmentInteriorActive)signBacks?.update(dt);mobilePerformance.update(dt);
+ if(!apartmentInteriorActive)signBacks?.update(dt);mobilePerformance.update(dt);mobileGeometryMemory.scan();
  airfield.update(dt);
  skate.update(dt);
  office.update(motionDt);
@@ -2403,8 +2408,9 @@ const startupTextureBudget=await budgetWorldTextures(scene,{limit:MOBILE||LOW_GR
 BOOT('Preparing nearby visibility');
 await outdoorVisibility.prepareInitial();
 BOOT('Preparing real building exteriors');await exteriorContinuity.prepare();
-const startupRenderPreparation=await prepareWorldRendering(scene,renderer,camera,{player,radius:MOBILE||LOW_GRAPHICS?140:220,onProgress:(done,total)=>BOOT('Preparing scenery '+done+'/'+total)});
+const startupRenderPreparation=await prepareWorldRendering(scene,renderer,camera,{player,radius:MOBILE||LOW_GRAPHICS?75:220,onProgress:(done,total)=>BOOT('Preparing scenery '+done+'/'+total)});
 const shoreRecovery=needleSportsPark?.garden.recoverPoint(player.x,player.z);if(shoreRecovery){player.x=shoreRecovery.x;player.z=shoreRecovery.z;}
+mobileGeometryMemory.scan({force:true});
 BOOT('Preparing the first render');graphicsEngine.render();await yieldStartup();
 startWorld();
 await yieldStartup();
@@ -2431,3 +2437,5 @@ export function exteriorStatus(){return{...outdoorVisibility.stats(),cameraFar:c
 
 
 export function mirrorStatus(){const m=gunStore.mirror;return{captures:m.captures,bound:m.glass.material.uniforms.tDiffuse.value===m.glass.getRenderTarget().texture,visible:m.glass.visible,resolution:m.resolution};}
+
+export function memoryStatus(){return {...sceneMemoryReport(scene,renderer),compaction:mobileGeometryStatus(),geometryMemory:mobileGeometryMemory.status()};}

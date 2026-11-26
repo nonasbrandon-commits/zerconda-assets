@@ -1,3 +1,5 @@
+import {loadSharedHumanAssets} from './shared-human-assets.js?v=423';
+import {waitForNearbyHuman} from './nearby-human-memory.js?v=423';
 import {humanStep} from "./human-runtime-budget.js?v=20261125-no-hats-v421";
 import {scheduleNpcSetup} from './npc-startup-queue.js?v=20261121-fast-start-v205';
 import {createHairCustomizer} from './hair-styles.js?v=20261117-style-cuts-v88';
@@ -13,13 +15,8 @@ const outfitCache=new Map(),garmentRegions=new WeakMap();
 let footContactTexture;
 function contactTexture(){if(footContactTexture)return footContactTexture;const c=document.createElement('canvas');c.width=c.height=64;const a=c.getContext('2d'),g=a.createRadialGradient(32,32,2,32,32,31);g.addColorStop(0,'rgba(18,25,20,.8)');g.addColorStop(.45,'rgba(18,25,20,.45)');g.addColorStop(1,'rgba(18,25,20,0)');a.fillStyle=g;a.fillRect(0,0,64,64);return footContactTexture=new THREE.CanvasTexture(c);}
 
-function source(){
- if(!sourcePromise){
-  const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
-  sourcePromise=Promise.all(['human.glb','idle.glb','walk.glb','run.glb','dance.glb'].map(file=>loader.loadAsync(new URL(file,BASE).href)));
- }
- return sourcePromise;
-}
+function source(){return loadSharedHumanAssets();}
+
 function colorClothes(mesh,shirt,pants,options={}){
  if(mesh.userData.wardrobeBase)mesh.material=mesh.userData.wardrobeBase;else mesh.userData.wardrobeBase=mesh.material;
  if(!/body/i.test(mesh.material.name)||!mesh.material.map?.image)return;
@@ -106,7 +103,7 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
   root.updateWorldMatrix(true,true);const groundY=root.parent?.getWorldPosition(parentPoint).y||0;
   for(const {foot,mesh}of contacts){mesh.visible=!seated&&!options.driving&&!options.skating&&!options.dancing;if(!mesh.visible)continue;const p=foot.getWorldPosition(new THREE.Vector3()),lift=Math.max(0,p.y-groundY-.09);mesh.material.opacity=.34*THREE.MathUtils.clamp(1-lift/.35,0,1);const target=root.worldToLocal(new THREE.Vector3(p.x,groundY+.012,p.z));mesh.position.copy(target);mesh.scale.set(.36+lift*.2,.5+lift*.2,1);}
  }};
- controller.readyPromise=source().then(bundle=>scheduleNpcSetup(()=>{const [character,idle,walk,run,dance]=bundle;
+ controller.readyPromise=waitForNearbyHuman(root).then(()=>source()).then(bundle=>scheduleNpcSetup(()=>{const [character,idle,walk,run,dance]=bundle;
   character.scene.updateMatrixWorld(true);
   const model=cloneSkeleton(character.scene);model.updateMatrixWorld(true);
   const bounds=new THREE.Box3().setFromObject(model,true),size=bounds.getSize(new THREE.Vector3());

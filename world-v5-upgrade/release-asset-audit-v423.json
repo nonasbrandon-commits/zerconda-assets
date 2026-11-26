@@ -1,0 +1,9 @@
+{
+  "version": 423,
+  "baseCommit": "4bebbe96b6958ca6e766f17d705846f5e9dfa68b",
+  "existingLicensedCharacterSHA256": "2f5364f949a2d9950af6706070b686cabee38337323bc082cd139393a9d717e0",
+  "newExternalAssets": [],
+  "licensedCharacterChanged": false,
+  "standaloneLicensedAssetsPublished": false,
+  "scope": "Mobile memory reduction and requested daily weather range; v422 gameplay retained. Existing approved compiled game character and credits retained."
+}
