@@ -1,5 +1,5 @@
 export const AREA_DESTINATIONS=[
- {id:'services-alley',name:'Services / Z Tattoo Alley',group:'Town & shops',x:-374.5,z:-26},
+ {id:'services-alley',name:'Services / Z Tattoo Alley',group:'Town & shops',x:-373.52,z:-26},
  {id:'plaza-alley',name:'Town Plaza East Alley',group:'Town & shops',x:76,z:58},
  {id:'west-alley',name:'West Extension Service Alley',group:'Town & shops',x:-398,z:52},
  {id:'boardwalk-alley',name:'Beach Cottage Rear Alley',group:'Town & shops',x:-48,z:158},

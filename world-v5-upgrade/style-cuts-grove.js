@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {loadStreetTree} from './street-tree-assets.js?v=20261121-fast-start-v205';
 import {optimizeStaticModel} from './static-model-batching.js?v=20261121-tree-geometry-v209';
 import {upgradePineMeshes} from './realistic-forest-pines.js?v=20261121-forest-airfield-v193';
-export const STYLE_CUTS_TRAIL_POINTS=[[-110,-48],[-265,-48],[-310,-44],[-404,-44]];
+export const STYLE_CUTS_TRAIL_POINTS=[[-110,-48],[-265,-48],[-310,-44],[-358.3,-44]];
 export const STYLE_CUTS_GROVE_TREES=[{x:-122,z:-75,height:21,kind:'pine'},{x:-116,z:-70,height:8,kind:'small'},{x:-123,z:-64,height:8.5,kind:'small'},{x:-117,z:-59,height:18,kind:'pine'},{x:-123,z:-57,height:7,kind:'small'},{x:-116,z:-38,height:8,kind:'small'},{x:-123,z:-35,height:22,kind:'pine'},{x:-116,z:-29,height:7.5,kind:'small'},{x:-123,z:-23,height:19,kind:'pine'},{x:-116,z:-19,height:7.5,kind:'small'},{x:-124,z:-71,height:7,kind:'small'},{x:-124,z:-30,height:8,kind:'small'}];
 const distance=(x,z,a,b)=>{const dx=b[0]-a[0],dz=b[1]-a[1],t=THREE.MathUtils.clamp(((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz),0,1);return Math.hypot(x-a[0]-dx*t,z-a[1]-dz*t)};
 export function createStyleCutsGrove(scene){const root=new THREE.Group();root.name='Style Cuts Grove · medium trees and tall forest pines';root.userData.customInterior=true;scene.add(root);
