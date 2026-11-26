@@ -1,0 +1,14 @@
+{
+  "version": 427,
+  "baseCommit": "c3479afdf1d4f9913a2d0536e23adf7fae3a18ce",
+  "compiledSha256": "d393dd37da0074638e7c802209c40a801975f69e85f2b4f84f8a1ee8cb73b598",
+  "gzipSha256": "a73567016feb314ebcad1e875c4bad3f20a78e00adfd2dcbdc93496d0603c063",
+  "chunkCount": 23,
+  "decompressedMatchesCompiled": true,
+  "embeddedCharacterUnchanged": true,
+  "embeddedCharacterSha256": "2f5364f949a2d9950af6706070b686cabee38337323bc082cd139393a9d717e0",
+  "credentialPatternMatches": 0,
+  "newExternalMediaAssets": false,
+  "privateVideoIncluded": false,
+  "authorization": "Existing approved public game repair/publication scope. Same previously approved licensed compiled character; no standalone GLB, texture or archive export. User recording used locally for diagnosis only and excluded from release."
+}

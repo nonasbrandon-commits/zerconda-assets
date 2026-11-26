@@ -1,3 +1,5 @@
+import {installMobileBitmapSizing} from './mobile-bitmap-sizing.js?v=427';
+import {installMobileGLTFMemory} from './mobile-gltf-memory.js?v=427';
 import {createCityLawnGeometry} from './golf-ground-joins.js?v=426';
 import {pedestrianSpeedLimit,pedestrianPoseBlocked,requestPedestrianYield} from './pedestrian-traffic.js?v=425';
 import {configureMobileImageDecoding} from './mobile-image-decode.js?v=425';
@@ -182,7 +184,8 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261121
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261123-town-v282';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const BOOT=stage=>globalThis.zercondaBootStage?.(stage);const requestedGraphics=new URLSearchParams(location.search).get('graphics');let LOW_GRAPHICS=requestedGraphics==='low'||requestedGraphics!=='normal'&&matchMedia('(pointer:coarse)').matches;const startupImageDecoding=await configureMobileImageDecoding();
+const BOOT=stage=>globalThis.zercondaBootStage?.(stage);const requestedGraphics=new URLSearchParams(location.search).get('graphics');let LOW_GRAPHICS=requestedGraphics==='low'||requestedGraphics!=='normal'&&matchMedia('(pointer:coarse)').matches;const startupGLTFMemory=installMobileGLTFMemory();const startupBitmapSizing=installMobileBitmapSizing({limit:256});
+const startupImageDecoding=await configureMobileImageDecoding();
 const startupImageMemory=matchMedia('(pointer:coarse)').matches?installStartupTextureMemory({limit:256}):()=>({resized:0,bytesAvoided:0});if(LOW_GRAPHICS)globalThis.zercondaBootGraphics?.('reduced (mobile)');const RECOVERY_PLAZA=new URLSearchParams(location.search).get('resume')==='0';BOOT('Creating the scene');
 const cameraClearance=createCameraClearance();
 await yieldStartup();
@@ -1084,14 +1087,18 @@ club=createClubZerconda(scene,{
 await yieldStartup();
 
 BOOT('Building the hospital and apartments');
+BOOT('Preparing apartment exteriors');await new Promise(resolve=>setTimeout(resolve,0));
 brickApartments=createBrickApartmentsExterior(scene,{walkMaterial:paving,lobbyOpening:true});venueAccessRoads=createVenueAccessRoads(scene,{asphalt,paving,curb});
+BOOT('Preparing the tag warehouse');await new Promise(resolve=>setTimeout(resolve,0));
 canopyVenue=createCanopyVenue(scene,{roadMaterial:asphalt,getPlayer:()=>player,onFace:heading=>{yaw=heading;},registerAction:registerTownAction,stopMovement:()=>{keys.clear();movement.vx=0;movement.vz=0;movement.wheelImpulse=0;sittingSeat=null;},canEnter:()=>!activeCar&&!scooters?.riding&&!powersports?.riding&&!marine?.riding});
 await yieldStartup();
 
 venueRenderIsolation=createVenueRenderIsolation(scene,{isInside:()=>freeApartments?.mode==='home'||!!gunStore?.active||!!hospital?.active||!!canopyVenue?.active||(!!cityview?.active&&!cityview.balcony),getKeep:()=>freeApartments?.mode==='home'?[freeApartments.root,avatar,...(freeApartments.mode==='lobby'?[brickApartments.root]:[])]:gunStore?.active?[gunStore.root,avatar,...(gunGame?.renderRoots||[]),...scene.children.filter(n=>/sky|cloud|mountain backdrop|alpine horizon/i.test(n.name))]:hospital?.active?[hospital.root,avatar,...scene.children.filter(n=>/sky|cloud|mountain backdrop|alpine horizon/i.test(n.name))]:cityview?.active?[cityview.renderRoot,cityview.exterior,avatar,...scene.children.filter(n=>/sky|cloud|mountain backdrop|alpine horizon/i.test(n.name))]:[canopyVenue?.root,canopyVenue?.access,avatar],getContext:()=>canopyVenue?.active?canopyVenue.context:null,getFillLights:()=>canopyVenue?.renderFillLights||[],getLightBudget:()=>renderBudget.stats(),maxPointLights:MOBILE?2:4,maxSpotLights:1});
 southBeach=createZercondaBeach(scene,{prepareModel:prepareScenery,roadMaterial:asphalt,roadCenters:[-418,...roadLines]});
 beachKate=createBeachKate(scene,{beach:southBeach,getPlayer:()=>player});
+BOOT('Preparing the hospital');await new Promise(resolve=>setTimeout(resolve,0));
 hospital=createZercondaHospital(scene,{walkMaterial:paving,getPlayer:()=>player,roadMaterial:asphalt,canEnter:()=>!activeCar&&!scooters?.riding&&!powersports?.riding&&!marine?.riding});
+BOOT('Preparing the gun store');await new Promise(resolve=>setTimeout(resolve,0));
 gunStore=createGunsAmmoStore(scene,{getPlayer:()=>player,roadMaterial:asphalt,canEnter:()=>!activeCar&&!scooters?.riding&&!powersports?.riding&&!marine?.riding});
 
 await yieldStartup();
@@ -1953,16 +1960,20 @@ boardwalkFitness=createBoardwalkFitness(scene,{getPlayer:()=>player,canWalk:walk
 const fountainResident=createFountainResident(scene,{getPlayer:()=>player,getHeight:standingHeightAt,getSeat:()=>realisticPlaza?.seats?.[4]||null});fountainResident.group.name='Kate · seated fountain visitor';fountainResident.group.userData.npcIdentity='Kate';
 const kateConversation=createKateConversation({getPlayer:()=>player,getKate:()=>fountainResident,canTalk:()=>!activeCar&&!zCabs?.riding&&!playerMenu?.panelOpen&&!cityMap.expanded});
 BOOT('Preparing forest detail');
+BOOT('Preparing forest ground cover');await new Promise(resolve=>setTimeout(resolve,0));
 const forestGroundCover=createForestGroundCover(scene,{getPlayer:()=>player,getRoadPolygons:()=>roadMap.polygons,getForestSegments:()=>[...(northernForest?.segments||[]),...(camp?.trailSegments||[]).map(([ax,az,bx,bz])=>({ax,az,bx,bz,width:3.2}))],getHeight:()=>.02,mobile:MOBILE||LOW_GRAPHICS});
 await yieldStartup();
+BOOT('Preparing military grounds');await new Promise(resolve=>setTimeout(resolve,0));
 militaryBase=createMilitaryBase(scene,{getPlayer:()=>player,hasClearance:militaryAccess.hasClearance,onAccessRequest:militaryAccess.request,onStop:()=>{keys.clear();townControls.stop();movement.vx=movement.vz=0;},canUseTower:()=>!adminTransport?.active&&!activeCar&&!zCabs?.riding,onTeleport:(x,y,z)=>{player.x=x;player.z=z;keys.clear();townControls.stop();movement.vx=movement.vz=0;yaw=0;pitch=0;avatar.position.set(x,y,z);camera.position.set(x,y+1.68,z);},onMessage:m=>townControls.notify(m),onReject:(x,z)=>{player.x=x;player.z=z;movement.vx=0;movement.vz=0;keys.clear();townControls.stop();}});
 await yieldStartup();
 signBacks=createSignBackMaintenance(scene);
 await yieldStartup();
+BOOT('Preparing sign surfaces');await new Promise(resolve=>setTimeout(resolve,0));
 signBacks.scan();
 await yieldStartup();
 mobilePerformance=createMobilePerformance({scene,renderer,getPlayer:()=>player,mobile:MOBILE||LOW_GRAPHICS});
 await yieldStartup();
+BOOT('Preparing mobile texture memory');await new Promise(resolve=>setTimeout(resolve,0));
 mobilePerformance.scan();
 await yieldStartup();
 
@@ -2422,7 +2433,7 @@ startWorld();
 await yieldStartup();
 
 
-export function startupStatus(){return{warehouseParkingSpaces:scene.getObjectByName('Tag Warehouse visitor parking · 37 marked bays')?.userData.parkingSpaces||0,carCameraView:carCameraViews.label,startupImageDecoding,startupImageMemory:startupImageMemory(),characterPreparation:startupCharacterSetup,texturePreparation:startupTextureBudget,renderPreparation:startupRenderPreparation,graphics:LOW_GRAPHICS?'low':'normal',recoveryPlaza:RECOVERY_PLAZA,entered:townEntered,painted:paintedFrame,characterReady:realisticPlayer.ready,fallbackVisible:fallbackPlayer.root.visible,loadingArea:!playable,playable,player:{x:player.x,z:player.z,yaw,pitch},sceneryStarted,sceneryComplete:sceneryFinished,nearbySceneryReady,trafficCount:ambientTraffic?.vehicles.length||0,referenceTruckCount:cars.filter(c=>c.referenceTruck).length,houseShadows:houseSunShadows.stats(),renderPixelRatio:renderer.getPixelRatio(),...shaderWarmup.stats(),...renderBudget.stats(),...outdoorVisibility.stats(),graphicsQuality:graphicsEngine?.stats()};}
+export function startupStatus(){return{warehouseParkingSpaces:scene.getObjectByName('Tag Warehouse visitor parking · 37 marked bays')?.userData.parkingSpaces||0,carCameraView:carCameraViews.label,startupImageDecoding,startupBitmapSizing:startupBitmapSizing(),startupGLTFMemory:startupGLTFMemory(),startupImageMemory:startupImageMemory(),characterPreparation:startupCharacterSetup,texturePreparation:startupTextureBudget,renderPreparation:startupRenderPreparation,graphics:LOW_GRAPHICS?'low':'normal',recoveryPlaza:RECOVERY_PLAZA,entered:townEntered,painted:paintedFrame,characterReady:realisticPlayer.ready,fallbackVisible:fallbackPlayer.root.visible,loadingArea:!playable,playable,player:{x:player.x,z:player.z,yaw,pitch},sceneryStarted,sceneryComplete:sceneryFinished,nearbySceneryReady,trafficCount:ambientTraffic?.vehicles.length||0,referenceTruckCount:cars.filter(c=>c.referenceTruck).length,houseShadows:houseSunShadows.stats(),renderPixelRatio:renderer.getPixelRatio(),...shaderWarmup.stats(),...renderBudget.stats(),...outdoorVisibility.stats(),graphicsQuality:graphicsEngine?.stats()};}
 
 export function movementStatus(x=player.x,z=player.z){return{point:{x,z},walkable:walkable(x,z),hit:townObstacles?.hit(x,z)?.object?.name,locked:movementLocked,keys:[...keys],velocity:{x:movement.vx,z:movement.vz},focus:document.activeElement?.tagName,menu:playerMenu?.panelOpen,car:!!activeCar,cab:zCabs?.riding,house:insideHouse(),villa:villas?.blocks(x,z),park:needleSportsPark?.blocks(x,z)}};
 await yieldStartup();
