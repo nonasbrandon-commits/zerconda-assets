@@ -1,0 +1,56 @@
+{
+  "version": 432,
+  "baseCommit": "ca21084365cc6eff65246b18222ec5ea1b52b823",
+  "compiledSha256": "80b870f74f94e5934516b9f5b5c29c09594d3b39f2bc69d85d3b27159b02add0",
+  "gzipSha256": "a16c7d6f42338cdef70a263160446e1c7f71531224f8c72cb6ac77f125428be4",
+  "chunkCount": 23,
+  "decompressedMatchesCompiled": true,
+  "embeddedCharacterUnchanged": true,
+  "embeddedCharacterSha256": "2f5364f949a2d9950af6706070b686cabee38337323bc082cd139393a9d717e0",
+  "credentialPatternMatches": 0,
+  "privateVideoIncluded": false,
+  "newMediaAssets": [
+    {
+      "path": "assets/tag-photo-1-v432.png",
+      "sha256": "eda7338fcc7ba773aaebf746327e397b41fe3371c576146300479570b6d1447e",
+      "bytes": 2189556,
+      "size": [
+        1254,
+        1254
+      ],
+      "provenance": "Generated fictional adult foam-tag promotional portrait, edited to user-requested surprised reaction. No uploaded person photograph or private video published."
+    },
+    {
+      "path": "assets/tag-photo-2-v432.png",
+      "sha256": "fd9be8afa9a14b55559c53330671da57e8998caecaadab0937fe8a44ea137d54",
+      "bytes": 2158950,
+      "size": [
+        1254,
+        1254
+      ],
+      "provenance": "Generated fictional adult foam-tag promotional portrait, edited to user-requested surprised reaction. No uploaded person photograph or private video published."
+    },
+    {
+      "path": "assets/tag-photo-3-v432.png",
+      "sha256": "936eee4f36b37a6963b88f6a4e662127c7d30951cb39d5845d580e8aebd46cee",
+      "bytes": 2532102,
+      "size": [
+        1254,
+        1254
+      ],
+      "provenance": "Generated fictional adult foam-tag promotional portrait, edited to user-requested surprised reaction. No uploaded person photograph or private video published."
+    },
+    {
+      "path": "assets/tag-photo-4-v432.png",
+      "sha256": "dcb893de427b615dcec7454f9a6ffd447ca2ac5d4721f4fcc9eafdc099fcb867",
+      "bytes": 2189794,
+      "size": [
+        1254,
+        1254
+      ],
+      "provenance": "Generated fictional adult foam-tag promotional portrait, edited to user-requested surprised reaction. No uploaded person photograph or private video published."
+    }
+  ],
+  "mobileProfileUnchanged": true,
+  "authorization": "Existing approved live game maintenance scope; user explicitly requested four wall photos and their surprised foam-tag reactions. Previously approved incorporated licensed character unchanged; no standalone model or archive export. Generated-image originals retained privately; only four selected final portraits published."
+}

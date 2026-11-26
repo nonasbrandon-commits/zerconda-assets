@@ -222,6 +222,7 @@ await yieldStartup();
 const status=document.getElementById('status');
 await yieldStartup();
 
+let forestCheckpoint=null;
 const scene=new THREE.Scene();
 const mobileGeometryMemory=createMobileGeometryMemory(scene,()=>globalThis.zercondaViewerPosition,{enabled:matchMedia('(pointer:coarse)').matches});
 globalThis.zercondaCompactStartup=()=>{mobileGeometryMemory.scan();return mobileGeometryMemory.status();};
@@ -801,56 +802,14 @@ await yieldStartup();
  // Extend the west wall deep into the ocean; no beach bypass.
 // East gate aligns with the existing eastbound city street at z=0.
 // Close the old golf access opening; keep road and sidewalks clear.
-wallSegment(618,-1398,618,-18);
+wallSegment(618,-1398,618,-66);
 await yieldStartup();
-wallSegment(618,18,618,350);
+wallSegment(618,66,618,350);
 await yieldStartup();
  // East perimeter also continues offshore.
 
- // East security entrance, spanning the 36m opening at z=-18..18.
- // The arch is high enough for vehicles; posts sit OUTSIDE the driving lane.
- const security=new THREE.Group();
-await yieldStartup();
-security.name='East perimeter security gate';
-await yieldStartup();
-security.userData.roadInfrastructure=true;
-await yieldStartup();
-security.position.x=48;
-await yieldStartup();
-scene.add(security);
-await yieldStartup();
-
- const gateSteel=new THREE.MeshStandardMaterial({color:0x263e4b,metalness:.72,roughness:.35});
-await yieldStartup();
-
- const gateWhite=new THREE.MeshStandardMaterial({color:0xe2e8e9,metalness:.18,roughness:.55});
-await yieldStartup();
-
- const gateGlass=new THREE.MeshStandardMaterial({color:0x76b5ce,metalness:.18,roughness:.23});
-await yieldStartup();
-
- for(const z of [-18,18]){
-  box(1.4,5,1.4,570,2.5,z,gateSteel,security);
-  box(1.75,.35,1.75,570,5.15,z,gateWhite,security);
- }
-await yieldStartup();
-
- box(1.5,1.2,37,570,6.1,0,gateSteel,security);
-await yieldStartup();
-
- box(1.55,.52,27,570,6.15,0,gateWhite,security);
-await yieldStartup();
-
- // Guard kiosks face the approach, with no obstruction in the opening.
- for(const z of [-25,25]){
-  box(4,2.6,4,562,1.3,z,gateWhite,security);
-  box(4.1,1.1,4.1,562,2.65,z,gateSteel,security);
-  box(.12,.95,2.5,559.92,1.8,z,gateGlass,security);
-
- }
-await yieldStartup();
-
- const forestCheckpoint=createEastForestGate(scene,{createAvatar:createZercondaAvatar,getPlayer:()=>({...player,x:player.x-36})});
+ // Gate Complex owns the checkpoint pillars, booths and lighting.
+ forestCheckpoint=createEastForestGate(scene,{createAvatar:createZercondaAvatar,getPlayer:()=>({...player,x:player.x-36})});
 await yieldStartup();
 forestCheckpoint.root.position.x=36;
 await yieldStartup();
@@ -2051,7 +2010,7 @@ await yieldStartup();
 addEventListener('keydown',e=>{if(cityview?.panelOpen||cityview?.riding||adminAccount?.panelOpen||controlsGuide?.panelOpen||adminTransport?.active||chessTables.panelOpen||realEstate.panelOpen||militaryAccess?.panelOpen||zCabs?.riding||zCabs?.panelOpen||(hotDogVendor?.panelOpen||sunglassesHut?.panelOpen)||zStore?.panelOpen||playerMenu?.panelOpen)return;if(e.code==='Escape'&&!e.repeat){carnival.close();}if(e.code==='KeyF'&&!e.repeat&&(camp?.resting||airfield?.boarded)){e.preventDefault();e.stopImmediatePropagation();camp.stopRest();airfield?.exit();skate?.end();office?.exit();barber?.exit();villas?.close();observationNeedle?.reset();return;}if(e.code!=='KeyF'||e.repeat||carnival?.riding||carnival?.gameOpen||observationNeedle.riding||villas?.panelOpen||barber?.panelOpen||club.gameOpen||(ownableHomes.panelOpen||coastal?.panelOpen||apartments?.panelOpen||(bowling?.gameOpen||(boutique?.panelOpen||(news?.panelOpen||(camp?.resting||airfield?.boarded)))))||marine?.panelOpen||['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))return;const action=townControls.activeActions[0];if(action){e.preventDefault();e.stopImmediatePropagation();townControls.activate(action.id);}},true);
 await yieldStartup();
 
-function walkable(x,z){const starterWalk=freeApartments?.canWalk(x,z,!!activeCar||!!scooters?.riding||!!powersports?.riding||!!marine?.riding);if(starterWalk!==null&&starterWalk!==undefined)return starterWalk;const stairWalk=brickApartments?.canWalk(x,z,!!activeCar||!!scooters?.riding||!!powersports?.riding||!!marine?.riding);if(stairWalk!==null&&stairWalk!==undefined)return stairWalk;const accessWalk=venueAccessRoads?.canWalk(x,z);if(accessWalk)return true;if(beachKate?.blocks(x,z)||brickApartments?.blocks(x,z))return false;const cvWalk=cityview?.canWalk(x,z);if(cvWalk!==null&&cvWalk!==undefined)return cvWalk;const mountainWalk=mountainWalkable(x,z);if(mountainWalk!==null)return !activeCar&&!scooters?.riding&&!powersports?.riding&&mountainWalk;const secretWalk=hiddenForestPassage.canWalk(x,z);if(secretWalk!==null)return !activeCar&&!scooters?.riding&&!powersports?.riding&&secretWalk;if(extraForestBlocks(x,z))return false;const bowlPortal=bowling?.portalWalk(x,z);if(bowlPortal!==null&&bowlPortal!==undefined)return bowlPortal;
+function walkable(x,z){if(forestCheckpoint?.blocks(x-36,z))return false;const starterWalk=freeApartments?.canWalk(x,z,!!activeCar||!!scooters?.riding||!!powersports?.riding||!!marine?.riding);if(starterWalk!==null&&starterWalk!==undefined)return starterWalk;const stairWalk=brickApartments?.canWalk(x,z,!!activeCar||!!scooters?.riding||!!powersports?.riding||!!marine?.riding);if(stairWalk!==null&&stairWalk!==undefined)return stairWalk;const accessWalk=venueAccessRoads?.canWalk(x,z);if(accessWalk)return true;if(beachKate?.blocks(x,z)||brickApartments?.blocks(x,z))return false;const cvWalk=cityview?.canWalk(x,z);if(cvWalk!==null&&cvWalk!==undefined)return cvWalk;const mountainWalk=mountainWalkable(x,z);if(mountainWalk!==null)return !activeCar&&!scooters?.riding&&!powersports?.riding&&mountainWalk;const secretWalk=hiddenForestPassage.canWalk(x,z);if(secretWalk!==null)return !activeCar&&!scooters?.riding&&!powersports?.riding&&secretWalk;if(extraForestBlocks(x,z))return false;const bowlPortal=bowling?.portalWalk(x,z);if(bowlPortal!==null&&bowlPortal!==undefined)return bowlPortal;
  const gunWalk=gunStore?.canWalk(x,z,!!activeCar||!!scooters?.riding||!!powersports?.riding||!!marine?.riding);if(gunWalk!==null&&gunWalk!==undefined)return gunWalk;const hospitalWalk=hospital?.canWalk(x,z,!!activeCar||!!scooters?.riding||!!powersports?.riding||!!marine?.riding);if(hospitalWalk!==null&&hospitalWalk!==undefined)return hospitalWalk;const canopyWalk=canopyVenue?.canWalk(x,z,!!activeCar||!!scooters?.riding||!!powersports?.riding||!!marine?.riding);if(canopyWalk!==null&&canopyWalk!==undefined)return canopyWalk;
  if(privateHomeBlocks(x,z)||residentialShadeTrees?.blocks(x,z)||museumGardenTrees?.blocks(x,z))return false;for(const portal of [barber?.canWalk(x,z),office?.portalWalk(x,z),club?.portalWalk(x,z),news?.canWalk(x,z,!!activeCar||!!scooters?.riding||!!powersports?.riding)])if(portal!==null&&portal!==undefined)return portal;
  if(scooters?.inside)return scooters.canWalkInterior(x,z);
