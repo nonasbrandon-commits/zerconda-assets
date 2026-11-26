@@ -1,4 +1,5 @@
 export const AREA_DESTINATIONS=[
+ {id:'services',name:'Zerconda Services',group:'Town & shops',x:-351,z:-12.6,yaw:Math.PI},
  {id:'brick-apartments',name:'Brick Apartments',group:'Homes',x:-632,z:-480,yaw:-Math.PI/2},
  {id:'guns-ammo',name:'Zerconda Guns & Ammo',group:'Town & shops',x:-632,z:-366,yaw:-Math.PI/2},
  {id:'hospital',name:'Zerconda Hospital',group:'Town & shops',x:-518,z:-360,yaw:-Math.PI/2},
