@@ -1,0 +1,17 @@
+{
+  "version": 439,
+  "baseCommit": "1579159400d106845798bb939cc5310a92d6b3ea",
+  "compiledSha256": "8e25f5c4493f97f6c8d4184af9082be9cc4fb8fc4e955b69229fe225b177783d",
+  "gzipSha256": "fd174ae81d832e8f4da23d9ac4cfb0f1932ea53522a4c1dc7621f855122628c1",
+  "chunkCount": 23,
+  "decompressedMatchesCompiled": true,
+  "embeddedCharacterUnchanged": true,
+  "embeddedCharacterSha256": "2f5364f949a2d9950af6706070b686cabee38337323bc082cd139393a9d717e0",
+  "credentialPatternMatches": 0,
+  "privateVideoIncluded": false,
+  "newMediaAssets": [],
+  "suvReference": "User supplied two PNG reference sheets; no raw ZIP or PNG upload. New procedural enclosed SUV derived from existing authored duty-truck chassis, in black and white, with independently rolling/steering wheels, full-size footprint collision and distant LOD.",
+  "mobileTextureCapsUnchanged": true,
+  "mobilePixelCeilingUnchanged": true,
+  "authorization": "User requested adding the SUV in their uploaded reference ZIP. Prior Services, sanitation and apartment gardens remain included. Existing live maintenance publication authorization. Previously licensed embedded character unchanged; no separate export."
+}
