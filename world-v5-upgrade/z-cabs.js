@@ -17,7 +17,7 @@ export function createCabRoadNetwork(){const points=[],edges=[],lookup=new Map()
  for(const z of[-283,-192,-96,0,96,175])road([-646,-562,-478,-418].map(x=>[x,z]));
  for(const x of[-646,-562,-478])road([-283,-192,-96,0,96,175].map(z=>[x,z]));
  road([[-418,169],[-418,175]]);
- road([[-418,-554],[-418,-559]]);for(const route of forestGravelNavigationRoutes())road(route,'gravel');
+ road([[-418,-554],[-616,-554],[-616,-530]]);road([[-616,-530],[-616,-518],[-616,-480],[-616,-360],[-616,-283]],'campus');road([[-418,-554],[-418,-559]]);for(const route of forestGravelNavigationRoutes())road(route,'gravel');
  // Split collinear roads at every shared node so T-junctions connect both ways.
  const raw=edges.splice(0),seenEdges=new Set();for(const e of raw){const a=points[e.i],b=points[e.j],dx=b.x-a.x,dz=b.z-a.z,L=e.length,list=[];for(let i=0;i<points.length;i++){const q=points[i],t=((q.x-a.x)*dx+(q.z-a.z)*dz)/(L*L);if(t>=-1e-7&&t<=1+1e-7&&Math.abs((q.x-a.x)*dz-(q.z-a.z)*dx)<1e-5)list.push({i,t});}list.sort((a,b)=>a.t-b.t);for(let k=1;k<list.length;k++){const i=list[k-1].i,j=list[k].i,key=[i,j].sort((a,b)=>a-b).join(',');if(!seenEdges.has(key)){seenEdges.add(key);edges.push({i,j,surface:e.surface,length:Math.hypot(points[j].x-points[i].x,points[j].z-points[i].z)});}}}
  function nearest(p){let best;for(const e of edges){const a=points[e.i],b=points[e.j],dx=b.x-a.x,dz=b.z-a.z,t=THREE.MathUtils.clamp(((p.x-a.x)*dx+(p.z-a.z)*dz)/(e.length*e.length),0,1),q={x:a.x+dx*t,z:a.z+dz*t},d=Math.hypot(q.x-p.x,q.z-p.z);if(!best||d<best.d)best={...q,d,e,t};}return best;}

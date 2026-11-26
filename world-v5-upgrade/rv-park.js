@@ -33,7 +33,7 @@ export function createRVPark(scene,{getPlayer,canUse=()=>true,onTeleport=()=>{},
  for(let i=1;i<=80;i++){const a=angle-(Math.PI+2*angle)*i/80;outline.push([-48+radius*Math.cos(a),-258+radius*Math.sin(a)]);}outline.push([-50.8,-156.8],[-82,-156.8]);surface(outline);
  paths.push({ax:-82,az:-154,bx:-48,bz:-154,w:5.6},{ax:-48,az:-154,bx:-48,bz:-258,w:5.6});
  function insideAt(x,z){return rvs.find(r=>r.cabin.contains(x,z));}
- function enter(r){if(!canUse())return;r.open=true;getPlayer().x=r.x;getPlayer().z=r.z+2.6;onTeleport(getPlayer().x,.42,getPlayer().z,Math.PI);onMessage('Cabin '+r.id+' · Find a seat or explore inside.');}
+ function enter(r){if(!canUse())return;r.open=true;r.closeAfter=.6;getPlayer().x=r.x;getPlayer().z=r.z+2.6;onTeleport(getPlayer().x,.42,getPlayer().z,Math.PI);onMessage('Cabin '+r.id+' · Find a seat or explore inside.');}
  function exit(r){r.open=false;getPlayer().x=r.x;getPlayer().z=r.z+7.6;onTeleport(getPlayer().x,.02,getPlayer().z,0);}
  function chair(x,z,a,kind='cabin fire-pit chair',base=0){const g=new THREE.Group();g.position.set(x,base,z);g.rotation.y=a;root.add(g);box(.86,.16,.84,0,.48,0,wood,g);box(.86,.76,.1,0,.9,-.37,wood,g);for(const sx of [-.34,.34]){box(.08,.44,.65,sx,.22,0,dark,g);box(.1,.1,.78,sx,.8,0,wood,g);}seats.push({x,z,facing:a,sitHeight:base+.59,kind});}
  for(const [i,[x,z]]of [[-68,-231],[-29,-231],[-68,-184],[-29,-184]].entries()){
@@ -43,6 +43,7 @@ export function createRVPark(scene,{getPlayer,canUse=()=>true,onTeleport=()=>{},
  for(let j=0;j<4;j++){const a=j*Math.PI/2,xx=fx+Math.sin(a)*2.6,zz=fz+Math.cos(a)*2.6;createFirePitBench(root,{x:xx,z:zz,y:GROUND_LEVEL,angle:a+Math.PI,width:2.1,seatHeight:.59});seats.push({x:xx,z:zz,facing:a+Math.PI,sitHeight:.59,kind:'RV fire-pit bench'});}
  sign('CABIN '+r.id,x,3.0,z+4.03,1.7,0);
   const door={x,z:z+7.6};action('enter-'+r.id,'Enter cabin '+r.id+'',door,()=>canUse()&&!insideAt(getPlayer().x,getPlayer().z)&&near(door,3.1),()=>enter(r),150);
+  action('bathroom-'+r.id,()=>r.cabin.bathroomOpen?'Close bathroom sliding door':'Open bathroom sliding door',{x:r.x-4.525,z:r.z-1.1},()=>insideAt(getPlayer().x,getPlayer().z)===r&&near({x:r.x-4.525,z:r.z-1.1},2.3),()=>r.cabin.toggleBathroomDoor(),155);
   action('exit-'+r.id,'Exit cabin '+r.id,{x,z:z+2.6},()=>insideAt(getPlayer().x,getPlayer().z)===r,()=>exit(r),145);
   action('fire-'+r.id,()=>`${f.lit?'Extinguish':'Light'} cabin site ${r.id} fire pit`,{x:fx,z:fz},()=>canUse()&&!insideAt(getPlayer().x,getPlayer().z)&&near(f,4.4),()=>{f.lit=!f.lit;f.visual.setLit(f.lit);onMessage(f.lit?'Fire pit lit. Take a chair and relax.':'Fire extinguished.');});
  }
@@ -59,7 +60,7 @@ export function createRVPark(scene,{getPlayer,canUse=()=>true,onTeleport=()=>{},
  const inArea=(x,z)=>x>RV_BOUNDS.x0&&x<RV_BOUNDS.x1&&z>RV_BOUNDS.z0&&z<RV_BOUNDS.z1;
  function blocks(x,z,vehicle=false){if(!inArea(x,z))return false;if(rvs.some(r=>r.cabin.blocks(x,z,vehicle)))return true;if(fires.some(f=>Math.hypot(x-f.x,z-f.z)<1.50))return true;if(trees.some(t=>Math.hypot(x-t.x,z-t.z)<t.height*.013+.28))return true;return seats.some(s=>Math.hypot(x-s.x,z-s.z)<.4);}
  function heightAt(x,z){if(!inArea(x,z))return null;for(const r of rvs){const y=r.cabin.heightAt(x,z);if(y!==null)return y;}return GROUND_LEVEL;}
- function update(dt){time+=dt;for(const r of rvs)r.hinge.rotation.y=THREE.MathUtils.damp(r.hinge.rotation.y,r.open?-1.45:0,8,dt);for(const f of fires)f.visual.update(dt,f.lit);for(const s of sources)s.b.style.display=s.when()?'block':'none';}
+ function update(dt){time+=dt;for(const r of rvs){const p=getPlayer();if(r.closeAfter>0&&r.cabin.contains(p.x,p.z)&&p.z<r.z+3.1){r.closeAfter-=dt;if(r.closeAfter<=0)r.open=false;}r.hinge.rotation.y=THREE.MathUtils.damp(r.hinge.rotation.y,r.open?-1.45:0,8,dt);r.cabin.update(dt,p);}for(const f of fires)f.visual.update(dt,f.lit);for(const s of sources)s.b.style.display=s.when()?'block':'none';}
  function clampCamera(v){const r=insideAt(getPlayer().x,getPlayer().z);if(!r)return;v.x=THREE.MathUtils.clamp(v.x,r.x-5.6,r.x+5.6);v.z=THREE.MathUtils.clamp(v.z,r.z-3.5,r.z+3.5);v.y=THREE.MathUtils.clamp(v.y,1.85,3.2);}
  return{root,routePolygons,rvs,cabins:rvs,fires,trees,seats,paths,inArea,blocks,heightAt,update,clampCamera,entry:{x:-82,z:-154},get inside(){return !!insideAt(getPlayer().x,getPlayer().z);},nearestSeat(x,z,max=2.3){let best=null;const current=insideAt(x,z);for(const s of seats){if(!!insideAt(s.x,s.z)!==!!current)continue;const d=Math.hypot(x-s.x,z-s.z);if(d<max){max=d;best=s;}}return best;}};
 }

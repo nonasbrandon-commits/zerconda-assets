@@ -1,0 +1,8 @@
+import * as THREE from 'three';
+const names=['Driver seat','Behind car','Front of car'];
+export function createCarCameraViews(){let mode=0,subject=null,snap=true;const forward=new THREE.Vector3(),right=new THREE.Vector3(),eye=new THREE.Vector3(),target=new THREE.Vector3(),direction=new THREE.Vector3();
+ return{get label(){return names[mode]},get mode(){return mode},get interior(){return mode===0},cycle(){mode=(mode+1)%names.length;snap=true;return names[mode]},resetFollow(){subject=null;snap=true},apply(camera,car,{dt=0,lookYaw=0,lookPitch=0,resolve}={}){if(subject!==car){subject=car;snap=true;}const ground=car.group.position.y||0,a=car.angle;forward.set(Math.sin(a),0,Math.cos(a));right.set(Math.cos(a),0,-Math.sin(a));
+ if(mode===0){eye.set(car.x,ground+(car.eyeHeight??1.58),car.z).addScaledVector(right,-.34).addScaledVector(forward,.25);camera.position.copy(eye);const heading=a+lookYaw;direction.set(Math.sin(heading),-Math.sin(lookPitch),Math.cos(heading));target.copy(eye).addScaledVector(direction,25);camera.lookAt(target);}
+ else{const f=car.footprint,halfLength=f?Math.max(Math.abs(f.minZ),Math.abs(f.maxZ)):3.2,distance=Math.max(6.5,halfLength+4),heading=a+lookYaw+(mode===2?Math.PI:0),elevation=THREE.MathUtils.clamp(.28+lookPitch,.10,1.05);target.set(car.x,ground+Math.min(1.45,(car.eyeHeight??1.58)*.76),car.z);eye.set(car.x-Math.sin(heading)*Math.cos(elevation)*distance,target.y+Math.sin(elevation)*distance,car.z-Math.cos(heading)*Math.cos(elevation)*distance);if(snap)camera.position.copy(eye);else camera.position.lerp(eye,1-Math.exp(-10*Math.min(.15,Math.max(0,dt))));if(resolve)resolve(camera,target,car);camera.lookAt(target);}
+ snap=false;return mode;}};
+}
