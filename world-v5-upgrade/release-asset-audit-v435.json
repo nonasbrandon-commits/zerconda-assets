@@ -1,0 +1,11 @@
+{
+  "version": 435,
+  "entryOnly": true,
+  "runtimeVersion": 433,
+  "runtimeManifestUnchanged": true,
+  "newMediaAssets": [],
+  "privateVideoIncluded": false,
+  "credentialPatternMatches": 0,
+  "authorization": "User-reported startup failure with explicit missing roundRect screenshot. Compatibility repair within approved live game maintenance. No compiled chunks, private recording or standalone character/model upload.",
+  "entrySha256": "03f41d42d73d4e61d1c3eb4297edd3f3fd1e37ec14469b4b0c7738e36d292d00"
+}
