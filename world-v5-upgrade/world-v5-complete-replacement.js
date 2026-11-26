@@ -1,4 +1,4 @@
-import {createBotHouseResident} from './bot-house-resident.js?v=445';
+import {createBotHouseResident} from './bot-house-resident.js?v=446';
 import {createTrailSUV} from './trail-suv.js?v=442';
 import {createZercondaServices} from './zerconda-services.js?v=442';
 import {createTownSanitation} from './town-sanitation.js?v=443';
@@ -51,7 +51,7 @@ import {createStyleCutsGrove} from './style-cuts-grove.js?v=442';
 import {applyPowersportsRiderPose} from './powersports-rider-pose.js?v=20261124-driving-v339';
 import {createCityviewApartments} from './cityview-apartments.js?v=20261125-starter-v403';
 import {createAdminAccount} from './admin-account.js?v=20261125-access-v410';
-import {getManagedPrivateHomes,managePrivateHome} from './private-home-locks.js?v=20261124-cityview-v326';
+import {getManagedPrivateHomes,managePrivateHome} from './private-home-locks.js?v=446';
 import {collectHomeLocations} from './home-location-names.js?v=444';
 import {createNeighborhoodResidents} from './neighborhood-residents.js?v=437';
 import {installPremiumGameUI} from './premium-game-ui.js?v=20261124-boardwalk-v314';
@@ -87,8 +87,8 @@ import {createGravelTireAudio} from './gravel-tire-audio.js?v=20261122-listings-
 import {availablePropertyListings} from './property-listings.js?v=444';
 import {createResidentialShadeTrees} from './residential-shade-trees.js?v=20261122-trail-v228';
 import {createBedRest} from './bed-rest.js?v=20261122-private-homes-v214';
-import {allowPrivateHomeAt,allowPrivateHome,privateHomeBlocks,updatePrivateHomes} from './private-home-locks.js?v=20261122-private-homes-v214';
-import {installOwnedHomeLocks} from './property-lock-setup.js?v=444';
+import {allowPrivateHomeAt,allowPrivateHome,privateHomeBlocks,updatePrivateHomes} from './private-home-locks.js?v=446';
+import {installOwnedHomeLocks} from './property-lock-setup.js?v=446';
 import {createMuseumGardenTrees} from './museum-garden-trees.js?v=20261125-porch-v390';
 import {createHouseSunShadows} from './house-sun-shadows.js?v=20261121-house-realism-v212';
 import {createRoadTreeMaintenance} from './road-tree-maintenance.js?v=20261122-apartments-v229';
@@ -155,7 +155,7 @@ import {createSkatePark} from './skate-park.js?v=20261119-entrance-steering-v118
 import {createAirfield} from './airfield.js?v=20261125-grass-seam-v379';
 import * as THREE from 'three';
 import {createForestCampground} from './forest-campground.js?v=20261123-natural-v264';
-import {createPremierHomes} from './premier-homes.js?v=444';
+import {createPremierHomes} from './premier-homes.js?v=446';
 import {createZercondaNews} from './zerconda-news.js?v=20261125-daily-v421';
 import {createClothingBoutique} from './clothing-boutique.js?v=20261124-public-doors-v369';
 import {createBowlingAlley} from './bowling-alley.js?v=20261124-public-doors-v369';
@@ -1850,7 +1850,7 @@ await yieldStartup();
 news=createZercondaNews(scene,{getPlayer:()=>player,canInteract:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!powersports?.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});
 await yieldStartup();
 
-premier=createPremierHomes(scene,{onPassage:passHomeDoor,getPlayer:()=>player,canInteract:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!powersports?.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});
+premier=createPremierHomes(scene,{hasBotAccess:()=>adminAccount?.isAdmin===true,onPassage:passHomeDoor,getPlayer:()=>player,canInteract:()=>!barber?.active&&!office?.active&&!activeCar&&!scooters.riding&&!powersports?.riding&&!skate?.riding&&!marine.riding&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!cafeInside&&!dealerInside&&!ownableHomes.active,onMessage:m=>townControls.notify(m)});
 botHouseResident=createBotHouseResident(premier.homes.find(h=>h.botHouse),{getPlayer:()=>player});
 await yieldStartup();
 
@@ -1898,7 +1898,7 @@ const cityResidents=createCityResidents(scene,{getPlayer:()=>player,getHeight:st
 
 await yieldStartup();
 
-installOwnedHomeLocks({getPlayer:()=>player,onStop:()=>{keys.clear();townControls.stop();movement.vx=movement.vz=movement.wheelImpulse=0;},onMessage:m=>townControls.notify(m),suburban:ownableHomes,premier,villas,coastal});
+installOwnedHomeLocks({adminAccount:{request:grant=>adminAccount?.request(grant)??false,get isAdmin(){return adminAccount?.isAdmin===true}},getPlayer:()=>player,onStop:()=>{keys.clear();townControls.stop();movement.vx=movement.vz=movement.wheelImpulse=0;},onMessage:m=>townControls.notify(m),suburban:ownableHomes,premier,villas,coastal});
 await yieldStartup();
 
 zCabs=createZCabs(scene,{getPlayer:()=>player,canRequest:()=>!scooters?.inside&&!universalSession&&!insideHouse()&&!museum?.contains(player.x,player.z)&&!tattooShop?.active&&!dealerInside&&!cafeInside,onHonk:(source,options)=>vehicleHorns.honk(source,options),onPickupState:state=>{areaTravel.setCabState(state)},getHeight:()=>GROUND_LEVEL,getVehicles:()=>[...cars,...(sanitation?.collisionVehicles||[]),...(ambientTraffic?.collisionVehicles||[]),...dealership.cars.map(o=>vehicleDescriptor(THREE,o.model))],getPedestrians:()=>[...pedestrianSystem.agents.map(a=>a.group.position),...cityResidents.collisionPeople,...(sanitation?.collisionPeople||[])],canUse:()=>!activeCar&&!marine.riding&&!scooters.riding&&!powersports?.riding&&!skate.riding&&!onObservationDeck&&!insideNeedleLobby&&!barber.active&&!office.active&&!airfield.boarded&&!carnival.riding&&!camp.resting&&!rvPark.inside&&!bowling.active&&!boutique.active&&!club.active&&!universalSession&&!apartmentSession&&!ownableHomes.active,onStop:()=>{cabPassengerCamera.reset();sittingSeat=null;seatReturn=null;keys.clear();movement.vx=movement.vz=movement.wheelImpulse=0;townControls.stop();},onMessage:m=>townControls.notify(m),onAlight:p=>{cabPassengerCamera.reset();let point=null;for(const[dx,dz]of[[0,0],[1,0],[-1,0],[0,1],[0,-1],[2,0],[-2,0]])if(walkable(p.x+dx,p.z+dz)){point={x:p.x+dx,z:p.z+dz};break;}player.x=point?.x??p.x;player.z=point?.z??p.z;yaw=p.yaw;pitch=0;keys.clear();movement.vx=movement.vz=movement.wheelImpulse=0;camera.position.set(player.x-Math.sin(yaw)*3.65,standingHeightAt(player.x,player.z)+1.75,player.z-Math.cos(yaw)*3.65);}});
