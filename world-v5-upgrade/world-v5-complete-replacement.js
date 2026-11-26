@@ -184,9 +184,9 @@ import {createEastsideGolfDistrict} from './eastside-golf-district.js?v=20261121
 import {createNeedleSportsPark} from './needle-sports-park.js?v=20261123-town-v282';
 
 // ZERCONDA V5 — COMPLETE REPLACEMENT SCENE, NOT A PATCH.
-const BOOT=stage=>globalThis.zercondaBootStage?.(stage);const requestedGraphics=new URLSearchParams(location.search).get('graphics');let LOW_GRAPHICS=requestedGraphics==='low'||requestedGraphics!=='normal'&&matchMedia('(pointer:coarse)').matches;const startupGLTFMemory=installMobileGLTFMemory();const startupBitmapSizing=installMobileBitmapSizing({limit:256});
+const BOOT=stage=>globalThis.zercondaBootStage?.(stage);const requestedGraphics=new URLSearchParams(location.search).get('graphics');let LOW_GRAPHICS=requestedGraphics==='low'||requestedGraphics!=='normal'&&matchMedia('(pointer:coarse)').matches;const startupGLTFMemory=installMobileGLTFMemory();const startupBitmapSizing=installMobileBitmapSizing({limit:128});
 const startupImageDecoding=await configureMobileImageDecoding();
-const startupImageMemory=matchMedia('(pointer:coarse)').matches?installStartupTextureMemory({limit:256}):()=>({resized:0,bytesAvoided:0});if(LOW_GRAPHICS)globalThis.zercondaBootGraphics?.('reduced (mobile)');const RECOVERY_PLAZA=new URLSearchParams(location.search).get('resume')==='0';BOOT('Creating the scene');
+const startupImageMemory=matchMedia('(pointer:coarse)').matches?installStartupTextureMemory({limit:128}):()=>({resized:0,bytesAvoided:0});if(LOW_GRAPHICS)globalThis.zercondaBootGraphics?.('reduced (mobile)');const RECOVERY_PLAZA=new URLSearchParams(location.search).get('resume')==='0';BOOT('Creating the scene');
 const cameraClearance=createCameraClearance();
 await yieldStartup();
 
@@ -2421,7 +2421,7 @@ for(const [sx,sz,angle] of truckSpots){const truck=createReferenceDutyTruck(),g=
 BOOT('Preparing vehicles');await zCabs.readyPromise;ambientTraffic=createAmbientTraffic(scene,{getPlayer:()=>player,getHeight:()=>GROUND_LEVEL,getVehicles:()=>[...cars,...(zCabs?.collisionVehicles||[])],getPedestrians:()=>[...pedestrianSystem.agents.map(a=>a.group.position),...cityResidents.collisionPeople],prepareModels:()=>loadLuxurySedan(),createModel:i=>installVehicleWheelRig(i%2?createShowroomPickup({name:'Resident pickup',color:i===1?'#637e91':'#935746'}):createLuxurySedan(),i%2?'pickup':'luxury-sedan')});await ambientTraffic.readyPromise;
 BOOT('Preparing nearby people');await installedCharacters.prepareNearby();
 BOOT('Preparing town characters');const startupCharacterSetup=await prepareNpcSetups({onProgress:done=>BOOT('Preparing town characters '+done)});
-const startupTextureBudget=await budgetWorldTextures(scene,{limit:MOBILE||LOW_GRAPHICS?512:1024,onProgress:(done,total)=>BOOT('Preparing texture memory '+done+'/'+total)});
+const startupTextureBudget=await budgetWorldTextures(scene,{limit:MOBILE?256:LOW_GRAPHICS?512:1024,onProgress:(done,total)=>BOOT('Preparing texture memory '+done+'/'+total)});
 BOOT('Preparing nearby visibility');
 await outdoorVisibility.prepareInitial();
 BOOT('Preparing real building exteriors');await exteriorContinuity.prepare();
