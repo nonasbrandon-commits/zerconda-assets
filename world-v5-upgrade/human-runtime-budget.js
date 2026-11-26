@@ -1,0 +1,6 @@
+import * as THREE from 'three';
+const states=new WeakMap(),humans=new Set(),point=new THREE.Vector3();
+// Keep local animation exact; skip hidden people and animate distant residents at 10 Hz.
+export function humanStep(root,dt){humans.add(root);if(!dt)return dt;let local=false;for(let p=root;p;p=p.parent){if(!p.visible)return null;if(p.userData.localPlayer||p.isScene&&globalThis.zercondaViewerScene&&p!==globalThis.zercondaViewerScene)local=true;}const viewer=globalThis.zercondaViewerPosition;if(local||!viewer)return dt;root.getWorldPosition(point);const d=(point.x-viewer.x)**2+(point.z-viewer.z)**2;if(d>80*80)return null;if(d<30*30)return dt;let state=states.get(root);if(!state){state={elapsed:0};states.set(root,state);}state.elapsed+=dt;if(state.elapsed<.1)return null;const step=Math.min(.15,state.elapsed);state.elapsed=0;return step;}
+
+export function applyHumanDrawBudget(scene,viewer,distance=65){const hidden=[];for(const root of humans){if(!root.parent){humans.delete(root);continue;}let local=false,owner=null;for(let p=root;p;p=p.parent){if(p.userData.localPlayer)local=true;if(p.isScene)owner=p;}if(local||owner!==scene||!root.visible)continue;root.getWorldPosition(point);if((point.x-viewer.x)**2+(point.z-viewer.z)**2>distance*distance){hidden.push(root);root.visible=false;}}return()=>{for(const root of hidden)root.visible=true;};}

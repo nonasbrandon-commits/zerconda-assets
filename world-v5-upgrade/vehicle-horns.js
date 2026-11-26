@@ -1,4 +1,4 @@
-export function createVehicleHorns({getListener=()=>({x:0,z:0}),getVehicle=()=>null}={}){
+export function createVehicleHorns({getListener=()=>({x:0,z:0}),getVehicle=()=>null,onHonk=()=>{}}={}){
  let context=null,last=-Infinity,disposed=false;
  function unlock(){if(disposed)return;try{context||=new (window.AudioContext||window.webkitAudioContext)();if(context.state==='suspended')context.resume().catch(()=>{});}catch{}return context;}
  const audioUnlock=()=>unlock();window.addEventListener('pointerdown',audioUnlock,{capture:true});window.addEventListener('keydown',audioUnlock,{capture:true});
@@ -8,7 +8,7 @@ export function createVehicleHorns({getListener=()=>({x:0,z:0}),getVehicle=()=>n
   }return true;
  }
  const button=document.createElement('button');button.id='vehicle-horn';button.type='button';button.textContent='H · Horn';button.setAttribute('aria-label','Sound vehicle horn');button.style.cssText='display:none;position:fixed;right:max(12px,env(safe-area-inset-right));bottom:225px;z-index:14500;min-height:46px;padding:10px 18px;background:#d8e4d9;color:#173a42;border:1px solid #91adb9;border-radius:9px;font:600 14px system-ui;touch-action:manipulation;cursor:pointer';document.body.append(button);
- const sound=()=>{const vehicle=getVehicle();if(vehicle)honk(vehicle);};button.onclick=e=>{e.stopPropagation();sound();};for(const name of['pointerdown','pointerup','keydown','keyup'])button.addEventListener(name,e=>e.stopPropagation());
+ const sound=()=>{const vehicle=getVehicle();if(vehicle){honk(vehicle);onHonk(vehicle);}};button.onclick=e=>{e.stopPropagation();sound();};for(const name of['pointerdown','pointerup','keydown','keyup'])button.addEventListener(name,e=>e.stopPropagation());
  function key(e){if(e.code!=='KeyH'||e.repeat||e.ctrlKey||e.metaKey||e.altKey||e.target?.isContentEditable||['INPUT','TEXTAREA','SELECT'].includes(e.target?.tagName)||!getVehicle())return;e.preventDefault();e.stopImmediatePropagation();sound();}window.addEventListener('keydown',key,true);
  return{unlock,honk,button,update(){button.style.display=getVehicle()?'block':'none';},dispose(){disposed=true;window.removeEventListener('keydown',key,true);window.removeEventListener('keydown',audioUnlock,true);window.removeEventListener('pointerdown',audioUnlock,true);button.remove();context?.close();}};
 }
