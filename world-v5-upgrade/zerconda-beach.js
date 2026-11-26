@@ -1,3 +1,4 @@
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createOffshoreSharks} from './offshore-sharks.js?v=20261120-coastal-v166';
 import {createBoardwalkAccess} from './boardwalk-access.js?v=20261123-waterfront-v271';
 import {createBoardwalkFurniture} from './boardwalk-furniture.js?v=20261123-waterfront-v271';
@@ -14,7 +15,11 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
  const sand=createBeachSandMaterial();
  const wood=new THREE.MeshStandardMaterial({color:0x927055,roughness:.87});
  function mesh(geo,mat,x,y,z){const o=new THREE.Mesh(geo,mat);o.position.set(x,y,z);o.receiveShadow=true;root.add(o);return o;}
- const land=mesh(new THREE.PlaneGeometry(1014,91),sand,63,.085,199.5);land.rotation.x=-Math.PI/2;
+ // The road approaches own their footprint: no sand surface is left beneath
+ // them to win a depth-offset fight at shallow camera angles.
+ const centers=roadCenters||[-418,-96,0,96],parts=[],cuts=[...new Set([-444,570,...centers.flatMap(x=>[x-9.5,x+9.5]).filter(x=>x>-444&&x<570)])].sort((a,b)=>a-b);
+ for(let i=1;i<cuts.length;i++)for(const[a,b]of[[154,181],[181,245]]){const x=(cuts[i-1]+cuts[i])/2,z=(a+b)/2;if(z<181&&centers.some(c=>Math.abs(x-c)<9.5))continue;const geo=new THREE.PlaneGeometry(cuts[i]-cuts[i-1],b-a);geo.rotateX(-Math.PI/2);geo.translate(x,.085,z);const p=geo.attributes.position,u=geo.attributes.uv;for(let j=0;j<p.count;j++)u.setXY(j,(p.getX(j)+444)/1014,(245-p.getZ(j))/91);parts.push(geo);}const land=mesh(mergeGeometries(parts),sand,0,0,0);land.name='Beach sand clear of waterfront roads';parts.forEach(g=>g.dispose());
+
  // Road connection across the former boundary to the promenade.
  const access=createBoardwalkAccess(root,{roadMaterial,roadCenters});
  // A single instanced deck spans the interior faces of both perimeter walls.

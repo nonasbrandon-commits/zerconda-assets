@@ -1,0 +1,50 @@
+{
+  "version": 424,
+  "publicRepository": "nonasbrandon-commits/zerconda-assets",
+  "publicDirectory": "world-v5-upgrade/",
+  "basePublicCommit": "76a3104cf17d965afc031ede86d8baddece98854",
+  "approval": "User explicitly said approve after the public game-upload review blockage was explained in this conversation.",
+  "bundleSHA256": "96fc2591c06faf916535d625a23b304b161c49ceaa071a9829e69f2f6abdf9ca",
+  "packedSHA256": "9af2a45c699079baf93cf95678a1310bff556121ec22032990defd6772a64fdc",
+  "existingCharacterUnchangedFromLiveV423": true,
+  "existingLicensedCharacterSHA256": "2f5364f949a2d9950af6706070b686cabee38337323bc082cd139393a9d717e0",
+  "characterBytes": 950300,
+  "newExternalAssets": [],
+  "standaloneLicensedAssetsPublished": false,
+  "credentialPatternMatches": {
+    "AWS key": 0,
+    "GitHub token": 0,
+    "OpenAI token": 0,
+    "private key": 0
+  },
+  "packedIntegrity": "Concatenated checked chunks decompress byte-identically to audited compiled JS.",
+  "sourceFiles": [
+    "world-v5-complete-replacement.js",
+    "vehicle-wheel-animation.js",
+    "static-model-batching.js",
+    "cab-rolling-wheels.js",
+    "westhaven-roads.js",
+    "venue-access-roads.js",
+    "canopy-venue.js",
+    "tag-warehouse-parking.js",
+    "z-cabs.js",
+    "zerconda-beach.js",
+    "animated-pedestrians.js",
+    "resident-roaming.js",
+    "city-residents.js",
+    "neighborhood-residents.js",
+    "boardwalk-fitness.js",
+    "bowling-alley.js"
+  ],
+  "changes": [
+    "Rolling original car wheels and front steering; three different parked vehicle models",
+    "Flat connected campus sidewalks, flush bowling apron, square boulevard pavement ends and visible feet",
+    "Remove duplicate warehouse grass surface; grass margins and open-front parking bays; remove warehouse walkway",
+    "Six two-exit hideouts with running lanes",
+    "Skip to destination during hired cab rides, with occupied dropoff safety",
+    "Four beach road footprints physically excluded from sand",
+    "Heeled purple-top runner Zoe id9 removed from pedestrian spawning",
+    "Longer roaming journeys and longer boardwalk walks; marked crossings retained"
+  ],
+  "preserved": "v423 mobile memory reduction and 60\u201380F daily weather; same existing compiled licensed character and public credits."
+}

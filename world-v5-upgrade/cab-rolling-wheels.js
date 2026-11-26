@@ -9,6 +9,6 @@ const rim=new THREE.Mesh(new THREE.CylinderGeometry(.302,.302,.025,40),dark);rim
 const ring=new THREE.Mesh(new THREE.TorusGeometry(.30,.018,8,40),metal);ring.rotation.y=Math.PI/2;ring.position.x=side*.112;pivot.add(ring);
 for(let j=0;j<10;j++){const a=j*Math.PI/5,spoke=new THREE.Mesh(new THREE.BoxGeometry(.025,.024,.24),metal);spoke.position.set(side*.112,Math.sin(a)*.17,Math.cos(a)*.17);spoke.rotation.x=-a;pivot.add(spoke);}
 const hub=new THREE.Mesh(new THREE.CylinderGeometry(.065,.065,.035,16),metal);hub.rotation.z=Math.PI/2;hub.position.x=side*.120;pivot.add(hub);pivot.userData.wheelRadius=.405;
-mesh.parent.add(pivot);});}
+const steer=new THREE.Group();steer.name='Z Cab front wheel steering';steer.position.copy(pivot.position);steer.quaternion.copy(pivot.quaternion);steer.scale.copy(pivot.scale);steer.userData.vehicleWheelSteer=true;steer.userData.vehicleWheelFront=c[2]>0;pivot.position.set(0,0,0);pivot.quaternion.identity();pivot.scale.set(1,1,1);pivot.userData.vehicleWheelRoll=true;pivot.userData.vehicleWheelRadius=.405;pivot.userData.externallyRolled=true;steer.add(pivot);mesh.parent.add(steer);});}
  model.userData.rollingWheelsInstalled=true;}
 export function rollCabWheels(wheels,distance){for(const w of wheels)w.rotation.x=(w.rotation.x+distance/(w.userData.wheelRadius||.38))%(Math.PI*2);}
