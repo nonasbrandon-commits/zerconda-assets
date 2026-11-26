@@ -1,0 +1,24 @@
+{
+  "version": 444,
+  "baseCommit": "3a616a2a0b29c5503b6761a02b7842f0313fde07",
+  "compiledSha256": "b6d3ae505f89d05aa019cf611addd00f488dbbd7b1e5596933f0f664066d4e57",
+  "gzipSha256": "e70cb345618bd7d4605b418f05a72aa3a833219d76f9f1823bfddfe303ce51b4",
+  "chunkCount": 23,
+  "decompressedMatchesCompiled": true,
+  "embeddedCharacterUnchanged": true,
+  "embeddedCharacterSha256": "2f5364f949a2d9950af6706070b686cabee38337323bc082cd139393a9d717e0",
+  "credentialPatternMatches": 0,
+  "privateVideoIncluded": false,
+  "newMediaAssets": [
+    {
+      "file": "assets/bot-house-woman-v444.glb",
+      "license": "CC0-1.0",
+      "source": "https://grab3d.com/models/characters/woman-base-character/",
+      "changes": "Reduced to 47999 triangles; textures resized; approved dark top and shorts; skin weights and walk/run clips retained"
+    }
+  ],
+  "sanitationReference": "User supplied PNG reference sheets; raw ZIP/PNGs not uploaded. Authored rear-loader trucks and commercial dumpsters; existing optimized MIT Rocketbox gardener rig retained.",
+  "mobileTextureCapsUnchanged": true,
+  "mobilePixelCeilingUnchanged": true,
+  "authorization": "User requested the approved Woman Base Character outfit, indoor walking and sitting, and reserved Bot House classification. Rosey remains pending her source file. Existing licensed embedded character unchanged; no separate export."
+}
