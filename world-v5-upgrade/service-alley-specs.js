@@ -1,6 +1,5 @@
 export const SERVICE_ALLEYS=[
- {id:'services-alley',name:'Services / Z Tattoo Alley',width:4.2,points:[[-373.52,0],[-373.52,-45.5],[-360.4,-45.5],[-360.4,-96]],stop:[-373.52,-26],side:1,existingWall:true,fillRects:[[-377.75,-367.12,-40.11,-14],[-377.75,-358.3,-49,-40.11]],roads:['road south of Z Tattoo','road north of Cityview Apartments']},
- {id:'plaza-alley',name:'Town Plaza East Alley',width:4.2,points:[[76,0],[76,96]],stop:[76,58],side:1,roads:['road north of Town Plaza','road south of Town Plaza']},
- {id:'west-alley',name:'West Extension Service Alley',width:4.2,points:[[-398,0],[-398,96]],stop:[-398,52],side:1,roads:['northern cross street','southern cross street']},
- {id:'boardwalk-alley',name:'Beach Cottage Rear Alley',width:4.2,points:[[-96,158],[0,158]],stop:[-48,158],side:1,roads:['western north–south beach road','central north–south beach road']}
+ {id:'services-alley',name:'Services / Z Tattoo Alley',width:4.2,points:[[-373.52,0],[-373.52,-45.5],[-358.27,-45.5],[-358.27,-96]],stop:[-373.52,-26],side:1,existingWall:true,startOpening:{x0:-377.75,x1:-367.12,z0:-14.02,z1:-9.5},apronRects:[[-377.75,-367.12,-14,-9.5]],fillRects:[[-377.75,-367.12,-40.11,-14],[-377.75,-356.17,-49,-40.11],[-362.5,-356.17,-86.5,-49]],roads:['road south of Z Tattoo','road north of Cityview Apartments']},
+ {id:'luxe-alley',name:'Luxe Lanes Service Alley',width:4.2,points:[[165.64,0],[165.64,40],[170,53],[170,96]],stop:[165.64,32],side:-1,existingWall:true,fillRects:[[161.4,167.74,18.6,40]],roads:['north cross street','south cross street']},
+ {id:'cityview-pickup',name:'Cityview Apartments Pickup',width:4.2,points:[[-373.52,0],[-373.52,-45.5],[-358.27,-45.5],[-358.27,-96]],stop:[-358.27,-62],side:1,existingWall:true,shareRoadId:'services-alley',roads:['road south of Z Tattoo','road north of Cityview Apartments']}
 ];

@@ -1,8 +1,7 @@
 export const AREA_DESTINATIONS=[
+ {id:'luxe-alley',name:'Luxe Lanes Service Alley',group:'Town & shops',x:165.64,z:32},
+ {id:'cityview-pickup',name:'Cityview Apartments Pickup',group:'Town & shops',x:-358.27,z:-62},
  {id:'services-alley',name:'Services / Z Tattoo Alley',group:'Town & shops',x:-373.52,z:-26},
- {id:'plaza-alley',name:'Town Plaza East Alley',group:'Town & shops',x:76,z:58},
- {id:'west-alley',name:'West Extension Service Alley',group:'Town & shops',x:-398,z:52},
- {id:'boardwalk-alley',name:'Beach Cottage Rear Alley',group:'Town & shops',x:-48,z:158},
  {id:'services',name:'Zerconda Services',group:'Town & shops',x:-351,z:-12.6,yaw:Math.PI},
  {id:'brick-apartments',name:'Brick Apartments',group:'Homes',x:-632,z:-480,yaw:-Math.PI/2},
  {id:'guns-ammo',name:'Zerconda Guns & Ammo',group:'Town & shops',x:-632,z:-366,yaw:-Math.PI/2},
