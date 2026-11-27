@@ -1,0 +1,24 @@
+{
+  "version": 462,
+  "baseline": 461,
+  "baseCommit": "d8d75f7900e1aac2c065c4fb4964894ebc52a9d1",
+  "baseTree": "3c979219fa90df018fdcafdd7788cddc3260d514",
+  "change": "Fix unowned houses incorrectly asking for a five-digit entry code after their for-sale sign is hidden by graphics culling. Derive privacy from recorded ownership or the explicit bot-home reservation, rather than sale-sign visibility or general availability flags. Unowned entry and garages remain public; owned-home PINs, bot/admin access and saved records stay protected.",
+  "sourceModules": [
+    "property-lock-setup.js"
+  ],
+  "newMedia": 0,
+  "allEmbeddedAssetsUnchanged": true,
+  "storageKeysChanged": false,
+  "privateRecordsPublished": false,
+  "compiledSha256": "2ec1420699177c08a0a08478b7f67976231b7b92384e37f4d76fc8455b05ecdf",
+  "gzipSha256": "ee9b8d007120af3aaa17976e74dd874fcc2f9fa1ee725247c7bb1870d6e5a64f",
+  "validation": [
+    "Real lock/action/DOM integration: unowned home with hidden sale sign enters without a code; garage opens and physical keypad stays hidden",
+    "Owned-home protection remains active even with visible sale sign; wrong PIN rejected and correct saved PIN accepted",
+    "Ownership claim enables lock; release disables lock",
+    "Reserved bot home remains locked for guests and accessible to verified admin; no bot/admin PIN persisted",
+    "Existing saved PINs and admin marker envelope preserved",
+    "One canonical property-lock module; build and compressed pack roundtrip"
+  ]
+}

@@ -1,0 +1,1 @@
+Fix unowned houses incorrectly asking for a five-digit entry code after their for-sale sign is hidden by graphics culling. Derive privacy from recorded ownership or the explicit bot-home reservation, rather than sale-sign visibility or general availability flags. Unowned entry and garages remain public; owned-home PINs, bot/admin access and saved records stay protected.
