@@ -43,7 +43,6 @@ export function createRVPark(scene,{getPlayer,canUse=()=>true,onTeleport=()=>{},
  for(let j=0;j<4;j++){const a=j*Math.PI/2,xx=fx+Math.sin(a)*2.6,zz=fz+Math.cos(a)*2.6;createFirePitBench(root,{x:xx,z:zz,y:GROUND_LEVEL,angle:a+Math.PI,width:2.1,seatHeight:.59});seats.push({x:xx,z:zz,facing:a+Math.PI,sitHeight:.59,kind:'RV fire-pit bench'});}
  sign('CABIN '+r.id,x,3.0,z+4.03,1.7,0);
   const door={x,z:z+7.6};action('enter-'+r.id,'Enter cabin '+r.id+'',door,()=>canUse()&&!insideAt(getPlayer().x,getPlayer().z)&&near(door,3.1),()=>enter(r),150);
-  action('bathroom-'+r.id,()=>r.cabin.bathroomOpen?'Close bathroom sliding door':'Open bathroom sliding door',{x:r.x-4.525,z:r.z-1.1},()=>insideAt(getPlayer().x,getPlayer().z)===r&&near({x:r.x-4.525,z:r.z-1.1},2.3),()=>r.cabin.toggleBathroomDoor(),155);
   action('exit-'+r.id,'Exit cabin '+r.id,{x,z:z+2.6},()=>insideAt(getPlayer().x,getPlayer().z)===r,()=>exit(r),145);
   action('fire-'+r.id,()=>`${f.lit?'Extinguish':'Light'} cabin site ${r.id} fire pit`,{x:fx,z:fz},()=>canUse()&&!insideAt(getPlayer().x,getPlayer().z)&&near(f,4.4),()=>{f.lit=!f.lit;f.visual.setLit(f.lit);onMessage(f.lit?'Fire pit lit. Take a chair and relax.':'Fire extinguished.');});
  }

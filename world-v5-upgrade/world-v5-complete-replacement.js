@@ -961,7 +961,7 @@ await yieldStartup();
 eastsideGolf=createEastsideGolfDistrict(scene,{x:425,z:-48,getPlayer:()=>player});
 await yieldStartup();
 
-ownableHomes=createOwnableHomes(scene);
+ownableHomes=createOwnableHomes(scene,{onExit:()=>finishExitUniversalInterior()});
 await yieldStartup();
 
 const universalInteriors=createUniversalInteriors(scene);

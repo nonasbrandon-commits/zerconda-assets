@@ -10,7 +10,7 @@ import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createHomeInterior} from './home-interior.js?v=20261122-floor-seams-v216';
 // Stable home IDs retain existing browser ownership. No account or currency is implied.
-export function createOwnableHomes(scene){
+export function createOwnableHomes(scene,{onExit}={}){
  const root=new THREE.Group();root.name='Western fenced residential neighborhood';root.userData.customInterior=true;scene.add(root);
  const m=(color,roughness=.9)=>new THREE.MeshStandardMaterial({color,roughness});
  const colors=['#d9d0bf','#b6c1b8','#b8bfc4','#c4aa96','#d5cfb9','#b8afa3'];
@@ -21,7 +21,7 @@ export function createOwnableHomes(scene){
  function shingles(){const c=document.createElement('canvas');c.width=c.height=512;const ctx=c.getContext('2d');ctx.fillStyle='#4d5150';ctx.fillRect(0,0,512,512);let n=47;const rand=()=>((n=(Math.imul(n,1664525)+1013904223)>>>0)/4294967296);for(let i=0;i<60000;i++){const v=53+rand()*51;ctx.fillStyle=`rgba(${v},${v+2},${v+1},.45)`;ctx.fillRect(rand()*512,rand()*512,1,1);}for(let row=0;row<16;row++){const y=row*32;ctx.fillStyle='#22292b';ctx.fillRect(0,y,512,2);for(let x=-32;x<512;x+=64){ctx.fillStyle='#343a3b';ctx.fillRect(x+(row%2)*32,y,1,32);}}const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(2,4);return t;}const roof=m(0x9d9f99);roof.map=shingles();
  const defaults={wall:'#e7e2d8',fabric:'#75877d',wood:'#795c40',sofa:'standard',dining:'standard',bed:'standard'};
  const key='zerconda-v5-demo-home';let owned=null;try{const saved=readSuburbanHomeOwnership(localStorage,key);if(Number.isInteger(saved?.id)&&saved.id>=1&&saved.id<=20)owned={...saved,username:String(saved.username||'Resident').slice(0,24),exterior:colors[(Number(saved.color)||0)%colors.length],config:{...defaults,...saved.config}};if(saved?.exterior&&/^#[0-9a-f]{6}$/i.test(saved.exterior))owned.exterior=saved.exterior;}catch{}
- const homes=[],interior=createHomeInterior(scene);let active=null;const originals=new Map();const windowViews=createHomeWindowViews(scene,interior,originals);
+ const homes=[],interior=createHomeInterior(scene,{onExit});let active=null;const originals=new Map();const windowViews=createHomeWindowViews(scene,interior,originals);
  function box(g,w,h,d,x,y,z,material){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);o.position.set(x,y,z);o.castShadow=h>.18;o.receiveShadow=true;g.add(o);return o;}
  function world(home,lx,lz){return {x:home.x+Math.cos(home.angle)*lx+Math.sin(home.angle)*lz,z:home.z-Math.sin(home.angle)*lx+Math.cos(home.angle)*lz};}
  function local(home,wx,wz){const dx=wx-home.x,dz=wz-home.z;return {x:Math.cos(home.angle)*dx-Math.sin(home.angle)*dz,z:Math.sin(home.angle)*dx+Math.cos(home.angle)*dz};}

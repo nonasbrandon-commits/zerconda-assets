@@ -1,0 +1,50 @@
+{
+  "version": 464,
+  "baseline": 463,
+  "baseCommit": "b877555d17a09c719e35417a5dc52c981e9fa812",
+  "baseTree": "a97c1f94e5a0caa193b05397315d491fd2b2f60f",
+  "change": "Upgrade suburban home interiors with warm neutral textured walls, white layered baseboards and crown, detailed oak planks and recessed ceiling fixtures. Reuse the previously crafted walnut sofa, coffee table and upholstered dining set, with matching working seats. Add a framed tropical sunset beside the stairs, hammered bronze planters with an areca palm and colorful croton, and a warm-shade floor lamp at the entry. Fit two additional upper/lower cabinet units and a continuous counter beside the fridge, with end panels and gap fillers clear of the stair landing. Upgrade the upstairs landing with a mountain-lake picture and two matching potted palms. Move the suburban bathroom mirror to the requested side via a per-call option; other bathroom styles retain the exact previous default geometry. Remove the suburban bedroom vanity/chair/small mirror and replace the plain closet with a full-height paneled walnut wardrobe with automatic sliding panels. Make residential pocket/sliding doors automatic from either side, remove their buttons, and preserve private-home access checks. Opening the front door from inside exits through the existing session handler; Go outside is available when the door is already open. Keep round dining, sectional and color customization, saved ownership, private pins and prior fixes.",
+  "sourceModules": [
+    "world-v5-complete-replacement.js",
+    "ownable-suburban-homes.js",
+    "home-interior.js",
+    "home-interior-finish.js",
+    "home-entry-decor.js",
+    "home-kitchen.js",
+    "automatic-sliding-doors.js",
+    "luxury-villas.js",
+    "premier-homes.js",
+    "waterfront-ocean-view-homes.js",
+    "woodland-cabin.js",
+    "rv-park.js",
+    "residential-furnishings.js",
+    "home-bedroom-wardrobe.js"
+  ],
+  "newMedia": [
+    "assets/home-sunset-v464.jpg",
+    "assets/home-mountain-lake-v464.jpg"
+  ],
+  "newMediaProvenance": "Two generated landscape prints (tropical sunset and mountain lake) based on user requested wall art; no reference collages or user photos included",
+  "allPreviouslyEmbeddedAssetsUnchanged": true,
+  "storageKeysChanged": false,
+  "privateRecordsPublished": false,
+  "compiledSha256": "23a8c3897de78f52d94f01cb643cf6b75c8f218d7f9ea88a6228672fa08382d7",
+  "gzipSha256": "ee157ae9b1201775c769643ce1d10b369ac2feb1e56d855abe9a47087f6b1be2",
+  "validation": [
+    "Actual home factory browser rendering of entry, lounge, dining and stair-wall picture",
+    "Nearby Open front door action exits the home, clears active state and hides interior",
+    "Go outside action works with already-open door",
+    "Real furniture names, doorway clearance and corrected dining/sofa seat heights",
+    "Repeated furniture/color customization without duplicated controls",
+    "H01 ownership/backup, owner-only marker IDs and PIN preservation regression",
+    "Build and compressed pack roundtrip; one canonical version per changed module; unchanged prior embedded media",
+    "New art is a 1024px JPEG; shared procedural finishes and no additional dynamic lights",
+    "Solid 3D plants/lamp batch by material and have collision; entry opening stays clear",
+    "Additional cabinet geometry/collision and actual stair approach/ascent/upper landing verified",
+    "Upstairs mountain art and plants checked, door/landing clear",
+    "Automatic suburban sliders open from either side, stay open when occupied, close when clear; buttons absent",
+    "Actual villa/premier/coastal/cabin slider factories checked; private guard requires approval",
+    "Other bathroom styles compare with original geometry signatures unchanged; mirror move only requested via suburban factory option",
+    "Bedroom vanity/chair/small mirror absent; walnut wardrobe automatic opening and closure verified"
+  ]
+}

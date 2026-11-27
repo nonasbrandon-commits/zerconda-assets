@@ -1,0 +1,11 @@
+import * as THREE from 'three';
+import {getCraftedWoodMaterials} from './crafted-coffee-table.js?v=20261122-walnut-v221';
+import {updateAutomaticSlide} from './automatic-sliding-doors.js?v=464';
+export function createHomeWardrobe(parent){
+ const root=new THREE.Group();root.name='Full-height paneled walnut sliding wardrobe';root.position.set(.86,3.2,-4.3);root.rotation.y=Math.PI/2;parent.add(root);const {walnut,edge}=getCraftedWoodMaterials(),metal=new THREE.MeshStandardMaterial({color:0xb9b6ae,roughness:.25,metalness:.85}),inside=new THREE.MeshStandardMaterial({color:0x3c3027,roughness:.8});const w=5.4,h=2.72,depth=.72;
+ const box=(g,a,b,c,x,y,z,m=walnut)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(a,b,c),m);o.position.set(x,y,z);o.receiveShadow=true;g.add(o);return o;};
+ for(const side of[-1,1])box(root,.09,h,depth,side*(w/2-.045),h/2,0);box(root,w,.09,depth,0,.045,0);box(root,w+.04,.10,depth+.035,0,h-.05,0);box(root,w-.16,h-.14,.035,0,h/2,-depth/2+.015,inside);box(root,.06,h-.18,depth-.10,0,h/2,0);box(root,w-.18,.035,depth-.10,0,2.26,0);
+ for(const y of[.55,1.1,1.65])box(root,w/2-.12,.035,depth-.12,w/4,y,0);const rod=new THREE.Mesh(new THREE.CylinderGeometry(.015,.015,w/2-.20,12),metal);rod.rotation.z=Math.PI/2;rod.position.set(-w/4,2.12,0);root.add(rod);
+ const leaves=[];for(const side of[-1,1]){const leaf=new THREE.Group();leaf.name=side<0?'Wardrobe left sliding panel':'Wardrobe right sliding panel';leaf.position.set(side*w/4,0,side<0?.40:.47);root.add(leaf);box(leaf,w/2-.025,h-.18,.06,0,h/2,0);for(const yy of[.12,h-.12])box(leaf,w/2-.035,.07,.035,0,yy,.045,edge);for(const xx of[-w/4+.045,w/4-.045])box(leaf,.07,h-.18,.035,xx,h/2,.045,edge);for(let i=1;i<7;i++)box(leaf,w/2-.18,.012,.013,0,.14+i*(h-.28)/7,.041,edge);box(leaf,.025,.48,.055,side*(w/4-.18),1.25,.085,metal);leaves.push(leaf);}
+ const door={width:w,open:false,progress:0};return {root,update(x,z,floor,dt){updateAutomaticSlide(door,{along:z+4.3,across:x-1.24,enabled:floor===1});door.progress=THREE.MathUtils.damp(door.progress,door.open?1:0,8,dt);leaves[0].position.x=-w/4+door.progress*(w/2-.13);},get open(){return door.open},get progress(){return door.progress},block:{x:.86,z:-4.3,w:.80,d:5.4,level:1}};
+}
