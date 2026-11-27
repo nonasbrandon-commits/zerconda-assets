@@ -1,0 +1,15 @@
+import * as T from 'three';
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+let geometry,material;
+function assets(){if(geometry)return;const map=new T.TextureLoader().load(new URL('./assets/rusted-metal-v447.jpg',import.meta.url).href);map.colorSpace=T.SRGBColorSpace;map.wrapS=map.wrapT=T.RepeatWrapping;map.anisotropy=4;material=new T.MeshStandardMaterial({map,bumpMap:map,bumpScale:.018,metalness:.48,roughness:.84,color:'#bca58b'});material.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <common>',`#include <common>
+float barrelHash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float barrelNoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(barrelHash(i),barrelHash(i+vec2(1,0)),f.x),mix(barrelHash(i+vec2(0,1)),barrelHash(i+vec2(1,1)),f.x),f.y);}`);shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
+#ifdef USE_MAP
+vec2 q=vMapUv*vec2(15.,6.);float n=barrelNoise(q)*.6+barrelNoise(q*3.7)*.28+barrelNoise(q*13.)*.12;float paint=smoothstep(.51,.60,n);vec3 faded=mix(vec3(.105,.145,.16),vec3(.24,.28,.29),barrelNoise(q*8.));diffuseColor.rgb=mix(diffuseColor.rgb,faded,paint*.85);float chips=step(.81,barrelNoise(q*23.))*paint;diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.37,.36,.30),chips*.38);
+#endif`);};material.customProgramCacheKey=()=> 'weathered-painted-drum-v448';const pieces=[];function add(g,x=0,y=0,z=0,rx=0){g.rotateX(rx);g.translate(x,y,z);if(g.index){const n=g.toNonIndexed();g.dispose();g=n;}pieces.push(g);}
+ const profile=[[.345,.015],[.355,.03],[.348,.05],[.343,.08],[.342,.27],[.35,.29],[.36,.305],[.36,.32],[.349,.335],[.343,.35],[.343,.59],[.35,.605],[.36,.62],[.36,.635],[.35,.65],[.343,.665],[.343,.87],[.348,.9],[.357,.92],[.35,.935]];
+ const shell=new T.LatheGeometry(profile.map(([r,y])=>new T.Vector2(r,y)),48);const p=shell.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i),a=Math.atan2(z,x),dent=.004*Math.sin(a*5+y*13)+.003*Math.cos(a*8-y*7)-.012*Math.exp(-(((a-.8)/.3)**2)-((y-.48)/.15)**2),radius=Math.hypot(x,z);p.setXYZ(i,x*(1+dent/radius),y,z*(1+dent/radius));}shell.computeVertexNormals();add(shell);add(new T.CylinderGeometry(.343,.343,.018,48),0,.915);add(new T.CylinderGeometry(.341,.341,.018,48),0,.02);
+ for(const y of[.032,.307,.627,.924])add(new T.TorusGeometry(y===.032||y===.924?.351:.355,.009,6,48),0,y,0,Math.PI/2);
+ for(const [x,z,r]of[[.18,.08,.052],[-.18,-.1,.027]]){add(new T.CylinderGeometry(r,r,.022,20),x,.938,z);add(new T.TorusGeometry(r,.006,5,20),x,.95,z,Math.PI/2);add(new T.CylinderGeometry(r*.68,r*.68,.009,6),x,.953,z);}
+ geometry=mergeGeometries(pieces);pieces.forEach(g=>g.dispose());geometry.computeBoundingSphere();}
+export function createRustedBarrel(){assets();const root=new T.Group();root.name='Weathered steel drum · rolled rims, dents and twin filler caps';root.userData.barrelDetails={rolledRims:2,raisedBands:2,fillerCaps:2,dentedShell:true,photoSurface:true};const mesh=new T.Mesh(geometry,material);mesh.receiveShadow=true;root.add(mesh);return root;}

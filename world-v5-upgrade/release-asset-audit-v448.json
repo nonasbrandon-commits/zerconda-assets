@@ -1,0 +1,35 @@
+{
+  "version": 448,
+  "baseVersion": 447,
+  "baseCommit": "8d97ef3209c459b7deba4e54a28aa1ae0e35ea6e",
+  "compiledSha256": "6bfc8918201fbfaad5067b0ed2365b228de012c5ef98d1ab8308a21edcdcf16a",
+  "gzipSha256": "fed30a2135260f910e23e3a8dedf2c2b73bd00d51d4b35f9a06f9b61c741b1b8",
+  "chunkCount": 23,
+  "decompressedMatchesCompiled": true,
+  "embeddedLongBase64Count": 10,
+  "allEmbeddedAssetsUnchangedFromVerifiedPublic447": true,
+  "newEmbeddedAssets": 0,
+  "credentialPatternMatches": 0,
+  "newMediaFiles": 0,
+  "referencePhotosIncluded": false,
+  "personalMarkerDataIncluded": false,
+  "markerStorage": "Browser localStorage only; descriptions are entered at runtime, not bundled or sent to GitHub",
+  "sourceChanges": [
+    "top-city-map.js",
+    "personal-map-markers.js",
+    "abandoned-forest-cabin.js",
+    "rusted-barrel.js",
+    "ruined-chimney.js"
+  ],
+  "qa": [
+    "Create arbitrary coordinate marker",
+    "20 grapheme limit incl emoji",
+    "Click/read/edit/cancel/delete",
+    "Persistence after reload",
+    "Expanded map Escape behavior",
+    "Mobile dialog within viewport",
+    "Detailed finite barrel/chimney geometry",
+    "Reuses public CC0 Poly Haven rust texture and public granite map"
+  ],
+  "authorization": "User requested player-created map pins with 20-character descriptions and edit/delete actions, more realistic cabin barrels and a run-down chimney. Publishing game updates is authorized in this session."
+}

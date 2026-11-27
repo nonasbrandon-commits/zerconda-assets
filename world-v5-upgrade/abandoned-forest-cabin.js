@@ -1,3 +1,5 @@
+import {createRuinedChimney} from './ruined-chimney.js?v=448';
+import {createRustedBarrel} from './rusted-barrel.js?v=448';
 import {nearForestGravelRoad} from './forest-gravel-roads.js?v=20261123-natural-v264';
 import * as T from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -28,9 +30,9 @@ export function createAbandonedForestCabin(scene,{site=MOUNTAIN_CABIN_SITE,compa
  for(const x of(compact?[]:[-3.4,-2.9,-2.4,2.4,2.9,3.4])){box(.065,.8,.065,x,.72,5.15,wood,(rnd()-.5)*.2);}for(const x of(compact?[]:[-2.8,2.8]))box(2.3,.1,.1,x,1.15,5.15);
  for(let i=0;i<3;i++)box(1.8,.1,.42,compact?1.5:0,.21-i*.065,5.25+i*.4);
  // Crumbling stone chimney and rubble, a rusty barrel and a collapsed porch chair.
- for(let y=.3;y<5.5;y+=.35)for(let x=0;x<3;x++)box(.38,.32,.9,-3.7+x*.38,y,-2.3,stone);
+ const chimney=createRuinedChimney();chimney.position.set(-3.32,0,-2.3);root.add(chimney);
  for(let i=0;i<22;i++){const a=rnd()*6.28,r=4+rnd()*8;part(new T.DodecahedronGeometry(.14+rnd()*.25,0),i%3?stone:moss,Math.cos(a)*r,.12,Math.sin(a)*r);}
- part(new T.CylinderGeometry(.36,.36,.94,16),rust,-5.1,.48,4.7);solid(-5.1,4.7,.75,.75);for(const y of[.14,.78])part(new T.TorusGeometry(.36,.025,4,16),metal,-5.1,y,4.7,Math.PI/2);
+ const barrel=createRustedBarrel();barrel.position.set(-5.1,0,4.7);root.add(barrel);solid(-5.1,4.7,.75,.75);
  box(.7,.1,.7,2.7,.48,4.2,wood,.18);box(.7,.8,.08,2.7,.85,3.9,wood,.2);for(const x of[2.4,3])for(const z of[3.9,4.5])box(.065,.4,.065,x,.22,z,wood,.17);solid(2.7,4.2,.9,1);
  // Faded 1950s pickup with rounded hood/fenders, open bed and a broken windshield.
  const truck=new T.Group();truck.name='Static abandoned rusted pickup';truck.position.set(9,.0,1);truck.rotation.y=.35;if(withTruck)root.add(truck);const truckParts=[];
