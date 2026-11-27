@@ -1,0 +1,36 @@
+{
+  "version": 454,
+  "baseline": 453,
+  "baseCommit": "02f4cec32d75b9d97bab6e0e3fe80979ac36fd6b",
+  "baseTree": "094faf873d81e191ebb9711fed51afe5e42f2521",
+  "compiledSha256": "b85147ff31572e9bd3eb14bc5481d6a45309a2a923c0940c5930c06b502a473a",
+  "gzipSha256": "495aacc48762b53e38db6e15c47ef36408744ad935657c5eec7c2ee2c3ba861b",
+  "allEmbeddedAssetsUnchanged": true,
+  "modifiedMedia": 2,
+  "privateUserDataIncluded": false,
+  "change": "Correct generated helicopter lettering on both sides with exact ZERCONDA AVIATION and CHANNEL NEWS 9 typography baked into cleaned paint textures; remove raised/mirrored gibberish. Center sunglasses consistently using a cached head-local attachment; add curved temples reaching over and behind both ears. Label arrived-cab control Get in cab. Unify versioned imports of town-interactions so elevator, cab and other nearby actions share one registry. Extend tree-clearance maintenance to campground gravel trails and forks, retaining trees outside their clearance.",
+  "validation": [
+    "Exact lettering visually checked on all four helicopter sides",
+    "Sunglasses front, left, right and refit after rotation checked on actual hero rig",
+    "Actual cab request, arrival control, destination picker, ride and exit passed",
+    "Elevator action from legacy import visible in shared registry and opens all floor buttons",
+    "Campground trail and fork obstructions hidden; off-trail tree retained",
+    "Compiled module manifest contains exactly one town-interactions instance",
+    "Complete packed startup and forest-location movement check",
+    "Build and compressed pack byte roundtrip"
+  ],
+  "media": [
+    {
+      "file": "assets/reference-helicopter-1-v454.glb",
+      "bytes": 1513416,
+      "sha256": "3e603f6759a688c7ae35130b314e3f8d9ace92379126a5f42fddaa94a4e563f3",
+      "source": "Existing v452 generated helicopter geometry; cleaned paint atlas from image editing tool; deterministic projected SVG typography."
+    },
+    {
+      "file": "assets/reference-helicopter-2-v454.glb",
+      "bytes": 2074436,
+      "sha256": "b047b779afffc0c5c2ac62e144659a39653debcfa569454f39bc3ab5c868536a",
+      "source": "Existing v452 generated helicopter geometry; cleaned paint atlas from image editing tool; deterministic projected SVG typography."
+    }
+  ]
+}

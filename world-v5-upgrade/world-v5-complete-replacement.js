@@ -1383,7 +1383,7 @@ const chessPartner=createChessPartner(scene,{getPlayer:()=>player,getHeight:stan
 await yieldStartup();
 
 function forestStructureBounds(){const boxes=[],add=(g,w,d,h=10)=>{if(!g)return;g.updateWorldMatrix(true,false);boxes.push(new THREE.Box3(new THREE.Vector3(-w/2,0,-d/2),new THREE.Vector3(w/2,h,d/2)).applyMatrix4(g.matrixWorld));};for(const h of ownableHomes?.homes||[])add(h.group,14.6,16.6);for(const h of premier?.homes||[])add(h.group,20.8,19,8.5);for(const h of coastal?.homesList||[])add(h.group,10.6,12,6);for(const h of villas?.homes||[])add(h.group,44,27.6);for(const h of apartmentExteriors)add(h.group||h.root,h.w||40,h.d||20,12);add(realEstate?.stanwood?.root,14.8,17.4,10);if(servicesCenter)add(servicesCenter.root,32.8,24.6,8);add(abandonedForestCabin?.root,9,12,6);add(woodlandCabin?.root,9,12,6);return boxes;}
-const treeRoadMaintenance=createRoadTreeMaintenance(scene,{asphalt,paving,getStructures:forestStructureBounds});
+const treeRoadMaintenance=createRoadTreeMaintenance(scene,{asphalt,paving,getStructures:forestStructureBounds,getTrailSegments:()=>camp?.trailSegments||[]});
 await yieldStartup();
 
 const roadMap=createRoadMapGeometry(scene,asphalt);

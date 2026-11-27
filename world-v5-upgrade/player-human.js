@@ -64,13 +64,13 @@ function colorClothes(mesh,shirt,pants,options={}){
 export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>{},modelFile=null,modelUrl=null,initialOutfit={}}={}){
  const root=new THREE.Group();root.name='Textured realistic human';
  let hairRig=null,hairChoice=null;const contacts=[];
- let relaxedStance=null;let mixer,actions,bones=[],active=null,ready=false,outfit={shirt,pants,...initialOutfit,hat:'none'},wearables=[];
+ let glassesAnchor=null;let relaxedStance=null;let mixer,actions,bones=[],active=null,ready=false,outfit={shirt,pants,...initialOutfit,hat:'none'},wearables=[];
  function clearWearables(){for(const g of wearables){g.parent?.remove(g);g.traverse(o=>{o.geometry?.dispose();if(o.material&&!Array.isArray(o.material))o.material.dispose();});}wearables=[];}
  function applyOutfit(){if(!ready)return;root.traverse(mesh=>{if(mesh.isMesh&&mesh.userData.wardrobeBase){if(outfit.native)mesh.material=mesh.userData.wardrobeBase;else colorClothes(mesh,outfit.shirt,outfit.pants,outfit);}});clearWearables();root.updateMatrixWorld(true);const mat=c=>new THREE.MeshStandardMaterial({color:c,roughness:.55}),black=mat(0x17252b),accent=mat(outfit.accessoryColor||0x8f6a45),gold=mat(0xc2a16a);
  function add(g,geo,m,x,y,z){const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.castShadow=true;g.add(o);return o;}
  function attach(g,bone){root.add(g);root.updateMatrixWorld(true);bone?.attach(g);wearables.push(g);}
  const head=bones.find(b=>/Head$/i.test(b.name)),headFit=avatarHeadFrame(root,head);
- if(outfit.glasses){const g=createSunglasses(outfit.sunglassesStyle||'wayfarer');g.position.set(headFit.point.x,headFit.top-.148,headFit.point.z+.117);attach(g,head);}
+ if(outfit.glasses){const g=createSunglasses(outfit.sunglassesStyle||'wayfarer');if(glassesAnchor&&head){head.add(g);g.matrix.copy(glassesAnchor);g.matrix.decompose(g.position,g.quaternion,g.scale);wearables.push(g);}else{g.position.set(headFit.point.x,headFit.top-.148,headFit.point.z+.117);attach(g,head);}}
  if(outfit.bag&&outfit.bag!=='none'){const g=new THREE.Group(),px=outfit.bag==='purse'?-.31:.22,py=outfit.bag==='purse'?.78:.92;add(g,new RoundedBoxGeometry(.23,.21,.10,3,.025),accent,px,py,.08);add(g,new THREE.BoxGeometry(.04,.03,.012),gold,px,py+.02,.14);const handle=add(g,new THREE.TorusGeometry(.08,.012,8,20,Math.PI),accent,px,py+.11,.08);if(outfit.bag==='crossbody'){const strap=add(g,new THREE.BoxGeometry(.025,.72,.025),accent,.03,1.28,.13);strap.rotation.z=.5;}attach(g,outfit.bag==='purse'?bones.find(b=>/L_Hand$|L Hand$/.test(b.name)):bones.find(b=>/Spine1$/.test(b.name)));}
  if(hairChoice)hairRig?.apply(hairChoice);
  }
@@ -123,7 +123,7 @@ export function createRealisticHuman({shirt=0x3e83ad,pants=0xb39568,onReady=()=>
   mixer=new THREE.AnimationMixer(model);actions={idle:mixer.clipAction(idle.animations[0]),walk:mixer.clipAction(walk.animations[0]),run:mixer.clipAction(run.animations[0]),dance:mixer.clipAction(dance.animations[0])};
   for(const side of ['L','R']){const foot=bones.find(b=>b.name.replace(/[^a-z0-9]/gi,'').endsWith(side+'Foot'));if(!foot)continue;const material=new THREE.MeshBasicMaterial({map:contactTexture(),transparent:true,depthWrite:false,opacity:.3,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),material);mesh.name=side+' shoe contact';mesh.rotation.x=-Math.PI/2;mesh.renderOrder=1;root.add(mesh);contacts.push({foot,mesh});}
   if(modelUrl&&/hero-rigged/.test(modelUrl))relaxedStance=createRelaxedPlayerStance(root,bones,targets=>controller.poseBasketball(targets));
-  ready=true;controller.update(0,0);hairRig=createHairCustomizer(root,bones);applyOutfit();onReady();return controller;
+  ready=true;controller.update(0,0);{const head=bones.find(b=>/Head$/i.test(b.name));if(head){const fit=avatarHeadFrame(root,head);root.updateMatrixWorld(true);const placement=new THREE.Matrix4().makeTranslation(fit.point.x,fit.top-.148,fit.point.z+.121);glassesAnchor=new THREE.Matrix4().copy(head.matrixWorld).invert().multiply(root.matrixWorld).multiply(placement);}}hairRig=createHairCustomizer(root,bones);applyOutfit();onReady();return controller;
  }).catch(error=>{console.error('Realistic character load failed',error);return controller;});
  return controller;
 }
