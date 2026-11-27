@@ -1390,7 +1390,7 @@ const roadMap=createRoadMapGeometry(scene,asphalt);
 await yieldStartup();
 roadMap.scan();
 await yieldStartup();
-const cityMap=createCityMap({player,getHeading:()=>avatar.rotation.y,getMarkerOwner:()=>freeApartments?.access.identity()??null,getHomes:()=>[...collectHomeLocations({starter:ownableHomes,premier,villas,coastal,apartments:apartmentExteriors,apartmentExperience}),...(cityview?[cityview.mapLocation()]:[])],getRoadPolygons:()=>roadMap.polygons,getLots:()=>realEstate.mapLots(),getNavigation:()=>{const cab=zCabs?.activeCab;if(!cab)return null;return{destination:cab.destination,points:[cab.root.position,...cab.path.points.filter((p,i)=>cab.path.lengths[i]>=cab.progress)]};}});
+let mapFacingHeading=0;const cityMap=createCityMap({player,getHeading:()=>mapFacingHeading,getMarkerOwner:()=>freeApartments?.access.identity()??null,getHomes:()=>[...collectHomeLocations({starter:ownableHomes,premier,villas,coastal,apartments:apartmentExteriors,apartmentExperience}),...(cityview?[cityview.mapLocation()]:[])],getRoadPolygons:()=>roadMap.polygons,getLots:()=>realEstate.mapLots(),getNavigation:()=>{const cab=zCabs?.activeCab;if(!cab)return null;return{destination:cab.destination,points:[cab.root.position,...cab.path.points.filter((p,i)=>cab.path.lengths[i]>=cab.progress)]};}});
 await yieldStartup();
 
 // Third-person walking avatar: forward-facing, visible from the default camera.
@@ -2291,7 +2291,7 @@ function animate(){
   if(powersports?.riding)camera.lookAt(target);else camera.lookAt(camera.position.clone().addScaledVector(forward,20));
   avatar.visible=!(freeApartments?.active&&camera.position.distanceTo(target)<.65)&&!sittingSeat?.reclined&&!(onObservationDeck&&Math.hypot(camera.position.x-player.x,camera.position.z-player.z)<.85)&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!rvPark.inside&&!observationNeedle.riding&&!carnival.riding&&!apartmentSession;
   avatar.position.set(player.x,0,player.z);
-  avatar.rotation.y=powersports?.riding?powersports.heading:marine.riding?marine.heading:sittingSeat?(sittingSeat.facing??yaw):yaw;avatar.rotation.x=marine.riding?marine.pitch:sittingSeat?.reclined?-.20:0;avatar.rotation.z=marine.riding?marine.roll:0;
+  avatar.rotation.y=powersports?.riding?powersports.heading:marine.riding?marine.heading:sittingSeat?(sittingSeat.facing??yaw):yaw;mapFacingHeading=avatar.rotation.y;avatar.rotation.x=marine.riding?marine.pitch:sittingSeat?.reclined?-.20:0;avatar.rotation.z=marine.riding?marine.roll:0;
   if(characterViews?.active){const viewPose=characterViews.apply(camera,player,avatar.rotation.y,groundHeightAt(player.x,player.z),(cam,target)=>cameraClearance.resolve(cam,target,freeApartments?.cameraRootAt()||gunStore?.cameraRootAt(player.x,player.z)||hospital?.cameraRootAt(player.x,player.z)||(cityview?.active?cityview.renderRoot:(canopyVenue?.cameraRootAt(player.x,player.z)||(ownableHomes.active?ownableHomes.interior.root:scene)))));if(viewPose)avatar.rotation.y=viewPose.heading;avatar.visible=true;}
   // Measure only movement produced by this frame's walking/scroll input. Fast
   // scroll steps are legitimate locomotion; teleports never enter this counter.

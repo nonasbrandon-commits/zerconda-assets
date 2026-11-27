@@ -1,0 +1,18 @@
+{
+  "version": 453,
+  "baseline": 452,
+  "baseCommit": "34dc3d8af666a2d82826c001d2567a58933bd1ac",
+  "baseTree": "250e81481f06cdf7b52138530bb9fbf422bd82f1",
+  "compiledSha256": "a1b615b4772b3cf6f13735a97ed5b8d482b8e6ea391b782cc6ebd606625d4cbe",
+  "gzipSha256": "013677ee01fea488e3623f4c539be080b9f4c9b6babe5522b6782467e32c9f39",
+  "allEmbeddedAssetsUnchanged": true,
+  "newMedia": 0,
+  "privateUserDataIncluded": false,
+  "change": "Fix startup crash caused by reading avatar rotation before avatar initialization in the map direction callback. Keep a safely initialized heading updated during gameplay. Relax main player idle arms, wrists and fingers with reversible animation corrections. Resize sunglasses with slimmer frames and closer facial placement. Correct stale loading version label and fallback module version.",
+  "validation": [
+    "Reproduced public v452 startup failure and tested complete packed startup to playable view with fix",
+    "Visual check on actual hero rig: relaxed stance and fitted sunglasses",
+    "Reversible joint correction restored before animation update",
+    "Build and compressed pack byte roundtrip"
+  ]
+}
