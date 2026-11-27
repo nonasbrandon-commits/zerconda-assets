@@ -1,0 +1,23 @@
+{
+  "version": 452,
+  "baseline": 451,
+  "baseCommit": "7ca6fb2bfffa2d9b0ba3d2e6a5085e4b26763517",
+  "baseTree": "cbb14ce5123e6e7dd3f4e48de6b175746d4a7790",
+  "publicBaselineVerified": true,
+  "compiledSha256": "6da2842c4ae66d30c679cd30b8e88662c73cb874c23e753f3f697d0bb5fe6e31",
+  "gzipSha256": "4738ac8256c8b5c40491506544eaae39806962a5573c84e8980289522f8e3668",
+  "allEmbeddedAssetsUnchanged": true,
+  "newMedia": 5,
+  "privateUserDataIncluded": false,
+  "change": "Modestly denser northern, mountain and western forests; fuller leafy bushes; seven-leaf folded dry litter clusters, more varied twigs, pine needles and cones; less regular wildflower coverage. Existing clearance, bounded streaming and mobile reductions retained. Add a small facing arrow to the player map marker. Add three generated reference women with standing idle animations to the level-10 Admin apartment for user review. Replace both helicopters with generated Zerconda Aviation and Channel 9 models, and remove their signboards/posts. Admin identity, private marks and property records unchanged.",
+  "validation": [
+    "Seven-region shrub and full crown route/wall/building clearance",
+    "No stone/log intersections; full log/trunk clearance",
+    "Nine bounded litter tiles; 634 leaf clusters, 253 twigs, 460 needle sprays, 56 cones in sampled region",
+    "Shader compile and browser preview",
+    "Map heading on nearby and expanded maps: four cardinal directions",
+    "Three real skinned idle models; apartment-floor grounding, furniture clearance and floor-9 unload/floor-10 reload",
+    "Two replacement helicopters: skid grounding, pad scale, board and leave actions; old signs and posts removed",
+    "ES module parse and build/pack roundtrip"
+  ]
+}

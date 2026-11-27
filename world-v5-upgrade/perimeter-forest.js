@@ -8,7 +8,7 @@ export function createPerimeterForest(scene,{grass}={}){const root=new THREE.Gro
  for(let z=-1382;z<175;z+=11)for(let row=0;row<6;row++){const zz=z+(row%2)*5+(rnd()-.5)*4;tree(CITY_PERIMETER.west+7+row*9.3+(rnd()-.5)*2,zz);tree(CITY_PERIMETER.east-7-row*9.3+(rnd()-.5)*2,zz);}
  for(let x=CITY_PERIMETER.west+14;x<610;x+=11)for(let row=0;row<6;row++)tree(x+(row%2)*5+(rnd()-.5)*4,CITY_PERIMETER.north+7+row*9.3+(rnd()-.5)*2);
  // Fill the previously open western North Woods strip, joining the existing grove.
- const extensionStart=trees.length;for(let z=-1338;z<-580;z+=11.2)for(let x=-655;x<-448;x+=11.2){const xx=x+(rnd()-.5)*3,zz=z+(rnd()-.5)*3;tree(xx,zz,true);}root.userData.forestExtension={bounds:{x0:-660,x1:-443,z0:-1344,z1:-575},trees:trees.length-extensionStart};
+ const extensionStart=trees.length;for(let z=-1338;z<-580;z+=10.6)for(let x=-655;x<-448;x+=10.6){const xx=x+(rnd()-.5)*3,zz=z+(rnd()-.5)*3;tree(xx,zz,true);}root.userData.forestExtension={bounds:{x0:-660,x1:-443,z0:-1344,z1:-575},trees:trees.length-extensionStart};
  // Additional irregular clusters around the warning clearing; preserve its approach.
  const warningStart=trees.length;
  for(const [cx,cz]of[[-228,-1371],[-214,-1351],[-161,-1370],[-146,-1345]])for(let i=0;i<7;i++){const angle=i*2.399+rnd()*.6,r=3+rnd()*10,x=cx+Math.cos(angle)*r,z=cz+Math.sin(angle)*r;if(z< -1380||Math.abs(x+186)<8||trees.some(t=>Math.hypot(x-t.x,z-t.z)<6))continue;tree(x,z);}

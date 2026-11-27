@@ -1390,7 +1390,7 @@ const roadMap=createRoadMapGeometry(scene,asphalt);
 await yieldStartup();
 roadMap.scan();
 await yieldStartup();
-const cityMap=createCityMap({player,getMarkerOwner:()=>freeApartments?.access.identity()??null,getHomes:()=>[...collectHomeLocations({starter:ownableHomes,premier,villas,coastal,apartments:apartmentExteriors,apartmentExperience}),...(cityview?[cityview.mapLocation()]:[])],getRoadPolygons:()=>roadMap.polygons,getLots:()=>realEstate.mapLots(),getNavigation:()=>{const cab=zCabs?.activeCab;if(!cab)return null;return{destination:cab.destination,points:[cab.root.position,...cab.path.points.filter((p,i)=>cab.path.lengths[i]>=cab.progress)]};}});
+const cityMap=createCityMap({player,getHeading:()=>avatar.rotation.y,getMarkerOwner:()=>freeApartments?.access.identity()??null,getHomes:()=>[...collectHomeLocations({starter:ownableHomes,premier,villas,coastal,apartments:apartmentExteriors,apartmentExperience}),...(cityview?[cityview.mapLocation()]:[])],getRoadPolygons:()=>roadMap.polygons,getLots:()=>realEstate.mapLots(),getNavigation:()=>{const cab=zCabs?.activeCab;if(!cab)return null;return{destination:cab.destination,points:[cab.root.position,...cab.path.points.filter((p,i)=>cab.path.lengths[i]>=cab.progress)]};}});
 await yieldStartup();
 
 // Third-person walking avatar: forward-facing, visible from the default camera.
