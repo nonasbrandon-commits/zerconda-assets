@@ -1,0 +1,24 @@
+{
+  "version": 473,
+  "baseline": 472,
+  "change": "Increase shared pedestrian clearance from1.15m to1.55m, begin passing earlier and allow safe backward steps when forward and side steps are blocked. Recover primary pedestrians already overlapping the body-clearance ring of a post or other scenery through the existing gradual static escape helper. Run their timeout/turnaround logic even when no passing step is available. Shared crowd separation now also checks full body clearance before pushing people, preventing separation from wedging someone into a pole. Preserve Ellis voiced conversation, beach gulls, quiet audio, existing resident identities and seated routines.",
+  "sourceModules": [
+    "beach-passing.js",
+    "animated-pedestrians.js",
+    "crowd-spacing.js"
+  ],
+  "newMedia": 0,
+  "privateRecordsPublished": false,
+  "allEmbeddedAssetsUnchanged": true,
+  "storageKeysChanged": false,
+  "compiledSha256": "5efbfbe009788aec5cd673d650be81375cac5b1b91cbf69be260f19548f8d4c4",
+  "gzipSha256": "f7529ea7e0640b57657ec69fb46474a666cd2c41af6bb7c11ccc6c3952c18f41",
+  "authorization": "User reported pictured close/stuck pedestrians and explicitly approved pending public game publication; same game and destination.",
+  "validation": [
+    "Reproduced old partial pole-overlap deadlock with original passing function",
+    "Two initially-close oncoming people escape pole and pass; minimum clearance after separation1.564m",
+    "Idle overlapping people separate to1.55m; full body clearance checked",
+    "Full-world real sidewalk prop escape and oncoming primary pedestrian test before deployment",
+    "Exact deterministic gzip, unchanged embedded assets, no QA hooks"
+  ]
+}

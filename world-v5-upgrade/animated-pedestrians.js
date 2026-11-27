@@ -1,4 +1,4 @@
-import {beachPassingStep} from './beach-passing.js?v=467';
+import {beachPassingStep,pedestrianStaticEscapeStep} from './beach-passing.js?v=467';
 import {createResidentBreaks} from './resident-breaks.js?v=467';
 import {stepPedestrianYield} from './pedestrian-traffic.js?v=425';
 import {clearSegment,createPedestrianDetourSearch} from './pedestrian-detour.js?v=20261122-hitch-v252';
@@ -93,7 +93,7 @@ export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=(
   const segment=(from,to)=>clearSegment(from,to,canWalk,radius)&&clearSegment(from,to,escapeClear,0);
 
   let next=routePoint(a,advance);
-  if(!a.vehicle){const target=routePoint(a,4),point=beachPassingStep({id:a.profile.id,here:old,target,speed:a.speed,dt:stepDt,people:obstacles.map((o,i)=>({...o,id:10000+i})),staticClear:(from,to)=>clearSegment(from,to,canWalk,radius),memory:a.passing||(a.passing={})});if(point){a.group.position.set(point.x,groundHeightAt(point.x,point.z),point.z);if(a.route.kind==='sidewalk')a.position=point.z;else if(a.route.kind==='boardwalk'){const goingEast=a.position<824;a.position=goingEast?point.x+266:1648-(point.x+266);}a.detour=null;a.search=null;}else{a.human.update(stepDt,0);a.waiting=true;continue;}}
+  if(!a.vehicle){const target=routePoint(a,4),recovery=pedestrianStaticEscapeStep({id:a.profile.id,here:old,canWalk,speed:a.speed,dt:stepDt,people:obstacles.map((o,i)=>({...o,id:10000+i})),memory:a.staticEscape||(a.staticEscape={}),radius}),point=recovery.active?recovery.point:beachPassingStep({id:a.profile.id,here:old,target,speed:a.speed,dt:stepDt,people:obstacles.map((o,i)=>({...o,id:10000+i})),staticClear:(from,to)=>clearSegment(from,to,canWalk,radius),memory:a.passing||(a.passing={})});if(point){a.group.position.set(point.x,groundHeightAt(point.x,point.z),point.z);if(a.route.kind==='sidewalk')a.position=point.z;else if(a.route.kind==='boardwalk'){const goingEast=a.position<824;a.position=goingEast?point.x+266:1648-(point.x+266);}a.detour=null;a.search=null;}else{a.blockedFor=(a.blockedFor||0)+stepDt;if(a.blockedFor>2&&a.route.kind==='sidewalk'){a.direction*=-1;a.blockedFor=0;a.passing={};}a.human.update(stepDt,0);a.waiting=true;continue;}}
   const escaped=a.group.position.distanceTo(old)>.0001;
   next=routePoint(a,advance);const directClear=!escaped&&!a.detour&&Math.hypot(next.x-old.x,next.z-old.z)<=advance+.02&&segment(old,next);a.retry=Math.max(0,(a.retry||0)-stepDt);
   if(!escaped&&!a.detour&&!directClear&&!a.retry){

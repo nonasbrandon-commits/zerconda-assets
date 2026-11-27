@@ -1,9 +1,9 @@
 // Keep a chosen passing side until clear; do not rebuild static paths around moving people.
 export function beachPassingStep({id,here,target,speed,dt,people,player,staticClear,memory}) {
  const gap=(q,p)=>Math.hypot(q.x-p.x,q.z-p.z);
- const obstacles=people.filter(p=>p.id!==id).map(p=>({...p,r:1.15}));
- if(player)obstacles.push({...player,r:1.2,id:-1});
- const heading={x:target.x-here.x,z:target.z-here.z},headingLength=Math.hypot(heading.x,heading.z)||1;const near=obstacles.filter(p=>gap(here,p)<3.2&&((p.x-here.x)*heading.x+(p.z-here.z)*heading.z)/headingLength>-.4);
+ const obstacles=people.filter(p=>p.id!==id).map(p=>({...p,r:1.55}));
+ if(player)obstacles.push({...player,r:1.6,id:-1});
+ const heading={x:target.x-here.x,z:target.z-here.z},headingLength=Math.hypot(heading.x,heading.z)||1;const near=obstacles.filter(p=>gap(here,p)<4.0&&((p.x-here.x)*heading.x+(p.z-here.z)*heading.z)/headingLength>-.4);
  memory.left=Math.max(0,(memory.left||0)-dt);
  if(!memory.left&&near.length){
   const closest=near.sort((a,b)=>gap(here,a)-gap(here,b))[0];
@@ -22,6 +22,8 @@ export function beachPassingStep({id,here,target,speed,dt,people,player,staticCl
   if(obstacles.some(p=>{const before=gap(here,p),after=gap(q,p);return after<p.r&&(before>=p.r||after<before-.000001);}))continue;
   return q;
  }
+ // If every forward/side step is blocked, step back instead of waiting forever.
+ for(const angle of[Math.PI,Math.PI-.65,Math.PI+.65]){const step=Math.min(len,speed*dt),vx=dx*Math.cos(angle)-dz*Math.sin(angle),vz=dx*Math.sin(angle)+dz*Math.cos(angle),q={x:here.x+vx*step,z:here.z+vz*step};if(staticClear(here,q)&&obstacles.every(p=>{const before=gap(here,p),after=gap(q,p);return after>=p.r||after>=before-.000001;}))return q;}
  return null;
 }
 // Recover when an existing position overlaps the clearance ring of a prop.
