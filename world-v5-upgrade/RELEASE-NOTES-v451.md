@@ -1,0 +1,1 @@
+Users directory contains only Admin, permanent ID admin. Legacy player names and property owner strings are not treated as extra accounts. Existing property and marker data preserved. No fabricated email or real-account moderation backend.

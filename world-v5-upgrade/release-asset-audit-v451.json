@@ -1,0 +1,19 @@
+{
+  "version": 451,
+  "baseline": 450,
+  "baseCommit": "fdf1554d958be658078480ba6a35277d72ad1212",
+  "baseTree": "da05488b9383157bdec05f456ceb96b3129a1f01",
+  "publicBaselineVerified": true,
+  "compiledSha256": "ccf8926cc09b622b827cc4003b92b44b6434e45ef6865bd943f9c0de5e4935a0",
+  "gzipSha256": "12a5a53288591d34af143ef8e5d079de32544c33c9133aac2ffbde265bcc1579",
+  "allEmbeddedAssetsUnchanged": true,
+  "newMedia": 0,
+  "privateUserDataIncluded": false,
+  "change": "Users directory contains only Admin, permanent ID admin. Legacy player names and property owner strings are not treated as extra accounts. Existing property and marker data preserved. No fabricated email or real-account moderation backend.",
+  "validation": [
+    "Admin-only UI and snapshot",
+    "Property and marker storage unchanged",
+    "Authorization guard",
+    "ES module parse and build/pack roundtrip"
+  ]
+}
