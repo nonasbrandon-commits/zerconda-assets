@@ -2001,7 +2001,7 @@ await yieldStartup();
 drivingControls=createVehicleControls({getViewLabel:()=>carCameraViews.label,onChangeView:()=>{carCameraViews.cycle();driverLookYaw=driverLookPitch=0;},onExit:()=>{if(powersports?.riding)powersports.end();else if(activeCar)toggleCar();},onEngage:()=>{keys.clear();townControls.stop();}});
 await yieldStartup();
 
-const blockedWallOpening=createBlockedWallOpening(scene,{getPlayer:()=>player,onMessage:m=>townControls.notify(m)});
+const blockedWallOpening=createBlockedWallOpening(scene,{getPlayer:()=>player,getView:()=>{const d=new THREE.Vector3();camera.getWorldDirection(d);return{x:camera.position.x,y:camera.position.y,z:camera.position.z,fx:d.x,fy:d.y,fz:d.z,active:!document.hidden};},onMessage:m=>townControls.notify(m)});
 await yieldStartup();
 
 const areaTravel=createAreaTravel({onCall:()=>{vehicleHorns.unlock();zCabs.requestPickup();},onCancel:()=>zCabs.cancel(),onStop:()=>{keys.clear();townControls.stop();}});

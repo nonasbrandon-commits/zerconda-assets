@@ -1,0 +1,1 @@
+Feet in Leaves #1 — Joseph SARDIN. Source: https://bigsoundbank.com/feet-in-leaves-s0137.html . CC0 (public domain). Download source https://bigsoundbank.com/UPLOAD/mp3/0137.mp3 . Used 10-second excerpt beginning at 8 seconds; brief fades. User approved preview. Runtime mono HRTF playback; no synthetic impacts.

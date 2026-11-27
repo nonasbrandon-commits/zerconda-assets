@@ -1,0 +1,22 @@
+{
+  "version": 450,
+  "baseline": 449,
+  "publicBaselineVerified": true,
+  "compiledSha256": "5cb66b44d37fc3192f25881ce7472dd6847becada77721220bda9047aa5cdce5",
+  "gzipSha256": "26c121bc1ce720ccd9991b571c26046064a99c1f3c693f23b9f0620951d14f07",
+  "allEmbeddedAssetsUnchanged": true,
+  "newMediaFiles": 1,
+  "audio": "User-approved real field recording: Feet in Leaves #1 by Joseph Sardin, CC0. Ten seconds from 8s, fades only. Behind-player HRTF playback while looking at warning, gesture unlock and look-away fade.",
+  "adminPersistence": "Remember verified Admin browser session across releases until signout; automatically migrate legacy pins only into Admin owner ID; preserve private per-owner marker keys and legacy backups",
+  "vegetation": "Additional irregular tree and sapling clusters around warning and gravel roadside, denser local leafy understory; clear road and warning approach",
+  "changes": [
+    "Replace typeset red wall warning with hand-drawn spray strokes, overspray, drips and dry paint pores"
+  ],
+  "validation": [
+    "ES module parse",
+    "Browser canvas render and visual preview",
+    "Web Audio render, non-clipping signal, gaze/distance gating, delayed onset and look-away checks",
+    "Build and pack roundtrip",
+    "Independent public v449 baseline and unchanged embedded asset comparison"
+  ]
+}
