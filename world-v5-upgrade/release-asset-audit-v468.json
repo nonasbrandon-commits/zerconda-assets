@@ -1,0 +1,25 @@
+{
+  "version": 468,
+  "baseline": 467,
+  "baseCommit": "7b2fbf38ffd2501a7217307bd3fef9f2b48f6db9",
+  "baseTree": "15f20a2eb78d4bcb678db7c50608e7a1ebbc33b9",
+  "change": "Upgrade only the baseball knockdown and basketball carnival booths from the user reference sheets. Baseball gets navy/timber siding, silver can pyramids (30 cans), eighteen racked baseballs, eight toy prizes, striped awning and illuminated two-line marquee. Basketball gets red exterior siding, three modeled backboards/hoops with cord nets, red-framed lane netting, ball-return ramps with 36 basketballs, eighteen prizes on side racks, silver-star front panels and striped awning. Both keep the existing nearby actions and game controllers. Existing ring-toss model, all v467 landscaping, controls, pedestrian routines, clubhouse-only golf, home style boundaries and saved data remain unchanged.",
+  "sourceModules": [
+    "carnival-sports-booths.js",
+    "seaside-carnival.js"
+  ],
+  "newMedia": 0,
+  "allEmbeddedAssetsUnchanged": true,
+  "storageKeysChanged": false,
+  "privateRecordsPublished": false,
+  "ringTossSourceUnchanged": true,
+  "compiledSha256": "9f6c38d2aa4a70039009701aaeab2ce4ebe9fd02f328d85d8a5eea151f60e38a",
+  "gzipSha256": "7f4ebf6a250dba858de9407147c380102f498a2cf1d5cf0ba963af0c03a74656",
+  "validation": [
+    "Actual sports booth factories: can/ball/prize/hoop/bulb counts; geometry remains inside original stall width and ten-metre display depth",
+    "Front and corner WebGL renders inspected for both booths",
+    "Actual carnival factory: baseball and basketball nearby actions open the existing games; ring toss still opens with its original model",
+    "Static material batching: baseball 17 batches and basketball 20 batches; no new dynamic lights",
+    "Exact deterministic gzip production roundtrip and unchanged embedded media"
+  ]
+}
