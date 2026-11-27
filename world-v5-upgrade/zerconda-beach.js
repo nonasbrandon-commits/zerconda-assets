@@ -1,3 +1,4 @@
+import {createBeachSeagulls} from './beach-seagulls.js?v=471';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {createOffshoreSharks} from './offshore-sharks.js?v=20261120-coastal-v166';
 import {createBoardwalkAccess} from './boardwalk-access.js?v=20261123-waterfront-v271';
@@ -52,12 +53,13 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
   for(const z of[202,220]){const lounge=createBeachLounge3D(root,{x,y:.085,z,index:70+i});lounges.push(lounge);eastBeachSets.push(lounge);}
   for(const z of i%2===0?[198,230]:[198]){const p={x:x+(z===198?-6:7),z};palms.push(createReferenceBeachPalm(root,{...p,y:.085,height:8.3+(i%3)*.55}));eastPalmSites.push(p);}
  }
+ const seagulls=createBeachSeagulls(root,{palms});
  const allBeachSeats=[...lounges.map(l=>l.seat),...boardwalkFurniture.seats];
- return {root,eastBeachSets,eastPalmSites,seats:allBeachSeats,westBeachSets,offshoreSharks,access,blocksVehicle:access.blocksVehicle,sandMaterial:sand,boardwalkBounds,lounges,palms,boardwalkFurniture,nearestSeat(x,z,max=2.5){let best=null,d=max;for(const seat of allBeachSeats){if(seat.npcOccupant)continue;const distance=Math.hypot(x-seat.x,z-seat.z);if(distance<d){best=seat;d=distance;}}return best;},blocks(x,z){return access.blocks(x,z)||boardwalkFurniture.blocks(x,z)||lounges.some(l=>l.blocks(x,z))||palms.some(p=>Math.hypot(x-p.x,z-p.z)<.48);},ocean:oceanSystem,heightAt(x,z){
+ return {root,seagulls,eastBeachSets,eastPalmSites,seats:allBeachSeats,westBeachSets,offshoreSharks,access,blocksVehicle:access.blocksVehicle,sandMaterial:sand,boardwalkBounds,lounges,palms,boardwalkFurniture,nearestSeat(x,z,max=2.5){let best=null,d=max;for(const seat of allBeachSeats){if(seat.npcOccupant)continue;const distance=Math.hypot(x-seat.x,z-seat.z);if(distance<d){best=seat;d=distance;}}return best;},blocks(x,z){return access.blocks(x,z)||boardwalkFurniture.blocks(x,z)||lounges.some(l=>l.blocks(x,z))||palms.some(p=>Math.hypot(x-p.x,z-p.z)<.48);},ocean:oceanSystem,heightAt(x,z){
   // Match the visible planks (.19 centre + .025 half thickness), not sea level.
   if(x>=boardwalkBounds.minX&&x<=boardwalkBounds.maxX&&z>=181&&z<=191)return .095;
   const roadY=access.heightAt(x,z);if(roadY!==null)return roadY;
   if(x>=-444&&x<=570&&z>=154&&z<=245)return .085;
   return null;
- },update(dt){advanceCoastalBreeze(dt);oceanSystem.update(dt);offshoreSharks.update(oceanSystem.time);},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
+ },update(dt){seagulls.update(dt);advanceCoastalBreeze(dt);oceanSystem.update(dt);offshoreSharks.update(oceanSystem.time);},bounds:{minX:-165,maxX:165,minZ:168,maxZ:248},center:{x:0,z:212}};
 }

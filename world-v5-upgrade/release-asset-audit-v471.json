@@ -1,0 +1,23 @@
+{
+  "version": 471,
+  "baseline": 470,
+  "change": "Add six original articulated white/gray seagulls with yellow beaks/feet and dark wing tips. Random staggered flight, palm-crown landing, resting and takeoff routines use existing beach trees, unique reserved perches and curved paths over the beach. Quiet beach output from v470 preserved. No external models, images, sound downloads or new storage fields.",
+  "sourceModules": [
+    "beach-seagulls.js",
+    "zerconda-beach.js"
+  ],
+  "newMedia": 0,
+  "allEmbeddedAssetsUnchanged": true,
+  "storageKeysChanged": false,
+  "privateRecordsPublished": false,
+  "compiledSha256": "39912f7843e4c72d3052ef833c48d46d69cb50f17928f29f52b634cec40482a0",
+  "gzipSha256": "092935379406f214cfded1f5f97f972651eca526bdf1d2c4fd0c53abc3b41194",
+  "authorization": "User requested pictured beach seagulls flying and landing randomly on trees; existing approval covers necessary game changes and same public compressed JavaScript publication",
+  "validation": [
+    "Actual beach factory and seagull model rendered in WebGL",
+    "Six bird flight/rest/landing state transitions and bounded beach routes simulated for30minutes",
+    "Unique palm perches and randomized waits; exact final landing points",
+    "v470 quieter sound source retained unchanged; deterministic production gzip and unchanged embedded assets",
+    "All six made32-35 landings in30minutes;48 real palm perches; no page errors; final small eyes, tapered wings and tucked flight feet inspected"
+  ]
+}

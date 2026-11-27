@@ -1,0 +1,1 @@
+Add six original articulated white/gray seagulls with yellow beaks/feet and dark wing tips. Random staggered flight, palm-crown landing, resting and takeoff routines use existing beach trees, unique reserved perches and curved paths over the beach. Quiet beach output from v470 preserved. No external models, images, sound downloads or new storage fields.
