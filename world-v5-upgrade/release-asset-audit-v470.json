@@ -1,0 +1,19 @@
+{
+  "version": 470,
+  "baseline": 469,
+  "change": "Reduce the beach ambience output gain to0.4 of v469 (60% lower signal amplitude, about8dB reduction) for surf, wind and gulls. Preserve user volume/mute settings, spatial fades, gesture unlock and indoor silence. No other gameplay or models changed.",
+  "sourceModules": [
+    "beach-ambience.js"
+  ],
+  "newMedia": 0,
+  "allEmbeddedAssetsUnchanged": true,
+  "storageKeysChanged": false,
+  "privateRecordsPublished": false,
+  "compiledSha256": "5c06af292e9432e499c5fac566866748ef2078b13fb56dc7424dfcbd7677694e",
+  "gzipSha256": "f2e3c44d2c862c7e2cd6ccbfdac4de5d8b121d0b9ac27b49645f6a0111e6e65d",
+  "authorization": "User requested quieter beach area; standing approval for necessary changes and explicit prior public compressed JavaScript publication to same game repo",
+  "validation": [
+    "OfflineAudioContext renders original and changed graph; exact0.4 RMS and peak amplitude ratio",
+    "Deterministic gzip roundtrip and all embedded assets unchanged; no QA hooks"
+  ]
+}

@@ -4,7 +4,7 @@ export function beachAmbienceGain(player,{indoors=false,hidden=false}={}){if(!pl
 // Original procedural coastal sound: no downloads, music, recordings or licensing dependencies.
 export function createCoastalSoundGraph(context,{seed=6173}={}){
  let state=seed>>>0;const random=()=>((state=(Math.imul(state,1664525)+1013904223)>>>0)/4294967296),nodes=[],sources=[],calls=new Set(),node=n=>(nodes.push(n),n);
- const master=node(context.createGain());master.gain.value=0;master.connect(context.destination);
+ const master=node(context.createGain());master.gain.value=0;const beachOutput=node(context.createGain());beachOutput.gain.value=.4;master.connect(beachOutput);beachOutput.connect(context.destination);
  const buffer=context.createBuffer(2,Math.ceil(context.sampleRate*4),context.sampleRate);for(let c=0;c<2;c++){const data=buffer.getChannelData(c);for(let i=0;i<data.length;i++)data[i]=(random()*2-1)*.9;}
  function noise(offset){const source=node(context.createBufferSource());source.buffer=buffer;source.loop=true;source.start(0,offset);sources.push(source);return source;}
  const surfHP=node(context.createBiquadFilter());surfHP.type='highpass';surfHP.frequency.value=85;

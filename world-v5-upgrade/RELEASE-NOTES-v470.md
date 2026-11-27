@@ -1,0 +1,1 @@
+Reduce the beach ambience output gain to0.4 of v469 (60% lower signal amplitude, about8dB reduction) for surf, wind and gulls. Preserve user volume/mute settings, spatial fades, gesture unlock and indoor silence. No other gameplay or models changed.
