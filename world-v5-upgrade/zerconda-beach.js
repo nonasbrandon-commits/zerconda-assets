@@ -47,8 +47,13 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
   palms.push(createReferenceBeachPalm(root,{x:x-6,y:.085,z:198,height:8.2+(i%3)*.6}));
   if(i%2===0)palms.push(createReferenceBeachPalm(root,{x:x+7,y:.085,z:229,height:8.8}));
  }
+ const eastBeachSets=[],eastPalmSites=[];
+ for(const [i,x]of [178,200,222,244,266,288,310,332,354].entries()){
+  for(const z of[202,220]){const lounge=createBeachLounge3D(root,{x,y:.085,z,index:70+i});lounges.push(lounge);eastBeachSets.push(lounge);}
+  for(const z of i%2===0?[198,230]:[198]){const p={x:x+(z===198?-6:7),z};palms.push(createReferenceBeachPalm(root,{...p,y:.085,height:8.3+(i%3)*.55}));eastPalmSites.push(p);}
+ }
  const allBeachSeats=[...lounges.map(l=>l.seat),...boardwalkFurniture.seats];
- return {root,seats:allBeachSeats,westBeachSets,offshoreSharks,access,blocksVehicle:access.blocksVehicle,sandMaterial:sand,boardwalkBounds,lounges,palms,boardwalkFurniture,nearestSeat(x,z,max=2.5){let best=null,d=max;for(const seat of allBeachSeats){if(seat.npcOccupant)continue;const distance=Math.hypot(x-seat.x,z-seat.z);if(distance<d){best=seat;d=distance;}}return best;},blocks(x,z){return access.blocks(x,z)||boardwalkFurniture.blocks(x,z)||lounges.some(l=>l.blocks(x,z))||palms.some(p=>Math.hypot(x-p.x,z-p.z)<.48);},ocean:oceanSystem,heightAt(x,z){
+ return {root,eastBeachSets,eastPalmSites,seats:allBeachSeats,westBeachSets,offshoreSharks,access,blocksVehicle:access.blocksVehicle,sandMaterial:sand,boardwalkBounds,lounges,palms,boardwalkFurniture,nearestSeat(x,z,max=2.5){let best=null,d=max;for(const seat of allBeachSeats){if(seat.npcOccupant)continue;const distance=Math.hypot(x-seat.x,z-seat.z);if(distance<d){best=seat;d=distance;}}return best;},blocks(x,z){return access.blocks(x,z)||boardwalkFurniture.blocks(x,z)||lounges.some(l=>l.blocks(x,z))||palms.some(p=>Math.hypot(x-p.x,z-p.z)<.48);},ocean:oceanSystem,heightAt(x,z){
   // Match the visible planks (.19 centre + .025 half thickness), not sea level.
   if(x>=boardwalkBounds.minX&&x<=boardwalkBounds.maxX&&z>=181&&z<=191)return .095;
   const roadY=access.heightAt(x,z);if(roadY!==null)return roadY;

@@ -1,0 +1,31 @@
+{
+  "version": 469,
+  "baseline": 468,
+  "baseCommit": "696e87755f9a3c8205ba3b987130d6869ca2aa05",
+  "baseTree": "6fec670ee489d770e263a6b390a86ba178fe2f50",
+  "change": "Add the three previously selected existing licensed attendants at basketball, baseball and ring toss counters; move the existing balloon-darts attendant closer and update talk, game-action and collision positions. Restore the east carnival beach with 18 chair/parasol/table sets and 14 palms, leaving boardwalk and access clear. Add gesture-unlocked original procedural surf, wind and occasional gull sounds with coast proximity and indoor muting. Add Beach sounds volume to existing player Settings, with zero as mute. Sketchfab candidates are a separate request and none are included in this release.",
+  "sourceModules": [
+    "carnival-game-attendants.js",
+    "seaside-carnival.js",
+    "zerconda-beach.js",
+    "beach-ambience.js",
+    "player-menu.js",
+    "world-v5-complete-replacement.js"
+  ],
+  "newMedia": 0,
+  "allEmbeddedAssetsUnchanged": true,
+  "storageKeysChanged": false,
+  "additiveExistingProfileSetting": "beachSoundVolume; other stored fields preserved",
+  "privateRecordsPublished": false,
+  "compiledSha256": "f35c28c9e5c9c04d34867125e9288d9b889c331f834f11be9684fb27d281191e",
+  "gzipSha256": "c9bbedb20bb4a407a4d45e5a9e9319afd4b04835e2bc71cbea56e69531e20534",
+  "validation": [
+    "Three actual licensed Microsoft Rocketbox models grounded at 0.095m, stationary native idle poses and collision",
+    "Worker-side basketball, baseball and ring-toss actions open existing games; darts collision and talk target follow closer post",
+    "East beach: 18 lounge/parasol/table sets and 14 palms, clear access, existing west 16 sets retained",
+    "Audio remains locked before trusted interaction; fades to zero indoors/off coast; slider mute preserves existing profile fields",
+    "Offline stereo audio render RMS 0.052, peak 0.278; gull nodes cleaned up",
+    "Full production-world boot and actual player Settings callback and carnival nearby game action",
+    "Deterministic gzip production roundtrip; unchanged embedded licensed assets; no QA hooks"
+  ]
+}

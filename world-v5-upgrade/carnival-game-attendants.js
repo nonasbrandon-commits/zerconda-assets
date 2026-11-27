@@ -1,0 +1,19 @@
+import * as THREE from 'three';
+import {createResidentHuman} from './resident-human.js?v=20261122-hitch-v252';
+// Existing Microsoft Rocketbox citizen models, MIT license. No new model purchases or body changes.
+export const CARNIVAL_GAME_ATTENDANTS=[
+ {id:901,name:'Dev',game:'basketball',gender:'man',height:1.82,source:'Male_Adult_10',model:'./assets/citizen-28-v196.glb',x:204.15,z:127.2,role:'Basketball game attendant'},
+ {id:902,name:'Evan',game:'baseball',gender:'man',height:1.80,source:'Male_Adult_03',model:'./assets/citizen-25-v196.glb',x:211.85,z:127.2,role:'Baseball knockdown attendant'},
+ {id:903,name:'Riley',game:'rings',gender:'woman',height:1.71,source:'Female_Adult_09',model:'./assets/citizen-23-v196.glb',x:258.15,z:127.2,role:'Ring toss attendant'}
+];
+export function createCarnivalGameAttendants(parent,{getPlayer=()=>({x:0,z:0}),makeHuman=createResidentHuman,mobile=typeof matchMedia==='function'&&matchMedia('(pointer:coarse)').matches}={}){
+ let time=0,loading=0;const agents=CARNIVAL_GAME_ATTENDANTS.map(profile=>{const group=new THREE.Group();group.name=profile.name+' · '+profile.role;group.userData={dynamicScenery:true,displayName:profile.name,gender:profile.gender,npcIdentity:'carnival-attendant-'+profile.game,modelAsset:profile.model,source:profile.source,license:'MIT · Microsoft Rocketbox'};group.position.set(profile.x,.155,profile.z);group.visible=false;parent.add(group);const human=makeHuman({...profile,activity:'standing',model:new URL(profile.model,import.meta.url).href},{defer:true});group.add(human.root);return{profile,group,human,staff:true,point:new THREE.Vector3(),pending:null,retry:0,animationTime:0,get ready(){return human.ready;}};});
+ function distance(a,p=getPlayer()){a.group.getWorldPosition(a.point);return Math.hypot(p.x-a.point.x,p.z-a.point.z);}
+ function load(a){if(a.human.ready)return Promise.resolve(true);if(a.pending)return a.pending;loading++;a.pending=Promise.resolve().then(()=>a.human.load()).then(()=>{if(!a.human.ready)throw Error('Attendant model not ready');a.group.visible=true;return true;}).catch(error=>{a.error=String(error);a.group.userData.loadError=a.error;a.retry=time+20;return false;}).finally(()=>{loading--;a.pending=null;});return a.pending;}
+ function update(dt=.016){dt=Math.min(.15,Math.max(0,dt));time+=dt;const p=getPlayer();for(const a of agents){if(a.group.userData.adminDeleted){a.group.visible=false;continue;}const d=distance(a,p);if(mobile&&d>110&&a.ready&&!a.pending){a.human.dispose?.();a.group.visible=false;}a.group.visible=a.ready&&d<100;if(!a.group.visible)continue;a.animationTime+=dt;const cadence=d<45?1/30:1/12;if(a.animationTime>=cadence){a.human.update(Math.min(.15,a.animationTime),0);a.animationTime=0;}if(d<9&&p.z>a.point.z-.5){const desired=THREE.MathUtils.clamp(Math.atan2(p.x-a.point.x,p.z-a.point.z),-.65,.65);a.group.rotation.y=THREE.MathUtils.damp(a.group.rotation.y,desired,4,dt);}else a.group.rotation.y=THREE.MathUtils.damp(a.group.rotation.y,0,3,dt);}
+  if(!loading){const next=agents.filter(a=>!a.ready&&!a.pending&&!a.group.userData.adminDeleted&&time>=a.retry&&distance(a,p)<(mobile?65:85)).sort((a,b)=>distance(a,p)-distance(b,p))[0];if(next)load(next);}
+ }
+ const find=game=>agents.find(a=>a.profile.game===game);
+ function near(game,max=3.1){const a=find(game);return !!a?.ready&&a.group.visible&&!a.group.userData.adminDeleted&&distance(a)<max;}
+ return{agents,update,near,target(game,fallback){const a=find(game);if(!near(game))return fallback;return{x:a.point.x,y:a.point.y+1.1,z:a.point.z};},blocks(x,z){return agents.some(a=>a.ready&&a.group.visible&&!a.group.userData.adminDeleted&&Math.hypot(x-a.point.x,z-a.point.z)<.45);},async prepareNearby({all=false}={}){for(const a of agents)if(!a.group.userData.adminDeleted&&(all||distance(a)<85))await load(a);update(.05);return agents.filter(a=>a.ready).length;}};
+}
