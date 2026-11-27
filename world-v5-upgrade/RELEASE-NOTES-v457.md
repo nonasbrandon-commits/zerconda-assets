@@ -1,0 +1,1 @@
+Enable front and side Character Views while seated on ordinary seats, use the actual occupied floor height, and preserve seated facing when camera obstruction changes inspection angle. Stabilize Cityview camera collision before smoothing and avoid a second conflicting post-smoothing collision pass. Recognize the forward-adjusted sofa sitting anchors when clearing cameras.

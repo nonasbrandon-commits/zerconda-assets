@@ -2100,7 +2100,7 @@ await yieldStartup();
 
 let playable=false,movementLocked=false,characterPrepared=false,settledFrames=0;
 gunGame=createWeaponGame({scene,camera,canvas:renderer.domElement,store:gunStore,getPlayer:()=>player,getHeight:groundHeightAt,actor:realisticPlayer,showHeld:()=>characterViews?.active||playable&&!movementLocked&&!padUIOpen()&&!activeCar&&!powersports?.riding&&!scooters?.riding&&!marine?.riding&&!zCabs?.riding&&!airfield?.boarded,getFacing:()=>characterViews?.active?new THREE.Vector3(Math.sin(avatar.rotation.y),0,Math.cos(avatar.rotation.y)):null,canControl:()=>playable&&!characterViews?.active&&!characterViews?.menuOpen&&!movementLocked&&!padUIOpen()&&!activeCar&&!powersports?.riding&&!scooters?.riding&&!marine?.riding&&!zCabs?.riding&&!airfield?.boarded,onStop:()=>{keys.clear();movement.vx=movement.vz=movement.wheelImpulse=0;townControls.stop();},clearOtherItems:()=>{tagGame?.chooseHand('');courtGames?.chooseHand('');marine?.chooseHand('');zStore?.chooseHand('');},registerAction:registerTownAction});
-characterViews=createCharacterViews({canvas:renderer.domElement,canUse:()=>playable&&!activeCar&&!powersports?.riding&&!marine?.riding&&!skate?.riding&&!scooters?.riding&&!airfield?.boarded&&!zCabs?.riding&&!adminTransport?.active&&!observationNeedle?.riding&&!carnival?.riding&&!camp?.resting&&!camp?.insideCabin&&!rvPark?.inside&&!apartmentSession&&!sittingSeat&&!playerMenu?.panelOpen&&!gunGame?.panelOpen,onStop:()=>{keys.clear();movement.vx=movement.vz=movement.wheelImpulse=0;townControls.stop();}});
+characterViews=createCharacterViews({canvas:renderer.domElement,canUse:()=>playable&&!activeCar&&!powersports?.riding&&!marine?.riding&&!skate?.riding&&!scooters?.riding&&!airfield?.boarded&&!zCabs?.riding&&!adminTransport?.active&&!observationNeedle?.riding&&!carnival?.riding&&!camp?.resting&&!camp?.insideCabin&&!rvPark?.inside&&!apartmentSession&&!sittingSeat?.reclined&&!playerMenu?.panelOpen&&!gunGame?.panelOpen,onStop:()=>{keys.clear();movement.vx=movement.vz=movement.wheelImpulse=0;townControls.stop();}});
 await yieldStartup();
 
 function updateAreaLoading(){} // Startup is covered by the screenshot loading screen.
@@ -2265,6 +2265,8 @@ function animate(){
   // camera position back into the next frame's desired distance.
   const hospitalCameraRoot=hospital?.cameraRootAt(player.x,player.z);if(hospitalCameraRoot)cameraClearance.resolve({position:desired},target,hospitalCameraRoot);
   if(freeApartments?.active)cameraClearance.resolve({position:desired},target,freeApartments.cameraRootAt());
+  // Resolve the apartment boom before smoothing; never feed a wall-clipped camera back into the next desired position.
+  if(cityview?.active){cityview.clampCamera(desired);cameraClearance.resolve({position:desired},target,cityview.renderRoot);}
   if(freeApartments?.active)freeApartments.resolveCamera(camera,target,desired,dt);else camera.position.lerp(desired,Math.min(1,dt*8));
   scooters.clampCamera(camera.position);
   canopyVenue?.clampCamera(camera.position);museum?.clampCamera(camera.position,player);cityview?.clampCamera(camera.position);
@@ -2284,7 +2286,7 @@ function animate(){
   if(universalSession&&!universalSession.home){camera.position.x=THREE.MathUtils.clamp(camera.position.x,universalInteriors.x-7.0,universalInteriors.x+7.0);camera.position.z=THREE.MathUtils.clamp(camera.position.z,universalInteriors.z-8.5,universalInteriors.z+8.5);}
   if(onObservationDeck)observationNeedle.clampCamera(camera.position,'deck');else if(insideNeedleLobby)observationNeedle.clampCamera(camera.position,'lobby');
   camera.position.y=Math.max(onObservationDeck?observationNeedle.deckY+1.25:1.75,camera.position.y);
-  if(sittingSeat?.reclined)positionBeachLoungeCamera(camera,sittingSeat);else if(!freeApartments?.active&&!marine.riding&&!rvPark.inside&&!camp.insideCabin&&!apartmentSession)cameraClearance.resolve(camera,target,freeApartments?.cameraRootAt()||gunStore?.cameraRootAt(player.x,player.z)||hospital?.cameraRootAt(player.x,player.z)||(cityview?.active?cityview.renderRoot:(canopyVenue?.cameraRootAt(player.x,player.z)||(ownableHomes.active?ownableHomes.interior.root:scene))));
+  if(sittingSeat?.reclined)positionBeachLoungeCamera(camera,sittingSeat);else if(!freeApartments?.active&&!cityview?.active&&!marine.riding&&!rvPark.inside&&!camp.insideCabin&&!apartmentSession)cameraClearance.resolve(camera,target,freeApartments?.cameraRootAt()||gunStore?.cameraRootAt(player.x,player.z)||hospital?.cameraRootAt(player.x,player.z)||(cityview?.active?cityview.renderRoot:(canopyVenue?.cameraRootAt(player.x,player.z)||(ownableHomes.active?ownableHomes.interior.root:scene))));
   coffeeShop.clampCamera(camera.position,player);
   const lookPitch=powersports?.riding?driverLookPitch:pitch;const forward=new THREE.Vector3(Math.sin(powersports?.riding?viewYaw:yaw)*Math.cos(lookPitch),Math.sin(lookPitch),Math.cos(powersports?.riding?viewYaw:yaw)*Math.cos(lookPitch));
   const nextNear=freeApartments?.active?.08:apartmentSession?.05:onObservationDeck?.5:.25;if(camera.near!==nextNear){camera.near=nextNear;camera.updateProjectionMatrix();}
@@ -2292,7 +2294,7 @@ function animate(){
   avatar.visible=!(freeApartments?.active&&camera.position.distanceTo(target)<.65)&&!sittingSeat?.reclined&&!(onObservationDeck&&Math.hypot(camera.position.x-player.x,camera.position.z-player.z)<.85)&&!airfield.boarded&&!camp.resting&&!camp.insideCabin&&!rvPark.inside&&!observationNeedle.riding&&!carnival.riding&&!apartmentSession;
   avatar.position.set(player.x,0,player.z);
   avatar.rotation.y=powersports?.riding?powersports.heading:marine.riding?marine.heading:sittingSeat?(sittingSeat.facing??yaw):yaw;mapFacingHeading=avatar.rotation.y;avatar.rotation.x=marine.riding?marine.pitch:sittingSeat?.reclined?-.20:0;avatar.rotation.z=marine.riding?marine.roll:0;
-  if(characterViews?.active){const viewPose=characterViews.apply(camera,player,avatar.rotation.y,groundHeightAt(player.x,player.z),(cam,target)=>cameraClearance.resolve(cam,target,freeApartments?.cameraRootAt()||gunStore?.cameraRootAt(player.x,player.z)||hospital?.cameraRootAt(player.x,player.z)||(cityview?.active?cityview.renderRoot:(canopyVenue?.cameraRootAt(player.x,player.z)||(ownableHomes.active?ownableHomes.interior.root:scene)))));if(viewPose)avatar.rotation.y=viewPose.heading;avatar.visible=true;}
+  if(characterViews?.active){const viewPose=characterViews.apply(camera,player,avatar.rotation.y,standingHeightAt(player.x,player.z),(cam,target)=>cameraClearance.resolve(cam,target,freeApartments?.cameraRootAt()||gunStore?.cameraRootAt(player.x,player.z)||hospital?.cameraRootAt(player.x,player.z)||(cityview?.active?cityview.renderRoot:(canopyVenue?.cameraRootAt(player.x,player.z)||(ownableHomes.active?ownableHomes.interior.root:scene)))));if(viewPose&&!sittingSeat)avatar.rotation.y=viewPose.heading;avatar.visible=true;}
   // Measure only movement produced by this frame's walking/scroll input. Fast
   // scroll steps are legitimate locomotion; teleports never enter this counter.
   const walkingSpeed=Math.min(10,walkingDistance/Math.max(motionDt,.001));

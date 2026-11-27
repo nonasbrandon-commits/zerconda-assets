@@ -1,0 +1,18 @@
+{
+  "version": 457,
+  "baseline": 456,
+  "baseCommit": "2e4a16577659d9bc409c0b14fc1d27ceca1d8082",
+  "baseTree": "86f0e294ceb1dce51bcece3774da769f6152a3ee",
+  "compiledSha256": "8a9cde6a558bc82ed844de10c74fe54e94738cd2abdf990632c6c3f8c8327e75",
+  "gzipSha256": "4cb773aebad06a81dffcbff1d24799ec382b39650475c62714f30f635e2423f3",
+  "allEmbeddedAssetsUnchanged": true,
+  "newMedia": 0,
+  "privateUserDataIncluded": false,
+  "change": "Enable front and side Character Views while seated on ordinary seats, use the actual occupied floor height, and preserve seated facing when camera obstruction changes inspection angle. Stabilize Cityview camera collision before smoothing and avoid a second conflicting post-smoothing collision pass. Recognize the forward-adjusted sofa sitting anchors when clearing cameras.",
+  "validation": [
+    "Seated front, left and right presets remain active; Done restores follow camera",
+    "Upper-floor inspection camera uses occupied floor height",
+    "Camera settles at reported X -385.5 Z -62.4 in all eight tested directions",
+    "Build and compressed pack byte roundtrip"
+  ]
+}
