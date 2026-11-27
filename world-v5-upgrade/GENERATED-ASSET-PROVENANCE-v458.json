@@ -1,0 +1,32 @@
+{
+  "version": 458,
+  "models": "Fal Rodin 2.5, clean T-pose references edited from original user-supplied front views",
+  "rigging": "Fal Meshy multi-animation, Mixamo skeleton, fingers, Idle action 0",
+  "animationCorrection": "Remove animated translations/scales and hip/leg rotations; planted clean lower-body stance with upper-body idle",
+  "placement": "Cityview apartment 10 only for review",
+  "sourceReferenceImagesPublished": false,
+  "privateReceiptsPublished": false,
+  "modelsOptimized": [
+    {
+      "file": "assets/turnaround-woman-1-idle-v458.glb",
+      "bytes": 862732,
+      "sha256": "d43b6842c56d23d518cab2b71223b52781d6e05ee0e3faee48533674d8a693e0",
+      "triangles": 50000,
+      "textures": 1024
+    },
+    {
+      "file": "assets/turnaround-woman-2-idle-v458.glb",
+      "bytes": 961492,
+      "sha256": "151ece2ea5f1e9d5f602ea449f792e0bd155da50c47a970cba6f50bf59c64da9",
+      "triangles": 50000,
+      "textures": 1024
+    },
+    {
+      "file": "assets/turnaround-woman-3-idle-v458.glb",
+      "bytes": 861380,
+      "sha256": "b22ba5ed9c28dbc7ea938b46d1e56c7fd57ffb9682978c3941adda778ae630c5",
+      "triangles": 50000,
+      "textures": 1024
+    }
+  ]
+}

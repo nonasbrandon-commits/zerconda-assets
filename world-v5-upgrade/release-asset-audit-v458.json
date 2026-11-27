@@ -1,0 +1,42 @@
+{
+  "version": 458,
+  "baseline": 457,
+  "baseCommit": "8704216ec23e1716991d9cd75bc604de2e6779bf",
+  "baseTree": "f8d5c1c7e06c1e742256cee28ddaa486585596d4",
+  "compiledSha256": "997dce89a6f61ebffd77fb745a390a32764ba64652263bd6523e03aef10a932e",
+  "gzipSha256": "f789261331ee3fbeb8078be2eb272e6da6dc9c6ddff8b0149ed5f993c4d93cc2",
+  "allEmbeddedAssetsUnchanged": true,
+  "newMedia": 3,
+  "privateUserDataIncluded": false,
+  "change": "Replace all three apartment-10 review women with clean regenerated meshes: two hands, natural straight standing legs and closed-toe ankle-strap heels. Keep hips and lower limbs in the clean bind stance while upper-body idle animation continues. Initialize skeleton matrices before size and ground fitting, and face the review models toward the room entrance. Preserve v457 seated Views and stable Cityview camera.",
+  "validation": [
+    "Clean source meshes checked: no extra hip hands, straight legs and clean shoes",
+    "Actual apartment-10 integration: all three loaded, correct scale and floor grounding, no furnishing overlap",
+    "Lower limb rotations unchanged over repeated idle loops",
+    "Floor-9 unload and floor-10 reload passed",
+    "Build and compressed pack byte roundtrip"
+  ],
+  "media": [
+    {
+      "file": "assets/turnaround-woman-1-idle-v458.glb",
+      "bytes": 862732,
+      "sha256": "d43b6842c56d23d518cab2b71223b52781d6e05ee0e3faee48533674d8a693e0",
+      "triangles": 50000,
+      "textures": 1024
+    },
+    {
+      "file": "assets/turnaround-woman-2-idle-v458.glb",
+      "bytes": 961492,
+      "sha256": "151ece2ea5f1e9d5f602ea449f792e0bd155da50c47a970cba6f50bf59c64da9",
+      "triangles": 50000,
+      "textures": 1024
+    },
+    {
+      "file": "assets/turnaround-woman-3-idle-v458.glb",
+      "bytes": 861380,
+      "sha256": "b22ba5ed9c28dbc7ea938b46d1e56c7fd57ffb9682978c3941adda778ae630c5",
+      "triangles": 50000,
+      "textures": 1024
+    }
+  ]
+}
