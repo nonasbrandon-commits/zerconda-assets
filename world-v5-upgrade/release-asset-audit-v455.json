@@ -1,0 +1,18 @@
+{
+  "version": 455,
+  "baseline": 454,
+  "baseCommit": "02b2c8c9f77c940f3e28d55dd5592a47dbc71741",
+  "baseTree": "e2ab69d11b54f42141fafe58db86bcf4954dd451",
+  "compiledSha256": "d8573b658323d06bdd06f665f663ec463418c317c5c5ddf24fad7cec9db69847",
+  "gzipSha256": "5abc12937bfd9f6f498d69f13559d8c8af9c86fb25051dd5a8d9618b05087c50",
+  "allEmbeddedAssetsUnchanged": true,
+  "newMedia": 0,
+  "privateUserDataIncluded": false,
+  "change": "Raise and flare sunglasses temples outside the ear rims, and move curved hooks behind both ears. Preserve centered head-local attachment and all v454 interaction, helicopter and campground fixes.",
+  "validation": [
+    "Actual hero rig front, left, right and refit after rotation visual checks",
+    "Raycast clearance against skinned head on both sides: positive clearance throughout sampled rear arm segments",
+    "Exactly one shared town-interactions module retained",
+    "Build and compressed pack byte roundtrip"
+  ]
+}
