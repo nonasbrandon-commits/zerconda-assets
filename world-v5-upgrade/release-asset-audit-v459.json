@@ -1,0 +1,43 @@
+{
+  "version": 459,
+  "baseline": 458,
+  "baseCommit": "1873177d8988fda650b7bcb002fd3eab51bdd279",
+  "baseTree": "eb79e9399076fa08280c46f1654f1a4415ee3330",
+  "compiledSha256": "ad3f1d10d77ea83f3e63d27f2cdc4077d3ce1403f3fa3d8b313f3114ca1bcb99",
+  "gzipSha256": "0a26e7fc564627d4049becfaf1a76413118d9dbdff8a46100f181dde4add7eb4",
+  "allEmbeddedAssetsUnchanged": true,
+  "newMedia": 3,
+  "privateUserDataIncluded": false,
+  "change": "Repair the main player thumb outline in hand space, add gently curled weighted fingers and preserve relaxed wrists. Align seated forearms and palms without wrist pinching. Let the three apartment-10 review women walk around open living areas, pause and avoid furniture, each other and the player. Keep shoes grounded and unload on other floors. Preserve saved admin identity, property data and map marks.",
+  "validation": [
+    "Both thumbs repaired with bounded 16.8mm maximum displacement; wrist and watch untouched",
+    "300 pose restoration cycles and 20 walking-to-idle transitions passed",
+    "Actual Cityview sofa seated hands checked",
+    "80-second apartment roaming: each woman travelled 26-32m, paused and avoided furniture and other actors; grounded within 7cm",
+    "Floor-9 unload and floor-10 reload passed",
+    "Build and compressed pack byte roundtrip"
+  ],
+  "media": [
+    {
+      "file": "assets/turnaround-woman-1-roaming-v459.glb",
+      "bytes": 874224,
+      "sha256": "e7eb606af24ea59d8930c9dde98231e8ce004d635bab0be079981f42495349fc",
+      "triangles": 50000,
+      "textures": 1024
+    },
+    {
+      "file": "assets/turnaround-woman-2-roaming-v459.glb",
+      "bytes": 974084,
+      "sha256": "0a134273df3398144dcaee5e0786dc3bf57a3bfc1380f334c5e3e36a189ebc76",
+      "triangles": 50000,
+      "textures": 1024
+    },
+    {
+      "file": "assets/turnaround-woman-3-roaming-v459.glb",
+      "bytes": 874480,
+      "sha256": "7b7c1362554c3e60dd2ab9de0ffeacb5ee337e56484951fe53aaf0dc6dfbf52d",
+      "triangles": 50000,
+      "textures": 1024
+    }
+  ]
+}

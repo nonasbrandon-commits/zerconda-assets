@@ -1,0 +1,32 @@
+{
+  "version": 459,
+  "models": "Existing clean v458 review models; no new generation",
+  "rigging": "Fal Meshy multi-animation, Mixamo skeleton, fingers, Idle action 0",
+  "animationCorrection": "Add existing matching walking armature rotation channels, omit toe animation for rigid shoes, crossfade walking and idle with floor correction",
+  "placement": "Cityview apartment 10 only for review",
+  "sourceReferenceImagesPublished": false,
+  "privateReceiptsPublished": false,
+  "modelsOptimized": [
+    {
+      "file": "assets/turnaround-woman-1-roaming-v459.glb",
+      "bytes": 874224,
+      "sha256": "e7eb606af24ea59d8930c9dde98231e8ce004d635bab0be079981f42495349fc",
+      "triangles": 50000,
+      "textures": 1024
+    },
+    {
+      "file": "assets/turnaround-woman-2-roaming-v459.glb",
+      "bytes": 974084,
+      "sha256": "0a134273df3398144dcaee5e0786dc3bf57a3bfc1380f334c5e3e36a189ebc76",
+      "triangles": 50000,
+      "textures": 1024
+    },
+    {
+      "file": "assets/turnaround-woman-3-roaming-v459.glb",
+      "bytes": 874480,
+      "sha256": "7b7c1362554c3e60dd2ab9de0ffeacb5ee337e56484951fe53aaf0dc6dfbf52d",
+      "triangles": 50000,
+      "textures": 1024
+    }
+  ]
+}
