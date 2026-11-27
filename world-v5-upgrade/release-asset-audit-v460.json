@@ -1,0 +1,36 @@
+{
+  "version": 460,
+  "baseline": 459,
+  "baseCommit": "de9f2bb402111d0fd142c9be26b5c0429c95fcca",
+  "baseTree": "f65604faccfdff538cd9827d8b61370d2d10aabe",
+  "change": "Add a fourth reference woman to Cityview apartment 10: a petite local Blender adaptation from the revised six-view reference sheet, at 1.60m review height, with sculpted smiling head, chestnut shoulder-length curls, opaque black lace garments and bare feet. Retain the existing three women and share their walking, pauses, avoidance and floor streaming. Preserve v459 player hand fixes and saved admin/property/map-mark data.",
+  "creation": "Local Blender 4.3 manual adaptation of existing CC0 body and motion plus attributed CC BY garments; new head sculpt, curl geometry and portrait texture",
+  "likeness": "Approximate interpretation for user visual review",
+  "originalReferenceFilesPublished": false,
+  "derivedPortraitTextureInModel": true,
+  "privateJobReceiptsOrAccountDataPublished": false,
+  "compiledSha256": "17cd8e74e91ee95a0d64f61041dd1c34693fcfd414fc651267542018b141b462",
+  "gzipSha256": "8237b028301bd3f4f91ef8ec24af2de24e4784b9061172d38d3ddc07fe19347b",
+  "allEmbeddedAssetsUnchanged": true,
+  "newMedia": [
+    {
+      "file": "assets/curly-woman-roaming-v460.glb",
+      "bytes": 1479984,
+      "sha256": "7c069c1c0c9fd1e0eb863ad149b89da84c02ec43890f91ec4a382575faba0693",
+      "skins": 5,
+      "walkRotationTracks": 22,
+      "idleTracks": 13,
+      "animations": [
+        "Review planted standing idle",
+        "Apartment walk"
+      ],
+      "triangles": 83146
+    }
+  ],
+  "validation": [
+    "Four characters loaded in actual apartment 10 at natural human scale",
+    "80-second roaming simulation with pauses, furniture/actor clearance and floor grounding",
+    "Floor-9 unload and floor-10 reload",
+    "Build and gzip byte roundtrip"
+  ]
+}
