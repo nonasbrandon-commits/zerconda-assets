@@ -1,0 +1,45 @@
+{
+  "version": 472,
+  "baseline": 471,
+  "change": "Give Ellis, the existing older town-square visitor, a nearby Talk to Ellis action and voiced branching conversation. He greets the player with Beautiful day after trusted input and approach. The hiking reply warns about strange events in the woods and going beyond the gate; the plans reply describes enjoying the weather/views and warns about aggressive animals outside the walls. Corrected grammar throughout. Ellis pauses and faces the player while talking; keyboard, mouse and controller world movement are locked during the modal. Close, Escape, distance, hidden tab and other-activity transitions stop speech. Greeting is limited to re-approach after90seconds. Existing other residents, six beach gulls and quieter beach sound preserved.",
+  "sourceModules": [
+    "ellis-conversation.js",
+    "town-character-install.js",
+    "world-v5-complete-replacement.js"
+  ],
+  "newMedia": [
+    {
+      "file": "ellis-hello-v472.mp3",
+      "bytes": 12790,
+      "duration": 1.567347,
+      "sha256": "fe25a387c2dfec4baa94ba63f08bfcc61ec1739499839bf64d6f29dec91d9030"
+    },
+    {
+      "file": "ellis-hiking-v472.mp3",
+      "bytes": 77365,
+      "duration": 9.639184,
+      "sha256": "d8a7414375d2f3554768dac15b7a070ecade7a9fe2829118f2451f7d2ab460d3"
+    },
+    {
+      "file": "ellis-plans-v472.mp3",
+      "bytes": 70469,
+      "duration": 8.777143,
+      "sha256": "da9f31c09482520c9aff378d516956929494d62d665821dfa5366170130cbe92"
+    }
+  ],
+  "voice": "Original fictional dialogue, ElevenLabs stock Bill voice generated through fal; no cloning or reference audio",
+  "allEmbeddedAssetsUnchanged": true,
+  "storageKeysChanged": false,
+  "privateRecordsPublished": false,
+  "compiledSha256": "78007abd5898985dc060a4d30ab5667fa64dfbf833a8f2f7f98b000edf4b69c2",
+  "gzipSha256": "0b7cefb17092591b54849c3a3cfacc9e730f540e95d44716247d11eced77c0b6",
+  "authorization": "User requested this NPC voice and Talk button with both dialogue branches, with standing approval and prior explicit approval for public compressed JavaScript in the same game",
+  "validation": [
+    "Actual Ellis model and nearby action; no audio before trusted input; automatic proximity greeting",
+    "Both corrected text branches and actual MP3 decode/playback passed",
+    "Ellis remains still during conversation; Escape/distance/other-activity gates close or hide dialogue; all speech stopped on close",
+    "Full production world boot and keyboard/controller modal lock checked before deployment",
+    "Existing beach gull and quiet audio source bytes preserved",
+    "Deterministic gzip roundtrip, all embedded licensed assets unchanged, no QA hooks"
+  ]
+}
