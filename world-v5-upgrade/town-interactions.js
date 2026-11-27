@@ -3,6 +3,7 @@ const actions=new Map();let sequence=0;
 export function registerTownAction(element,options={}){
  const id=options.id||element.id||'town-action-'+(++sequence);element.classList.add('town-action-source');element.setAttribute('aria-hidden','true');element.tabIndex=-1;const action={id,element,priority:50,...options};actions.set(id,action);return ()=>actions.delete(id);
 }
+export function activateTownActionSource(id){const a=actions.get(id);if(!a||!a.element.isConnected||a.element.disabled)return false;a.element.click();return true;}
 const cleanLabel=value=>String(value||'').replace(/^[A-Z]\s*[·:.–-]\s*/,'').replace(/\s*\(DEMO\)/gi,'').trim().toLowerCase().replace(/(^|[·] )\w/g,s=>s.toUpperCase());
 export function createTownInteractions({canvas,isLocked=()=>false,onStop=()=>{},onLook=()=>{},onTap=()=>{},onStartWalk=()=>{}}={}){
  const style=document.createElement('style');style.textContent=`
@@ -44,7 +45,7 @@ export function createTownInteractions({canvas,isLocked=()=>false,onStop=()=>{},
  `;document.head.appendChild(style);
  const touchMode=()=>matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0;
  if(touchMode()||innerWidth<700)document.body.classList.add('town-map-closed');document.body.classList.add('town-chat-closed');
- const panel=document.createElement('section');panel.id='town-actions';panel.setAttribute('aria-label','Nearby actions');const title=document.createElement('h2');title.textContent=touchMode()?'Nearby · Tap':'Nearby · Tap or click';panel.appendChild(title);const list=document.createElement('div');list.id='town-action-list';panel.appendChild(list);document.body.appendChild(panel);
+ const panel=document.createElement('section');panel.id='town-actions';panel.setAttribute('aria-label','Nearby actions');const title=document.createElement('h2');title.textContent='Nearby · Tap or click';panel.appendChild(title);const list=document.createElement('div');list.id='town-action-list';panel.appendChild(list);document.body.appendChild(panel);
  const toolbar=document.createElement('nav');toolbar.id='town-tools';toolbar.setAttribute('aria-label','World tools');document.body.appendChild(toolbar);
  function utility(text,callback){const b=document.createElement('button');b.type='button';b.className='town-utility';b.textContent=text;b.onclick=()=>{stop();callback();};toolbar.appendChild(b);return b;}
  const mapButton=utility('Map',()=>{const closed=document.body.classList.toggle('town-map-closed');mapButton.setAttribute('aria-expanded',String(!closed));});mapButton.setAttribute('aria-controls','zerconda-v5-map');mapButton.setAttribute('aria-expanded',String(!document.body.classList.contains('town-map-closed')));
@@ -57,7 +58,7 @@ export function createTownInteractions({canvas,isLocked=()=>false,onStop=()=>{},
  const proxies=new Map();
  function stop(){clearTimeout(holdTimer);holdTimer=null;walking=false;indicator.style.display='none';if(pointer)pointer.held=false;onStop();}
  function available(action){try{return action.element.isConnected&&!action.element.disabled&&(action.when?action.when():action.element.style.display!=='none');}catch{return false;}}
- function current(){return [...actions.values()].filter(available).map(a=>({...a,label:typeof a.label==='function'?a.label():a.label||cleanLabel(a.element.textContent)})).filter(a=>a.label).sort((a,b)=>b.priority-a.priority||a.id.localeCompare(b.id));}
+ function current(){const result=[...actions.values()].filter(available).map(a=>({...a,label:typeof a.label==='function'?a.label():a.label||cleanLabel(a.element.textContent)})).filter(a=>a.label).sort((a,b)=>b.priority-a.priority||a.id.localeCompare(b.id));const entry=result.find(a=>a.exclusiveNearby?.());return entry?[entry]:result;}
  function activate(action){if(!available(action)||isLocked())return false;stop();action.element.click();signature='';return true;}
  function update(force=false){const now=performance.now();if(!force&&now-lastUpdate<100)return;lastUpdate=now;const locked=isLocked();if(locked&&walking)stop();help.style.display=locked?'none':'block';if(!locked&&!walking)indicator.style.display='none';runButton.style.display=touchMode()?'block':'none';const social=document.getElementById('club-social'),socialOpen=!!social&&social.style.display!=='none';chatButton.style.display=socialOpen?'block':'none';if(socialOpen&&!wasSocial&&touchMode())document.body.classList.add('town-chat-closed');wasSocial=socialOpen;
   for(const [id,text]of [['zerconda-reset-view','Reset'],['zerconda-beach','Beach']]){const source=document.getElementById(id);if(source&&source.parentElement!==toolbar){source.classList.add('town-utility');source.textContent=text;source.addEventListener('click',stop,true);toolbar.appendChild(source);}}

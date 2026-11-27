@@ -1,0 +1,42 @@
+{
+  "version": 447,
+  "baseCommit": "750d3e8b14e202e853a2d15d71d4079644e01051",
+  "compiledSha256": "9e195b2c7693a56660a7d5e74e792a3710295f671e092030c03fd23b62cd95c4",
+  "gzipSha256": "aca498d2e039f8ea00d2e6f398d6d1c1afab54da16932d3c40e5beaf55b4fa10",
+  "chunkCount": 23,
+  "decompressedMatchesCompiled": true,
+  "embeddedCharacterUnchanged": true,
+  "embeddedCharacterSha256": "2f5364f949a2d9950af6706070b686cabee38337323bc082cd139393a9d717e0",
+  "credentialPatternMatches": 0,
+  "privateVideoIncluded": false,
+  "newMediaAssets": [
+    {
+      "file": "assets/services-city-display-v447.jpg",
+      "source": "User-supplied Zerconda_Citizen_Center_Assets.zip / Items/City_display.png",
+      "changes": "Cropped screen artwork and resized to 512x300 JPEG; reference ZIP and full sheets excluded"
+    },
+    {
+      "file": "assets/weathered-wood-v447.jpg",
+      "source": "https://polyhaven.com/a/wood_planks",
+      "license": "CC0",
+      "changes": "512px optimized diffuse JPEG"
+    },
+    {
+      "file": "assets/rusted-metal-v447.jpg",
+      "source": "https://polyhaven.com/a/rusty_metal_03",
+      "license": "CC0",
+      "changes": "512px optimized diffuse JPEG"
+    }
+  ],
+  "sanitationReference": "User supplied PNG reference sheets; raw ZIP/PNGs not uploaded. Authored rear-loader trucks and commercial dumpsters; existing optimized MIT Rocketbox gardener rig retained.",
+  "mobileTextureCapsUnchanged": true,
+  "mobilePixelCeilingUnchanged": true,
+  "authorization": "User requested only Private home keypad for homes not for sale, with automatic entry after an accepted code. Preserve existing admin and owner verification. User also requested Services Center sign flicker/paving repairs and supplied a Citizen Center reference pack for the interior upgrade. Later user requests include forest and mountain grass, rocks, lake, cabin/truck, hospital dumpsters and turnaround, ambulance bay upgrade, driveway sidewalk removal, second woodland cabin, live map coordinates, and tree carving/knife in the approximate marked area.",
+  "authoredGeometry": [
+    "Two abandoned cabins",
+    "Static old pickup",
+    "Hospital bay signs and markings",
+    "Tree carving and embedded static knife"
+  ],
+  "referencePhotosIncluded": false
+}

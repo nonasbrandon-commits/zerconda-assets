@@ -34,7 +34,8 @@ export function createZercondaHospital(scene,{getPlayer,canEnter=()=>true,roadMa
  function room(name,x0,z0,x1,z1,doorSide='right',doorOptions={}){const doorWidth=doorOptions.width??1.8,midx=(x0+x1)/2,midz=(z0+z1)/2;roomWalls:for(const [side,a,b,c,d]of [['back',x0,z0,x1,z0],['front',x0,z1,x1,z1],['left',x0,z0,x0,z1],['right',x1,z0,x1,z1]]){if((name==='EXAM 3'&&side==='front')||(side==='left'&&x0===-28)||(side==='right'&&x1===28)||(side==='back'&&z0===-18)||(side==='front'&&z1===18))continue;wall(a,b,c,d,side===doorSide?(doorOptions.offset??Math.hypot(c-a,d-b)/2):null,doorWidth);}rooms.push({name,x:midx,z:midz,x0,z0,x1,z1});const side=doorSide;const sx=side==='left'?x0-.12:side==='right'?x1+.12:midx,sz=side==='front'?z1+.12:side==='back'?z0-.12:(doorOptions.offset===undefined?midz:z0+doorOptions.offset);const ry=side==='left'?-Math.PI/2:side==='right'?Math.PI/2:side==='back'?Math.PI:0;text(name,sx,3.14,sz,Math.min(3.7,x1-x0-.3),.55,{ry,font:60});doorways.push({name,x:side==='left'?x0:side==='right'?x1:midx,z:side==='front'?z1:side==='back'?z0:(doorOptions.offset===undefined?midz:z0+doorOptions.offset),ry,width:doorWidth,...doorOptions});return {x:midx,z:midz,x0,z0,x1,z1};}
  function windowBay(x,z,w,ry=0){const win=new THREE.Group();const panel=new THREE.Mesh(new THREE.PlaneGeometry(w,2.7),m.glass);panel.name='Hospital lightly tinted front window';panel.position.set(x,2.18,z);panel.rotation.y=ry;panel.userData.cameraPassThrough=true;root.add(panel);for(const side of [-1,1])box(.12,2.9,.12,x+Math.cos(ry)*side*w/2,2.18,z-Math.sin(ry)*side*w/2,m.trim);box(ry?.12:w,.13,ry?w:.12,x,.74,z,m.trim);box(ry?.12:w,.13,ry?w:.12,x,3.57,z,m.trim);for(let i=-1;i<=1;i++)box(.08,2.7,.08,x+Math.cos(ry)*i*w/4,2.18,z-Math.sin(ry)*i*w/4,m.trim);}
  // Flush building floor and a generous, unobstructed forecourt connection to the road.
- for(const [w,d,x,z]of [[62,27,-3,-31.5],[6,40,-31,2],[17.2,53.5,36.6,-4.75],[84,33,8,38.5],[20,4,-18,20],[20,4,18,20]])box(w,.08,d,x,-.04,z,m.asphalt);box(6,.08,58,0,-.04,84,m.asphalt);for(const x of[-3.75,3.75])box(1.5,.08,58,x,-.04,84,m.pave);const crossing=walkMaterial||m.pave;box(9,.08,4.5,0,-.04,115.25,crossing);box(56,.12,36,0,-.06,0,m.floor);box(16,.12,4,0,-.06,20,m.floor);box(60,.08,5,0,-.04,21.6,m.pave);
+ for(const [w,d,x,z]of [[62,27,-3,-31.5],[6,40,-31,2],[17.2,53.5,36.6,-4.75],[84,33,8,38.5],[20,4,-18,20],[20,4,18,20]])box(w,.08,d,x,-.04,z,m.asphalt);box(6,.08,58,0,-.04,84,m.asphalt);for(const x of[-3.75,3.75])box(1.5,.08,58,x,-.04,84,m.pave);// Asphalt owns the driveway mouth; the road join pass cuts both sidewalk and curb.
+ box(9,.08,4.5,0,-.04,115.25,m.asphalt);box(56,.12,36,0,-.06,0,m.floor);box(16,.12,4,0,-.06,20,m.floor);box(60,.08,5,0,-.04,21.6,m.pave);
  // Low wings, central glazed arrival hall and raised sign tower.
  // Front glazing follows room boundaries: partitions terminate behind solid piers.
  for(const side of [-1,1]){box(20,.85,.36,side*18,.425,18);box(20,1.62,.36,side*18,4.34,18);block(side*18,18,20,.4);if(side<0)box(.4,5.1,36,side*28,2.55,0);else{box(.4,5.1,19,28,2.55,-8.5);box(.4,5.1,13,28,2.55,11.5);box(.4,2.3,4,28,3.95,3);}box(56,5.1,.4,0,2.55,-18);}
@@ -77,6 +78,25 @@ export function createZercondaHospital(scene,{getPlayer,canEnter=()=>true,roadMa
  for(let x=-22.5;x<=22.5;x+=5){if(Math.abs(x)<5)continue;box(2.5,.13,.30,x,.065,54.05,stopMat);for(const dx of[-.86,.86])cylinder(.025,.008,x+dx,.134,54.05,m.trim);block(x,54.05,2.5,.30);}
  // Posted sign is behind the bays, leaving the pedestrian route clear.
  cylinder(.035,2.4,-20,1.2,24.05,m.metal);const signCanvas=document.createElement('canvas');signCanvas.width=256;signCanvas.height=320;const sc=signCanvas.getContext('2d');sc.fillStyle='#164f8b';sc.fillRect(0,0,256,320);sc.strokeStyle='#f5f3e8';sc.lineWidth=7;sc.strokeRect(5,5,246,310);wheelchair(sc,119,115,140);sc.fillStyle='#fff';sc.textAlign='center';sc.font='bold 25px Arial';sc.fillText('ACCESSIBLE',128,247);sc.fillText('PARKING',128,282);const signTex=new THREE.CanvasTexture(signCanvas);signTex.colorSpace=THREE.SRGBColorSpace;add(new THREE.PlaneGeometry(.62,.78),new THREE.MeshBasicMaterial({map:signTex,side:THREE.DoubleSide}),-20,2.12,24.10);
+ // Two ambulance-only bays on the existing rear court, clear of the service shutter.
+ const ambulanceBayCenters=[-4,3],ambulanceBayWidth=6,ambulanceBayDepth=9;
+ const reservedCanvas=document.createElement('canvas');reservedCanvas.width=384;reservedCanvas.height=512;
+ const rc=reservedCanvas.getContext('2d');rc.fillStyle='#f5f4ec';rc.fillRect(0,0,384,512);rc.strokeStyle='#c32027';rc.lineWidth=18;rc.strokeRect(10,10,364,492);rc.fillStyle='#c32027';rc.fillRect(18,18,348,100);rc.fillStyle='#fff';rc.textAlign='center';rc.font='bold 48px Arial';rc.fillText('RESERVED',192,86);
+ rc.save();rc.translate(192,222);rc.fillStyle='#215d9a';for(let k=0;k<3;k++){rc.save();rc.rotate(k*Math.PI/3);rc.fillRect(-25,-78,50,156);rc.restore();}rc.restore();rc.fillStyle='#16212b';rc.font='bold 40px Arial';for(const [t,y] of [['FOR',344],['AMBULANCES',398],['ONLY',452]])rc.fillText(t,192,y,340);
+ const reservedTexture=new THREE.CanvasTexture(reservedCanvas);reservedTexture.colorSpace=THREE.SRGBColorSpace;
+ const reservedMaterial=new THREE.MeshStandardMaterial({map:reservedTexture,roughness:.7});
+ const markingCanvas=document.createElement('canvas');markingCanvas.width=512;markingCanvas.height=768;const mc=markingCanvas.getContext('2d');mc.clearRect(0,0,512,768);mc.strokeStyle='#f4f3e9';mc.lineWidth=10;mc.strokeRect(8,8,496,752);mc.fillStyle='#f4f3e9';mc.textAlign='center';mc.font='bold 54px Arial';mc.fillText('AMBULANCE',256,510,470);mc.fillText('ONLY',256,580);mc.save();mc.translate(256,310);for(let k=0;k<3;k++){mc.save();mc.rotate(k*Math.PI/3);mc.fillRect(-20,-70,40,140);mc.restore();}mc.restore();
+ const markingTexture=new THREE.CanvasTexture(markingCanvas);markingTexture.colorSpace=THREE.SRGBColorSpace;
+ const markingMaterial=new THREE.MeshStandardMaterial({map:markingTexture,transparent:true,depthWrite:false,roughness:1,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});
+ for(const x of ambulanceBayCenters){
+  add(new THREE.PlaneGeometry(ambulanceBayWidth,ambulanceBayDepth).rotateZ(Math.PI),markingMaterial,x,.006,-24,0,-Math.PI/2);
+  box(.08,2.8,.08,x,1.4,-19.25,m.metal);block(x,-19.25,.08,.08);
+  box(.98,1.28,.075,x,2.4,-19.25,m.trim);
+  add(new THREE.PlaneGeometry(.92,1.22),reservedMaterial,x,2.4,-19.30,Math.PI);
+  box(2.7,.15,.34,x,.075,-20.1,m.trim);block(x,-20.1,2.7,.34);
+  for(let k=0;k<7;k++)box(.22,.008,.35,x-1.17+k*.39,.154,-20.1,k%2?m.trim:material('#e4bc27'),-.32);
+ }
+ root.userData.ambulanceBays=ambulanceBayCenters.map(x=>({center:world(x,-24),width:ambulanceBayWidth,depth:ambulanceBayDepth}));
  // Service canopy uses the same stone, brushed metal and illuminated wayfinding as the arrival wing.
  box(15,.35,10,-18,3.6,-23,m.trim);box(15.1,.12,10.1,-18,3.83,-23,m.metal);box(14.6,.1,9.6,-18,3.37,-23,m.inside);
  for(const x of[-25,-11]){box(.4,3.4,.4,x,1.7,-27,m.stone);box(.4,.18,.4,x,.09,-27,m.trim);box(.4,.14,.4,x,3.28,-27,m.metal);block(x,-27,.4,.4);}

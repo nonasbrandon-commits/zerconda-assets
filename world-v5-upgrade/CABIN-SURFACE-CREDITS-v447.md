@@ -1,0 +1,1 @@
+Cabin surface maps: Wood Planks (https://polyhaven.com/a/wood_planks) and Rusty Metal 03 (https://polyhaven.com/a/rusty_metal_03), Poly Haven, CC0 (https://polyhaven.com/license). Diffuse maps resized to 512px JPEG for game use. Cabin, truck and knife geometry authored for Zerconda. User reference images are not included in this release.
