@@ -1,0 +1,1 @@
+Return the retired H01/brandon local demo claim to sale with a recoverable browser-local backup and one-time migration. Preserve later purchases and other ownership. Remove My marks button; show saved pins automatically only for their verified immutable owner ID. Preserve marker IDs, PINs and other saved data.

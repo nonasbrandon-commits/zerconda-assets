@@ -1,0 +1,25 @@
+{
+  "version": 463,
+  "baseline": 462,
+  "baseCommit": "3af3fc779a44c0f46d60b4cd6c4d48aa09845887",
+  "baseTree": "d0ff7f0fc47e6b2cc2317312dec015ba1410f80d",
+  "change": "Return the retired H01/brandon local demo claim to sale with a recoverable browser-local backup and one-time migration. Preserve later purchases and other ownership. Remove My marks button; show saved pins automatically only for their verified immutable owner ID. Preserve marker IDs, PINs and other saved data.",
+  "sourceModules": [
+    "ownable-suburban-homes.js",
+    "suburban-home-ownership.js",
+    "personal-map-markers.js"
+  ],
+  "newMedia": 0,
+  "allEmbeddedAssetsUnchanged": true,
+  "storageKeysChanged": false,
+  "privateRecordsPublished": false,
+  "compiledSha256": "7c1189335284bee53f7cb3c3eee6fdc378e93a32931f6ce037da8fb8cdb1ad45",
+  "gzipSha256": "10ea0ac7ba575b1da0fbe4ec26a555dd55b96e7f1617b36b6f9eeb9f244396be",
+  "validation": [
+    "Real home factory confirms for-sale sign, absent old nameplate and rejected owner customization",
+    "One-time release backs up legacy claim; later purchases and other owners survive",
+    "Real marker UI confirms removed My marks button, automatic owner pins and direct editing/deletion",
+    "Verified owner IDs isolate pins; anonymous and unverified identities see none",
+    "Marker IDs and PIN data preserved; compiled pack roundtrip and unchanged embedded media"
+  ]
+}
