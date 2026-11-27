@@ -1,0 +1,41 @@
+{
+  "version": 449,
+  "baseVersion": 448,
+  "baseCommit": "eb0381bc79fc916e2c202fdbdc478d0d8ae3b980",
+  "baseTree": "ad75da772ce2bf34a7f63e75ab3e495146b7d01e",
+  "publicBaselineIndependentlyDownloadedAndVerifiedChunks": 23,
+  "publicBaselineDecodedSha256": "6bfc8918201fbfaad5067b0ed2365b228de012c5ef98d1ab8308a21edcdcf16a",
+  "compiledSha256": "973200d2f0dca1d4d1e64c00040d4f8190da7c96940ed50faafb001e5e50d527",
+  "gzipSha256": "0b797d24f573fc0e8cf81430336335f43bafb5ac1670abd469b1b4ddd5cf70d5",
+  "chunkCount": 23,
+  "decompressedMatchesCompiled": true,
+  "embeddedAssetStrings": 10,
+  "allEmbeddedAssetsUnchangedFromPublic448": true,
+  "newMediaFiles": 0,
+  "newLongBase64Strings": 0,
+  "credentialPatternMatches": 0,
+  "referenceZipOrPhotosIncluded": false,
+  "privateMarkerDataIncluded": false,
+  "sourceChanges": [
+    "world-v5-complete-replacement.js",
+    "forest-shrubs.js",
+    "forest-ground-cover.js",
+    "abandoned-forest-cabin.js",
+    "carved-forest-tree.js",
+    "beach-visitors.js",
+    "reference-swim-visitor.js",
+    "beach-reference-looks.js",
+    "top-city-map.js",
+    "personal-map-markers.js"
+  ],
+  "beachBodies": "Existing public assets/male-swim-walk-v286.glb and fit-male-swim-walk-v292.glb, unchanged; four runtime appearance variants from user PNG concepts; no glasses or hats",
+  "markerOwnership": "Same immutable identity as free apartments; browser-local per provider+ownerId, not display name. Existing Admin supported; normal website login adapter connection remains required. Older browser pins restored only by explicit Admin action.",
+  "validation": [
+    "Five forest regions, six draw batches, 216 desktop/108 mobile maximum nearby bushes, whole-crown route/wall/structure clearance",
+    "No rock/log overlap; irregular wood, ~1.1-3.4m lengths, nine bounded ground tiles",
+    "Actual generic obstacle scanner plus swept movement from (-683,-1113.4) into cabin; second carving raycast to actual remaining trunk and faces player",
+    "Four animated beach looks and shader compilation; hats/glasses removed",
+    "Multiple markers, rename stability, per-user read/write isolation, stale-editor protection, sign-out hiding and explicit legacy Admin restore"
+  ],
+  "authorization": "User requested realistic forest bushes; four beach men from supplied PNG concept ZIP and removal of glasses/hats; cabin entrance repair; personal markers keyed to immutable free-apartment user IDs; varied natural logs/stones without intersections; same carving and knife on cabin-side tree."
+}

@@ -1,3 +1,4 @@
+import {customizeBeachReference} from './beach-reference-looks.js?v=449';
 import {beachPassingStep} from './beach-passing.js?v=437';
 import {createReferenceSwimVisitor} from './reference-swim-visitor.js?v=437';
 import * as THREE from 'three';
@@ -19,7 +20,13 @@ export function createBeachVisitors(scene,{getPlayer,getPlayerSeat=()=>null,getP
   {name:'Beach visitor · black hair white swimsuit',female:true,asset:'assets/white-bikini-walk-v286.glb',height:1.7,speed:1.10,route:[[163,222],[126,211],[97,228],[145,231]],pause:0},
   {name:'Beach visitor · blonde yellow swimsuit east',female:true,asset:'assets/yellow-swimsuit-walk-v286.glb',height:1.7,rests:false,speed:1.50,route:[[140,212],[108,198],[54,213],[111,231]],pause:2,firstRest:65}
  ];
- const visitors=specs.map((s,id)=>{const actor=createReferenceSwimVisitor({asset:s.asset,height:s.height,getPlayer,identity:s.name}),anchor=new THREE.Group();anchor.name=s.name;anchor.position.set(s.route[0][0],beach.heightAt(...s.route[0])??.085,s.route[0][1]);root.add(anchor);anchor.add(actor.root);return{...s,id,actor,root:anchor,index:1,path:[],pauseLeft:0,clock:0,repath:0,distance:0,state:'walking',nextRest:s.firstRest??Infinity,seat:null,restCount:0,seatTime:0,passing:{}};});
+ const referenceMen=[
+ {name:'Cade · blue palm swim shorts',female:false,referenceLook:0,asset:'assets/male-swim-walk-v286.glb',height:1.86,speed:1.05,route:[[-385,204],[-335,217],[-292,207],[-340,198]],pause:2},
+ {name:'Blake · red floral swim shorts',female:false,referenceLook:1,asset:'assets/male-swim-walk-v286.glb',height:1.83,speed:1.10,route:[[-222,224],[-172,218],[-140,203],[-195,201]],pause:2},
+ {name:'Kenji · striped swim shorts',female:false,referenceLook:2,asset:'assets/fit-male-swim-walk-v292.glb',height:1.81,speed:1.08,route:[[190,219],[235,229],[283,215],[226,202]],pause:2},
+ {name:'Nico · turquoise palm swim shorts',female:false,referenceLook:3,asset:'assets/male-swim-walk-v286.glb',height:1.85,speed:1.05,route:[[325,210],[378,222],[420,208],[366,199]],pause:2}
+ ];specs.push(...referenceMen);
+ const visitors=specs.map((s,id)=>{const actor=createReferenceSwimVisitor({asset:s.asset,height:s.height,getPlayer,identity:s.name,customizeModel:s.referenceLook!==undefined?customizeBeachReference(s.referenceLook):null}),anchor=new THREE.Group();anchor.name=s.name;anchor.position.set(s.route[0][0],beach.heightAt(...s.route[0])??.085,s.route[0][1]);root.add(anchor);anchor.add(actor.root);return{...s,id,actor,root:anchor,index:1,path:[],pauseLeft:0,clock:0,repath:0,distance:0,state:'walking',nextRest:s.firstRest??Infinity,seat:null,restCount:0,seatTime:0,passing:{}};});
  const lounges=beach.lounges.map(l=>({l,x:l.root.position.x,z:l.root.position.z,c:Math.cos(l.root.rotation.y),s:Math.sin(l.root.rotation.y),tx:l.tablePoint.x,tz:l.tablePoint.z,ux:l.parasol.position.x,uz:l.parasol.position.z}));
  const square=(x,z,r)=>x*x+z*z<r*r;
  const blocked=(x,z)=>beach.access.blocks(x,z)||(z<182.4&&beach.boardwalkFurniture.blocks(x,z))||(z>191.4&&z<228&&beach.palms.some(p=>square(x-p.x,z-p.z,.48)))||(z>204&&z<228&&lounges.some(p=>{const dx=x-p.x,dz=z-p.z,lx=p.c*dx-p.s*dz,lz=p.s*dx+p.c*dz;return Math.abs(lx)<.57&&lz>-.98&&lz<1.25||square(x-p.tx,z-p.tz,.43)||square(lx-p.ux,lz-p.uz,.14);}));
