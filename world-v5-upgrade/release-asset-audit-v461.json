@@ -1,0 +1,31 @@
+{
+  "version": 461,
+  "baseline": 460,
+  "baseCommit": "5bfbde70cba72f5f7784c7f827433dc33b0f5ef8",
+  "baseTree": "ce78d05f9a6b3e9cd976f7f09d27b2cb6b5762f6",
+  "change": "Reduce repeated street-travel stalls: spatially cache minimap road paths, reuse unchanged tree-clearance bounds and defer periodic maintenance during transport, and move resident seat-path searches into the existing time-sliced route queue. Remove the rejected fourth character draft from apartment 10; retain the original three women and their walking. Preserve saved markers, admin identity and property records.",
+  "newMedia": 0,
+  "allEmbeddedAssetsUnchanged": true,
+  "originalThreeModelsUnchanged": true,
+  "mainSourceUnchanged": true,
+  "profilingInstrumentationPublished": false,
+  "privateDataPublished": false,
+  "compiledSha256": "1e94982afe0716562f2c02802185ec822e8b3b222324579d6983fcf47830a771",
+  "gzipSha256": "9cb4e9d875f1ae917d8a1294ffb9bf4d4324180e21966527ff5d6e98104636b3",
+  "validation": [
+    "Road raster comparison: zero different pixels across nearby, junction, overview and zoomed views; changed roads invalidate index",
+    "100 unchanged tree sweeps: zero subtree-bounds rebuilds; moved trees, changed structures and road/trail clearance passed",
+    "Immediate new-tree clearance still runs during transport",
+    "Resident seat routes yield to the event loop and respect obstacles",
+    "Actual apartment-10 original-three scale, grounding, 80-second walking, clearance and floor-9 unload/floor-10 reload passed",
+    "Instrumented packed startup and actual cab trip through the reported street",
+    "Build and gzip byte roundtrip"
+  ],
+  "observedStreetMapCPU": {
+    "baselineAverageMS": 11.906,
+    "cachedAverageMS": 0.355,
+    "baselineMaxMS": 58.1,
+    "cachedMaxMS": 2.1,
+    "context": "Local software-rendering browser; CPU timings are not a device-wide FPS guarantee"
+  }
+}

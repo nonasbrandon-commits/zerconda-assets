@@ -2,9 +2,9 @@ import {createApartmentWomenRoaming} from './apartment-women-roaming.js?v=459';
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
-const specifications=[['Pink satin · blonde updo',-1.0,1.70],['Black satin · long dark hair',1.0,1.68],['Red satin · curly updo',3.0,1.69],['Petite brunette · black lace',1.0,1.60,-5.4,'curly-woman-roaming-v460.glb']];
+const specifications=[['Pink satin · blonde updo',-1.0,1.70],['Black satin · long dark hair',1.0,1.68],['Red satin · curly updo',3.0,1.69]];
 export function createApartmentReviewWomen(parent,{solids=[]}={}){
- const root=new T.Group();root.name='Four reference women · level 10 review';root.userData.customInterior=true;root.userData.apartmentDynamic=true;root.visible=false;parent.add(root);
+ const root=new T.Group();root.name='Three reference women · level 10 review';root.userData.customInterior=true;root.userData.apartmentDynamic=true;root.visible=false;parent.add(root);
  const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder),actors=[];let active=false,loading=false,generation=0,error=null;const roaming=createApartmentWomenRoaming(root,{solids,actors});
  function releaseModel(model,mixer){mixer?.stopAllAction();mixer?.uncacheRoot(model);const gs=new Set(),ms=new Set(),ts=new Set();model.traverse(o=>{if(o.geometry)gs.add(o.geometry);for(const m of(Array.isArray(o.material)?o.material:[o.material]))if(m){ms.add(m);for(const v of Object.values(m))if(v?.isTexture)ts.add(v);}o.skeleton?.dispose();});for(const g of gs)g.dispose();for(const m of ms)m.dispose();for(const t of ts){t.dispose();t.source?.data?.close?.();}model.removeFromParent();}
  function clear(){for(const a of actors){releaseModel(a.model,a.mixer);a.group.removeFromParent();}actors.length=0;}
