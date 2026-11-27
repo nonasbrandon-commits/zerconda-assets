@@ -1,0 +1,33 @@
+{
+  "version": 465,
+  "baseline": 464,
+  "baseCommit": "6ecc255efa707053a0a436e23e063da665193eb9",
+  "baseTree": "62ff808a6720093af06460573d75355c1e7172b0",
+  "change": "Replace duplicate front-door controls with one Leave home action, available at the front entrance and garage. Place the player at the real exterior entry/driveway, face outward, stop movement and suppress automatic re-entry until the player deliberately walks clear and returns. Open front and garage doors support walk-out at reachable interior thresholds; closed doors do not trigger passage. Restore actual neighborhood views through home windows using scoped exterior distance, LOD and shader contexts, then restore interior render state. Preserve v464 furnishings, other home styles, private access and saved data.",
+  "sourceModules": [
+    "home-interior.js",
+    "world-v5-complete-replacement.js",
+    "home-entry-passage.js",
+    "home-window-views.js",
+    "ownable-suburban-homes.js",
+    "outdoor-visibility.js",
+    "render-budget.js",
+    "exterior-continuity.js"
+  ],
+  "newMedia": 0,
+  "allEmbeddedAssetsUnchanged": true,
+  "storageKeysChanged": false,
+  "privateRecordsPublished": false,
+  "compiledSha256": "f1e415bceded5bf94402d3df725506dac420ff91555c91931d957049798cd17a",
+  "gzipSha256": "bbb7a95311d7c72f3930a0fdcfb8c9327d52fbaef3182341050efbdd4ad4fb9f",
+  "validation": [
+    "Real nearby UI has exactly one Leave home action; no old front open/close option",
+    "Actual production exit/automatic-entry handlers exercised in browser fixture for both house orientations, front and garage, door open/closed",
+    "Outside placement, movement/wheel reset, stopped walking, session and interior visibility cleared",
+    "No automatic re-entry after cooldown while near door; leaving approach zone then returning restores entry",
+    "Open garage/front walk-out thresholds are reachable; closed garage and upper-floor windows do not exit",
+    "Rendered exterior window pass shows terrain and neighborhood fixture after reproducing virtual-interior culling; renderer/visibility/continuity state restored",
+    "Scoped view APIs leave other rendering styles unchanged unless explicitly invoked by home window pass",
+    "Compiled pack roundtrip and unchanged embedded media"
+  ]
+}
