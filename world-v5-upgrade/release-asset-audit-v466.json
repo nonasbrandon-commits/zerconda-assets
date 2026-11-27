@@ -1,0 +1,24 @@
+{
+  "version": 466,
+  "baseline": 465,
+  "baseCommit": "d8bee094913fdc210b095f57546b07c3e81f9f8e",
+  "baseTree": "b0aace7b00be17e79e2f5d8d4ba560b3d4dadd59",
+  "change": "Fix disappearing terrain and blue outside views after suburban home visits. Hide outdoor roots only for the synchronous interior render pass and restore their exact visibility in finally; never leave them hidden during world updates or exit. Repeated enter calls are idempotent. Preserve intentionally hidden scenery, all furnishings, window view contexts, single Leave home action, garage/front exits and saved data.",
+  "sourceModules": [
+    "ownable-suburban-homes.js",
+    "world-v5-complete-replacement.js"
+  ],
+  "newMedia": 0,
+  "allEmbeddedAssetsUnchanged": true,
+  "storageKeysChanged": false,
+  "privateRecordsPublished": false,
+  "compiledSha256": "c455b8a33d4d1ee9c7724ff4b8cba01d30465735298a0314bce76badfcdaa1dc",
+  "gzipSha256": "4d3c895cdcafc2b556940d79374e35910a7fb1fc5b30f74e4cf34a7e0db6acfb",
+  "validation": [
+    "Reproduced previous repeated-enter ground visibility loss with the original home factory",
+    "New home factory repeated enter/update/render/exit cycles preserve terrain and intentionally hidden objects",
+    "Scoped interior renderer restores visibility even on a thrown render error",
+    "Full production game boot and real front/garage/front Leave home button cycles, with repeated enter requests, terrain/scenery checked before and after",
+    "Compiled pack roundtrip, unchanged media and no storage schema changes"
+  ]
+}
