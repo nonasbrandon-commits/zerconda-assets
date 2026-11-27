@@ -1,3 +1,5 @@
+import {beachPassingStep} from './beach-passing.js?v=467';
+import {createResidentBreaks} from './resident-breaks.js?v=467';
 import {stepPedestrianYield} from './pedestrian-traffic.js?v=425';
 import {clearSegment,createPedestrianDetourSearch} from './pedestrian-detour.js?v=20261122-hitch-v252';
 import * as THREE from 'three';
@@ -6,7 +8,7 @@ import {residentProfiles} from './resident-profiles.js?v=20261118-residents-v97'
 import {createResidentVehicle} from './resident-vehicles.js?v=20261120-bikes-v180';
 // Articulated human-shaped characters and animated pedestrian NPCs.
 // Adult resident meshes are adapted from the MIT-licensed Microsoft Rocketbox collection.
-export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=()=>true,getPlayer=()=>null,getPeople=()=>[]}={}){
+export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=()=>true,getPlayer=()=>null,getPeople=()=>[],getSeats=()=>[],getOccupiedSeat=()=>null}={}){
  const root=new THREE.Group();root.name='Animated Zerconda pedestrians';scene.add(root);
  const skin=[0xe7b58d,0x9d6345,0xc78d68,0xf0c9a6,0x69432f].map(color=>new THREE.MeshStandardMaterial({color,roughness:.88}));
  const shirts=[0x7731a1,0x171d23,0x52705c,0xd0c7b8,0x444b64,0x9b8665,0x9b3652,0x336d96].map(color=>new THREE.MeshStandardMaterial({color,roughness:.91}));
@@ -77,24 +79,21 @@ export function createPedestrians(scene,{count=20,groundHeightAt=()=>0,canWalk=(
   for(const sign of[-1,1])for(const offset of[0,2,-2,4,-4,8,-8,12,-12,16,-16]){const goal=vertical?{x:xRoad+sign*11.8,z:old.z+offset}:{x:old.x+offset,z:zRoad+sign*11.8};if(xs.every(x=>Math.abs(goal.x-x)>10.2)&&zs.every(z=>Math.abs(goal.z-z)>10.2)&&clearSegment(goal,goal,canWalk,.48))choices.push(goal);}
   return choices.sort((a,b)=>Math.hypot(a.x-old.x,a.z-old.z)-Math.hypot(b.x-old.x,b.z-old.z))[0];
  }
- function update(dt,time){simulationTime+=dt;const player=getPlayer();if(mobile&&player){const near=[...agents].sort((a,b)=>Math.hypot(a.group.position.x-player.x,a.group.position.z-player.z)-Math.hypot(b.group.position.x-player.x,b.group.position.z-player.z)).filter(a=>Math.hypot(a.group.position.x-player.x,a.group.position.z-player.z)<65).slice(0,4);for(const a of agents){if(!near.includes(a)&&a.human.ready){a.human.dispose();a.group.visible=false;}}if(!loading){const a=near.find(a=>!a.human.ready);if(a){loading=true;a.human.load().then(()=>{a.group.visible=true}).catch(console.warn).finally(()=>loading=false);}}}const actorDeadline=performance.now()+4;let actorVisits=0;while(actorVisits++<agents.length&&performance.now()<actorDeadline){const a=agents[agentCursor++%agents.length];if(!a.human.ready)continue;const stepDt=Math.min(.15,simulationTime-(a.lastSimulationTime??simulationTime-dt));a.lastSimulationTime=simulationTime;const distance2=player?(a.group.position.x-player.x)**2+(a.group.position.z-player.z)**2:0;a.group.visible=distance2<180*180;if(!a.group.visible)continue;if(!a.vehicle&&stepPedestrianYield(a,stepDt,groundHeightAt,canWalk))continue;if(a.parkLeft>0){a.parkLeft=Math.max(0,a.parkLeft-stepDt);a.human.update(stepDt,0,{vehicle:a.profile.activity,phase:a.phase,detailed:distance2<70*70});continue;}const old=a.group.position.clone(),advance=Math.min(stepDt,.15)*a.speed;a.waiting=false;
+ const breaks=createResidentBreaks({getSeats,getOccupiedSeat,canWalk,getHeight:groundHeightAt,getPeople:()=>[...getPeople(),...agents.filter(a=>a.human.ready&&a.group.visible).map(a=>a.group.position)],getPlayer});
+ function update(dt,time){simulationTime+=dt;const player=getPlayer();if(mobile&&player){const near=[...agents].sort((a,b)=>Math.hypot(a.group.position.x-player.x,a.group.position.z-player.z)-Math.hypot(b.group.position.x-player.x,b.group.position.z-player.z)).filter(a=>Math.hypot(a.group.position.x-player.x,a.group.position.z-player.z)<65).slice(0,4);for(const a of agents){if(!near.includes(a)&&a.human.ready){a.human.dispose();a.group.visible=false;}}if(!loading){const a=near.find(a=>!a.human.ready);if(a){loading=true;a.human.load().then(()=>{a.group.visible=true}).catch(console.warn).finally(()=>loading=false);}}}const actorDeadline=performance.now()+4;let actorVisits=0;while(actorVisits++<agents.length&&performance.now()<actorDeadline){const a=agents[agentCursor++%agents.length];if(!a.human.ready)continue;const stepDt=Math.min(.15,simulationTime-(a.lastSimulationTime??simulationTime-dt));a.lastSimulationTime=simulationTime;const distance2=player?(a.group.position.x-player.x)**2+(a.group.position.z-player.z)**2:0;a.group.visible=distance2<180*180;if(!a.group.visible)continue;if(!a.vehicle&&breaks.update(a,stepDt,simulationTime))continue;if(!a.vehicle&&stepPedestrianYield(a,stepDt,groundHeightAt,canWalk))continue;if(a.parkLeft>0){a.parkLeft=Math.max(0,a.parkLeft-stepDt);a.human.update(stepDt,0,{vehicle:a.profile.activity,phase:a.phase,detailed:distance2<70*70});continue;}const old=a.group.position.clone(),advance=Math.min(stepDt,.15)*a.speed;a.waiting=false;
   if(a.route.kind==='sidewalk'&&(a.position>=79.99&&a.direction>0||a.position<=-79.99&&a.direction<0))a.direction*=-1;
   const radius=a.vehicle?.48:.28;
   // An overlapping spawn must be able to separate before normal clearance applies.
   const obstacles=agents.filter(other=>other!==a&&other.human.ready).map(other=>({x:other.group.position.x,z:other.group.position.z,r:.94}));
   for(const p of getPeople())obstacles.push({x:p.x,z:p.z,r:.94});
   if(player)obstacles.push({x:player.x,z:player.z,r:a.vehicle?1.5:.94});
-  const escapeClear=(x,z)=>obstacles.every(o=>{const before=Math.hypot(old.x-o.x,old.z-o.z),after=Math.hypot(x-o.x,z-o.z);return after>=o.r||before<o.r+radius&&after>before+.00001;});
+  const escapeClear=(x,z)=>obstacles.every(o=>{const before=Math.hypot(old.x-o.x,old.z-o.z),after=Math.hypot(x-o.x,z-o.z);return after>=o.r||before<o.r+radius&&after>=before-.000001;});
   const clear=(x,z)=>canWalk(x,z)&&escapeClear(x,z);
   // Check body clearance against scenery, but center separation against people.
   const segment=(from,to)=>clearSegment(from,to,canWalk,radius)&&clearSegment(from,to,escapeClear,0);
 
-  // Give people a consistent passing side before launching a long path search.
   let next=routePoint(a,advance);
-  if(!a.detour&&a.route.kind==='sidewalk'&&!segment(old,next)){
-   const ahead=routePoint(a,Math.max(1.8,advance));const dz=Math.sign(ahead.z-old.z)||a.direction;
-   for(const side of [dz,-dz]){const candidate={x:old.x+side*advance*.8,z:old.z+dz*advance*.5};if(segment(old,candidate)){a.group.position.set(candidate.x,groundHeightAt(candidate.x,candidate.z),candidate.z);a.detour=null;a.search=null;a.retry=.2;break;}}
-  }
+  if(!a.vehicle){const target=routePoint(a,4),point=beachPassingStep({id:a.profile.id,here:old,target,speed:a.speed,dt:stepDt,people:obstacles.map((o,i)=>({...o,id:10000+i})),staticClear:(from,to)=>clearSegment(from,to,canWalk,radius),memory:a.passing||(a.passing={})});if(point){a.group.position.set(point.x,groundHeightAt(point.x,point.z),point.z);if(a.route.kind==='sidewalk')a.position=point.z;else if(a.route.kind==='boardwalk'){const goingEast=a.position<824;a.position=goingEast?point.x+266:1648-(point.x+266);}a.detour=null;a.search=null;}else{a.human.update(stepDt,0);a.waiting=true;continue;}}
   const escaped=a.group.position.distanceTo(old)>.0001;
   next=routePoint(a,advance);const directClear=!escaped&&!a.detour&&Math.hypot(next.x-old.x,next.z-old.z)<=advance+.02&&segment(old,next);a.retry=Math.max(0,(a.retry||0)-stepDt);
   if(!escaped&&!a.detour&&!directClear&&!a.retry){

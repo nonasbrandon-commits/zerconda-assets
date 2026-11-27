@@ -3,7 +3,7 @@ export function beachPassingStep({id,here,target,speed,dt,people,player,staticCl
  const gap=(q,p)=>Math.hypot(q.x-p.x,q.z-p.z);
  const obstacles=people.filter(p=>p.id!==id).map(p=>({...p,r:1.15}));
  if(player)obstacles.push({...player,r:1.2,id:-1});
- const near=obstacles.filter(p=>gap(here,p)<3.0);
+ const heading={x:target.x-here.x,z:target.z-here.z},headingLength=Math.hypot(heading.x,heading.z)||1;const near=obstacles.filter(p=>gap(here,p)<3.2&&((p.x-here.x)*heading.x+(p.z-here.z)*heading.z)/headingLength>-.4);
  memory.left=Math.max(0,(memory.left||0)-dt);
  if(!memory.left&&near.length){
   const closest=near.sort((a,b)=>gap(here,a)-gap(here,b))[0];
@@ -19,7 +19,7 @@ export function beachPassingStep({id,here,target,speed,dt,people,player,staticCl
   const side=memory.side||{x:dz,z:-dx};let vx=Number.isFinite(bias)?dx+side.x*bias:side.x*Math.sign(bias),vz=Number.isFinite(bias)?dz+side.z*bias:side.z*Math.sign(bias);
   const norm=Math.hypot(vx,vz),step=Math.min(len,speed*dt),q={x:here.x+vx/norm*step,z:here.z+vz/norm*step};
   if(!staticClear(here,q))continue;
-  if(obstacles.some(p=>{const before=gap(here,p),after=gap(q,p);return after<p.r&&(before>=p.r||after<before+.00001);}))continue;
+  if(obstacles.some(p=>{const before=gap(here,p),after=gap(q,p);return after<p.r&&(before>=p.r||after<before-.000001);}))continue;
   return q;
  }
  return null;

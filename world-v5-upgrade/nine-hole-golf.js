@@ -5,7 +5,7 @@ import {registerTownAction} from './town-interactions.js?v=20261117-touch-v75';
 import {trimGolfGround} from './golf-road-clearance.js?v=20261117-ground-golf-v86';
 
 // A compact nine-hole city course, with all playing surfaces inside road-free parcels.
-export function createNineHoleGolf(course,{origin,materials,tree,getPlayer}){
+export function createNineHoleGolf(course,{origin,materials,tree,getPlayer,clubhouse={x:origin.x-65,z:origin.z+203}}){
  const {rough,fairway,green,sand,walk}=materials;
  const toLocal=(x,z,y=.035)=>new THREE.Vector3(x-origin.x,y,z-origin.z);
  const turf=[],pathCurves=[];
@@ -100,12 +100,17 @@ export function createNineHoleGolf(course,{origin,materials,tree,getPlayer}){
  }
  // Simple playable practice golf: approach a tee, then use G for each stroke.
  const ball=new THREE.Mesh(new THREE.SphereGeometry(.12,16,10),flagMat);ball.visible=false;course.add(ball);
- const button=document.createElement('button');button.style.cssText='position:fixed;right:14px;bottom:245px;z-index:10001;padding:13px;background:#244d38;color:white;border:1px solid #c7b87e;border-radius:8px;display:none';document.body.appendChild(button);
- registerTownAction(button,{id:'golf-play',priority:90,target:()=>active?{x:ball.position.x+origin.x,y:.3,z:ball.position.z+origin.z}:nearest?{x:nearest.tee[0],y:.3,z:nearest.tee[1]}:null});
+ const button=document.createElement('button');button.id='golf-play-action';button.style.cssText='position:fixed;right:14px;bottom:245px;z-index:10001;padding:13px;background:#244d38;color:white;border:1px solid #c7b87e;border-radius:8px;display:none';document.body.appendChild(button);
+ registerTownAction(button,{id:'golf-play',priority:90,target:()=>clubStart?{...clubhouse,y:1}:active?{x:ball.position.x+origin.x,y:.3,z:ball.position.z+origin.z}:nearest?{x:nearest.tee[0],y:.3,z:nearest.tee[1]}:null});
  const score=document.createElement('div');score.id='golf-score';score.style.cssText='position:fixed;left:14px;top:245px;z-index:9997;padding:9px 12px;background:#173529df;color:#fff;border-radius:7px;display:none;font:13px sans-serif';document.body.appendChild(score);
- let active=null,strokes=0,flight=null,nearest=null;const results=new Map();
+ let checkedIn=false,clubStart=false,active=null,strokes=0,flight=null,nearest=null;const results=new Map();
+ function onCourse(player){return !!player&&player.x>=240&&player.x<=556&&!(player.x<276&&player.z>110)&&heightAt(player.x,player.z)!==null;}
+ function nearClub(player){return !!player&&Math.hypot(player.x-clubhouse.x,player.z-clubhouse.z)<5.5;}
  function stroke(){
-  if(flight)return;
+  const player=getPlayer?.();if(nearClub(player)&&(!checkedIn||results.size===holeSpecs.length)){checkedIn=true;active=null;flight=null;strokes=0;results.clear();ball.visible=false;score.textContent='Round started · Go to numbered Tee 1, then tap Play hole';return;}
+  if(!checkedIn||!onCourse(player)||flight)return;
+  if(active&&Math.hypot(player.x-(ball.position.x+origin.x),player.z-(ball.position.z+origin.z))>=11)return;
+  if(!active)nearest=holeSpecs.find(h=>Math.hypot(player.x-h.tee[0],player.z-h.tee[1])<11)||null;
   if(!active){if(!nearest)return;active=nearest;strokes=0;ball.position.copy(toLocal(...active.tee,.18));ball.visible=true;}
   const target=toLocal(...active.pin,.18),distance=ball.position.distanceTo(target);
   const end=ball.position.clone().lerp(target,distance<9?1:.70);
@@ -119,15 +124,17 @@ export function createNineHoleGolf(course,{origin,materials,tree,getPlayer}){
   const player=getPlayer?.();if(!player)return;
   nearest=holeSpecs.find(h=>Math.hypot(player.x-h.tee[0],player.z-h.tee[1])<11)||null;
   const nearBall=active&&Math.hypot(player.x-(ball.position.x+origin.x),player.z-(ball.position.z+origin.z))<11;
-  const show=!!(nearBall||(!active&&nearest));button.style.display=show?'block':'none';
-  button.textContent=active?'G · HIT BALL · STROKE '+(strokes+1):'G · PLAY HOLE '+(nearest?.number||'');
-  score.style.display=(player.x>232&&player.x<564&&player.z> -273&&player.z<170)?'block':'none';
+  const inside=onCourse(player);clubStart=nearClub(player)&&(!checkedIn||results.size===holeSpecs.length);
+  const show=clubStart||checkedIn&&inside&&!!(nearBall||(!active&&nearest));button.style.display=show?'block':'none';
+  button.textContent=clubStart?'Start golf round':active?'G · HIT BALL · STROKE '+(strokes+1):'G · PLAY HOLE '+(nearest?.number||'');
+  score.style.display=checkedIn&&inside?'block':'none';ball.visible=!!active&&inside;
   if(active)score.textContent='Hole '+active.number+' · Par 3 · '+strokes+' strokes · Follow the ball, then tap Hit ball';
-  else if(!results.size)score.textContent='ZERCONDA · NINE-HOLE GOLF · Approach a numbered tee and tap Play';
+  else if(results.size===holeSpecs.length)score.textContent='Nine-hole round complete · Return to the clubhouse to play again';
+  else if(checkedIn)score.textContent='ZERCONDA · NINE-HOLE GOLF · '+results.size+'/9 holes completed · Go to a numbered tee to play';
  }
  const floorCells=new Map(),cellSize=8;
  for(const mesh of turf){mesh.updateMatrix();const geo=mesh.geometry.index?mesh.geometry.toNonIndexed():mesh.geometry,p=geo.getAttribute('position');for(let i=0;i<p.count;i+=3){const a=new THREE.Vector3().fromBufferAttribute(p,i).applyMatrix4(mesh.matrix),b=new THREE.Vector3().fromBufferAttribute(p,i+1).applyMatrix4(mesh.matrix),c=new THREE.Vector3().fromBufferAttribute(p,i+2).applyMatrix4(mesh.matrix);const area=(b.x-a.x)*(c.z-a.z)-(b.z-a.z)*(c.x-a.x);if(Math.abs(area)<1e-8)continue;const tri={a,b,c,area};for(let ix=Math.floor(Math.min(a.x,b.x,c.x)/cellSize);ix<=Math.floor(Math.max(a.x,b.x,c.x)/cellSize);ix++)for(let iz=Math.floor(Math.min(a.z,b.z,c.z)/cellSize);iz<=Math.floor(Math.max(a.z,b.z,c.z)/cellSize);iz++){const key=ix+','+iz,list=floorCells.get(key)||[];list.push(tri);floorCells.set(key,list);}}}
  function heightAt(wx,wz){const x=wx-origin.x,z=wz-origin.z,list=floorCells.get(Math.floor(x/cellSize)+','+Math.floor(z/cellSize))||[];let height=null;for(const {a,b,c,area}of list){const u=((x-a.x)*(c.z-a.z)-(z-a.z)*(c.x-a.x))/area,v=((b.x-a.x)*(z-a.z)-(b.z-a.z)*(x-a.x))/area;if(u>=-1e-6&&v>=-1e-6&&u+v<=1.000001)height=Math.max(height??-1,a.y+u*(b.y-a.y)+v*(c.y-a.y));}return height;}
- return {groundJoins,holes:holeSpecs,cartCurve,pathCurves,heightAt,update,routeLength:cartCurve.getLength(),groundMeshes:turf};
+ return {checkIn:clubhouse,get roundStarted(){return checkedIn;},groundJoins,holes:holeSpecs,cartCurve,pathCurves,heightAt,update,routeLength:cartCurve.getLength(),groundMeshes:turf};
 }
 

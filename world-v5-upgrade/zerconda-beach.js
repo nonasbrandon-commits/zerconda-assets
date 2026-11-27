@@ -41,8 +41,14 @@ export function createZercondaBeach(scene,{base='https://raw.githubusercontent.c
   if(Math.abs(x)<14)continue;
   palms.push(createReferenceBeachPalm(root,{x,y:.085,z,height:8.9*(.86+(i%5)*.055)}));
  }
+ const westBeachSets=[];
+ for(const [i,x] of [-332,-310,-288,-266,-244,-222,-200,-178].entries()){
+  for(const z of [202,220]){const lounge=createBeachLounge3D(root,{x,y:.085,z,index:40+i});lounges.push(lounge);westBeachSets.push(lounge);}
+  palms.push(createReferenceBeachPalm(root,{x:x-6,y:.085,z:198,height:8.2+(i%3)*.6}));
+  if(i%2===0)palms.push(createReferenceBeachPalm(root,{x:x+7,y:.085,z:229,height:8.8}));
+ }
  const allBeachSeats=[...lounges.map(l=>l.seat),...boardwalkFurniture.seats];
- return {root,offshoreSharks,access,blocksVehicle:access.blocksVehicle,sandMaterial:sand,boardwalkBounds,lounges,palms,boardwalkFurniture,nearestSeat(x,z,max=2.5){let best=null,d=max;for(const seat of allBeachSeats){if(seat.npcOccupant)continue;const distance=Math.hypot(x-seat.x,z-seat.z);if(distance<d){best=seat;d=distance;}}return best;},blocks(x,z){return access.blocks(x,z)||boardwalkFurniture.blocks(x,z)||lounges.some(l=>l.blocks(x,z))||palms.some(p=>Math.hypot(x-p.x,z-p.z)<.48);},ocean:oceanSystem,heightAt(x,z){
+ return {root,seats:allBeachSeats,westBeachSets,offshoreSharks,access,blocksVehicle:access.blocksVehicle,sandMaterial:sand,boardwalkBounds,lounges,palms,boardwalkFurniture,nearestSeat(x,z,max=2.5){let best=null,d=max;for(const seat of allBeachSeats){if(seat.npcOccupant)continue;const distance=Math.hypot(x-seat.x,z-seat.z);if(distance<d){best=seat;d=distance;}}return best;},blocks(x,z){return access.blocks(x,z)||boardwalkFurniture.blocks(x,z)||lounges.some(l=>l.blocks(x,z))||palms.some(p=>Math.hypot(x-p.x,z-p.z)<.48);},ocean:oceanSystem,heightAt(x,z){
   // Match the visible planks (.19 centre + .025 half thickness), not sea level.
   if(x>=boardwalkBounds.minX&&x<=boardwalkBounds.maxX&&z>=181&&z<=191)return .095;
   const roadY=access.heightAt(x,z);if(roadY!==null)return roadY;

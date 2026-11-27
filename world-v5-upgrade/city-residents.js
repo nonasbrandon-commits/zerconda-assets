@@ -1,3 +1,4 @@
+import {beachPassingStep} from './beach-passing.js?v=467';
 import {selectMobileResidents,releaseMobileResident} from './mobile-resident-budget.js?v=428';
 import {stepPedestrianYield} from './pedestrian-traffic.js?v=425';
 import {createNeighborhoodHuman} from './neighborhood-human.js?v=20261124-neighborhood-v316';
@@ -22,12 +23,12 @@ export function createCityResidents(scene,{getPlayer=()=>({x:0,z:0}),getHeight=(
  const separating=p=>{const before=Math.hypot(old.x-p.x,old.z-p.z),after=Math.hypot(x-p.x,z-p.z);return after>.94||before<.94&&after>before;};
  const clear=roaming.safe(x,z)&&Math.hypot(x-player.x,z-player.z)>.94&&!getVehicles().some(o=>Math.hypot(x-o.x,z-o.z)<4.5)&&existingPeople().every(separating)&&agents.every(o=>o===a||o.staff||separating(o.group.position));
  if(clear){const angle=Math.atan2(goal.x-old.x,goal.z-old.z);a.group.position.set(x,getHeight(x,z),z);a.group.rotation.y+=Math.atan2(Math.sin(angle-a.group.rotation.y),Math.cos(angle-a.group.rotation.y))*Math.min(1,dt*7);speed=.95;r.stuck=0;if(d<=step+.01){r.route.shift();if(!r.route.length)r.remaining=8+(r.seed*17)%20;}}
- else {r.stuck+=dt;const dx=goal.x-old.x,dz=goal.z-old.z,len=Math.hypot(dx,dz)||1,side=a.profile.id%2?1:-1;for(const sign of[side,-side]){const sx=old.x-dz/len*step*sign,sz=old.z+dx/len*step*sign;if(roaming.safe(sx,sz)&&Math.hypot(sx-player.x,sz-player.z)>.94&&existingPeople().every(p=>Math.hypot(sx-p.x,sz-p.z)>.94)&&agents.every(o=>o===a||o.staff||Math.hypot(sx-o.group.position.x,sz-o.group.position.z)>.94)){a.group.position.set(sx,getHeight(sx,sz),sz);speed=.7;break;}}if(r.stuck>3){r.route=[];r.remaining=.3;r.stuck=0;}}
+ else {r.stuck+=dt;const q=beachPassingStep({id:a.profile.id,here:old,target:goal,speed:.95,dt:Math.min(.1,dt),people:[...existingPeople(),...agents.filter(o=>o!==a&&!o.staff&&o.group.visible).map(o=>o.group.position)].map((p,i)=>({...p,id:1000+i})),player,staticClear:(from,to)=>roaming.safe(to.x,to.z)&&!getVehicles().some(v=>Math.hypot(to.x-v.x,to.z-v.z)<4.5),memory:a.passing||(a.passing={})});if(q){a.group.rotation.y=Math.atan2(q.x-old.x,q.z-old.z);a.group.position.set(q.x,getHeight(q.x,q.z),q.z);speed=.95;r.stuck=0;}if(r.stuck>3){r.route=[];r.remaining=.3;r.stuck=0;}}
 
  }a.walking=speed>0;a.item.visible=false;}
 
  a.human.update(dt,speed);if(a.seated){a.group.position.set(60,getHeight(60,68),68);a.group.rotation.y=Math.atan2(-12,-20);poseSeatedResident(a.human,{sitHeight:.52,casual:true,legSpread:.18},elapsed);}a.item.visible=false;if(a.profile.id===29){if(!a.photographer)a.photographer=createPhotographerRoutine(a);a.photographer.update(dt,speed>0);}
  a.group.updateMatrixWorld(true);
  }}
- return{root,agents,readyPromise,update,get collisionPeople(){return agents.filter(a=>a.human.ready&&a.group.parent.visible).map(a=>a.group.getWorldPosition(new THREE.Vector3()));},dispose(){for(const a of agents){a.button.remove();a.human.dispose();a.group.removeFromParent();}root.removeFromParent();}};
+ return{root,agents,readyPromise,update,get collisionPeople(){return agents.filter(a=>a.human.ready&&a.group.visible&&a.group.parent.visible).map(a=>a.group.getWorldPosition(new THREE.Vector3()));},dispose(){for(const a of agents){a.button.remove();a.human.dispose();a.group.removeFromParent();}root.removeFromParent();}};
 }
