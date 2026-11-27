@@ -1,0 +1,19 @@
+{
+  "version": 456,
+  "baseline": 455,
+  "baseCommit": "d82238756bdee6290e89029c5d83ac78fdf74e72",
+  "baseTree": "f7736ba272b876246aac73247985e207e755da77",
+  "compiledSha256": "d927840475804b49276805b123a04104851fa8245f16a10d1ad2a37ddcdf6d3a",
+  "gzipSha256": "5a2bafde33cdc378bced0801358d15500c4f2bb18180d87f02b96aaa1be62552",
+  "allEmbeddedAssetsUnchanged": true,
+  "newMedia": 0,
+  "privateUserDataIncluded": false,
+  "change": "Return sunglasses to snug proportions with thinner, shorter temples, temples tucked into the groove behind each ear, with the outer ear naturally hiding the rear section. Move Cityview sitting anchors forward 0.4 m and raise hip offset 0.05 m to keep legs out of sofa cushions. Preserve centered lenses and all v454 interaction, helicopter and campground fixes.",
+  "validation": [
+    "Actual hero rig front, left, right and refit after rotation visual checks",
+    "Skinned head cross-section probe identifies the groove between skull and inner ear; rear arms fitted into it and visually occluded by outer ears",
+    "Exactly one shared town-interactions module retained",
+    "Actual hero on Cityview lobby sofa: visible knees, feet on floor, hands resting on thighs",
+    "Build and compressed pack byte roundtrip"
+  ]
+}

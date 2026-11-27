@@ -1,0 +1,1 @@
+Return sunglasses to snug proportions with thinner, shorter temples, temples tucked into the groove behind each ear, with the outer ear naturally hiding the rear section. Move Cityview sitting anchors forward 0.4 m and raise hip offset 0.05 m to keep legs out of sofa cushions. Preserve centered lenses and all v454 interaction, helicopter and campground fixes.
