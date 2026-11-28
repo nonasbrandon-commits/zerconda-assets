@@ -11,6 +11,8 @@ export function createTownObstacles({scene,getFloor=()=>0,ignore=()=>false,getDy
   // Interior modules own their walls, but their outdoor benches and props still
   // register explicit colliders. Previously this skipped the entire campground.
   if(o.userData.customInterior){explicitChildren(o);return;}
+  // Keep explicit bench footprints instead of swallowing them in a parent AABB.
+  if(o.isGroup&&o.children.some(c=>c.userData.parkBench&&c.userData.playerCollider)){for(const c of o.children)visit(c);return;}
   if(o.userData.outdoorSolid&&!seen.has(o)){seen.add(o);add(new THREE.Box3().setFromObject(o),o);return;}
   if(o.isGroup&&!seen.has(o)&&o.children.length&&groupChildren.get(o)!==o.children.length){groupChildren.set(o,o.children.length);box.setFromObject(o);box.getSize(size);let character=false;if(size.x<6&&size.z<6&&size.y>.25&&size.y<4){o.traverse(c=>{if(c.isSkinnedMesh)character=true});if(!character){seen.add(o);add(box.clone(),o);return;}}}
   if(o.isMesh&&!seen.has(o)){seen.add(o);box.setFromObject(o);box.getSize(size);if(size.x<14&&size.z<14&&size.y>.22&&(size.y<5||(size.x<2&&size.z<2))&&size.x>.05&&size.z>.05)add(box.clone(),o);}
