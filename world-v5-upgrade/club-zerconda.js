@@ -1,3 +1,4 @@
+import {createClubDartsFinish,DART_LANES} from './club-darts-finish.js?v=483';
 import {createClubLoungeFinish} from './club-lounge-finish.js?v=480';
 import {createClubMusic} from './club-music.js?v=20261119-fountain-seating-v135';
 import {GROUND_LEVEL} from './ground-level.js?v=20261119-level-ground-v117';
@@ -120,24 +121,19 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
  }
  const stage=createClubStage(root);
  // Upholstered booths, small conversation tables and a two-floor lounge.
- const seats=[];const lounge=createClubLoungeFinish(root,{x,z,seats});
+ const boardCanvas=document.createElement('canvas');boardCanvas.width=boardCanvas.height=1024;drawDartBoard(boardCanvas.getContext('2d'),1024);const boardTexture=new THREE.CanvasTexture(boardCanvas);boardTexture.colorSpace=THREE.SRGBColorSpace;
+ const seats=[];const dartsFinish=createClubDartsFinish(root,{boardTexture,seats,x,z});let dartLane=-18;const lounge=createClubLoungeFinish(root,{x,z,seats});
  function sofa(px,pz,level,angle=0){
   if(!level){lounge.addSofa(px,pz,angle);for(const side of[-1,1]){const p=new THREE.Vector3(side*.72,.16,.09).applyAxisAngle(new THREE.Vector3(0,1,0),angle);seats.push({x:x+px+p.x,z:z+pz+p.z,y:.02,sitHeight:.55,facing:angle,kind:'club',floor:0});}return;}
-  const group=new THREE.Group();group.position.set(px,level+.16,pz);group.rotation.y=angle;root.add(group);
-  box(3,.30,1.05,0,.28,0,velvet,group);box(3,.9,.22,0,.86,-.46,velvet,group);
-  for(const offset of [-1,0,1]){box(.94,.12,.91,offset,.47,.015,velvet,group);const button=new THREE.Mesh(new THREE.SphereGeometry(.025,10,8),leather);button.scale.z=.35;button.position.set(offset,.92,-.335);group.add(button);}
-  for(const side of [-1,1]){box(.24,.52,1.1,side*1.5,.54,0,leather,group);for(const zz of [-.4,.4])cyl(.045,.35,side*1.3,.19,zz,brass,group);}
+  dartsFinish.addSofa(px,pz,angle);
   for(const side of [-1,1]){const p=new THREE.Vector3(side*.72,.16,.09).applyAxisAngle(new THREE.Vector3(0,1,0),angle);seats.push({x:x+px+p.x,z:z+pz+p.z,y:level+.02,sitHeight:level+.55,facing:angle,kind:'club',floor:level?1:0});}
  }
  for(const level of [0,4.5])for(const xx of [6,12,19]){
-  sofa(xx,5.4,level,Math.PI);if(level){cyl(.75,.1,xx,level+.7,3.4,oak);cyl(.065,.5,xx,level+.4,3.4,brass);}
+  sofa(xx,5.4,level,Math.PI);if(level)dartsFinish.addTable(xx,3.4);
  }
  sofa(-24,-4,4.5,Math.PI/2);sofa(-24,3.5,4.5,Math.PI/2);
- lounge.finalize();
+ lounge.finalize();dartsFinish.finalize();
  // Darts upstairs: the scoring target is also the visible board texture.
- const boardCanvas=document.createElement('canvas');boardCanvas.width=boardCanvas.height=1024;drawDartBoard(boardCanvas.getContext('2d'),1024);const boardTexture=new THREE.CanvasTexture(boardCanvas);boardTexture.colorSpace=THREE.SRGBColorSpace;
- const board=new THREE.Mesh(new THREE.CircleGeometry(.32,64),new THREE.MeshStandardMaterial({map:boardTexture,roughness:.92}));board.position.set(-18,6.39,-7.77);root.add(board);
- box(1.25,1.25,.07,-18,6.39,-7.86,oak);box(2,.025,.09,-18,4.675,-5.4,brass);label('301 DARTS',-18,7.8,-7.76,5,.55);
  // A regulation-proportioned 8-ball table with six pockets, rails and numbered balls.
  const tableOrigin={x:3,z:-.3,y:4.5};const felt=mat(0x24634f,.98),pocketMat=mat(0x081713,.9);
  box(3.08,.45,1.72,tableOrigin.x,5.05,tableOrigin.z,oak);box(2.7,.08,1.35,tableOrigin.x,5.32,tableOrigin.z,felt);
@@ -151,7 +147,7 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
  function validPool(value){return value&&[0,1].includes(value.turn)&&Array.isArray(value.groups)&&value.groups.length===2&&value.groups.every(g=>g===null||g==='solids'||g==='stripes')&&Array.isArray(value.potted)&&typeof value.last==='string'&&typeof value.moving==='boolean'&&(value.winner===null||[0,1].includes(value.winner))&&value.balls?.length===16&&new Set(value.balls.map(b=>b.id)).size===16&&value.balls.every(b=>Number.isInteger(b.id)&&b.id>=0&&b.id<16&&Number.isFinite(b.x)&&Number.isFinite(b.z)&&Math.abs(b.x)<2&&Math.abs(b.z)<1.2&&Number.isFinite(b.vx)&&Number.isFinite(b.vz)&&Math.hypot(b.vx,b.vz)<7&&typeof b.pocketed==='boolean');}
  function validDarts(value){return value&&[0,1].includes(value.turn)&&value.scores?.length===2&&value.scores.every(v=>Number.isInteger(v)&&v>=0&&v<=301)&&Number.isInteger(value.throws)&&value.throws>=0&&value.throws<=3&&Number.isInteger(value.start)&&value.start>=0&&value.start<=301&&typeof value.last==='string'&&(value.winner===null||[0,1].includes(value.winner))&&Array.isArray(value.hits)&&value.hits.length<=3&&value.hits.every(h=>Number.isFinite(h.x)&&Number.isFinite(h.y)&&Math.hypot(h.x,h.y)<1.3);}
  const darts3d=[];
- function showDart(nx,ny){const dart=new THREE.Group();const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.008,.008,.20,8),brass);shaft.rotation.x=Math.PI/2;dart.add(shaft);box(.065,.05,.018,0,0,.075,velvet,dart);dart.position.set(-18+nx*.32*.79,6.39-ny*.32*.79,-7.65);root.add(dart);darts3d.push(dart);if(darts3d.length>3)root.remove(darts3d.shift());}
+ function showDart(nx,ny){const dart=new THREE.Group();const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.008,.008,.20,8),brass);shaft.rotation.x=Math.PI/2;dart.add(shaft);box(.065,.05,.018,0,0,.075,velvet,dart);dart.position.set(dartLane+nx*.34*.79,6.39-ny*.34*.79,-7.285);root.add(dart);darts3d.push(dart);if(darts3d.length>3)root.remove(darts3d.shift());}
  const remotes=new Map();
  let active=false,floor=0,dancing=false,connectionTime=0;
  const outsideVisibility=new Map();
@@ -197,7 +193,7 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
   if(wasStairs&&prevZ>-3.7&&prevZ<3.7&&!inStairs)return false;
   if(inStairs&&!wasStairs&&(floor===0?lz>-3.2:lz<3.2))return false;
   if(floor===1&&Math.abs(lx-3)<1.9&&Math.abs(lz+.3)<1.2)return false;
-  if(floor===0&&lounge.blocks(lx,lz))return false;
+  if(floor===0&&lounge.blocks(lx,lz))return false;if(floor===1&&dartsFinish.blocks(lx,lz))return false;
   for(const cx of [6,12,19]){if(Math.abs(lx-cx)<1.7&&Math.abs(lz-5.4)<.8)return false;if(Math.hypot(lx-cx,lz-3.4)<1.0)return false;}
   if(floor===1&&Math.abs(lx+24)<.8&&(Math.abs(lz+4)<1.7||Math.abs(lz-3.5)<1.7))return false;
   if(floor===0&&Math.abs(lx+12)<3.8&&lz>4.95)return false;
@@ -205,16 +201,17 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
   return true;
  }
  enterButton.onclick=toggle;danceButton.onclick=()=>{dancing=!dancing;stopMovement();};
- gameButton.onclick=()=>{const p=getPlayer();gameView.show(Math.hypot(p.x-(x+3),p.z-(z-.3))<5?'pool':'darts');};
+ gameButton.onclick=()=>{const p=getPlayer();dartLane=DART_LANES.reduce((a,b)=>Math.abs(p.x-x-a)<Math.abs(p.x-x-b)?a:b);gameView.show(Math.hypot(p.x-(x+3),p.z-(z-.3))<5?'pool':'darts');};
  addEventListener('keydown',e=>{if(!active||gameView.open||['INPUT','TEXTAREA'].includes(e.target.tagName))return;if(e.code==='KeyB'&&!e.repeat&&floor===0&&Math.abs(getPlayer().x-(x-12))<9){dancing=!dancing;stopMovement();}if(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))dancing=false;});
  // A small resident dance group keeps the floor alive without masquerading as live users.
  const dancers=[];for(let i=0;i<2;i++){const human=createRealisticHuman({shirt:[0x754c64,0x467782,0x8b7857][i],pants:0x343e47});const spot=new THREE.Group();spot.position.set(-16+i*6,.258,4);spot.add(human.root);root.add(spot);human.readyPromise.then(()=>{for(let j=0;j<i*8;j++)human.update(.05,0,{dancing:true});});dancers.push(human);}
  const indoor=new THREE.Group();indoor.name='Club interior details';for(const child of [...root.children])if(!exteriorParts.has(child))indoor.add(child);root.add(indoor);indoor.visible=false;
- return {root,roof,seats,stage,music,westHinge,lounge,get games(){return {pool,darts};},get online(){return social.connected;},get peers(){return social.peers;},get active(){return active;},get floor(){return floor;},get dancing(){return dancing;},set dancing(value){dancing=value;},get gameOpen(){return gameView.open;},near,toggle,heightAt,contains,
+ return {root,roof,seats,stage,music,westHinge,lounge,dartsFinish,get games(){return {pool,darts};},get online(){return social.connected;},get peers(){return social.peers;},get active(){return active;},get floor(){return floor;},get dancing(){return dancing;},set dancing(value){dancing=value;},get gameOpen(){return gameView.open;},near,toggle,heightAt,contains,
   portalWalk(px,pz){const lx=px-x,lz=pz-z;if(Math.abs(lx)<1.7&&lz>=6.9&&lz<=12||Math.abs(lz)<1.55&&lx>=-34&&lx<=-28)return (!active&&canEnter()||active&&floor===0);return null;},blocks(px,pz){return Math.abs(px-x)<30.3&&Math.abs(pz-z)<8.3;},
   nearestSeat(px,pz,max=2.4){if(!active)return null;let best=null,distance=max;for(const seat of seats){if(seat.floor!==floor)continue;const d=Math.hypot(px-seat.x,pz-seat.z);if(d<distance){best=seat;distance=d;}}return best;},
   clampCamera(point){point.x=THREE.MathUtils.clamp(point.x,x-28.6,x+28.6);point.z=THREE.MathUtils.clamp(point.z,z-6.8,z+6.8);},
   update(dt,time){
+   dartsFinish.updateDarts(darts);
    const p=getPlayer(),lx=p.x-x,lz=p.z-z;
    if(active)focusInterior(true);
    indoor.visible=active||near();
@@ -231,7 +228,7 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
    for(const remote of remotes.values()){const before=remote.group.position.clone(),target=new THREE.Vector3(remote.pose.x-x,remote.pose.y||.16,remote.pose.z-z);remote.group.position.lerp(target,Math.min(1,dt*9));remote.group.rotation.y=remote.pose.yaw||0;const speed=dt?Math.min(5,before.distanceTo(remote.group.position)/dt):0;remote.human.update(dt,speed,{dancing:remote.pose.dance,seated:remote.pose.seated});}
    enterButton.style.display='none';enterButton.textContent=active?'E · EXIT CLUB ZERCONDA':'E · ENTER CLUB ZERCONDA';
    const onDance=active&&floor===0&&Math.abs(lx+12)<9&&Math.abs(lz)<5.8;danceButton.style.display=onDance?'block':'none';danceButton.textContent=dancing?'B · STOP DANCING':'B · DANCE';
-   const nearPool=active&&floor===1&&Math.hypot(lx-3,lz+.3)<5,nearDarts=active&&floor===1&&Math.hypot(lx+18,lz+5.8)<4;
+   const nearPool=active&&floor===1&&Math.hypot(lx-3,lz+.3)<5,nearDarts=active&&floor===1&&DART_LANES.some(cx=>Math.hypot(lx-cx,lz+5.8)<3.4);
    gameButton.style.display=nearPool||nearDarts?'block':'none';gameButton.textContent=nearPool?'PLAY 8-BALL POOL':'PLAY 301 DARTS';
    social.update(dt);gameView.update();
   }

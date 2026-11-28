@@ -1,0 +1,48 @@
+{
+  "version": 483,
+  "baseline": 482,
+  "change": "Add the user supplied Unboxing Allure character exclusively to Cityview/Sky View level10. Fit her to1.72m, add a distance-driven leg rig while preserving the face/upper body, and route her among clear apartment destinations with pauses, yielding and automatic bedroom doors. Keep the three existing residents. Add the user supplied orange-crop-top visitor beside Z-View/Needle on the plaza, at1.70m with an explicit collider clear of the palms and entrance. Optimize both licensed static models with1024px textures and meshopt, preserving vertex counts and attribution. Upgrade upstairs301 darts from the supplied ZIP: three cabinet boards with selectable scoring lanes, live score screens, black marble, purple/warm lighting, plum seating, brass tables/stools, plants and skyline art. Preserve downstairs lounge, steeper stairs, pool and all prior game data.",
+  "sourceModules": [
+    "cityview-interior.js",
+    "cityview-apartments.js",
+    "skyview-guest.js",
+    "skyview-guest-asset.js",
+    "level10-walk-rig.js",
+    "level10-guest-roaming.js",
+    "observation-needle.js",
+    "needle-orange-guest.js",
+    "needle-guest-asset.js",
+    "club-zerconda.js",
+    "club-darts-finish.js"
+  ],
+  "newMedia": 2,
+  "sourceAssets": [
+    {
+      "name": "Unboxing Allure",
+      "author": "Zizian1987",
+      "license": "CC BY4.0",
+      "source": "https://sketchfab.com/3d-models/unboxing-allure-fdc86a76387f49b4a87c67bc91bedae9"
+    },
+    {
+      "name": "Orange Crop Top And White Denim Skirt",
+      "author": "restore50",
+      "license": "CC BY4.0",
+      "source": "https://sketchfab.com/3d-models/orange-crop-top-and-white-denim-skirt-3d63cba7edc942f2aa27836f6c0d6047"
+    }
+  ],
+  "userReferenceImagesPublished": false,
+  "privateRecordsPublished": false,
+  "existingEmbeddedMediaUnchanged": true,
+  "storageKeysChanged": false,
+  "compiledSha256": "954e1af839c20f4322b5e1e16c7731d7e627fc6b554992c792b9eb374f8f53d2",
+  "gzipSha256": "beb57f6721acaaa710df8c17cf0eaba56fff51559929fa55cf24d428bd42d710",
+  "newAssetsGzipBytes": 4145967,
+  "authorization": "User uploaded both models and requested level10 placement and movement, Needle placement, and upstairs darts upgrade in the existing public game.",
+  "validation": [
+    "Optimized vertex counts unchanged for both assets; attribution preserved",
+    "Actual apartment fixture: floor contact, level10-only visibility/collider,97m walk and7 destinations without furniture overlap",
+    "Focused darts fixture:3 stations,4 scorescreens,5 upgraded sofas,4 new stools; clear lanes, center aisle, stairs and all seats",
+    "Full production world: apartment doors,3 prior residents, level scope, Needle collision/entrance and3 dart lanes scoring plus original pool checked before deployment",
+    "Deterministic gzip, old embedded media unchanged; no QA hooks or private records"
+  ]
+}

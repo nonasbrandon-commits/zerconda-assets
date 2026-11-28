@@ -1,0 +1,4 @@
+Orange Crop Top And White Denim Skirt by restore50 https://sketchfab.com/restore50
+Source https://sketchfab.com/3d-models/orange-crop-top-and-white-denim-skirt-3d63cba7edc942f2aa27836f6c0d6047
+License CC BY4.0 https://creativecommons.org/licenses/by/4.0/
+User supplied model; resized textures to1024px WebP, meshopt compression/quantization, normalized to1.70m. Geometry preserved.

@@ -1,0 +1,86 @@
+{
+  "parts": [
+    {
+      "file": "skyview-guest-v483-00.bin",
+      "sha256": "c49e7ba5390071fdbdee28542f984724d2355ba2a8f90dcc991a7502885c0deb"
+    },
+    {
+      "file": "skyview-guest-v483-01.bin",
+      "sha256": "d4c26585fba4479e8dbb307362bea067733716346a6a7ce2058c6f7d9dab4b41"
+    },
+    {
+      "file": "skyview-guest-v483-02.bin",
+      "sha256": "a268bf71900a70b78cb5c778f756081acfc881cccd7a5bbaa82625398fda09f1"
+    },
+    {
+      "file": "skyview-guest-v483-03.bin",
+      "sha256": "99f1f9e1638650729185717fe67858726103e47d61c1bb1756f288fae80bf52c"
+    },
+    {
+      "file": "skyview-guest-v483-04.bin",
+      "sha256": "f1c364923955f961908f9ffa1305b649b856e2479b2468091341440871c0df25"
+    },
+    {
+      "file": "skyview-guest-v483-05.bin",
+      "sha256": "fbdbba988da1a672db64d2b8a399760738ef968252dd5c6d7b226d538cdb5c1f"
+    },
+    {
+      "file": "skyview-guest-v483-06.bin",
+      "sha256": "f244863b7ff7dbcf32b4bb865b322c94b75173eebf3a62d8d331091ecc681011"
+    },
+    {
+      "file": "skyview-guest-v483-07.bin",
+      "sha256": "b597b1869738b214ac18993ca7fdb8d724f54e0635254df61af851eaaafc756b"
+    },
+    {
+      "file": "skyview-guest-v483-08.bin",
+      "sha256": "3fa5396283f4a36f65959ba426c21f65f7800396bd98bb6b249dfba46234d089"
+    },
+    {
+      "file": "skyview-guest-v483-09.bin",
+      "sha256": "901f0ac716809d68e2d440289a3d9f7012258ebd7eacf9cfe25289b55911b378"
+    },
+    {
+      "file": "skyview-guest-v483-10.bin",
+      "sha256": "60b172f8b11bd2440452e23403987c08ab4d7a8045b88df84d27f3317260aab0"
+    },
+    {
+      "file": "skyview-guest-v483-11.bin",
+      "sha256": "cdabce307e92037156a6743460957fe79fbc46faa9c4c4832fca2928cbe4f1f5"
+    },
+    {
+      "file": "skyview-guest-v483-12.bin",
+      "sha256": "5ca15f24a27e9ce93a8a57965af3e231e7e008b86b8981006f98e3041ed8efa4"
+    },
+    {
+      "file": "skyview-guest-v483-13.bin",
+      "sha256": "3b06306d6b2156dab07ef66e35d6bc6eb35ec9d44186283e3721bc5cf1f4680f"
+    },
+    {
+      "file": "skyview-guest-v483-14.bin",
+      "sha256": "ef660667ce31ba10d6e2884a339130b3bda6042f3bcadc2b10cdb2d97e92c55d"
+    },
+    {
+      "file": "skyview-guest-v483-15.bin",
+      "sha256": "8c00508fa7009f97f1af7229cee8c6993591cd282b966b92316765f0611bc96b"
+    },
+    {
+      "file": "skyview-guest-v483-16.bin",
+      "sha256": "2eaebcd8e1614ab954ebd81ac71cbadd19105142268fd55176f0c0a7654b1e64"
+    },
+    {
+      "file": "skyview-guest-v483-17.bin",
+      "sha256": "cd60ac812a6607c0e20855ff6c3330560d69c940fec51e6ba6681cacc4543564"
+    },
+    {
+      "file": "skyview-guest-v483-18.bin",
+      "sha256": "060ffe13ab6bd3862d5ad8a589674909462936d7bab6c72711724550fd5a002a"
+    }
+  ],
+  "rawBytes": 2186992,
+  "gzipBytes": 1856950,
+  "rawSha256": "aec6a8d3556da118736fcaae878123bd0e3955aee2bf33586b7a57c455abf9e5",
+  "source": "User supplied unboxing_allure.glb",
+  "license": "CC BY4.0",
+  "author": "Zizian1987"
+}

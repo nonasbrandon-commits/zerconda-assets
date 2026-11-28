@@ -1,0 +1,4 @@
+Unboxing Allure by Zizian1987 (https://sketchfab.com/493caf85284a49b4a090c9c6eb1935)
+Source: https://sketchfab.com/3d-models/unboxing-allure-fdc86a76387f49b4a87c67bc91bedae9
+License: Creative Commons Attribution4.0 https://creativecommons.org/licenses/by/4.0/
+User supplied source. Modifications: resized textures to1024px WebP; meshopt compression/quantization; normalized to1.72m. Geometry vertex counts preserved. Added a runtime procedural leg rig and collision-aware apartment roaming; face and upper body remain rigid. The supplied model has no authored animation.
