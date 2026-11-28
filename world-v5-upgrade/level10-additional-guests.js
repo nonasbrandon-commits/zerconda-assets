@@ -6,8 +6,8 @@ import {loadAdditionalGuestBytes} from './level10-additional-assets.js?v=487';
 // Preserve the supplied poses: these scans contain no skeleton or animation.
 export function createAdditionalLevel10Guests(parent,{solids}) {
   const actors=[
-    {id:'kayden',name:'Kayden',x:1,z:-3,height:1.7,yaw:.4},
-    {id:'midnight-lace',name:'Midnight Lace',x:11.3,z:6.6,height:1.72,yaw:-.8}
+    {id:'kayden',name:'Kayden',x:4.2,z:.1,height:1.7,yaw:.4},
+    
   ].map(spec=>{
     const root=new THREE.Group();root.name='Level 10 · '+spec.name;
     Object.assign(root.userData,{customInterior:true,apartmentDynamic:true,npcIdentity:spec.name,characterSource:spec.name+' by Zizian1987 · CC BY 4.0'});

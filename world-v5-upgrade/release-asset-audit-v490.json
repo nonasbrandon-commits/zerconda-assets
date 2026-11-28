@@ -1,0 +1,125 @@
+{
+  "version": 490,
+  "baseCommit": "5151df14468d3abe0c2cfcbb2b8fc9e379ff0e84",
+  "repository": "nonasbrandon-commits/zerconda-assets",
+  "publicPath": "world-v5-upgrade/launch-v408.html?v=490",
+  "newMediaAssets": 0,
+  "embeddedPublicModelUnchanged": true,
+  "bundleSHA256": "e2f9117842b2e2452c7e7dffa58822c9ada58ae6b0030f12a619cfab254416f1",
+  "gzipSHA256": "31d4d56f1e49522d12d3ccda8294ede3f56ad8edfa2c9381274f693f6ac84602",
+  "compiledParts": [
+    {
+      "file": "world-pack-v490-00.bin",
+      "sha256": "688401c83ae24cb588866289792c0852581c0be79ef5e8c9c7ddbd652abb439a"
+    },
+    {
+      "file": "world-pack-v490-01.bin",
+      "sha256": "56e2aee663b6dbed5512ac914fac9b2a478b1394b856120503451708d3fd06be"
+    },
+    {
+      "file": "world-pack-v490-02.bin",
+      "sha256": "00c19bbce46314a765f8917f2584a3c65d084d1ba55a201750c8a1ac72317690"
+    },
+    {
+      "file": "world-pack-v490-03.bin",
+      "sha256": "91eb59aa3614557152c05a1e5bdce152ae24f7f40588446a40f49effbb4570ae"
+    },
+    {
+      "file": "world-pack-v490-04.bin",
+      "sha256": "a9217a51c750563df143b2e8418aa4c56b34e1d3a0592c8078a671cb2bd7ad52"
+    },
+    {
+      "file": "world-pack-v490-05.bin",
+      "sha256": "35b9efb8afa89cac395969ac5448987a5cd655ce536a4b26f1ebdc49b5b2b507"
+    },
+    {
+      "file": "world-pack-v490-06.bin",
+      "sha256": "1fce64eb0197545011e76fcc5775d23ece543b7520fe0f56e4a3a88236234ff9"
+    },
+    {
+      "file": "world-pack-v490-07.bin",
+      "sha256": "dcee88ca1405c318e6ab59908a3444cb2ec15bc9bb31a31e823419c43cf850de"
+    },
+    {
+      "file": "world-pack-v490-08.bin",
+      "sha256": "ee834943360033eddb4260deb01f22dfb61c1fe2fc5710e9d69e86193fb9128a"
+    },
+    {
+      "file": "world-pack-v490-09.bin",
+      "sha256": "5685e520f86ea5febf888dc847a57fa19c2d782291196d325956be3adefe22d3"
+    },
+    {
+      "file": "world-pack-v490-10.bin",
+      "sha256": "9256edee9f71f6e91ae27dc021015b469fc3cd3dea1004d411b2fa681482c8a3"
+    },
+    {
+      "file": "world-pack-v490-11.bin",
+      "sha256": "acd88a3806725f43bfd19a749e43d580b7b2658d2352eb867f48fdf7169ac553"
+    },
+    {
+      "file": "world-pack-v490-12.bin",
+      "sha256": "694d079b0ae6bb1ceb6549484d413093ac2f26c10293b578152f2f0337083396"
+    },
+    {
+      "file": "world-pack-v490-13.bin",
+      "sha256": "01fdab1d24c3a86c641f30c62bda60e570ddb8e4551282c2447a114acd07b914"
+    },
+    {
+      "file": "world-pack-v490-14.bin",
+      "sha256": "0a63258ab9484ecd083e0b7a94bd60f4a956ebb0b580a13d32fceccebaf7883c"
+    },
+    {
+      "file": "world-pack-v490-15.bin",
+      "sha256": "134385f1943d58cbba8afbe0fc23f86696ad7444b92fa5282e3f4ca28f8a3afb"
+    },
+    {
+      "file": "world-pack-v490-16.bin",
+      "sha256": "4e679c3102145f58c514008c41d1cb0831f1bfacaa2c767360014ff16dd718a0"
+    },
+    {
+      "file": "world-pack-v490-17.bin",
+      "sha256": "7e7c4a7cd58f2e5b16c22647ac94a14cb03d0c99a7650402c3b12f1ea28579ad"
+    },
+    {
+      "file": "world-pack-v490-18.bin",
+      "sha256": "ed59a35b2aa74c164932691d4020404678d5a8b84ba4146f6da58ff7754e56bb"
+    },
+    {
+      "file": "world-pack-v490-19.bin",
+      "sha256": "805bc6e1080a52aeb5fb86c6ad61d5db6b3f4e82d14bf45576ca978e5dcc9db5"
+    },
+    {
+      "file": "world-pack-v490-20.bin",
+      "sha256": "3a57c8dd15dbd3a36af71b6f047e21b1184c8d33be54d264519ddb3f74b1f887"
+    },
+    {
+      "file": "world-pack-v490-21.bin",
+      "sha256": "647b44d87975dad328e953d79982b0c084c6bde95ec4e79f4e145b2c6263822d"
+    },
+    {
+      "file": "world-pack-v490-22.bin",
+      "sha256": "1a6e4535a15ad713c372e972df57bdae4f199d12525b11bf9653a118b4db4e29"
+    },
+    {
+      "file": "world-pack-v490-23.bin",
+      "sha256": "461fcea85e4a74385ba5dd6b553ae150e5ea8c6df3abb90fd4623d5e0acf74c3"
+    }
+  ],
+  "sources": {
+    "apartment-review-women.js": "1e703583171163bb5fae400f7846d9a256982e7ed1719f387828ca09b6c427b1",
+    "club-zerconda.js": "1958693975a42df6e5ab4f382619f85a22c671f56ae6a29764e972b785c3bd15",
+    "bot-house-resident.js": "528768691cf12afa726f2163eb70f54cf8d5a1057e7bdbf472215876b343fc24",
+    "household-residents.js": "fd1e042965b4aacf1627ac2710b984f92edbc0df080386808eeacc611e3cbdeb",
+    "house-midnight.js": "739e9c9f77aa92f72e34605af57afcf937565e7a718db8b971eec5ba497a0ae6",
+    "house-scan-rig.js": "7264bbba37c1c9017b1003e16fea6702c922165844b9d1d1f253ccd10a1f8aeb",
+    "level10-additional-guests.js": "8dbedb09fb6b998ea0dcb9127b8ff8165bc1d638a4538acaa02a16603f7d1366",
+    "RELEASE-NOTES-v490.md": "c796c24c2dec85ad2d79e7a895f3225ceabceec698cb3903b5313e0c06905670"
+  },
+  "qaHooksExcluded": true,
+  "credentialSignatureScanPassed": true,
+  "validation": [
+    "full-world490-final.log",
+    "inspect-house-scan490.log",
+    "inspect-house-red490.log"
+  ]
+}

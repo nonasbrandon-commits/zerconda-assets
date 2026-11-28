@@ -1,3 +1,4 @@
+import {createApartmentReviewWomen} from './apartment-review-women.js?v=490';
 import {createClubPoolFinish} from './club-pool-finish.js?v=484';
 import {createClubSideGarden} from './club-side-garden.js?v=484';
 import {createClubDartsFinish,DART_LANES} from './club-darts-finish.js?v=483';
@@ -203,8 +204,9 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
  addEventListener('keydown',e=>{if(!active||gameView.open||['INPUT','TEXTAREA'].includes(e.target.tagName))return;if(e.code==='KeyB'&&!e.repeat&&floor===0&&Math.abs(getPlayer().x-(x-12))<9){dancing=!dancing;stopMovement();}if(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))dancing=false;});
  // A small resident dance group keeps the floor alive without masquerading as live users.
  const dancers=[];for(let i=0;i<2;i++){const human=createRealisticHuman({shirt:[0x754c64,0x467782,0x8b7857][i],pants:0x343e47});const spot=new THREE.Group();spot.position.set(-16+i*6,.258,4);spot.add(human.root);root.add(spot);human.readyPromise.then(()=>{for(let j=0;j<i*8;j++)human.update(.05,0,{dancing:true});});dancers.push(human);}
+ const pinkSpot=new THREE.Group();pinkSpot.name='Pink satin dancer · dance floor';pinkSpot.position.set(-15,.258,-1.5);root.add(pinkSpot);const pinkDancer=createApartmentReviewWomen(pinkSpot,{characterIndices:[0],roam:false,placement:{x:0,z:0},label:'Club dance-floor resident · pink satin'});
  const indoor=new THREE.Group();indoor.name='Club interior details';for(const child of [...root.children])if(!exteriorParts.has(child))indoor.add(child);root.add(indoor);indoor.visible=false;
- return {root,roof,seats,stage,music,westHinge,sideGarden,lounge,dartsFinish,poolFinish,get games(){return {pool,darts};},get online(){return social.connected;},get peers(){return social.peers;},get active(){return active;},get floor(){return floor;},get dancing(){return dancing;},set dancing(value){dancing=value;},get gameOpen(){return gameView.open;},near,toggle,heightAt,contains,
+ return {root,roof,seats,stage,pinkDancer,music,westHinge,sideGarden,lounge,dartsFinish,poolFinish,get games(){return {pool,darts};},get online(){return social.connected;},get peers(){return social.peers;},get active(){return active;},get floor(){return floor;},get dancing(){return dancing;},set dancing(value){dancing=value;},get gameOpen(){return gameView.open;},near,toggle,heightAt,contains,
   portalWalk(px,pz){const lx=px-x,lz=pz-z;if(Math.abs(lx)<1.7&&lz>=6.9&&lz<=12)return (!active&&canEnter()||active&&floor===0);return null;},blocks(px,pz){return Math.abs(px-x)<30.3&&Math.abs(pz-z)<8.3||sideGarden.blocks(px-x,pz-z);},
   nearestSeat(px,pz,max=2.4){if(!active)return null;let best=null,distance=max;for(const seat of seats){if(seat.floor!==floor)continue;const d=Math.hypot(px-seat.x,pz-seat.z);if(d<distance){best=seat;distance=d;}}return best;},
   clampCamera(point){point.x=THREE.MathUtils.clamp(point.x,x-28.6,x+28.6);point.z=THREE.MathUtils.clamp(point.z,z-6.8,z+6.8);},
@@ -212,7 +214,7 @@ export function createClubZerconda(scene,{getPlayer,getYaw=()=>0,stopMovement,pa
    dartsFinish.updateDarts(darts);
    const p=getPlayer(),lx=p.x-x,lz=p.z-z;
    if(active)focusInterior(true);
-   indoor.visible=active||near();
+   indoor.visible=active||near();pinkDancer.setActive(indoor.visible);if(indoor.visible){pinkDancer.update(dt);pinkSpot.rotation.y=.25+Math.sin(time*.65)*.14;}
    musicButton.style.display=active?'block':'none';westHinge.rotation.y=THREE.MathUtils.damp(westHinge.rotation.y,-Math.PI/2+(westDistance(p)<5?1.35:0),7,dt);
    const frontNear=frontDistance(p)<5&&(!active||floor===0);
    for(const door of frontDoors)door.hinge.rotation.y=THREE.MathUtils.damp(door.hinge.rotation.y,frontNear?door.side*1.18:0,7,dt);

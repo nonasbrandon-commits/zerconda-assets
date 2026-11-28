@@ -1,0 +1,1033 @@
+{
+  "version": 490,
+  "repository": "nonasbrandon-commits/zerconda-assets",
+  "visibility": "public",
+  "newMediaAssets": 0,
+  "files": [
+    {
+      "path": "world-v5-upgrade/apartment-review-women.js",
+      "bytes": 6427,
+      "sha256": "1e703583171163bb5fae400f7846d9a256982e7ed1719f387828ca09b6c427b1"
+    },
+    {
+      "path": "world-v5-upgrade/club-zerconda.js",
+      "bytes": 27152,
+      "sha256": "1958693975a42df6e5ab4f382619f85a22c671f56ae6a29764e972b785c3bd15"
+    },
+    {
+      "path": "world-v5-upgrade/bot-house-resident.js",
+      "bytes": 8229,
+      "sha256": "528768691cf12afa726f2163eb70f54cf8d5a1057e7bdbf472215876b343fc24"
+    },
+    {
+      "path": "world-v5-upgrade/household-residents.js",
+      "bytes": 4398,
+      "sha256": "fd1e042965b4aacf1627ac2710b984f92edbc0df080386808eeacc611e3cbdeb"
+    },
+    {
+      "path": "world-v5-upgrade/house-midnight.js",
+      "bytes": 1410,
+      "sha256": "739e9c9f77aa92f72e34605af57afcf937565e7a718db8b971eec5ba497a0ae6"
+    },
+    {
+      "path": "world-v5-upgrade/house-scan-rig.js",
+      "bytes": 4480,
+      "sha256": "7264bbba37c1c9017b1003e16fea6702c922165844b9d1d1f253ccd10a1f8aeb"
+    },
+    {
+      "path": "world-v5-upgrade/level10-additional-guests.js",
+      "bytes": 2371,
+      "sha256": "8dbedb09fb6b998ea0dcb9127b8ff8165bc1d638a4538acaa02a16603f7d1366"
+    },
+    {
+      "path": "world-v5-upgrade/RELEASE-NOTES-v490.md",
+      "bytes": 915,
+      "sha256": "c796c24c2dec85ad2d79e7a895f3225ceabceec698cb3903b5313e0c06905670"
+    },
+    {
+      "path": "world-v5-upgrade/release-asset-audit-v490.json",
+      "bytes": 4697,
+      "sha256": "cfbb69fef8e6b3bd221932abe9c7aac52c768344d6adb44003e1ed028c0a668c"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-00.bin",
+      "bytes": 98304,
+      "sha256": "688401c83ae24cb588866289792c0852581c0be79ef5e8c9c7ddbd652abb439a"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-01.bin",
+      "bytes": 98304,
+      "sha256": "56e2aee663b6dbed5512ac914fac9b2a478b1394b856120503451708d3fd06be"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-02.bin",
+      "bytes": 98304,
+      "sha256": "00c19bbce46314a765f8917f2584a3c65d084d1ba55a201750c8a1ac72317690"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-03.bin",
+      "bytes": 98304,
+      "sha256": "91eb59aa3614557152c05a1e5bdce152ae24f7f40588446a40f49effbb4570ae"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-04.bin",
+      "bytes": 98304,
+      "sha256": "a9217a51c750563df143b2e8418aa4c56b34e1d3a0592c8078a671cb2bd7ad52"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-05.bin",
+      "bytes": 98304,
+      "sha256": "35b9efb8afa89cac395969ac5448987a5cd655ce536a4b26f1ebdc49b5b2b507"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-06.bin",
+      "bytes": 98304,
+      "sha256": "1fce64eb0197545011e76fcc5775d23ece543b7520fe0f56e4a3a88236234ff9"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-07.bin",
+      "bytes": 98304,
+      "sha256": "dcee88ca1405c318e6ab59908a3444cb2ec15bc9bb31a31e823419c43cf850de"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-08.bin",
+      "bytes": 98304,
+      "sha256": "ee834943360033eddb4260deb01f22dfb61c1fe2fc5710e9d69e86193fb9128a"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-09.bin",
+      "bytes": 98304,
+      "sha256": "5685e520f86ea5febf888dc847a57fa19c2d782291196d325956be3adefe22d3"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-10.bin",
+      "bytes": 98304,
+      "sha256": "9256edee9f71f6e91ae27dc021015b469fc3cd3dea1004d411b2fa681482c8a3"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-11.bin",
+      "bytes": 98304,
+      "sha256": "acd88a3806725f43bfd19a749e43d580b7b2658d2352eb867f48fdf7169ac553"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-12.bin",
+      "bytes": 98304,
+      "sha256": "694d079b0ae6bb1ceb6549484d413093ac2f26c10293b578152f2f0337083396"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-13.bin",
+      "bytes": 98304,
+      "sha256": "01fdab1d24c3a86c641f30c62bda60e570ddb8e4551282c2447a114acd07b914"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-14.bin",
+      "bytes": 98304,
+      "sha256": "0a63258ab9484ecd083e0b7a94bd60f4a956ebb0b580a13d32fceccebaf7883c"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-15.bin",
+      "bytes": 98304,
+      "sha256": "134385f1943d58cbba8afbe0fc23f86696ad7444b92fa5282e3f4ca28f8a3afb"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-16.bin",
+      "bytes": 98304,
+      "sha256": "4e679c3102145f58c514008c41d1cb0831f1bfacaa2c767360014ff16dd718a0"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-17.bin",
+      "bytes": 98304,
+      "sha256": "7e7c4a7cd58f2e5b16c22647ac94a14cb03d0c99a7650402c3b12f1ea28579ad"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-18.bin",
+      "bytes": 98304,
+      "sha256": "ed59a35b2aa74c164932691d4020404678d5a8b84ba4146f6da58ff7754e56bb"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-19.bin",
+      "bytes": 98304,
+      "sha256": "805bc6e1080a52aeb5fb86c6ad61d5db6b3f4e82d14bf45576ca978e5dcc9db5"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-20.bin",
+      "bytes": 98304,
+      "sha256": "3a57c8dd15dbd3a36af71b6f047e21b1184c8d33be54d264519ddb3f74b1f887"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-21.bin",
+      "bytes": 98304,
+      "sha256": "647b44d87975dad328e953d79982b0c084c6bde95ec4e79f4e145b2c6263822d"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-22.bin",
+      "bytes": 98304,
+      "sha256": "1a6e4535a15ad713c372e972df57bdae4f199d12525b11bf9653a118b4db4e29"
+    },
+    {
+      "path": "world-v5-upgrade/world-pack-v490-23.bin",
+      "bytes": 43485,
+      "sha256": "461fcea85e4a74385ba5dd6b553ae150e5ea8c6df3abb90fd4623d5e0acf74c3"
+    },
+    {
+      "path": "world-v5-upgrade/index.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v238.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v239.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v240.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v241.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v242.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v243.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v244.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v245.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v246.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v247.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v248.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v249.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v250.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v251.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v252.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v253.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v254.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v255.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v256.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v257.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v258.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v259.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v260.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v261.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v262.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v263.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v264.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v265.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v266.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v267.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v268.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v269.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v270.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v271.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v272.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v273.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v274.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v275.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v276.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v277.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v278.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v279.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v280.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v281.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v282.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v283.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v284.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v285.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v286.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v287.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v288.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v289.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v290.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v291.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v292.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v293.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v294.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v295.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v296.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v297.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v298.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v299.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v300.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v301.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v302.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v303.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v304.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v305.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v306.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v307.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v308.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v309.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v310.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v311.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v312.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v313.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v314.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v315.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v316.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v317.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v318.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v319.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v320.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v321.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v322.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v323.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v324.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v325.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v326.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v327.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v328.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v329.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v330.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v331.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v332.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v333.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v334.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v335.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v336.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v337.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v338.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v339.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v340.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v341.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v342.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v343.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v344.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v345.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v346.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v347.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v348.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v349.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v350.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v351.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v352.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v353.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v354.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v355.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v356.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v357.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v358.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v359.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v360.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v361.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v362.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v363.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v364.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v365.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v366.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v367.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v368.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v369.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v370.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v371.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v372.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v373.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v374.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v375.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v376.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v377.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v378.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v379.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v380.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v381.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v382.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v383.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v384.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v385.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v386.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v387.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v388.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v389.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v390.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v391.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v392.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v393.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v394.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v395.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v396.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v397.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v398.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v399.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v400.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v401.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v402.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v403.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v404.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v405.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v406.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v407.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    },
+    {
+      "path": "world-v5-upgrade/launch-v408.html",
+      "bytes": 73449,
+      "sha256": "409dd620141589d5252508129f61a30a092c5f952d9dbf7c04122e22a2f70081"
+    }
+  ]
+}
