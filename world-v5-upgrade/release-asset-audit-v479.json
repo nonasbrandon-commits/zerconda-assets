@@ -1,0 +1,22 @@
+{
+  "version": 479,
+  "baseline": 478,
+  "change": "Upgrade Club Zerconda ground lounge using the supplied image references: black marble and charcoal brick, purple and warm lighting, a fluted brass bar with nine usable stools and ninety bottles, alternating plum and teal sofas, marble tables with lanterns, skyline artwork, indoor plants, and lit stair treads. Preserve walk-in doors, dance floor, upstairs seating, pool, darts and music controls. Retain v478 walking, bench recovery and Z-View fixes.",
+  "sourceModules": [
+    "club-zerconda.js",
+    "club-lounge-finish.js"
+  ],
+  "newMedia": 0,
+  "privateRecordsPublished": false,
+  "allEmbeddedAssetsUnchanged": true,
+  "approvedCharacterPartsUnchanged": true,
+  "storageKeysChanged": false,
+  "compiledSha256": "3ede293bfdb047605dd47984c332d5ad617ae8accd63167b09b9a488253bef1b",
+  "gzipSha256": "d85b6468cf5884027aa1dd3a26bc48d853374995c5652c9d99bef5d454f95c48",
+  "authorization": "User requested this lounge upgrade after prior fixes, using uploaded ZIP as design reference. Same authorized public game repository.",
+  "validation": [
+    "Focused lounge geometry, seats, collision aisle and stairs passed",
+    "Full world actual keyboard walking, sofa/stool sit and stand, both stair directions, pool and darts panels, outdoor exit, no page errors",
+    "Deterministic gzip, embedded assets unchanged, production has no QA hooks or social stub"
+  ]
+}
