@@ -595,7 +595,7 @@ function authoredGroundHeightAt(x,z){
  return Number.isFinite(height)?height:GROUND_LEVEL;
 }
 // Exterior modules and sidewalk slabs may overlap at their physical edges.
-function groundHeightAt(x,z){const cabinY=woodlandCabin?.heightAt(x,z)??abandonedForestCabin?.heightAt(x,z);if(cabinY!==null&&cabinY!==undefined)return cabinY;const mountainY=mountainHeightAt(x,z);if(mountainY!==null)return mountainY;
+function groundHeightAt(x,z){if(apartmentExperience?.active){const floorY=apartmentExperience.heightAt(x,z);if(floorY!==null&&floorY!==undefined)return floorY;}const cabinY=woodlandCabin?.heightAt(x,z)??abandonedForestCabin?.heightAt(x,z);if(cabinY!==null&&cabinY!==undefined)return cabinY;const mountainY=mountainHeightAt(x,z);if(mountainY!==null)return mountainY;
  const estateY=realEstate?.heightAt(x,z);if(estateY!==null&&estateY!==undefined)return estateY;
  let height=authoredGroundHeightAt(x,z);
  if(barber?.active||office?.active||apartmentExperience?.active||bowling?.active||boutique?.active||club?.active||ownableHomes?.active||marine?.riding||airfield?.boarded)return height;
@@ -2360,7 +2360,7 @@ function animate(){
  dealerButton.style.display='none';
  dealerButton.textContent=dealerInside?'E · EXIT DEALERSHIP':'E · ENTER DEALERSHIP';
  const showroomCar=dealerInside?dealership.nearestCar(player.x,player.z,5):null;showroomButton.style.display=showroomCar?'block':'none';if(showroomCar)showroomButton.textContent='View '+showroomCar.name;
- apartmentButton.style.display=apartmentSession&&!apartments.currentUnit&&apartments.currentFloor!==0?'block':'none';apartmentButton.textContent=apartments.currentUnit?'Return to apartment corridor':apartments.currentFloor?'Return to ground floor':'Exit apartments';
+ apartmentButton.style.display='none';
  if(enter){enter.style.display=!adminTransport?.active&&(activeCar||!otherInterior&&!cafeInside&&!dealerInside&&nearestUsableCar())?'block':'none';enter.textContent=activeCar?'Exit vehicle':'Enter vehicle';}
  townControls.update();
  drivingControls.update(activeCar||powersports?.activeVehicle);
