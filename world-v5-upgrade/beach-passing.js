@@ -3,6 +3,15 @@ export function beachPassingStep({id,here,target,speed,dt,people,player,staticCl
  const gap=(q,p)=>Math.hypot(q.x-p.x,q.z-p.z);
  const obstacles=people.filter(p=>p.id!==id).map(p=>({...p,r:1.55}));
  if(player)obstacles.push({...player,r:1.6,id:-1});
+ // Commit to a short, clear route around scenery instead of re-centering
+ // toward the blocked walking line on every frame.
+ memory.propCheck=Math.max(0,(memory.propCheck||0)-dt);memory.propTTL=Math.max(0,(memory.propTTL||0)-dt);
+ if(memory.propPath){while(memory.propPath.length&&gap(here,memory.propPath[0])<.13)memory.propPath.shift();if(!memory.propPath.length||!memory.propTTL||!staticClear(here,memory.propPath[0]))memory.propPath=null;}
+ if(!memory.propPath&&!memory.propCheck&&staticClear(here,here)){
+  memory.propCheck=.3;const dx=target.x-here.x,dz=target.z-here.z,len=Math.hypot(dx,dz)||1,fx=dx/len,fz=dz/len,probe={x:here.x+fx*Math.min(len,1.65),z:here.z+fz*Math.min(len,1.65)};
+  if(!staticClear(here,probe))for(const width of[1.1,1.65,2.2]){for(const side of[1,-1]){const across={x:here.x+fz*width*side,z:here.z-fx*width*side},past={x:across.x+fx*2.6,z:across.z+fz*2.6};if(staticClear(here,across)&&staticClear(across,past)){memory.propPath=[across,past];memory.propTTL=Math.max(8,12/Math.max(.4,speed));break;}}if(memory.propPath)break;}
+ }
+ if(memory.propPath?.length)target=memory.propPath[0];
  const heading={x:target.x-here.x,z:target.z-here.z},headingLength=Math.hypot(heading.x,heading.z)||1;const near=obstacles.filter(p=>gap(here,p)<4.0&&((p.x-here.x)*heading.x+(p.z-here.z)*heading.z)/headingLength>-.4);
  memory.left=Math.max(0,(memory.left||0)-dt);
  if(!memory.left&&near.length){
