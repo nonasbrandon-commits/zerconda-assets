@@ -1,0 +1,35 @@
+{
+  "version": 482,
+  "baseline": 480,
+  "change": "Enable seating breaks for all twelve beach visitors, including the red swimsuit visitor; replace repeated beach circuits and fitness pacing with varied destinations, track recent seats so residents visit different lounges and benches, enable public-seat breaks for roaming city residents, retain staff assignments, and detect stalled or circling movement to choose a new destination. Add blended skeletal sitting poses for reference beach models. Raise the buried timber pier approach above the sand, overlap the boardwalk edge, and match the ramp height for a continuous visible path, with a short entry slope and sand clipped beneath it. Remove all preset Coastal Shades prices and the displayed credit balance, leave prices unset and purchases disabled until configured, and preserve existing owned styles and balances. Place a reference-matched salesman beside Coastal Shades using the already published hero rig, black polo, white cargo shorts, black sunglasses and a procedural chest badge, with a clear counter approach and promenade.",
+  "sourceModules": [
+    "resident-variety.js",
+    "beach-visitors.js",
+    "resident-breaks.js",
+    "neighborhood-residents.js",
+    "boardwalk-fitness.js",
+    "city-residents.js",
+    "world-v5-complete-replacement.js",
+    "reference-swim-visitor.js",
+    "seaside-pier.js",
+    "zerconda-beach.js",
+    "sunglasses-hut.js",
+    "sunglasses-styles.js",
+    "sunglasses-salesman.js"
+  ],
+  "newMedia": 0,
+  "privateRecordsPublished": false,
+  "allEmbeddedAssetsUnchanged": true,
+  "approvedCharacterPartsUnchanged": true,
+  "storageKeysChanged": false,
+  "compiledSha256": "6ecfe5793ec881740cf6a616412541cb0b7cece42f49a0c35a58dc378ec00a39",
+  "gzipSha256": "ca874f01a70658e3ae3c2236b58142144070b51aa2ff7ffb7cd15b742bcb3034",
+  "publicationStatus": "Do not publish until user explicitly approves this complete release; prior binary upload was automatically rejected. User ZIP images remain local.",
+  "authorization": "User requested all roaming residents move around and sit in different places, fixes for shaking and circling, and the boardwalk connection to pier, in the previously approved public game.",
+  "validation": [
+    "Deterministic 1600-second behavior simulation: red visitor12 breaks at9 different seats,20 destinations; no duplicate seat reservations",
+    "Public resident breaks used4 different benches; circling progress watchdog recovered",
+    "Actual full game real beach model sitting and changing lounge plus pier geometry, walkability and keyboard crossings checked before deployment",
+    "Production deterministic gzip, no new media or QA hooks; original embedded assets unchanged"
+  ]
+}
