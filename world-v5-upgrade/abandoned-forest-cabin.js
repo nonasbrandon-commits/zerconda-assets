@@ -16,6 +16,13 @@ export function createAbandonedForestCabin(scene,{site=MOUNTAIN_CABIN_SITE,compa
  function part(g,m,x,y,z,rx=0,ry=0,rz=0){g.applyMatrix4(new T.Matrix4().compose(new T.Vector3(x,y,z),new T.Quaternion().setFromEuler(new T.Euler(rx,ry,rz)),new T.Vector3(1,1,1)));const a=batches.get(m)||[];if(m===wood){const p=g.attributes.position,n=g.attributes.normal,u=g.attributes.uv;for(let i=0;i<p.count;i++){const side=Math.abs(n.getX(i))>.7,floor=Math.abs(n.getY(i))>.7;u.setXY(i,(side?p.getZ(i):p.getX(i))*.23,(floor?p.getZ(i):p.getY(i))*.62);}}if(g.index){const n=g.toNonIndexed();g.dispose();g=n;}a.push(g);batches.set(m,a);}
  const box=(w,h,d,x,y,z,m=wood,rz=0)=>part(new T.BoxGeometry(w,h,d),m,x,y,z,0,0,rz);
  const solid=(x,z,w,d)=>solids.push({x0:x-w/2,x1:x+w/2,z0:z-d/2,z1:z+d/2});
+ // Opaque subfloor and low sill boards close terrain leaks at the floor edges.
+ // The raised planks and genuine doorway/window openings retain their layout.
+ box(8.26,.08,6.2,.06,.10,0,dark);box(8.26,.08,2.2,.06,.10,4.15,dark);
+ box(8.18,.22,.18,0,.29,-3);for(const x of[-4,4])box(.18,.22,6.18,x,.29,0);
+ const doorCenter=compact?1.5:0,doorLeft=doorCenter-.78,doorRight=doorCenter+.78;
+ box(doorLeft+4,.22,.18,(-4+doorLeft)/2,.29,3);
+ box(4-doorRight,.22,.18,(4+doorRight)/2,.29,3);
  // Raised weathered floor; front doorway and two genuine empty window openings.
  for(let x=-3.9;x<4;x+=.24)box(.225,.18,6,x,.18,0);for(let x=-3.9;x<4;x+=.24)box(.225,.16,2.2,x,.18,4.15);
  for(let row=0;row<15;row++){const y=.45+row*.2,cut=[];if(y<2.55)cut.push([(compact?1.5:0)-.78,(compact?1.5:0)+.78]);if(y>1.1&&y<2.35)for(const x of(compact?[-2.3]:[-2.5,2.5]))cut.push([x-.8,x+.8]);cut.sort((a,b)=>a[0]-b[0]);let left=-4;for(const [a,b]of [...cut,[4,4]]){if(a>left)box(a-left-.02,.183,.16,(left+a)/2,y,3,wood,(rnd()-.5)*.006);left=Math.max(left,b);}box(7.96,.183,.16,0,y,-3);for(const x of[-4,4])box(.16,.183,5.97,x,y,0);}

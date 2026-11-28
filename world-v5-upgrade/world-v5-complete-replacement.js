@@ -57,7 +57,7 @@ import {createAdminDashboard} from './admin-dashboard.js?v=447';
 import {createAdminWorldControls} from './admin-world-controls.js?v=20261124-menu-v352';
 import {createStyleCutsGrove} from './style-cuts-grove.js?v=442';
 import {applyPowersportsRiderPose} from './powersports-rider-pose.js?v=20261124-driving-v339';
-import {createCityviewApartments} from './cityview-apartments.js?v=20261125-starter-v403';
+import {createCityviewDistrict as createCityviewApartments} from './cityview-district.js?v=487';
 import {createAdminAccount} from './admin-account.js?v=20261125-access-v410';
 import {getManagedPrivateHomes,managePrivateHome} from './private-home-locks.js?v=447';
 import {collectHomeLocations} from './home-location-names.js?v=447';
@@ -1395,7 +1395,7 @@ const roadMap=createRoadMapGeometry(scene,asphalt);
 await yieldStartup();
 roadMap.scan();
 await yieldStartup();
-let mapFacingHeading=0;const cityMap=createCityMap({player,getHeading:()=>mapFacingHeading,getMarkerOwner:()=>freeApartments?.access.identity()??null,getHomes:()=>[...collectHomeLocations({starter:ownableHomes,premier,villas,coastal,apartments:apartmentExteriors,apartmentExperience}),...(cityview?[cityview.mapLocation()]:[])],getRoadPolygons:()=>roadMap.polygons,getLots:()=>realEstate.mapLots(),getNavigation:()=>{const cab=zCabs?.activeCab;if(!cab)return null;return{destination:cab.destination,points:[cab.root.position,...cab.path.points.filter((p,i)=>cab.path.lengths[i]>=cab.progress)]};}});
+let mapFacingHeading=0;const cityMap=createCityMap({player,getHeading:()=>mapFacingHeading,getMarkerOwner:()=>freeApartments?.access.identity()??null,getHomes:()=>[...collectHomeLocations({starter:ownableHomes,premier,villas,coastal,apartments:apartmentExteriors,apartmentExperience}),...(cityview?.mapLocations?.()||[])],getRoadPolygons:()=>roadMap.polygons,getLots:()=>realEstate.mapLots(),getNavigation:()=>{const cab=zCabs?.activeCab;if(!cab)return null;return{destination:cab.destination,points:[cab.root.position,...cab.path.points.filter((p,i)=>cab.path.lengths[i]>=cab.progress)]};}});
 await yieldStartup();
 
 // Third-person walking avatar: forward-facing, visible from the default camera.
@@ -1941,7 +1941,7 @@ const kateConversation=createKateConversation({getPlayer:()=>player,getKate:()=>
 BOOT('Preparing forest detail');
 BOOT('Preparing forest ground cover');await new Promise(resolve=>setTimeout(resolve,0));
 const forestGroundCover=createForestGroundCover(scene,{getTreePoints:()=>[...mountainTreePoints(),...(northernForest?.trees||[]),...(perimeterForest?.trees||[])],getPlayer:()=>player,getRoadPolygons:()=>roadMap.polygons,getForestSegments:()=>[...(northernForest?.segments||[]),...(camp?.trailSegments||[]).map(([ax,az,bx,bz])=>({ax,az,bx,bz,width:3.2}))],getHeight:(x,z)=>mountainHeightAt(x,z)??.02,canPlace:(x,z,r=0)=>!woodlandCabin?.blocks(x,z)&&!(Math.abs(x+686)<5&&Math.abs(z+1120)<6)&&!abandonedForestCabin?.blocks(x,z)&&!(Math.abs(x+930)<5&&Math.abs(z+685)<6)&&mountainLakeDistance(x,z)>1.35+r/16&&!nearMountainTrail(x,z,.65+r)&&!forestRockFormations?.blocks(x,z)&&(!cabinCarvedTree||Math.hypot(x-cabinCarvedTree.tree.x,z-cabinCarvedTree.tree.z)>r+3),mobile:MOBILE||LOW_GRAPHICS});
-const forestShrubs=createForestShrubs(scene,{getPlayer:()=>player,getRoadPolygons:()=>roadMap.polygons,getForestSegments:()=>[...(northernForest?.segments||[]),...(camp?.trailSegments||[]).map(([ax,az,bx,bz])=>({ax,az,bx,bz,width:3.2}))],getHeight:(x,z)=>mountainHeightAt(x,z)??.02,canPlace:(x,z,r=0)=>!woodlandCabin?.blocks(x,z)&&!(Math.abs(x+686)<5&&Math.abs(z+1120)<6)&&!abandonedForestCabin?.blocks(x,z)&&!(Math.abs(x+930)<5&&Math.abs(z+685)<6)&&mountainLakeDistance(x,z)>1.35+r/16&&!nearMountainTrail(x,z,.65+r)&&!forestRockFormations?.blocks(x,z)&&(!cabinCarvedTree||Math.hypot(x-cabinCarvedTree.tree.x,z-cabinCarvedTree.tree.z)>r+3),mobile:MOBILE||LOW_GRAPHICS,inForest:forestGroundCover.inForest,getStructures:()=>{const boxes=forestStructureBounds();for(const g of [brickApartments?.root,gunStore?.root,hospital?.root,canopyVenue?.root])if(g)boxes.push(new THREE.Box3().setFromObject(g));return boxes;}});
+const forestShrubs=createForestShrubs(scene,{getPlayer:()=>player,canRustle:()=>!document.hidden&&!activeCar&&!marine?.riding&&!scooters?.riding&&!powersports?.riding&&!airfield?.boarded&&!zCabs?.riding&&!freeApartments?.active&&!cityview?.active,getRoadPolygons:()=>roadMap.polygons,getForestSegments:()=>[...(northernForest?.segments||[]),...(camp?.trailSegments||[]).map(([ax,az,bx,bz])=>({ax,az,bx,bz,width:3.2}))],getHeight:(x,z)=>mountainHeightAt(x,z)??.02,canPlace:(x,z,r=0)=>!woodlandCabin?.blocks(x,z)&&!(Math.abs(x+686)<5&&Math.abs(z+1120)<6)&&!abandonedForestCabin?.blocks(x,z)&&!(Math.abs(x+930)<5&&Math.abs(z+685)<6)&&mountainLakeDistance(x,z)>1.35+r/16&&!nearMountainTrail(x,z,.65+r)&&!forestRockFormations?.blocks(x,z)&&(!cabinCarvedTree||Math.hypot(x-cabinCarvedTree.tree.x,z-cabinCarvedTree.tree.z)>r+3),mobile:MOBILE||LOW_GRAPHICS,inForest:forestGroundCover.inForest,getStructures:()=>{const boxes=forestStructureBounds();for(const g of [brickApartments?.root,gunStore?.root,hospital?.root,canopyVenue?.root])if(g)boxes.push(new THREE.Box3().setFromObject(g));return boxes;}});
 await yieldStartup();
 BOOT('Preparing military grounds');await new Promise(resolve=>setTimeout(resolve,0));
 militaryBase=createMilitaryBase(scene,{getPlayer:()=>player,hasClearance:militaryAccess.hasClearance,onAccessRequest:militaryAccess.request,onStop:()=>{keys.clear();townControls.stop();movement.vx=movement.vz=0;},canUseTower:()=>!adminTransport?.active&&!activeCar&&!zCabs?.riding,onTeleport:(x,y,z)=>{player.x=x;player.z=z;keys.clear();townControls.stop();movement.vx=movement.vz=0;yaw=0;pitch=0;avatar.position.set(x,y,z);camera.position.set(x,y+1.68,z);},onMessage:m=>townControls.notify(m),onReject:(x,z)=>{player.x=x;player.z=z;movement.vx=0;movement.vz=0;keys.clear();townControls.stop();}});
@@ -2083,7 +2083,8 @@ function walkable(x,z){
  if(apartmentSession)return apartments.contains(x,z);
   if(coffeeShop.canWalk(x,z)===false)return false;
   if(coffeeShop.isInside(x,z))return !activeCar&&!powersports?.riding&&!scooters?.riding&&!skate?.riding;
- if(x< -718.5||x>616.5||z< -1396.5||z>(Math.abs(x)<165?248:242))return false;
+ const mountainWallApproach=x>=-835&&x<=-721.5&&z>=-990&&z<=-270&&!activeCar&&!scooters?.riding&&!powersports?.riding&&!marine?.riding;
+ if((x< -718.5&&!mountainWallApproach)||x>616.5||z< -1396.5||z>(Math.abs(x)<165?248:242))return false;
  // No movement around the submerged perimeter: shoreline outside the central beach is impassable.
  if(z>234&&Math.abs(x)>260)return false;
  // Eastern expansion is accessed from the city's eastbound road corridor.

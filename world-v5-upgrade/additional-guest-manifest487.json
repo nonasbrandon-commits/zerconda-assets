@@ -1,0 +1,298 @@
+{
+  "kayden": [
+    {
+      "file": "kayden-v487-00.bin",
+      "sha256": "209726805fd98643c44ba03148baeef9b456edd736ab53983ef44c200773e82d"
+    },
+    {
+      "file": "kayden-v487-01.bin",
+      "sha256": "246f6ec04139a1a426a0d268c99801990610846c8ba122c445420937ec494bde"
+    },
+    {
+      "file": "kayden-v487-02.bin",
+      "sha256": "fcd074c8c2216edc79748f2d4dbf6674ec295932eeb1dc4411f8fb23dd51e7b4"
+    },
+    {
+      "file": "kayden-v487-03.bin",
+      "sha256": "3263200d5655d76c85d11f2e3871b2b503bf6e2e58c03ab8a0a57fc06697bc65"
+    },
+    {
+      "file": "kayden-v487-04.bin",
+      "sha256": "bbad28b7bf8dbee0d0ab25f65fe79814f5c62fa13748c8594b0f32cdb342cd86"
+    },
+    {
+      "file": "kayden-v487-05.bin",
+      "sha256": "06b29ceed07ee4e0d32f399d0ef1e935e69ca6f6a5f5b3570eb7bdabf9c4b4fd"
+    },
+    {
+      "file": "kayden-v487-06.bin",
+      "sha256": "e5072172476bf387674f7f5de3fcc196f15f0271140126240fe24e02d8336c96"
+    },
+    {
+      "file": "kayden-v487-07.bin",
+      "sha256": "b90748fb6f665a092e12732ab98c9b11c3b737b9742e1908316f5e9222c6690e"
+    },
+    {
+      "file": "kayden-v487-08.bin",
+      "sha256": "b691dfb9ad8992c500b1b9c91eda1f7f4aa10931d4dee0733e7266453d620ac2"
+    },
+    {
+      "file": "kayden-v487-09.bin",
+      "sha256": "faffe34c5fecb2402fd9675ed08369222930f42088f9dc40f7e4f5df206cb3cd"
+    },
+    {
+      "file": "kayden-v487-10.bin",
+      "sha256": "92c97a3ad984eaedc63d4191edfbfd8f92f6981319805c08d89455f95c8fceee"
+    },
+    {
+      "file": "kayden-v487-11.bin",
+      "sha256": "20834a7ea5b9bc294d046ae8ead8fa985476faa88321e61636cd47053692f186"
+    },
+    {
+      "file": "kayden-v487-12.bin",
+      "sha256": "a06c0c46c3208aaefdc4e6d589dc69989540af63d0dce8858b251295b02dad6b"
+    },
+    {
+      "file": "kayden-v487-13.bin",
+      "sha256": "72ce265107e3923c392b5db0cafef8f38e6477e4b944e0d4ce8449e6fc769c34"
+    },
+    {
+      "file": "kayden-v487-14.bin",
+      "sha256": "be846ffd8359876c645f95ae8d0626b033a0308359915742df2f87ae2448c230"
+    },
+    {
+      "file": "kayden-v487-15.bin",
+      "sha256": "3c489d140154c726c1f0ce3d369b2f4bca001513579ca6cf9fb34b1ef6f87bf0"
+    },
+    {
+      "file": "kayden-v487-16.bin",
+      "sha256": "b8f08ce135cecf02fbace648776790cfd682a1312b1de427e89b00b994da04fb"
+    },
+    {
+      "file": "kayden-v487-17.bin",
+      "sha256": "7870e71e48b25533099a1523cb34135a43ac33593d2202d35c90e7f71954f671"
+    },
+    {
+      "file": "kayden-v487-18.bin",
+      "sha256": "ad22cc745fe669ed75afe1a83628b4f20c461f192228a56d512e471947197ffd"
+    },
+    {
+      "file": "kayden-v487-19.bin",
+      "sha256": "94c7bdae3d9d282ec6db219fce29d33edf60a51a293a4391f1fc70937a81a641"
+    },
+    {
+      "file": "kayden-v487-20.bin",
+      "sha256": "067dd3becdceec888ab33045ced8d42af517c87bfccd8432b621d0602684a91a"
+    },
+    {
+      "file": "kayden-v487-21.bin",
+      "sha256": "1c790dbd52dc65e37531e6e00df01af733507008c0307c9f32861283b0e04b7a"
+    },
+    {
+      "file": "kayden-v487-22.bin",
+      "sha256": "c60d3b8d249a442039ead9dd90295b2aee735ac0065b2c65921f07264fc444b8"
+    },
+    {
+      "file": "kayden-v487-23.bin",
+      "sha256": "fd4eddb3e2aa89fd29a127d81a4ecd38a64a0cb34293337d45dfff4d06ba0e1a"
+    },
+    {
+      "file": "kayden-v487-24.bin",
+      "sha256": "ba33db75a09a9e78bdc46792886ee5191c6018eaf67840061bee9e9521e80c27"
+    },
+    {
+      "file": "kayden-v487-25.bin",
+      "sha256": "2f0d489e5edc6264c1d511598690b52fa5edd6459880ee73cc475151c1d8854e"
+    },
+    {
+      "file": "kayden-v487-26.bin",
+      "sha256": "cc1cc61b17a2dbbdc4629c373cdb24a035be41b58c24c1b3298b3d5dac45e307"
+    },
+    {
+      "file": "kayden-v487-27.bin",
+      "sha256": "224e1ca61b657210322c71db0a86f799c81a66dc9f49b91f513dadb769c3f628"
+    },
+    {
+      "file": "kayden-v487-28.bin",
+      "sha256": "95c0ee36067e9adba4f898d7c4f93204dd5a2785bcad32acab7c0b57ab97647f"
+    },
+    {
+      "file": "kayden-v487-29.bin",
+      "sha256": "2cf0618b81e07cc0892ddd1c012f35bbc2eba7ff689ea2b52124781faf12deb9"
+    },
+    {
+      "file": "kayden-v487-30.bin",
+      "sha256": "7772775f49dc9c83693fa6027e744009f5297c1923ce5e10a10cf67fd7091187"
+    },
+    {
+      "file": "kayden-v487-31.bin",
+      "sha256": "0265101a516828ce9d34b9dea2de18bda32b999499a156b4b4e95763c05c5bfc"
+    },
+    {
+      "file": "kayden-v487-32.bin",
+      "sha256": "eeb6018ce124b894142feea67f5131df3091e2b25641171b55fefcb638ce2cc3"
+    }
+  ],
+  "midnight-lace": [
+    {
+      "file": "midnight-lace-v487-00.bin",
+      "sha256": "4775aea24d06e191a41dc1d63cb52579541b5052d4a27a580c47324a06fe4b09"
+    },
+    {
+      "file": "midnight-lace-v487-01.bin",
+      "sha256": "282c29f674c97a075bb2f1bcb04424bb71e5d8d61481ba07aa6ce9b8644b2c8c"
+    },
+    {
+      "file": "midnight-lace-v487-02.bin",
+      "sha256": "be5dd32b475b06ffe271d8795db438475b13c1a71f555161396bdcaf9f22e5c5"
+    },
+    {
+      "file": "midnight-lace-v487-03.bin",
+      "sha256": "ab4015ebf721bd5d2c4231f01efb82de5d367a9df01c49476c715e03c4282b8d"
+    },
+    {
+      "file": "midnight-lace-v487-04.bin",
+      "sha256": "f8c56a8e9769538af098a8e2e4ba5aeba3db6bd648ddaaa354f50d5dbd664d78"
+    },
+    {
+      "file": "midnight-lace-v487-05.bin",
+      "sha256": "191a210a63f62776a7987f7b4cd5b62fc75756d753ae6cb9eaa1d61e3067e20d"
+    },
+    {
+      "file": "midnight-lace-v487-06.bin",
+      "sha256": "963ff8ef3ce475f5ca0e551e27c82a9706e73ad57897faf8d749b9fda1e42617"
+    },
+    {
+      "file": "midnight-lace-v487-07.bin",
+      "sha256": "489ae83257350ba2eb31b17560eda86ca713c2f3d62db477a6579953a6396fa2"
+    },
+    {
+      "file": "midnight-lace-v487-08.bin",
+      "sha256": "50a34f106fe691196c3feb14ed593520314a4832c52018aa13f3930fbc7f9f62"
+    },
+    {
+      "file": "midnight-lace-v487-09.bin",
+      "sha256": "0df40b3479cddd8b5765ff003edeaf4e43a40d17c81a4112eee468494ee4059d"
+    },
+    {
+      "file": "midnight-lace-v487-10.bin",
+      "sha256": "c4a356fb0fcace1968bec21db8f8dd7ea1a8163cb0137724294880977bba68a5"
+    },
+    {
+      "file": "midnight-lace-v487-11.bin",
+      "sha256": "455a092209157a774cd6d53e9338a9e1716f7cc20e1302cc419c32d487af7e04"
+    },
+    {
+      "file": "midnight-lace-v487-12.bin",
+      "sha256": "11aead93207732c0ac691e89fe1a8729e695c029e107c9968ef4f3c9499d876f"
+    },
+    {
+      "file": "midnight-lace-v487-13.bin",
+      "sha256": "44b16227765e52215ec9dc048f3f2ff452ef8137a50016d0e6f1945c55c99627"
+    },
+    {
+      "file": "midnight-lace-v487-14.bin",
+      "sha256": "50706de12230200da997f7ffa8bbdecf29fb676b47ecdefde23d416a2a36e864"
+    },
+    {
+      "file": "midnight-lace-v487-15.bin",
+      "sha256": "159f21645b3ef233e97a57705767579e86c6a2eab3c8444ee69fcab8e782a11e"
+    },
+    {
+      "file": "midnight-lace-v487-16.bin",
+      "sha256": "394128fc2e931c2ccdbff1fb3486b5a8ea912f7ae88f4a93e5765758d3270060"
+    },
+    {
+      "file": "midnight-lace-v487-17.bin",
+      "sha256": "fa016d6270a7c5863e5938a1a8e91135bf6e0a9dc04df5a073b477d7e7182d8e"
+    },
+    {
+      "file": "midnight-lace-v487-18.bin",
+      "sha256": "d68ea70d5a493276b8443c6fa6e239aef4118fd3c7bcf82239a9e5d8b2b847a4"
+    },
+    {
+      "file": "midnight-lace-v487-19.bin",
+      "sha256": "028ae7ccc24ebfadd5c30a6e17bce59e8aa19078dd861fc64e948686038d04e4"
+    },
+    {
+      "file": "midnight-lace-v487-20.bin",
+      "sha256": "66ed98efee434901af830763db7c307623081e8539849e6802978885989ce856"
+    },
+    {
+      "file": "midnight-lace-v487-21.bin",
+      "sha256": "72a7f1418947716b6d9c69e4d66e4a0572c71e054d054c9271bc77cedd382485"
+    },
+    {
+      "file": "midnight-lace-v487-22.bin",
+      "sha256": "586e873e67a0326c8ccfa6bcbeff3ed35d85cfcdbd6a98b13a03a9363cabaa35"
+    },
+    {
+      "file": "midnight-lace-v487-23.bin",
+      "sha256": "6e729f45756f5bab1d47104e08295aa19905497994e3cbd594c72186c3fe9b66"
+    },
+    {
+      "file": "midnight-lace-v487-24.bin",
+      "sha256": "53894ce92acd9faa63f4366a12d673aa029dddc6a00914abd1bb54e11792d4d7"
+    },
+    {
+      "file": "midnight-lace-v487-25.bin",
+      "sha256": "a739329fb886be6a50b3ae63e9b8b36724934960955c46b825ac9625f4195601"
+    },
+    {
+      "file": "midnight-lace-v487-26.bin",
+      "sha256": "87d3148c6aa810c31ad8ac578f5b4c501fbd51483d1359d9d232baea001ba338"
+    },
+    {
+      "file": "midnight-lace-v487-27.bin",
+      "sha256": "871be56c3c1bd97c8ff813a8677128fb25064e58436d858fc1f855835d95e724"
+    },
+    {
+      "file": "midnight-lace-v487-28.bin",
+      "sha256": "92b69c488afd40aab39aec26cc8298611ee0d4a2c167b022789406e197e67e0b"
+    },
+    {
+      "file": "midnight-lace-v487-29.bin",
+      "sha256": "1a77853632f38a97a26d3d955f57fd2079817376498435200d1289ec43433e30"
+    },
+    {
+      "file": "midnight-lace-v487-30.bin",
+      "sha256": "8d82a0f15df6afcc19604da825339f5f2bd9c9721b85e668b5c156ac8ac4c89b"
+    },
+    {
+      "file": "midnight-lace-v487-31.bin",
+      "sha256": "3615466e3d63334ddd97d0546d009d6c43e40f9298d96de416d8da011cb7da59"
+    },
+    {
+      "file": "midnight-lace-v487-32.bin",
+      "sha256": "51b27102f6317bf6d2bf4be0ba48a615346fb926bf5381daa696ba8126ea1875"
+    },
+    {
+      "file": "midnight-lace-v487-33.bin",
+      "sha256": "f1846b4ace677da3dc7083b182fd1cd0447b7a190a829bd9888802c40719408f"
+    },
+    {
+      "file": "midnight-lace-v487-34.bin",
+      "sha256": "65aec9b0c2b3c957d72458e4bf1e40678cb1ce8287433f251192469a7df7c8c0"
+    },
+    {
+      "file": "midnight-lace-v487-35.bin",
+      "sha256": "0b7969df0560f5d88f2c0f11afff843e7d7e27f34c3689f15deb7bb09da7285b"
+    },
+    {
+      "file": "midnight-lace-v487-36.bin",
+      "sha256": "413d60518c7fb75add63fe331a79719adba0f5cacb25de23aac0b76dfa8656eb"
+    },
+    {
+      "file": "midnight-lace-v487-37.bin",
+      "sha256": "c0d755c64c8c92e42689d276f1c1598cf124aeb3268d59bc60962eb323cf69d3"
+    },
+    {
+      "file": "midnight-lace-v487-38.bin",
+      "sha256": "97bff63a8e4e7d64b44905ea7d52e4ac680fa7d212164809e38756634eb466d5"
+    },
+    {
+      "file": "midnight-lace-v487-39.bin",
+      "sha256": "f8aa99664f1e8762d5099cbd20d14794eb698625aab179ef5594bea1972951bd"
+    }
+  ]
+}
