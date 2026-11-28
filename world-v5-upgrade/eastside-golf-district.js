@@ -1,3 +1,4 @@
+import {createPedestrianOverpasses} from './pedestrian-overpasses.js?v=485';
 import {createTownSidewalkMaterial} from './town-sidewalks.js?v=20261121-forest-airfield-v193';
 import {applyRealisticGrass,createRealisticGrass} from './realistic-grass.js?v=20261121-town-v191';
 import {addGolfGroves} from './golf-landscaping.js?v=20261121-forest-airfield-v193';
@@ -37,51 +38,7 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48,getPlayer}={}){
   const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);parent.add(g);treeInstances.push({g,seed});
   // No cartoon placeholder crown. Model is loaded below; failed loads leave an empty planting location instead of lollipop trees.
  }
- // Steel truss pedestrian crossing with vehicle clearance and grounded access ramps.
- const bridge=new THREE.Group();bridge.name='Eastside steel pedestrian bridge';bridge.userData.roadInfrastructure=true;root.add(bridge);
- const steel=mat(0x334954,.48),concrete=mat(0x929d9f,.9),deck=mat(0xb7bbb8,.82),glassRail=mat(0x748e99,.48);
- const bx=290,roadZ=0,deckY=10.5,width=4.4,span=38;
- // More than 9.9m of clear height above the boulevard; supports stay beyond sidewalks.
- box(bridge,bx,deckY,roadZ,width,.32,span,deck);
- for(const edge of [-1,1]){
-  const xx=bx+edge*(width/2-.1);
-  box(bridge,xx,deckY+.13,roadZ,.23,.22,span,steel);
-  for(let j=0;j<=16;j++){
-   const zz=roadZ-span/2+j*span/16;
-   box(bridge,xx,deckY+1.1,zz,.09,2.0,.1,steel);
-  }
-  for(const h of [.5,1.2,2.1])box(bridge,xx,deckY+h,roadZ,.10,.10,span,steel);
-  // Diagonal steel braces form visible, realistic bridge trusses.
-  for(let j=0;j<16;j++){
-   const zz=roadZ-span/2+(j+.5)*span/16;
-   const brace=new THREE.Mesh(new THREE.BoxGeometry(.11,2.3,.12),steel);
-   brace.position.set(xx,deckY+1.15,zz);
-   brace.rotation.x=(j%2?1:-1)*.64;bridge.add(brace);
-  }
- }
- // Four columns land beyond the traffic envelope and sidewalk.
- for(const zz of [roadZ-span/2-1.4,roadZ+span/2+1.4])
-  for(const xx of [bx-width/2+.3,bx+width/2-.3]){
-   box(bridge,xx,deckY/2,zz,.65,deckY,.65,concrete);
-   box(bridge,xx,.28,zz,1.5,.56,1.5,concrete);
-  }
- // Short, steeper approaches turn alongside the road instead of reaching
- // across the neighboring city streets. The deck meets both ramps at full height.
- const rampLength=25,landingY=.24,rise=deckY-landingY;
- const angle=Math.atan2(rise,rampLength),rampDeckLength=Math.hypot(rampLength,rise);
- for(const side of [-1,1]){
-  const rampZ=roadZ+side*(span/2-width/2);
-  const rampStartX=bx+width/2,centerX=rampStartX+rampLength/2;
-  const ramp=new THREE.Group();ramp.position.set(centerX,(deckY+landingY)/2,rampZ);
-  ramp.rotation.z=-angle;bridge.add(ramp);
-  box(ramp,0,0,0,rampDeckLength,.3,width,deck);
-  for(const edge of [-1,1]){
-   const zz=edge*(width/2-.1);
-   for(const h of [.55,1.15])box(ramp,0,h,zz,rampDeckLength,.12,.12,steel);
-   for(let j=0;j<=12;j++)box(ramp,j*rampDeckLength/12-rampDeckLength/2,.58,zz,.12,1.2,.12,steel);
-  }
-  box(bridge,rampStartX+rampLength+2,.12,rampZ,4,.24,width+.8,concrete);
- }
+ const overpasses=createPedestrianOverpasses(root,{getPlayer});
  // All land in the eastern reserve belongs to one connected nine-hole course.
  const course=new THREE.Group();course.position.set(x,0,z);root.add(course);
  const layout=createNineHoleGolf(course,{origin:{x,z},materials:{rough,fairway,green,sand,walk},tree,getPlayer});
@@ -153,15 +110,15 @@ export function createEastsideGolfDistrict(scene,{x=425,z=-48,getPlayer}={}){
  const sign=new THREE.Mesh(new THREE.PlaneGeometry(15,2.65),new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide}));
  sign.position.set(0,5.1,7.28);club.add(sign);
  // Carts follow the center of the same visible stone route used between holes.
- function update(dt){
+ function update(dt){overpasses.update();
   layout.update(dt);
   for(const state of movingCarts){
    state.distance=(state.distance+state.speed*dt)%layout.routeLength;
    const t=state.distance/layout.routeLength,p=layout.cartCurve.getPointAt(t),direction=layout.cartCurve.getTangentAt(t);
-   state.cart.position.set(p.x,.01,p.z);state.cart.rotation.y=Math.atan2(-direction.x,-direction.z);
+   state.cart.position.set(p.x,.07,p.z);state.cart.rotation.y=Math.atan2(-direction.x,-direction.z);
   }
  }
- return {root,clubhouse:club,movingCarts,center:{x,z},holes:9,residentialBuildings:0,layout,groves,heightAt:layout.heightAt,bounds:{minX:240,maxX:556,minZ:-265,maxZ:166},update};
+ return {root,clubhouse:club,movingCarts,center:{x,z},holes:9,residentialBuildings:0,layout,groves,overpasses,bridgeBlocks:overpasses.blocks,heightAt:(x,z)=>overpasses.heightAt(x,z)??layout.heightAt(x,z),bounds:{minX:240,maxX:556,minZ:-265,maxZ:166},update};
 }
 
 
