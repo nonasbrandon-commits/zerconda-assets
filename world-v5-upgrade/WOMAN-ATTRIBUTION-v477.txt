@@ -1,0 +1,6 @@
+Realistic Women by Michal
+Author: https://sketchfab.com/Michal_K
+Source: https://sketchfab.com/3d-models/realistic-women-b1044722512546e9b3e49c0ec10f0d18
+License: Creative Commons Attribution 4.0 International
+https://creativecommons.org/licenses/by/4.0/
+Changes for Zerconda v477: resized textures, compressed delivery, custom leg-region data, runtime walking skeleton and animation; original geometry and face retained.

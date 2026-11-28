@@ -1,0 +1,23 @@
+{
+  "version": 477,
+  "baseline": 476,
+  "change": "Add the user-supplied Realistic Women character by Michal beside Luxe Lanes bowling alley. Retain original scanned geometry, face, hair, coat and handbag; create a distance-driven leg rig with planted-foot gait, neutral idle and bounded sidewalk patrol. Share existing pedestrian avoidance and prop clearance. Resize embedded textures and lazily load integrity-checked compressed GLB parts only nearby. Include CC BY 4.0 attribution and adaptation notes. Keep all six existing installed residents, carnival staff, gardens, Z-View lounge, Ellis voice and game records.",
+  "sourceModules": [
+    "town-character-install.js",
+    "bowling-woman-rig.js",
+    "bowling-woman-asset.js"
+  ],
+  "newMedia": 1,
+  "privateRecordsPublished": false,
+  "allEmbeddedAssetsUnchanged": true,
+  "storageKeysChanged": false,
+  "compiledSha256": "5affa940d74c6da46527f0eda266431273dd6419b954f7a766a26cfd35cdcc13",
+  "gzipSha256": "61800d6278b5a64fc815feafb7005c7fb1ef2f4491c4886e3d90d0272cba64d6",
+  "authorization": "User uploaded Realistic Women and explicitly requested her walking by the bowling alley in the existing public game; standing publication approval applies to the same repository.",
+  "validation": [
+    "Actual uploaded model: embedded textures and geometry valid, 60 walking samples, rigid face, planted feet, idle transition and visual coat/handbag checks",
+    "Full world bowling sidewalk footprint and normal installed-character update movement before publication",
+    "Original embedded game assets unchanged; new CC BY model separately attributed and compressed with SHA-256 checks",
+    "Deterministic public bundle, no QA hooks or private records"
+  ]
+}
