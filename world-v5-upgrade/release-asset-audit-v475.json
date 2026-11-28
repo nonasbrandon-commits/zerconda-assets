@@ -1,0 +1,25 @@
+{
+  "version": 475,
+  "baseline": 474,
+  "change": "Upgrade only the Z-View upper observation lounge using the supplied ZIP design: procedural marble, charcoal/gold elevator pavilion, cream seating, six modeled palms and warm ceiling rings. Retain ground lobby, tower silhouette, skywalk portals and scenic elevator. Add a distance-driven cane-assisted skin rig to the original static Ellis model: alternating planted/swing feet and knees, coordinated cane and hand, gentle free arm, smooth idle return, and unchanged rigid face. Preserve dialogue, routes, other characters, assets and saved records.",
+  "sourceModules": [
+    "observation-needle.js",
+    "zview-upper-lounge.js",
+    "town-character-install.js",
+    "ellis-cane-walk.js"
+  ],
+  "newMedia": 0,
+  "privateRecordsPublished": false,
+  "allEmbeddedAssetsUnchanged": true,
+  "storageKeysChanged": false,
+  "compiledSha256": "04e07ba0012972c556b568f279a016ae2fbfb8bad27558bee65fe3e121ecebef",
+  "gzipSha256": "5145c9994b24f60e301239f576acec86166fb9492707075357a77d04f1d45dee",
+  "authorization": "User requested the upper lounge upgrade and Ellis walking fix, and explicitly replied approved after the public game upload review explanation; same public game repository and destination.",
+  "validation": [
+    "Upper lounge excluded from ground-height appliance culling; actual full-world upper visibility asserted after refresh",
+    "Actual tower fixture: all four axial deck routes and lift/lobby landing clear; 52 seats; 15 static batches and no added dynamic lights",
+    "Actual Ellis GLB: 44 moving frames, alternating knees, floor clearance, rigid face equality, idle blend returns to zero",
+    "Full production world entry, reception, up/down elevator, exit and original lamp detour regression before publication",
+    "Exact deterministic gzip; original embedded assets unchanged; no QA hooks or user ZIP published"
+  ]
+}

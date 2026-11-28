@@ -1,0 +1,26 @@
+import * as THREE from 'three';
+// Add a small gait rig to the existing CC0 static figure. Face, materials and
+// authored standing pose are retained; motion follows actual distance travelled.
+export function createEllisCaneWalk(model,actor){
+ actor.updateWorldMatrix(true,true);const inverse=actor.matrixWorld.clone().invert(),rig=new THREE.Group();rig.name='Ellis · distance-driven cane-assisted gait';const root=new THREE.Bone();root.name='Ellis gait root';rig.add(root);const bones=[root],legs=[];
+ function bone(name,parent,x,y,z){const b=new THREE.Bone();b.name=name;b.position.set(x,y,z);parent.add(b);bones.push(b);return b;}
+ for(const side of[-1,1]){const hip=bone('Ellis thigh '+side,root,side*.105,.90,.035),knee=bone('Ellis knee '+side,hip,0,-.42,0),ankle=bone('Ellis ankle '+side,knee,0,-.40,0);legs.push({side,hip,knee,ankle,indices:[bones.indexOf(hip),bones.indexOf(knee),bones.indexOf(ankle)]});}
+ const caneOrigin=new THREE.Vector3(.29,.91,.275),cane=bone('Ellis cane and supporting hand',root,...caneOrigin.toArray()),freeArm=bone('Ellis free arm',root,-.20,1.39,.04);const skeleton=new THREE.Skeleton(bones);const meshes=[];model.traverse(o=>{if(o.isMesh)meshes.push(o);});const p=new THREE.Vector3(),smooth=(lo,hi,v)=>THREE.MathUtils.smoothstep(v,lo,hi);let vertices=0;
+ for(const source of meshes){const g=source.geometry.clone(),position=source.geometry.attributes.position,normal=source.geometry.attributes.normal,xyz=new Float32Array(position.count*3),norm=normal?new Float32Array(normal.count*3):null;for(let i=0;i<position.count;i++){p.fromBufferAttribute(position,i);xyz.set(p.toArray(),i*3);if(normal){p.fromBufferAttribute(normal,i);norm.set(p.toArray(),i*3);}}g.setAttribute('position',new THREE.BufferAttribute(xyz,3));if(norm)g.setAttribute('normal',new THREE.BufferAttribute(norm,3));g.applyMatrix4(new THREE.Matrix4().multiplyMatrices(inverse,source.matrixWorld));
+  if(source.name.startsWith('Cane')){g.translate(-caneOrigin.x,-caneOrigin.y,-caneOrigin.z);const mesh=new THREE.Mesh(g,source.material);mesh.name=source.name;mesh.frustumCulled=false;cane.add(mesh);continue;}
+  const indices=new Uint16Array(position.count*4),weights=new Float32Array(position.count*4),a=g.attributes.position;
+  for(let i=0;i<a.count;i++){const x=a.getX(i),y=a.getY(i),z=a.getZ(i);let entries=[[0,1]];
+   if(y<.93){const leg=legs[x<0?0:1],rootWeight=smooth(.77,.93,y),thighWeight=smooth(.39,.56,y)*(1-rootWeight),footWeight=(1-smooth(.12,.23,y))*(1-rootWeight),shinWeight=Math.max(0,1-rootWeight-thighWeight-footWeight);entries=[[0,rootWeight],[leg.indices[0],thighWeight],[leg.indices[1],shinWeight],[leg.indices[2],footWeight]];}
+   // The hand holding the cane follows its grip, while head and face stay rigid.
+   if(x>.19&&y>.78&&y<1.34&&z>.09){const w=smooth(.19,.29,x)*(1-smooth(1.03,1.34,y));entries=[[0,1-w],[bones.indexOf(cane),w]];}
+   else if(x<-.21&&y>.83&&y<1.40){const w=smooth(.21,.30,-x)*(1-smooth(1.18,1.40,y));entries=[[0,1-w],[bones.indexOf(freeArm),w]];}
+   const total=entries.reduce((n,e)=>n+e[1],0)||1;entries.forEach(([index,w],k)=>{indices[i*4+k]=index;weights[i*4+k]=w/total;});
+  }
+  g.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(indices,4));g.setAttribute('skinWeight',new THREE.Float32BufferAttribute(weights,4));const mesh=new THREE.SkinnedMesh(g,source.material);mesh.name=source.name;mesh.frustumCulled=false;rig.add(mesh);vertices+=position.count;
+ }
+ actor.add(rig);rig.updateMatrixWorld(true);for(const mesh of rig.children)if(mesh.isSkinnedMesh)mesh.bind(skeleton);model.removeFromParent();let distance=0,blend=0,last=actor.position.clone();const stride=.72,stance=.62;
+ function gait(t){t=((t%1)+1)%1;const reach=stride*stance/2;if(t<stance)return{z:reach-stride*t,lift:0};const u=(t-stance)/(1-stance);return{z:-reach+2*reach*(.5-.5*Math.cos(Math.PI*u)),lift:Math.sin(Math.PI*u)*.055};}
+ function pose(leg,target){leg.hip.position.y=.90-.035*blend;const down=.82-.035*blend-target.lift*blend,z=target.z*blend,d=THREE.MathUtils.clamp(Math.hypot(down,z),.05,.819999),alpha=Math.acos(THREE.MathUtils.clamp((.42*.42+d*d-.4*.4)/(.84*d),-1,1)),knee=Math.PI-Math.acos(THREE.MathUtils.clamp((.42*.42+.4*.4-d*d)/(.336),-1,1));leg.hip.rotation.x=-Math.atan2(z,down)-alpha;leg.knee.rotation.x=knee;leg.ankle.rotation.x=-leg.hip.rotation.x-knee;}
+ rig.userData.caneGait={vertices,skinMeshes:rig.children.filter(o=>o.isSkinnedMesh).length,preservesOriginalFace:true,stride};
+ return{root:rig,legs,cane,skeleton,get state(){return{distance,blend,phase:distance/stride};},update(dt,speed=0){dt=Math.min(.1,Math.max(0,dt));const moved=actor.position.distanceTo(last);last.copy(actor.position);const walking=speed>0&&moved>.00001&&moved<.20;if(walking)distance+=moved;blend=THREE.MathUtils.damp(blend,walking?1:0,9,dt);const t=distance/stride;legs.forEach((leg,i)=>pose(leg,gait(t+i*.5)));const c=gait(t+.5);const tilt=Math.sin(t*Math.PI*2)*.035*blend;cane.position.set(caneOrigin.x,caneOrigin.y+c.lift*blend-.89*(1-Math.cos(tilt))+.02*Math.sin(tilt),caneOrigin.z+c.z*blend-.89*Math.sin(tilt)+.02*(1-Math.cos(tilt)));cane.rotation.x=tilt;freeArm.rotation.x=Math.sin(t*Math.PI*2)*.05*blend;actor.updateWorldMatrix(true,false);actor.updateMatrixWorld(true);skeleton.update();},dispose(){rig.removeFromParent();}};
+}
