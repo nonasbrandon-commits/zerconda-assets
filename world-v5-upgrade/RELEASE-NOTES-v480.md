@@ -1,0 +1,1 @@
+Move club stairs against the back/east wall, shorten run from12m to8m at the same4.5m rise, widen the upper floor beside the opening, provide clear3.3m end landings, align stair treads/rails and collision height, relocate the two corner planters to the opposite wall, and remove the club description banner.

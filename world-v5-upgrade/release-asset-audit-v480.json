@@ -1,0 +1,22 @@
+{
+  "version": 480,
+  "baseline": 479,
+  "change": "Move club stairs against the back/east wall, shorten run from12m to8m at the same4.5m rise, widen the upper floor beside the opening, provide clear3.3m end landings, align stair treads/rails and collision height, relocate the two corner planters to the opposite wall, and remove the club description banner.",
+  "sourceModules": [
+    "club-zerconda.js",
+    "club-lounge-finish.js"
+  ],
+  "newMedia": 0,
+  "privateRecordsPublished": false,
+  "allEmbeddedAssetsUnchanged": true,
+  "approvedCharacterPartsUnchanged": true,
+  "storageKeysChanged": false,
+  "compiledSha256": "c16aec82a11948b58a5ec69036cc480f36582841c50c5bf10c7af43be491dc93",
+  "gzipSha256": "d419562e3fc796bda48c4e19a65d3fe36e458ee3cd6311386db2068c322bdc1d",
+  "authorization": "User requested corner plant relocation and steeper stairs against back wall in the same public game; prior release publication explicitly approved.",
+  "validation": [
+    "Focused lounge geometry, seats, collision aisle and stairs passed",
+    "Full world actual keyboard walking, sofa/stool sit and stand, both stair directions, pool and darts panels, outdoor exit, no page errors",
+    "Deterministic gzip, embedded assets unchanged, production has no QA hooks or social stub"
+  ]
+}
