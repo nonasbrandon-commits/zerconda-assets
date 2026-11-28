@@ -1,0 +1,21 @@
+{
+  "version": 476,
+  "baseline": 475,
+  "change": "Add ten broadleaf trees to the shown west apartment lawns in two contrasting green and copper-leaf canopy varieties, using the existing licensed island-tree geometry. Keep existing narrow evergreens, other garden trees, clear footpath and 0.55m expanded building/balcony clearance. Batch the added models with instancing and retain trunk collision. Preserve v475 Z-View lounge and Ellis gait, dialogue and all existing game features.",
+  "sourceModules": [
+    "apartment-gardens.js"
+  ],
+  "newMedia": 0,
+  "privateRecordsPublished": false,
+  "allEmbeddedAssetsUnchanged": true,
+  "storageKeysChanged": false,
+  "compiledSha256": "9fd2abdf95bd159ace8dd450be687edcfb23e0280717b5501884aa1ac2569a01",
+  "gzipSha256": "315afc3e5cf4f49dc9eb461a57491ffcc4cd2960710f0ab0b7406c1b8d18b12f",
+  "authorization": "User requested the upper lounge upgrade and Ellis walking fix, and explicitly replied approved after the public game upload review explanation; same public game repository and destination.",
+  "validation": [
+    "Real apartment exteriors: 913 full geometry instance bounds checked against expanded buildings, balconies and 4.5m path",
+    "Ten new mixed trees, 54 total garden trees, trunk collisions and continuous path clearance",
+    "Rendered actual west lawn preview and no browser errors",
+    "Deterministic gzip and unchanged embedded assets; v475 modules retained"
+  ]
+}
